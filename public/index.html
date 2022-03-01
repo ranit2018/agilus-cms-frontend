@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>  
+    <title>SRL Diagnostics</title>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <meta http-equiv="cache-control" content="no-cache, must-revalidate, post-check=0, pre-check=0">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="pragma" content="no-cache">
+    
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css"> 
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>    
+    <script type="text/javascript" src="https://unpkg.com/element-closest@3.0.2/browser.js"></script>
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+    <script src="%PUBLIC_URL%/tinymce/tinymce.min.js"></script>
+    
+
+    <script>
+      tinymce.PluginManager.add("placeholder",function(editor,url){var element;editor.on("init",function(evt){if(editor.settings.inline){element=editor.getElement()}else{element=editor.contentAreaContainer}element.classList.add("plugin-placeholder");if(element.getAttribute("placeholder")===null){element.setAttribute("placeholder",editor.settings.placeholder||editor.getElement().getAttribute("placeholder"))}if(document.getElementById("plugin-placeholder")===null){addPlaceholderStyles()}element.addEventListener("click",function(){editor.execCommand("mceFocus",false,element)})});editor.on("selectionchange init",function(evt){if(editor.getContent()==""){element.classList.add("empty")}else{element.classList.remove("empty")}});function addPlaceholderStyles(){var head=document.head||document.getElementsByTagName("head")[0];var css=document.createElement("style");css.id="plugin-placeholder";css.type="text/css";css.innerHTML=".plugin-placeholder:before {                 display: none;position: absolute;content: attr(placeholder);-webkit-margin-before: 1em;-webkit-margin-after: 1em;-webkit-margin-start: 0px;-webkit-margin-end: 0px;color:#454545;font-style:italic;}.mce-panel.plugin-placeholder:before{margin-left:8px;}.plugin-placeholder iframe{z-index: 2;}.plugin-placeholder.empty:before{display:block;}";head.appendChild(css)}});
+    </script>   
+    <title>SRL Diagnostics</title>
+  </head>
+  <body>
+    <noscript>
+      You need to enable JavaScript to run this app.
+    </noscript>
+    <div id="root"></div> 
+  </body>
+</html>

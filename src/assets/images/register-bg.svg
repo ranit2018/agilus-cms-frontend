@@ -1,0 +1,164 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="369" height="177" viewBox="0 0 369 177">
+  <defs>
+    <clipPath id="clip-path">
+      <rect width="104" height="129" fill="none"/>
+    </clipPath>
+  </defs>
+  <g id="Group_4100" data-name="Group 4100" transform="translate(-602 -512)">
+    <circle id="Ellipse_1647" data-name="Ellipse 1647" cx="88.5" cy="88.5" r="88.5" transform="translate(602 512)" fill="#fff" opacity="0.06"/>
+    <g id="Group_4035" data-name="Group 4035" transform="translate(657 583.26)">
+      <path id="Path_9497" data-name="Path 9497" d="M301.758,277.19v-8.507l-3.179-.852c-.125-.336-.266-.673-.421-1.007l1.647-2.855-6.013-6.013-2.855,1.647c-.334-.154-.671-.3-1.007-.421l-.852-3.18h-8.507l-.852,3.179c-.336.125-.673.266-1.007.421l-2.855-1.647-6.013,6.013,1.647,2.855c-.189.406-.354.814-.5,1.217l5.928.38v.147a9.032,9.032,0,1,1,0,8.739v.147l-5.93.38c.143.4.309.812.5,1.216L269.84,281.9l6.013,6.013,2.855-1.647c.334.154.671.3,1.007.421l.852,3.18h8.507l.852-3.179c.336-.125.673-.266,1.007-.421l2.855,1.647L299.8,281.9l-1.647-2.855c.154-.334.3-.671.421-1.007Zm0,0" transform="translate(-231.758 -219.871)" fill="#e8ae4a"/>
+      <path id="Path_9498" data-name="Path 9498" d="M63.613,116.323H32V96H63.613Zm0,0" transform="translate(-27.484 -82.452)" fill="#e8ae4a"/>
+      <g id="Group_4034" data-name="Group 4034">
+        <path id="Path_9499" data-name="Path 9499" d="M0,0V54.194H5.909a2.814,2.814,0,0,0,1.458,1.482l7.079,3.034H44.622a10.161,10.161,0,1,0,0-11.29H14.446l-7.08,3.034a2.812,2.812,0,0,0-1.456,1.482H2.258V11.29H63.226V39.276l2.258,2.258V0ZM53.065,45.161a7.9,7.9,0,1,1-7.9,7.9A7.912,7.912,0,0,1,53.065,45.161ZM42.97,51.935H20.323v2.258H42.97a10.1,10.1,0,0,0,.526,2.258H15.806V54.194h2.258V51.935H15.806V49.677H43.5A10.1,10.1,0,0,0,42.97,51.935Zm-34.713.593,5.292-2.268v5.608L8.257,53.6a.584.584,0,0,1,0-1.073Zm-6-43.5V2.258H63.226V9.032Zm0,0" fill="#fff"/>
+        <path id="Path_9500" data-name="Path 9500" d="M341.645,347.29A5.645,5.645,0,1,0,336,341.645,5.652,5.652,0,0,0,341.645,347.29Zm0-9.032a3.387,3.387,0,1,1-3.387,3.387A3.392,3.392,0,0,1,341.645,338.258Zm0,0" transform="translate(-288.581 -288.581)" fill="#fff"/>
+        <path id="Path_9501" data-name="Path 9501" d="M32,32h2.258v2.258H32Zm0,0" transform="translate(-27.484 -27.484)" fill="#fff"/>
+        <path id="Path_9502" data-name="Path 9502" d="M64,32h2.258v2.258H64Zm0,0" transform="translate(-54.968 -27.484)" fill="#fff"/>
+        <path id="Path_9503" data-name="Path 9503" d="M96,32h2.258v2.258H96Zm0,0" transform="translate(-82.452 -27.484)" fill="#fff"/>
+        <path id="Path_9504" data-name="Path 9504" d="M272,96h2.258v2.258H272Zm0,0" transform="translate(-233.613 -82.452)" fill="#fff"/>
+        <path id="Path_9505" data-name="Path 9505" d="M304,96h18.065v2.258H304Zm0,0" transform="translate(-261.097 -82.452)" fill="#fff"/>
+        <path id="Path_9506" data-name="Path 9506" d="M272,128h22.581v2.258H272Zm0,0" transform="translate(-233.613 -109.935)" fill="#fff"/>
+        <path id="Path_9507" data-name="Path 9507" d="M272,160h22.581v2.258H272Zm0,0" transform="translate(-233.613 -137.419)" fill="#fff"/>
+        <path id="Path_9508" data-name="Path 9508" d="M352,192h11.29v2.258H352Zm0,0" transform="translate(-302.323 -164.903)" fill="#fff"/>
+        <path id="Path_9509" data-name="Path 9509" d="M272,192h9.032v2.258H272Zm0,0" transform="translate(-233.613 -164.903)" fill="#fff"/>
+        <path id="Path_9510" data-name="Path 9510" d="M272,224h18.065v2.258H272Zm0,0" transform="translate(-233.613 -192.387)" fill="#fff"/>
+        <path id="Path_9511" data-name="Path 9511" d="M34.258,256A2.26,2.26,0,0,0,32,258.258v2.258a2.26,2.26,0,0,0,2.258,2.258h4.516a2.26,2.26,0,0,0,2.258-2.258v-2.258A2.26,2.26,0,0,0,38.774,256Zm0,4.516v-2.258h4.516v2.258Zm0,0" transform="translate(-27.484 -219.871)" fill="#fff"/>
+        <path id="Path_9512" data-name="Path 9512" d="M114.258,256A2.26,2.26,0,0,0,112,258.258v2.258a2.26,2.26,0,0,0,2.258,2.258h4.516a2.26,2.26,0,0,0,2.258-2.258v-2.258A2.26,2.26,0,0,0,118.774,256Zm0,4.516v-2.258h4.516v2.258Zm0,0" transform="translate(-96.194 -219.871)" fill="#fff"/>
+        <path id="Path_9513" data-name="Path 9513" d="M194.258,262.774h4.516a2.26,2.26,0,0,0,2.258-2.258v-2.258A2.26,2.26,0,0,0,198.774,256h-4.516A2.26,2.26,0,0,0,192,258.258v2.258A2.26,2.26,0,0,0,194.258,262.774Zm0-4.516h4.516v2.258h-4.517Zm0,0" transform="translate(-164.903 -219.871)" fill="#fff"/>
+        <path id="Path_9514" data-name="Path 9514" d="M64,128H82.065v2.258H64Zm0,0" transform="translate(-54.968 -109.935)" fill="#fff"/>
+        <path id="Path_9515" data-name="Path 9515" d="M208,128h2.258v2.258H208Zm0,0" transform="translate(-178.645 -109.935)" fill="#fff"/>
+        <path id="Path_9516" data-name="Path 9516" d="M96,160h18.065v2.258H96Zm0,0" transform="translate(-82.452 -137.419)" fill="#fff"/>
+        <path id="Path_9517" data-name="Path 9517" d="M64,192H82.065v2.258H64Zm0,0" transform="translate(-54.968 -164.903)" fill="#fff"/>
+        <path id="Path_9518" data-name="Path 9518" d="M64,160h2.258v2.258H64Zm0,0" transform="translate(-54.968 -137.419)" fill="#fff"/>
+      </g>
+    </g>
+    <g id="Repeat_Grid_4" data-name="Repeat Grid 4" transform="translate(867 520)" clip-path="url(#clip-path)">
+      <g transform="translate(-102 -739)">
+        <circle id="Ellipse_19" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-83 -739)">
+        <circle id="Ellipse_19-2" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-64 -739)">
+        <circle id="Ellipse_19-3" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-45 -739)">
+        <circle id="Ellipse_19-4" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-26 -739)">
+        <circle id="Ellipse_19-5" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-7 -739)">
+        <circle id="Ellipse_19-6" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-102 -719)">
+        <circle id="Ellipse_19-7" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-83 -719)">
+        <circle id="Ellipse_19-8" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-64 -719)">
+        <circle id="Ellipse_19-9" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-45 -719)">
+        <circle id="Ellipse_19-10" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-26 -719)">
+        <circle id="Ellipse_19-11" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-7 -719)">
+        <circle id="Ellipse_19-12" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-102 -699)">
+        <circle id="Ellipse_19-13" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-83 -699)">
+        <circle id="Ellipse_19-14" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-64 -699)">
+        <circle id="Ellipse_19-15" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-45 -699)">
+        <circle id="Ellipse_19-16" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-26 -699)">
+        <circle id="Ellipse_19-17" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-7 -699)">
+        <circle id="Ellipse_19-18" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-102 -679)">
+        <circle id="Ellipse_19-19" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-83 -679)">
+        <circle id="Ellipse_19-20" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-64 -679)">
+        <circle id="Ellipse_19-21" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-45 -679)">
+        <circle id="Ellipse_19-22" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-26 -679)">
+        <circle id="Ellipse_19-23" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-7 -679)">
+        <circle id="Ellipse_19-24" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-102 -659)">
+        <circle id="Ellipse_19-25" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-83 -659)">
+        <circle id="Ellipse_19-26" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-64 -659)">
+        <circle id="Ellipse_19-27" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-45 -659)">
+        <circle id="Ellipse_19-28" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-26 -659)">
+        <circle id="Ellipse_19-29" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-7 -659)">
+        <circle id="Ellipse_19-30" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-102 -639)">
+        <circle id="Ellipse_19-31" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-83 -639)">
+        <circle id="Ellipse_19-32" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-64 -639)">
+        <circle id="Ellipse_19-33" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-45 -639)">
+        <circle id="Ellipse_19-34" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-26 -639)">
+        <circle id="Ellipse_19-35" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-7 -639)">
+        <circle id="Ellipse_19-36" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-102 -619)">
+        <circle id="Ellipse_19-37" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-83 -619)">
+        <circle id="Ellipse_19-38" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-64 -619)">
+        <circle id="Ellipse_19-39" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-45 -619)">
+        <circle id="Ellipse_19-40" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-26 -619)">
+        <circle id="Ellipse_19-41" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+      <g transform="translate(-7 -619)">
+        <circle id="Ellipse_19-42" data-name="Ellipse 19" cx="2" cy="2" r="2" transform="translate(102 739)" fill="#fff" opacity="0.33"/>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="15" height="17" viewBox="0 0 15 17">
+  <g id="Group_7" data-name="Group 7" transform="translate(-0.367)">
+    <g id="pending" transform="translate(0 1)">
+      <path id="Union_4" data-name="Union 4" d="M7.5,15A7.5,7.5,0,1,1,15,7.5,7.526,7.526,0,0,1,7.5,15Z" transform="translate(0.367)" fill="#c31e1e"/>
+    </g>
+    <text id="_" data-name="!" transform="translate(6.367 13)" fill="#fff" font-size="12" font-family="OpenSans-Semibold, Open Sans" font-weight="600"><tspan x="0" y="0">!</tspan></text>
+  </g>
+</svg>

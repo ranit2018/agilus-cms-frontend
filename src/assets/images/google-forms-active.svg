@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="21.005" viewBox="0 0 16 21.005">
+  <defs>
+    <clipPath id="clip-path">
+      <rect width="10.123" height="7.6" fill="none"/>
+    </clipPath>
+  </defs>
+  <g id="google-forms" transform="translate(-61)">
+    <path id="Path_9577" data-name="Path 9577" d="M76.82,5.1,71.9.18A.62.62,0,0,0,71.462,0H62.846A1.848,1.848,0,0,0,61,1.846V19.159a1.848,1.848,0,0,0,1.846,1.846H75.154A1.848,1.848,0,0,0,77,19.159V5.538A.622.622,0,0,0,76.82,5.1Zm-4.743-3L74.9,4.923H72.692a.616.616,0,0,1-.615-.615Zm3.077,17.673H62.846a.616.616,0,0,1-.615-.615V1.846a.616.616,0,0,1,.615-.615h8V4.308a1.848,1.848,0,0,0,1.846,1.846h3.077V19.159A.616.616,0,0,1,75.154,19.774Z" fill="#b5ceef"/>
+    <ellipse id="Ellipse_1654" data-name="Ellipse 1654" cx="0.5" rx="0.5" transform="translate(64 15.037)" fill="#b5ceef"/>
+    <g id="Repeat_Grid_7" data-name="Repeat Grid 7" transform="translate(64 9.036)" clip-path="url(#clip-path)">
+      <g transform="translate(-64 -9.036)">
+        <path id="Path_9578" data-name="Path 9578" d="M187.6,242h-6a.616.616,0,0,0,0,1.231h6a.616.616,0,0,0,0-1.231Z" transform="translate(-114.077 -232.964)" fill="#b5ceef"/>
+        <circle id="Ellipse_1655" data-name="Ellipse 1655" cx="0.8" cy="0.8" r="0.8" transform="translate(64 9.036)" fill="#b5ceef"/>
+      </g>
+      <g transform="translate(-64 -6.036)">
+        <path id="Path_9578-2" data-name="Path 9578" d="M187.6,242h-6a.616.616,0,0,0,0,1.231h6a.616.616,0,0,0,0-1.231Z" transform="translate(-114.077 -232.964)" fill="#b5ceef"/>
+        <circle id="Ellipse_1655-2" data-name="Ellipse 1655" cx="0.8" cy="0.8" r="0.8" transform="translate(64 9.036)" fill="#b5ceef"/>
+      </g>
+      <g transform="translate(-64 -3.036)">
+        <path id="Path_9578-3" data-name="Path 9578" d="M187.6,242h-6a.616.616,0,0,0,0,1.231h6a.616.616,0,0,0,0-1.231Z" transform="translate(-114.077 -232.964)" fill="#b5ceef"/>
+        <circle id="Ellipse_1655-3" data-name="Ellipse 1655" cx="0.8" cy="0.8" r="0.8" transform="translate(64 9.036)" fill="#b5ceef"/>
+      </g>
+    </g>
+  </g>
+</svg>

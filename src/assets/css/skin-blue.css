@@ -1,0 +1,103 @@
+/*
+ * Skin: Blue samiron
+ * ----------
+ */
+ .skin-blue .main-header .navbar {
+  background-color: #fff;
+}
+.skin-blue .main-header .navbar .nav > li > a {
+  color: #a4a3a4;
+}
+.skin-blue .main-header .navbar .nav > li > a:hover,
+.skin-blue .main-header .navbar .nav > li > a:active,
+.skin-blue .main-header .navbar .nav > li > a:focus,
+.skin-blue .main-header .navbar .nav .open > a,
+.skin-blue .main-header .navbar .nav .open > a:hover,
+.skin-blue .main-header .navbar .nav .open > a:focus,
+.skin-blue .main-header .navbar .nav > .active > a {
+  background: rgba(0, 0, 0, 0.1);
+  color: #f6f6f6;
+}
+.skin-blue .main-header .navbar .sidebar-toggle {
+  color: #ffffff;
+}
+.skin-blue .main-header .navbar .sidebar-toggle:hover {
+  color: #f6f6f6;
+  background: #311d65;
+}
+.skin-blue .main-header .navbar .sidebar-toggle {
+  color: #fff;
+}
+@media (max-width: 767px) {
+  .skin-blue .main-header .navbar .dropdown-menu li.divider {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  .skin-blue .main-header .navbar .dropdown-menu li a {
+    color: #fff;
+  }
+  .skin-blue .main-header .navbar .dropdown-menu li a:hover {
+    background: #464f6b;
+  }
+}
+.skin-blue .main-header .logo {
+  background-color: #fff;
+  color: #ffffff;
+  border-bottom: 0 solid transparent;
+}
+.skin-blue .main-header .logo:hover {
+  background-color: #fff;
+}
+.skin-blue .main-header li.user-header {
+  background-color: #fff;
+}
+.skin-blue .content-header {
+  background: transparent;
+}
+.skin-blue .user-panel > .info,
+.skin-blue .user-panel > .info > a {
+  color: #fff;
+}
+.skin-blue .sidebar-menu > li.header {
+  color: #4b646f;
+  background: #1a2226;
+}
+.skin-blue .sidebar-menu > li > a {
+  border-left: 3px solid transparent;
+}
+.skin-blue .sidebar-menu > li > .treeview-menu {
+  margin: 0 1px;
+  background: #5225b5;
+  padding: 5px 0;
+}
+.sidebar-menu .treeview-menu > li > a > img{ margin-right: 5px; display: inline-block; margin-top: -2px;}
+.sidebar-menu .treeview-menu > li:hover > a > img{
+  -webkit-filter: brightness(0) invert(1);
+  -moz-filter: brightness(0) invert(1);
+  -o-filter: brightness(0) invert(1);
+  -ms-filter:brightness(0) invert(1);
+  filter: brightness(0) invert(1);
+}
+.skin-blue .sidebar a {
+  color: #8a7abf;
+  transition: 0.5s;
+}
+.skin-blue .sidebar a:hover {
+  text-decoration: none;
+  color: #fff;
+}
+.skin-blue .treeview-menu > li > a {
+  color: #8a7abf;
+  transition: 0.5s;  
+}
+.skin-blue .treeview-menu > li.active > a,
+.skin-blue .treeview-menu > li > a:hover {
+  color: #fff;
+}
+.skin-blue.layout-top-nav .main-header > .logo {
+  background-color: #5225b5;
+  color: #ffffff;
+  border-bottom: 0 solid transparent;
+}
+.skin-blue.layout-top-nav .main-header > .logo:hover {
+  background-color: #5225b5;
+}
