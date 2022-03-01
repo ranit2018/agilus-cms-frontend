@@ -72,6 +72,7 @@ import "../assets/css/all.css";
 import "../assets/css/admin-style.css";
 import "../assets/css/admin-skin-blue.css";
 import "react-bootstrap-table/dist/react-bootstrap-table.min.css";
+import ManageHeading from "../components/admin/manageHeading/ManageHeading";
 
 // Private Route for inner component
 const PrivateRoute = ({ component: RefComponent, ...rest }) => (
@@ -99,6 +100,7 @@ class Admin extends Component {
         />
 
         <PrivateRoute path="/banner" component={Banner} handler="Banner" />
+        <PrivateRoute path="/manageheadings" component={ManageHeading} />
         <PrivateRoute path="/testimonials" component={Testimonials} />
         <PrivateRoute path="/auto-popup" component={AutoPopup} />
         <PrivateRoute path="/categories" component={Categories} />

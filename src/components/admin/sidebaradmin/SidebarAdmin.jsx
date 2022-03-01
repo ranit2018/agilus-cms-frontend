@@ -166,6 +166,23 @@ class SidebarAdmin extends Component {
               </Link>{" "}
             </li>
           )}
+          {this.props.path_name === "/manageheadings" ? (
+            <li className="active">
+              {" "}
+              <Link to="/manageheadings">
+                {" "}
+                <i className="fa fa-flag"></i> <span> Manage Headings</span>
+              </Link>{" "}
+            </li>
+          ) : (
+            <li>
+              {" "}
+              <Link to="/manageheadings">
+                {" "}
+                <i className="fa fa-flag"></i> <span> Manage Headings</span>
+              </Link>{" "}
+            </li>
+          )}
           {this.props.path_name === "/testimonials" ? (
             <li className="active">
               {" "}
