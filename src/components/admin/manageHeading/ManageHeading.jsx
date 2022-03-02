@@ -15,9 +15,8 @@ import Switch from "react-switch";
 import Layout from "../layout/Layout";
 
 const initialValues = {
-    name: "",
-    medium_id: [1],
-    status: ""
+    title_name:"",
+    status:"",
 };
 
 const __htmlDecode = (refObj) => (cell) => {
@@ -61,14 +60,14 @@ const actionFormatter = (refObj) => (cell, row) => {
             >
                 <i className="far fa-edit" />
             </LinkWithTooltip>
-            <LinkWithTooltip
+            {/* <LinkWithTooltip
                 tooltip="Click to Delete"
                 href="#"
                 clicked={(e) => refObj.confirmDelete(e, cell)}
                 id="tooltip-1"
             >
                 <i className="far fa-trash-alt" />
-            </LinkWithTooltip>
+            </LinkWithTooltip> */}
 
         </div>
     );
@@ -81,7 +80,7 @@ class ManageHeading extends Component {
 
         this.state = {
             headingsList: [],
-
+            headingDetails: {},
 
             categories: [],
             categoryDetails: {},
@@ -109,12 +108,12 @@ class ManageHeading extends Component {
         this.getHeadingsList();
     }
 
-    getHeadingsList = () => {
-      API.get("/api/home/get_heading_text")
+    getHeadingsList = (page = 1) => {
+      API.get(`/api/home/get_heading_text?page=${page}`)
       .then(res => {
-        console.log(res.data);
         this.setState({
           headingsList: res.data.data,
+          totalCount:res.data.count,
           isLoading: false,
         })
       })
@@ -126,55 +125,17 @@ class ManageHeading extends Component {
     });
     }
 
-    // getCategoryList = (page = 1) => {
-    //     let category_name = this.state.category_name;
-    //     let medium_name = this.state.medium_name;
-    //     let status = this.state.status;
-    //     API.get(
-    //         `/api/category?page=${page}&category_name=${encodeURIComponent(category_name)}&medium_name=${encodeURIComponent(medium_name)}&status=${encodeURIComponent(status)}`
-    //     )
-    //         .then((res) => {
-    //             this.setState({
-    //                 categories: res.data.data,
-    //                 totalCount: res.data.count,
-    //                 isLoading: false
-    //             });
-    //         })
-    //         .catch((err) => {
-    //             this.setState({
-    //                 isLoading: false,
-    //             });
-    //             showErrorMessage(err, this.props);
-    //         });
-    // }
-
-    // getMediumList = () => {
-    //     API.get(
-    //         `/api/category/medium`
-    //     )
-    //         .then((res) => {
-    //             this.setState({
-    //                 mediumList: res.data.data,
-    //             });
-    //         })
-    //         .catch((err) => {
-    //             this.setState({
-    //                 isLoading: false,
-    //             });
-    //             showErrorMessage(err, this.props);
-    //         });
-    // }
-
     handleSubmitEvent = (values, actions) => {
         let method = '';
-        let url = '/api/category';
+        let url = '';
         if (this.state.category_id > 0) {
             method = 'PUT';
-            url = `/api/category/${this.state.category_id}`;
+            url = `/api/home/heading_text/${this.state.category_id}`;
         } else {
             method = 'POST';
             url = `/api/category/`
         }
+        console.log(values);
         API({
             method: method,
             url: url,
@@ -182,14 +143,14 @@ class ManageHeading extends Component {
         }).then((res) => {
             // this.setState({ showModal: false });
             this.modalCloseHandler();
-
             swal({
                 closeOnClickOutside: false,
                 title: "Success",
                 text: method === 'PUT' ? "Record updated successfully." : "Record added successfully.",
                 icon: "success",
             }).then(() => {
-                this.getCategoryList(this.state.activePage);
+                // this.getCategoryList(this.state.activePage);
+                this.getHeadingsList(this.state.activePage);
             })
         }).catch((err) => {
             this.setState({ showModalLoader: false });
@@ -216,14 +177,13 @@ class ManageHeading extends Component {
             dangerMode: true,
         }).then((willDelete) => {
             if (willDelete) {
-
-                this.deleteCategory(id);
+                this.deleteHeading(id);
             }
         });
     };
 
-    deleteCategory = (id) => {
-        API.delete(`/api/category/${id}`)
+    deleteHeading = (id) => {
+        API.post(`/api/home/heading_text/${id}`)
             .then((res) => {
                 swal({
                     closeOnClickOutside: false,
@@ -231,158 +191,119 @@ class ManageHeading extends Component {
                     text: "Record deleted successfully.",
                     icon: "success",
                 }).then(() => {
-                    this.getCategoryList(this.state.activePage);
+                    // this.getCategoryList(this.state.activePage);
+                    this.getHeadingsList(this.state.activePage);
                 });
             })
             .catch((err) => {
                 if (err.data.status === 3) {
                     this.setState({ closeModal: true });
                     showErrorMessage(err, this.props);
+                }else if(err.data.status === 2) {
+                    this.setState({closeModal: true });
+                    showErrorMessage(err, this.props);
                 }
             });
     };
 
-    getCategorydetails(id) {
-        var selDetailsMedium = [];
-        //var selMedium = [];
-        API.get(`/api/category/${id}`)
-            .then((res) => {
-                for (let index = 0; index < res.data.data.category_mapping_details.length; index++) {
-                    const element = res.data.data.category_mapping_details[index];
-                    selDetailsMedium.push({
-                        value: element["id"],
-                        label: element["medium_name"],
-                    });
-                    //selMedium.push(element["id"]);
-                }
+    getHeadingDetails(id) {
+        API.get(`/api/home/get_heading_text/${id}`)
+            .then(res => {
                 this.setState({
-                    selectedMediumList: selDetailsMedium,
-                    //selectedMedium: selMedium,
-                    categoryDetails: res.data.data.category_details,
+                    headingDetails: res.data.data[0],
                     category_id: id,
-                    showModal: true,
-
-                });
-                initialValues.medium_id = [1];
+                    showModal: true
+                })
+               
             })
             .catch((err) => {
                 showErrorMessage(err, this.props);
             });
     }
 
+    // categorySearch = (e) => {
+    //     e.preventDefault();
 
-    categorySearch = (e) => {
-        e.preventDefault();
+    //     const category_name = document.getElementById("category_name").value;
+    //     // const medium_name = document.getElementById("medium_name").value;
+    //     const medium_name = 1;
+    //     const status = document.getElementById("status").value;
 
-        const category_name = document.getElementById("category_name").value;
-        // const medium_name = document.getElementById("medium_name").value;
-        const medium_name = 1;
-        const status = document.getElementById("status").value;
+    //     if (category_name === "" && medium_name === "" && status === "") {
+    //         return false;
+    //     }
 
-        if (category_name === "" && medium_name === "" && status === "") {
-            return false;
-        }
+    //     API.get(`/api/category?page=1&category_name=${encodeURIComponent(category_name)}&medium_name=${encodeURIComponent(medium_name)}&status=${encodeURIComponent(status)}`)
+    //         .then((res) => {
+    //             this.setState({
+    //                 categories: res.data.data,
+    //                 totalCount: res.data.count,
+    //                 isLoading: false,
+    //                 category_name: category_name,
+    //                 medium_name: medium_name,
+    //                 status: status,
+    //                 activePage: 1,
+    //                 remove_search: true
+    //             });
+    //         })
+    //         .catch((err) => {
+    //             this.setState({
+    //                 isLoading: false
+    //             });
+    //             showErrorMessage(err, this.props);
+    //         });
+    // };
 
-        API.get(`/api/category?page=1&category_name=${encodeURIComponent(category_name)}&medium_name=${encodeURIComponent(medium_name)}&status=${encodeURIComponent(status)}`)
-            .then((res) => {
-                this.setState({
-                    categories: res.data.data,
-                    totalCount: res.data.count,
-                    isLoading: false,
-                    category_name: category_name,
-                    medium_name: medium_name,
-                    status: status,
-                    activePage: 1,
-                    remove_search: true
-                });
-            })
-            .catch((err) => {
-                this.setState({
-                    isLoading: false
-                });
-                showErrorMessage(err, this.props);
-            });
-    };
+    // clearSearch = () => {
 
-    clearSearch = () => {
+    //     document.getElementById("category_name").value = "";
+    //     // document.getElementById("medium_name").value = "";
+    //     document.getElementById("status").value = "";
 
-        document.getElementById("category_name").value = "";
-        // document.getElementById("medium_name").value = "";
-        document.getElementById("status").value = "";
+    //     this.setState(
+    //         {
+    //             category_name: "",
+    //             medium_name: "",
+    //             status: "",
+    //             remove_search: false,
+    //         },
+    //         () => {
+    //             this.setState({ activePage: 1 });
+    //             this.getCategoryList();
 
-        this.setState(
-            {
-                category_name: "",
-                medium_name: "",
-                status: "",
-                remove_search: false,
-            },
-            () => {
-                this.setState({ activePage: 1 });
-                this.getCategoryList();
-
-            }
-        );
-    };
+    //         }
+    //     );
+    // };
 
     handlePageChange = (pageNumber) => {
         this.setState({ activePage: pageNumber });
-        this.getCategoryList(pageNumber > 0 ? pageNumber : 1);
+        this.getHeadingsList(pageNumber > 0 ? pageNumber : 1);
     };
 
     modalCloseHandler = () => {
-        this.setState({ categoryDetails: {}, category_id: 0, selectedMediumList: [], showModal: false })
+        this.setState({ headingDetails: {}, category_id: 0, selectedMediumList: [], showModal: false })
     };
 
     modalShowHandler = (event, id) => {
         if (id) {
             event.preventDefault();
-            this.getCategorydetails(id);
+            this.getHeadingDetails(id);
         } else {
-            this.setState({ showModal: true, category_id: 0, categoryDetails: {} });
+            this.setState({ showModal: true, category_id: 0, headingDetails: {} });
         }
     };
 
-    chageStatus = (cell, status) => {
-        API.put(`/api/category/change_status/${cell}`, {status: status == 1 ? String(0) : String(1)})
-        .then((res) => {
-          swal({
-            closeOnClickOutside: false,
-            title: "Success",
-            text: "Record updated successfully.",
-            icon: "success",
-          }).then(() => {
-            this.getCategoryList(this.state.activePage);
-          });
-        })
-        .catch((err) => {
-          if (err.data.status === 3) {
-            this.setState({ closeModal: true });
-            showErrorMessage(err, this.props);
-          }
-        });
-      }
-
-
     render() {
-        const { categoryDetails } = this.state;
+        const { headingDetails } = this.state;
         const newInitialValues = Object.assign(initialValues, {
-            name: categoryDetails.name ? htmlDecode(categoryDetails.name) : '',
-            //medium_id: this.state.mediumList.name ? this.state.mediumList.name : "",
-            permalink: categoryDetails.permalink ? htmlDecode(categoryDetails.permalink) : "",
-            status: categoryDetails.status || + categoryDetails.status === 0
-                ? categoryDetails.status.toString() : ''
-
+            title_name: headingDetails.title_name ? htmlDecode(headingDetails.title_name) : '',
+            status: headingDetails.status || + headingDetails.status === 0
+                ? headingDetails.status.toString() : ''
         });
 
         const validateStopFlag = Yup.object().shape({
-            name: Yup.string().required("Please enter the name"),
-            // medium_id: Yup.array()
-            //     .ensure()
-            //     .min(1,  "Please add at least one post type name")
-            //     .of(Yup.string().ensure().required("medium name cannot be empty")),
-            permalink: Yup.string().required("Please enter the permalink").matches(/^[a-zA-Z0-9\-\s]*$/, "Only '-' is allowed in permalink"),
-            status: Yup.string().trim()
+            title_name: Yup.string().required("Please enter the Title"),
+             status: Yup.string().trim()
                 .required("Please select status")
                 .matches(/^[0|1]$/, "Invalid status selected")
         });
@@ -484,33 +405,22 @@ class ManageHeading extends Component {
                                     <TableHeaderColumn
                                         isKey
                                         dataField="sl_no"
-                                        // dataFormat={__htmlDecode(this)}
                                     >
                                       Serial Number
                                         
                         </TableHeaderColumn>
                                     {/* <TableHeaderColumn
-                                        dataField="medium_name"
-                                        dataFormat={__htmlDecode(this)}
+                                        dataField="status"
+                                        dataFormat={custStatus(this)}
                                     >
-                                        Type
+                                        Status
                         </TableHeaderColumn> */}
-                                    {/* <TableHeaderColumn
-                                        dataField="permalink"
-                                        dataFormat={__htmlDecode(this)}
-                                    >
-                                        Heading Title
-                        </TableHeaderColumn> */}
-
-
-
-{/* 
                                     <TableHeaderColumn
                                         dataField="id"
                                         dataFormat={actionFormatter(this)}
                                     >
                                         Action
-                        </TableHeaderColumn> */}
+                        </TableHeaderColumn>
                                 </BootstrapTable>
 
 
@@ -533,7 +443,7 @@ class ManageHeading extends Component {
                                 ) : null}
 
                                 {/* ======= Add Banner Modal ======== */}
-                                {/* <Modal
+                                <Modal
                                     show={this.state.showModal}
                                     onHide={() => this.modalCloseHandler()}
                                     backdrop="static"
@@ -567,7 +477,7 @@ class ManageHeading extends Component {
                                                     )}
                                                     <Modal.Header closeButton>
                                                         <Modal.Title>
-                                                            {this.state.category_id > 0 ? 'Edit Category' : 'Add Category'}
+                                                            {this.state.category_id > 0 ? 'Edit Heading' : 'Add Heading'}
                                                         </Modal.Title>
                                                     </Modal.Header>
                                                     <Modal.Body>
@@ -576,84 +486,26 @@ class ManageHeading extends Component {
                                                                 <Col xs={12} sm={12} md={12}>
                                                                     <div className="form-group">
                                                                         <label>
-                                                                            Name
-                                                                      <span className="impField">*</span>
+                                                                            Title
+                                                                        <span className="impField">*</span>
                                                                         </label>
                                                                         <Field
-                                                                            name="name"
+                                                                            name="title_name"
                                                                             type="text"
                                                                             className={`form-control`}
                                                                             placeholder="Enter name"
                                                                             autoComplete="off"
-                                                                            value={values.name}
+                                                                            value={values.title_name}
                                                                         />
-                                                                        {errors.name && touched.name ? (
+                                                                        {errors.title_name && touched.title_name ? (
                                                                             <span className="errorMsg">
-                                                                                {errors.name}
-                                                                            </span>
-                                                                        ) : null}
-                                                                    </div>
-                                                                </Col>
-                                                            </Row> */}
-                                                            {/* <Row>
-                                                                <Col xs={12} sm={12} md={12}>
-                                                                    <div className="form-group">
-                                                                        <label>
-                                                                            Post Type
-                                        <span className="impField">*</span>
-                                                                        </label>
-                                                                        <Select
-                                                                            isMulti
-                                                                            name="medium_id[]"
-                                                                            options={this.state.mediumList}
-                                                                            className="basic-multi-select"
-                                                                            classNamePrefix="select"
-                                                                            onChange={(evt) => {
-                                                                                if (evt === null) {
-                                                                                    setFieldValue("medium_id", []);
-                                                                                } else {
-                                                                                    setFieldValue(
-                                                                                        "medium_id",
-                                                                                        [].slice.call(evt).map((val) => val.value)
-                                                                                    );
-                                                                                }
-                                                                            }}
-                                                                            placeholder="Choose Post Type"
-                                                                            onBlur={() => setFieldTouched("medium_id")}
-                                                                            defaultValue={
-                                                                                this.state.selectedMediumList
-                                                                            }
-                                                                        />
-                                                                        {errors.medium_id && touched.medium_id ? (
-                                                                            <span className="errorMsg">{errors.medium_id}</span>
-                                                                        ) : null}
-                                                                    </div>
-                                                                </Col>
-                                                            </Row> */}
-                                                            {/* <Row>
-                                                                <Col xs={12} sm={12} md={12}>
-                                                                    <div className="form-group">
-                                                                        <label>
-                                                                            Permalink
-                                                                      <span className="impField">*</span>
-                                                                        </label>
-                                                                        <Field
-                                                                            name="permalink"
-                                                                            type="text"
-                                                                            className={`form-control`}
-                                                                            placeholder="Enter Permalink"
-                                                                            autoComplete="off"
-                                                                            value={values.permalink}
-                                                                        />
-                                                                        {errors.permalink && touched.permalink ? (
-                                                                            <span className="errorMsg">
-                                                                                {errors.permalink}
+                                                                                {errors.title_name}
                                                                             </span>
                                                                         ) : null}
                                                                     </div>
                                                                 </Col>
                                                             </Row>
-                                                            <Row>
+                                                            {/* <Row>
                                                                 <Col xs={12} sm={12} md={12}>
                                                                     <div className="form-group">
                                                                         <label>
@@ -685,7 +537,7 @@ class ManageHeading extends Component {
                                                                         ) : null}
                                                                     </div>
                                                                 </Col>
-                                                            </Row>
+                                                            </Row> */}
 
                                                         </div>
                                                     </Modal.Body>
@@ -710,13 +562,13 @@ class ManageHeading extends Component {
                                                             type="button"
                                                         >
                                                             Close
-                                  </button>
+                                    </button>
                                                     </Modal.Footer>
                                                 </Form>
                                             );
                                         }}
                                     </Formik>
-                                </Modal> */}
+                                </Modal>
                             </div>
                         </div>
                     </section >
