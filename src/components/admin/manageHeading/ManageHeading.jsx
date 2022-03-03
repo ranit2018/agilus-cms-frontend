@@ -81,11 +81,12 @@ class ManageHeading extends Component {
         this.state = {
             headingsList: [],
             headingDetails: {},
+            heading_name: "",
+            heading_id: 0,
 
             categories: [],
             categoryDetails: {},
             mediumList: [],
-            category_id: 0,
             isLoading: false,
             showModal: false,
             totalCount: 0,
@@ -95,7 +96,7 @@ class ManageHeading extends Component {
                 { value: "0", label: "Inactive" },
                 { value: "1", label: "Active" }
             ],
-            category_name: "",
+            
             medium_name: "",
             status: "",
         }
@@ -128,9 +129,9 @@ class ManageHeading extends Component {
     handleSubmitEvent = (values, actions) => {
         let method = '';
         let url = '';
-        if (this.state.category_id > 0) {
+        if (this.state.heading_id > 0) {
             method = 'PUT';
-            url = `/api/home/heading_text/${this.state.category_id}`;
+            url = `/api/home/heading_text/${this.state.heading_id}`;
         } else {
             method = 'POST';
             url = `/api/category/`
@@ -211,7 +212,7 @@ class ManageHeading extends Component {
             .then(res => {
                 this.setState({
                     headingDetails: res.data.data[0],
-                    category_id: id,
+                    heading_id: id,
                     showModal: true
                 })
                
@@ -221,27 +222,30 @@ class ManageHeading extends Component {
             });
     }
 
-    // categorySearch = (e) => {
+    // headingSearch = (e) => {
     //     e.preventDefault();
 
-    //     const category_name = document.getElementById("category_name").value;
+    //     const heading_name = document.getElementById("heading_name").value;
     //     // const medium_name = document.getElementById("medium_name").value;
-    //     const medium_name = 1;
-    //     const status = document.getElementById("status").value;
+    //     // const medium_name = 1;
+    //     // const status = document.getElementById("status").value;
 
-    //     if (category_name === "" && medium_name === "" && status === "") {
+    //     // if (heading_name === "" && medium_name === "" && status === "") {
+    //     //     return false;
+    //     // }
+    //     if (heading_name === ""){
     //         return false;
     //     }
 
-    //     API.get(`/api/category?page=1&category_name=${encodeURIComponent(category_name)}&medium_name=${encodeURIComponent(medium_name)}&status=${encodeURIComponent(status)}`)
+    //     API.get(`/api/home/get_heading_text?page=1&title_name=${heading_name}`)
     //         .then((res) => {
     //             this.setState({
-    //                 categories: res.data.data,
+    //                 headingsList: res.data.data,
     //                 totalCount: res.data.count,
     //                 isLoading: false,
-    //                 category_name: category_name,
-    //                 medium_name: medium_name,
-    //                 status: status,
+    //                 heading_name: heading_name,
+    //                 // medium_name: medium_name,
+    //                 // status: status,
     //                 activePage: 1,
     //                 remove_search: true
     //             });
@@ -253,23 +257,24 @@ class ManageHeading extends Component {
     //             showErrorMessage(err, this.props);
     //         });
     // };
+    
 
     // clearSearch = () => {
 
-    //     document.getElementById("category_name").value = "";
+    //     document.getElementById("heading_name").value = "";
     //     // document.getElementById("medium_name").value = "";
-    //     document.getElementById("status").value = "";
+    //     // document.getElementById("status").value = "";
 
     //     this.setState(
     //         {
-    //             category_name: "",
-    //             medium_name: "",
-    //             status: "",
+    //             heading_name: "",
+    //             // medium_name: "",
+    //             // status: "",
     //             remove_search: false,
     //         },
     //         () => {
     //             this.setState({ activePage: 1 });
-    //             this.getCategoryList();
+    //             this.getHeadingsList();
 
     //         }
     //     );
@@ -281,7 +286,7 @@ class ManageHeading extends Component {
     };
 
     modalCloseHandler = () => {
-        this.setState({ headingDetails: {}, category_id: 0, selectedMediumList: [], showModal: false })
+        this.setState({ headingDetails: {}, heading_id: 0, selectedMediumList: [], showModal: false })
     };
 
     modalShowHandler = (event, id) => {
@@ -289,7 +294,7 @@ class ManageHeading extends Component {
             event.preventDefault();
             this.getHeadingDetails(id);
         } else {
-            this.setState({ showModal: true, category_id: 0, headingDetails: {} });
+            this.setState({ showModal: true, heading_id: 0, headingDetails: {} });
         }
     };
 
@@ -330,15 +335,15 @@ class ManageHeading extends Component {
                                         <i className="fas fa-plus m-r-5" /> Add Category
                         </button>
                                 </div> */}
-                                {/* <form className="form">
-                                    <div className="">
+                                <form className="form">
+                                    {/* <div className="">
                                         <input
                                             className="form-control"
-                                            name="category_name"
-                                            id="category_name"
+                                            name="heading_name"
+                                            id="heading_name"
                                             placeholder="Filter by Category Name"
                                         />
-                                    </div>
+                                    </div> */}
 
                                     {/* <div className="">
                                         <select
@@ -355,7 +360,7 @@ class ManageHeading extends Component {
                                         </select>
                                     </div> */}
 
-                                     {/* <div className="">
+                                        {/* <div className="">
                                         <select
                                             name="status"
                                             id="status"
@@ -368,13 +373,14 @@ class ManageHeading extends Component {
                                                 );
                                             })}
                                         </select>
-                                    </div>
-                                    <div className="">
+                                        </div>*/}
+                                        
+                                    {/* <div className="">
                                         <input
                                             type="submit"
                                             value="Search"
                                             className="btn btn-warning btn-sm"
-                                            onClick={(e) => this.categorySearch(e)}
+                                            onClick={(e) => this.headingSearch(e)}
                                         />
                                         {this.state.remove_search ? (
                                             <a
@@ -382,12 +388,12 @@ class ManageHeading extends Component {
                                                 className="btn btn-danger btn-sm"
                                             >
                                                 {" "}
-                              Remove{" "}
+                                Remove{" "}
                                             </a>
                                         ) : null}
                                     </div>
-                                    <div className="clearfix"></div>
-                                </form> */}
+                                    <div className="clearfix"></div> */}
+                                </form>
                             </div>
                         </div>
                     </section> 
@@ -477,7 +483,7 @@ class ManageHeading extends Component {
                                                     )}
                                                     <Modal.Header closeButton>
                                                         <Modal.Title>
-                                                            {this.state.category_id > 0 ? 'Edit Heading' : 'Add Heading'}
+                                                            {this.state.heading_id > 0 ? 'Edit Heading' : 'Add Heading'}
                                                         </Modal.Title>
                                                     </Modal.Header>
                                                     <Modal.Body>
@@ -548,7 +554,7 @@ class ManageHeading extends Component {
                                                             type="submit"
                                                             disabled={isValid ? (isSubmitting ? true : false) : true}
                                                             >
-                                                            {this.state.category_id > 0
+                                                            {this.state.heading_id > 0
                                                                 ? isSubmitting
                                                                     ? "Updating..."
                                                                     : "Update"
