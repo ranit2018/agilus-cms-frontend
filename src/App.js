@@ -4,12 +4,18 @@ import { withRouter } from "react-router";
 import { createBrowserHistory } from "history";
 
 
+
 //import "./App.css";
 
 const history = createBrowserHistory();
 
 const AdminComponent = lazy(() =>
   import("./routes/Admin")
+);
+
+const HRComponent = lazy(() =>
+  import("./routes/HR")
+  
 );
 
 const WaitingComponent = (RefComponent) => {
@@ -25,7 +31,8 @@ class App extends Component {
     return  (
       <div className="wrapper" style={{ height: "auto" }}>
         <Switch>
-          <Route path="/" component={WaitingComponent(AdminComponent)} />
+        <Route exact path="/hr" component={WaitingComponent(HRComponent)} />
+          <Route  path="/" component={WaitingComponent(AdminComponent)} />
         </Switch>
       </div>
     );

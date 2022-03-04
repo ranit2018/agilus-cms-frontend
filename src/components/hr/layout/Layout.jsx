@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
-import SidebarAdmin from "../sidebaradmin/SidebarAdmin";
+import Sidebar from "../sidebar/Sidebar";
 
 class Layout extends Component {
   componentDidMount() {
@@ -18,7 +18,7 @@ class Layout extends Component {
     return (
       <Fragment>
         <Header isLoggedIn={isLoggedIn} />
-        <SidebarAdmin isLoggedIn={isLoggedIn} path_name={path_name} />
+        <Sidebar isLoggedIn={isLoggedIn} path_name={path_name} />
         {this.props.children}
         <Footer isLoggedIn={isLoggedIn} />
       </Fragment>

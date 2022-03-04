@@ -34,7 +34,7 @@ class Dashboard extends Component {
             <section className="content-header">
               <h1>
                 Dashboard
-                    <small>Hello this is dashboard</small>
+                    <small>Hello this is HR dashboard</small>
               </h1>
             </section>
           </div>
