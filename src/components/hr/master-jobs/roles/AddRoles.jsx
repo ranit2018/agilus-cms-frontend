@@ -1,100 +1,81 @@
-import React, { Component } from "react";
-import { Row, Col, Button } from "react-bootstrap";
-import { Formik, Field, Form } from "formik";
-import API from "../../../../../shared/admin-axios"
-import * as Yup from "yup";
-import swal from "sweetalert";
-import { showErrorMessage } from "../../../../../shared/handle_error";
-import whitelogo from "../../../../../assets/images/drreddylogo_white.png";
-import Layout from "../../../layout/Layout";
-import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
-
+import React, { Component } from 'react';
+import { Row, Col } from 'react-bootstrap';
+// import { Link } from "react-router-dom";
+import { Formik, Field, Form } from 'formik';
+import API from '../../../../shared/admin-axios';
+import * as Yup from 'yup';
+import swal from 'sweetalert';
+import { showErrorMessage } from '../../../../shared/handle_error';
+import whitelogo from '../../../../assets/images/drreddylogo_white.png';
+import Layout from '../../layout/Layout';
 
 const initialValues = {
-    category_name: "",
-    status: "",
-  };
+  job_role: '',
+  status: '',
+};
 
-class EditJobCategory extends Component {
+class AddRoles extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      category_name: "",
+      value: '',
       selectStatus: [
-        { value: "0", label: "Inactive" },
-        { value: "1", label: "Active" },
+        { value: '1', label: 'Active' },
+        { value: '0', label: 'Inactive' },
       ],
-      category_name_id: this.props.match.params.id,
     };
   }
 
   handleSubmitEvent = (values, actions) => {
     let post_data = {
-      category_name: values.category_name,
+      job_role: values.job_role,
       status: values.status,
-    }
-    let method = "";
-    let url = "api/job_portal/job/category/";
-    
-    method = "PUT";
-    url = `api/job_portal/job/category/${this.props.match.params.id}`;
-    
-      API({
-        method: method,
-        url: url,
-        data: post_data,
-      })
-        .then((res) => {
-          this.setState({ showModal: false });
-          swal({
-            closeOnClickOutside: false,
-            title: "Success",
-            text: "Record updated successfully.",
-            icon: "success",
-          }).then(() => {
-            this.props.history.push("/master-jobs/jobcategories");
-          });
-        })
-        .catch((err) => {
-          // this.setState({ showModalLoader: false });
-          if (err.data.status === 3) {
-            // this.setState({
-            //   showModal: false,
+    };
 
-            // });
-            showErrorMessage(err, this.props);
-          } else {
-            actions.setErrors(err.data.errors);
-            actions.setSubmitting(false);
-          }
+    let url = `api/job_portal/job/role`;
+    let method = 'POST';
+    API({
+      method: method,
+      url: url,
+      data: post_data,
+    })
+      .then((res) => {
+        this.setState({ showModal: false });
+        swal({
+          closeOnClickOutside: false,
+          title: 'Success',
+          text: 'Record added successfully.',
+          icon: 'success',
+        }).then(() => {
+          this.props.history.push('/hr/master-jobs/job-roles');
         });
-    
+      })
+      .catch((err) => {
+        if (err.data.status === 3) {
+          showErrorMessage(err, this.props);
+        } else {
+          actions.setErrors(err.data.errors);
+          actions.setSubmitting(false);
+        }
+      });
   };
 
   render() {
-    const { NewCategoryDetails } = this.props.location.state;
-    // console.log('NewCategoryDetails',NewCategoryDetails)
-    // console.log('NewCategoryDetails',Object.keys(NewCategoryDetails).length)
-
-    const newInitialValues = Object.assign(initialValues, {
-      category_name: NewCategoryDetails && Object.keys(NewCategoryDetails).length > 0 ? NewCategoryDetails.category_name : '',
-      status: NewCategoryDetails && Object.keys(NewCategoryDetails).length > 0 ? NewCategoryDetails.status : '',
-    });
+    // const { selectedValue } = this.state;
 
     const validateStopFlag = Yup.object().shape({
-      category_name: Yup.string().required("Please enter category"),
+      job_role: Yup.string().required('Please enter category'),
       status: Yup.string()
         .trim()
-        .required("Please select status")
-        .matches(/^[0|1]$/, "Invalid status selected"),
+        .required('Please select status')
+        .matches(/^[0|1]$/, 'Invalid status selected'),
     });
-
     return (
       <Layout {...this.props}>
         <div className="content-wrapper">
           <section className="content-header">
             <h1>
-              Edit Blog
+              Add Job Role
               <small />
             </h1>
             <input
@@ -105,51 +86,47 @@ class EditJobCategory extends Component {
                 window.history.go(-1);
                 return false;
               }}
-              style={{ right: "9px", position: "absolute", top: "13px" }}
+              style={{ right: '9px', position: 'absolute', top: '13px' }}
             />
           </section>
           <section className="content">
             <div className="box">
               <div className="box-body">
                 <Formik
-                  initialValues={newInitialValues}
+                  initialValues={initialValues}
                   validationSchema={validateStopFlag}
                   onSubmit={this.handleSubmitEvent}
                 >
-                  {({
-                    values,
-                    errors,
-                    touched,
-                    isValid,
-                    isSubmitting,
-                    setFieldValue,
-                    setFieldTouched,
-                    handleChange,
-                    setErrors,
-                  }) => {
+                  {({ values, errors, touched, isValid, isSubmitting }) => {
                     return (
                       <Form>
+                        {this.state.showModalLoader === true ? (
+                          <div className="loading_reddy_outer">
+                            <div className="loading_reddy">
+                              <img src={whitelogo} alt="loader" />
+                            </div>
+                          </div>
+                        ) : (
+                          ''
+                        )}
                         <div className="contBox">
-                        <Row>
+                          <Row>
                             <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
                                 <label>
-                                  Category Name
+                                  Job Role
                                   <span className="impField">*</span>
                                 </label>
                                 <Field
-                                  name="category_name"
+                                  name="job_role"
                                   type="text"
                                   className={`form-control`}
-                                  placeholder="Enter job category"
-                                  // onChange={handleChange}                                 
-                                  // autoComplete="off"
-                                  value={values.category_name}
+                                  placeholder="Enter job role"
+                                  value={values.job_role}
                                 />
-                                {errors.category_name &&
-                                touched.category_name ? (
+                                {errors.job_role && touched.job_role ? (
                                   <span className="errorMsg">
-                                    {errors.category_name}
+                                    {errors.job_role}
                                   </span>
                                 ) : null}
                               </div>
@@ -186,24 +163,23 @@ class EditJobCategory extends Component {
                               </div>
                             </Col>
                           </Row>
-            
                         </div>
                         <button
                           className={`btn btn-success btn-sm ${
-                            isValid ? "btn-custom-green" : "btn-disable"
+                            isValid ? 'btn-custom-green' : 'btn-disable'
                           } m-r-10`}
                           type="submit"
                           disabled={
                             isValid ? (isSubmitting ? true : false) : true
                           }
                         >
-                          {this.props.match.params.id > 0
+                          {this.state.banner_id > 0
                             ? isSubmitting
-                              ? "Updating..."
-                              : "Update"
+                              ? 'Updating...'
+                              : 'Update'
                             : isSubmitting
-                            ? "Submitting..."
-                            : "Submit"}
+                            ? 'Submitting...'
+                            : 'Submit'}
                         </button>
                       </Form>
                     );
@@ -217,4 +193,4 @@ class EditJobCategory extends Component {
     );
   }
 }
-export default EditJobCategory;
+export default AddRoles;

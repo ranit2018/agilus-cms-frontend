@@ -109,6 +109,7 @@ class SidebarAdmin extends Component {
         return null;
       }
     }
+
   };
 
   handlePlus = (event) => {

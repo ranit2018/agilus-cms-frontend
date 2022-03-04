@@ -1,29 +1,29 @@
-import React, { Component } from "react";
-import { Link, withRouter } from "react-router-dom";
-import { getAdminName } from "../../../shared/helper";
-import { Row, Col, Button, Modal } from "react-bootstrap";
-import { Formik, Field, Form } from "formik";
-import API from "../../../shared/admin-axios";
-import * as Yup from "yup";
+import React, { Component } from 'react';
+import { Link, withRouter } from 'react-router-dom';
+import { getAdminName } from '../../../shared/helper';
+import { Row, Col, Button, Modal } from 'react-bootstrap';
+import { Formik, Field, Form } from 'formik';
+import API from '../../../shared/admin-axios';
+import * as Yup from 'yup';
 
 // connect to store
-import { connect } from "react-redux";
-import { adminLogout } from "../../../store/actions/auth";
+import { connect } from 'react-redux';
+import { adminLogout } from '../../../store/actions/auth';
 
-import logoImage from "../../../assets/images/cipla_logo_white.png";
+import logoImage from '../../../assets/images/cipla_logo_white.png';
 // import logoImageMini from '../../../assets/images/drreddylogosmall_white.png';
-import userImage from "../../../assets/images/user2-160x160.jpg";
-import SRLLogo from "../../../assets/images/SRL-Logo.png";
-import SRLLogoNew from "../../../assets/images/logoJpg.933b09051.png";
-import swal from "sweetalert";
-import { showErrorMessage } from "../../../shared/handle_error";
+import userImage from '../../../assets/images/user2-160x160.jpg';
+import SRLLogo from '../../../assets/images/SRL-Logo.png';
+import SRLLogoNew from '../../../assets/images/logoJpg.933b09051.png';
+import swal from 'sweetalert';
+import { showErrorMessage } from '../../../shared/handle_error';
 
 const initialValues = {
-  first_name: "",
-  last_name: "",
-  email: "",
-  newpassword: "",
-  confirm_Password: "",
+  first_name: '',
+  last_name: '',
+  email: '',
+  newpassword: '',
+  confirm_Password: '',
 };
 
 class Header extends Component {
@@ -33,7 +33,7 @@ class Header extends Component {
       openProfile: false,
       openNotification: false,
       toggleMenu: false,
-      userDetails: "",
+      userDetails: '',
       showModal: false,
     };
   }
@@ -57,13 +57,13 @@ class Header extends Component {
   };
 
   componentDidMount() {
-    document.addEventListener("mousedown", this.handleClickOutside);
+    document.addEventListener('mousedown', this.handleClickOutside);
     // for web page
-    document.body.classList.add("sidebar-open");
+    document.body.classList.add('sidebar-open');
   }
 
   componentWillUnmount() {
-    document.removeEventListener("mousedown", this.handleClickOutside);
+    document.removeEventListener('mousedown', this.handleClickOutside);
   }
 
   handleClickOutside = (event) => {
@@ -76,7 +76,7 @@ class Header extends Component {
   };
 
   handleModal = (event) => {
-    API.get("adm/").then((res) => {
+    API.get('adm/').then((res) => {
       this.setState({
         userDetails: res.data.admin_details[0],
         isLoading: false,
@@ -92,18 +92,18 @@ class Header extends Component {
   };
 
   handleToggleMenu = () => {
-    if (document.body.classList.contains("sidebar-open")) {
-      document.body.classList.remove("sidebar-open");
-      document.body.classList.add("sidebar-collapse");
-    } else if (document.body.classList.contains("sidebar-collapse")) {
-      document.body.classList.add("sidebar-open");
-      document.body.classList.remove("sidebar-collapse");
+    if (document.body.classList.contains('sidebar-open')) {
+      document.body.classList.remove('sidebar-open');
+      document.body.classList.add('sidebar-collapse');
+    } else if (document.body.classList.contains('sidebar-collapse')) {
+      document.body.classList.add('sidebar-open');
+      document.body.classList.remove('sidebar-collapse');
     }
   };
 
   logout = () => {
     this.props.dispatch(adminLogout());
-    this.props.history.push("/");
+    this.props.history.push('/');
   };
   handleSubmitEvent = (values, actions) => {
     const post_data = {
@@ -119,9 +119,9 @@ class Header extends Component {
         this.closeModal();
         swal({
           closeOnClickOutside: false,
-          title: "Success",
-          text: "Profile updated successfully.",
-          icon: "success",
+          title: 'Success',
+          text: 'Profile updated successfully.',
+          icon: 'success',
         });
       })
       .catch((err) => {
@@ -147,32 +147,32 @@ class Header extends Component {
       first_name: userDetails.first_name,
       last_name: userDetails.last_name,
       email: userDetails.email,
-      newpassword: "",
-      confirm_Password: "",
+      newpassword: '',
+      confirm_Password: '',
     });
     const validateStopFlag = Yup.object().shape({
       first_name: Yup.string()
-        .min(1, "First name must be at least 1 characters")
-        .max(30, "First name must be at most 30 characters")
-        .required("Please enter the first name"),
+        .min(1, 'First name must be at least 1 characters')
+        .max(30, 'First name must be at most 30 characters')
+        .required('Please enter the first name'),
       last_name: Yup.string()
-        .min(1, "Last name must be at least 1 characters")
-        .max(30, "Last name must be at most 30 characters")
-        .required("Please enter the last name"),
+        .min(1, 'Last name must be at least 1 characters')
+        .max(30, 'Last name must be at most 30 characters')
+        .required('Please enter the last name'),
       // email: Yup.string()
       //   .trim()
       //   .required("Please enter the email")
       //   .matches(/^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/, "Enter valid email"),
       newpassword: Yup.string()
         .trim()
-        .min(8, "Password must be at least 8 characters")
+        .min(8, 'Password must be at least 8 characters')
         .matches(
           /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/,
-          "Password must be alphanumeric"
+          'Password must be alphanumeric'
         ),
       confirm_Password: Yup.string()
-        .label("Confirm password")
-        .test("passwords-match", "Passwords is not match", function (value) {
+        .label('Confirm password')
+        .test('passwords-match', 'Passwords is not match', function (value) {
           return this.parent.newpassword === value;
         }),
     });
@@ -180,10 +180,12 @@ class Header extends Component {
       <header className="main-header">
         <Link to="/admin" className="logo">
           {/* <!-- mini logo for sidebar mini 50x50 pixels --> */}
-          <span className="logo-mini"><img src={SRLLogoNew} width="50" alt="SRL" /></span>
+          <span className="logo-mini">
+            <img src={SRLLogoNew} width="50" alt="SRL" />
+          </span>
           {/*<!-- logo for regular state and mobile devices -->*/}
           <span className="logo-lg">
-          <img src={SRLLogoNew} width="100" alt="SRL" />
+            <img src={SRLLogoNew} width="100" alt="SRL" />
           </span>
         </Link>
         <nav className="navbar navbar-static-top">
@@ -211,18 +213,16 @@ class Header extends Component {
                 ref={this.setContainerRef}
                 className={
                   this.state.openProfile === true
-                    ? "dropdown user user-menu open"
-                    : "dropdown user user-menu"
+                    ? 'dropdown user user-menu open'
+                    : 'dropdown user user-menu'
                 }
                 onClick={this.displayProfile}
               >
                 <span className="dropdown-toggle" data-toggle="dropdown">
                   <div className="adminImgSmall">
-                  <img src={SRLLogo} alt="User Img" />
+                    <img src={SRLLogo} alt="User Img" />
                   </div>
-                  <span className="hidden-xs user-name">
-                    SRL Diagnostics
-                  </span>
+                  <span className="hidden-xs user-name">SRL Diagnostics</span>
                   <i className="fa fa-angle-down"></i>
                   <div className="clearFix"></div>
                 </span>
@@ -230,16 +230,10 @@ class Header extends Component {
                 <ul className="dropdown-menu">
                   <li className="user-header">
                     <div className="adminImg">
-                    <img
-                      src={SRLLogo}
-                      alt="User Img"
-                    />
+                      <img src={SRLLogo} alt="User Img" />
                     </div>
-                   
-                    <p>
-                      {" "}
-                      SRL Diagnostics CMS Admin{" "}
-                    </p>
+
+                    <p> SRL Diagnostics CMS Admin </p>
                   </li>
                   <li className="user-footer">
                     <div className="pull-left">
@@ -382,7 +376,7 @@ class Header extends Component {
                               value={values.confirm_Password}
                             />
                             {errors.confirm_Password &&
-                              touched.confirm_Password ? (
+                            touched.confirm_Password ? (
                               <span className="errorMsg">
                                 {errors.confirm_Password}
                               </span>
@@ -397,25 +391,26 @@ class Header extends Component {
                           </Col>
                         </Row>
                       ) : (
-                        ""
+                        ''
                       )}
                     </div>
                   </Modal.Body>
                   <Modal.Footer>
                     <Button
-                      className={`btn btn-success btn-sm ${isValid ? "btn-custom-green" : "btn-disable"
-                        } mr-2`}
+                      className={`btn btn-success btn-sm ${
+                        isValid ? 'btn-custom-green' : 'btn-disable'
+                      } mr-2`}
                       type="submit"
                       disabled={isValid ? false : true}
                     >
-                      {isSubmitting ? "Updating..." : "Update"}
+                      {isSubmitting ? 'Updating...' : 'Update'}
                     </Button>
                     <Button
                       className="btn btn-danger btn-sm"
                       onClick={this.closeModal}
                     >
-                      {" "}
-                      Cancel{" "}
+                      {' '}
+                      Cancel{' '}
                     </Button>
                   </Modal.Footer>
                 </Form>
@@ -427,6 +422,5 @@ class Header extends Component {
     );
   }
 }
-
 
 export default Header;

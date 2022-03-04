@@ -1,14 +1,14 @@
-import React, { Component } from "react";
-import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
-import { Link } from "react-router-dom";
-import { Row, Col, Tooltip, OverlayTrigger } from "react-bootstrap";
-import API from "../../../../../shared/admin-axios";
-import swal from "sweetalert";
-import { showErrorMessage } from "../../../../../shared/handle_error";
-import Pagination from "react-js-pagination";
-import { htmlDecode } from "../../../../../shared/helper";
-import Switch from "react-switch";
-import Layout from "../../../layout/Layout";
+import React, { Component } from 'react';
+import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import { Link } from 'react-router-dom';
+import { Row, Col, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import API from '../../../../../shared/admin-axios';
+import swal from 'sweetalert';
+import { showErrorMessage } from '../../../../../shared/handle_error';
+import Pagination from 'react-js-pagination';
+import { htmlDecode } from '../../../../../shared/helper';
+import Switch from 'react-switch';
+import Layout from '../../../layout/Layout';
 
 const __htmlDecode = (refObj) => (cell) => {
   return htmlDecode(cell);
@@ -17,9 +17,9 @@ const __htmlDecode = (refObj) => (cell) => {
 const custStatus = (refObj) => (cell) => {
   //return cell === 1 ? "Active" : "Inactive";
   if (cell === 1) {
-    return "Active";
+    return 'Active';
   } else if (cell === 0) {
-    return "Inactive";
+    return 'Inactive';
   }
 };
 
@@ -30,7 +30,7 @@ function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
       placement="left"
       delayShow={300}
       delayHide={150}
-      trigger={["hover"]}
+      trigger={['hover']}
     >
       <Link to={href} onClick={clicked}>
         {children}
@@ -52,7 +52,7 @@ const actionFormatter = (refObj) => (cell, row) => {
         <i className="far fa-edit" />
       </LinkWithTooltip>
       <LinkWithTooltip
-        tooltip={"Click to change status"}
+        tooltip={'Click to change status'}
         // clicked={(e) => refObj.changeStatus(e, cell, row.status)}
         href="#"
         id="tooltip-1"
@@ -93,13 +93,13 @@ class JobCategories extends Component {
       itemPerPage: 10,
       activePage: 1,
       selectStatus: [
-        { value: "0", label: "Inactive" },
-        { value: "1", label: "Active" },
+        { value: '0', label: 'Inactive' },
+        { value: '1', label: 'Active' },
       ],
-      value: "",
-      selectedValue: "",
+      value: '',
+      selectedValue: '',
       suggestions: [],
-      search_category_name: "",
+      search_category_name: '',
     };
   }
 
@@ -129,9 +129,9 @@ class JobCategories extends Component {
     event.preventDefault();
     swal({
       closeOnClickOutside: false,
-      title: "Are you sure?",
-      text: "Once deleted, you will not be able to recover this!",
-      icon: "warning",
+      title: 'Are you sure?',
+      text: 'Once deleted, you will not be able to recover this!',
+      icon: 'warning',
       buttons: true,
       dangerMode: true,
     }).then((willDelete) => {
@@ -142,14 +142,13 @@ class JobCategories extends Component {
   };
 
   deleteCategory = (id, row) => {
-
     API.post(`api/job_portal/job/category/${row.id}`)
       .then((res) => {
         swal({
           closeOnClickOutside: false,
-          title: "Success",
-          text: "Record deleted successfully.",
-          icon: "success",
+          title: 'Success',
+          text: 'Record deleted successfully.',
+          icon: 'success',
         }).then(() => {
           this.getCategoryList(this.state.activePage);
         });
@@ -181,7 +180,7 @@ class JobCategories extends Component {
     API.get(`api/job_portal/job/category/${row.id}`)
       .then((res) => {
         this.props.history.push({
-          pathname: "/master-jobs/editjobcategory/" + id,
+          pathname: '/master-jobs/editjobcategory/' + id,
           state: {
             NewCategoryDetails: res.data.data,
           },
@@ -192,16 +191,16 @@ class JobCategories extends Component {
       });
   }
   changeStatus = (cell, status, row) => {
-    console.log("row.id", row.id);
+    console.log('row.id', row.id);
     API.put(`api/job_portal/job/category/change_status/${row.id}`, {
       status: status == 1 ? String(0) : String(1),
     })
       .then((res) => {
         swal({
           closeOnClickOutside: false,
-          title: "Success",
-          text: "Record updated successfully.",
-          icon: "success",
+          title: 'Success',
+          text: 'Record updated successfully.',
+          icon: 'success',
         }).then(() => {
           this.getCategoryList(this.state.activePage);
         });
@@ -220,10 +219,10 @@ class JobCategories extends Component {
 
   modalCloseHandler = () => {
     this.setState({
-      categoryId: "",
+      categoryId: '',
       showModal: false,
-      value: "",
-      selectedValue: "",
+      value: '',
+      selectedValue: '',
     });
   };
 
@@ -232,7 +231,7 @@ class JobCategories extends Component {
     if (id) {
       this.getcategoryDetails(id);
     } else {
-      this.setState({ categoryDetails: {}, categoryId: "" });
+      this.setState({ categoryDetails: {}, categoryId: '' });
     }
   };
 
@@ -244,9 +243,11 @@ class JobCategories extends Component {
   CategorySearch = (e) => {
     e.preventDefault();
 
-    const search_category_name = document.getElementById("search_category_name").value;
+    const search_category_name = document.getElementById(
+      'search_category_name'
+    ).value;
 
-    if (search_category_name === "") {
+    if (search_category_name === '') {
       return false;
     }
 
@@ -275,11 +276,11 @@ class JobCategories extends Component {
   };
 
   clearSearch = () => {
-    document.getElementById("search_category_name").value = "";
+    document.getElementById('search_category_name').value = '';
 
     this.setState(
       {
-        search_category_name: "",
+        search_category_name: '',
 
         remove_search: false,
       },
@@ -290,7 +291,7 @@ class JobCategories extends Component {
     );
   };
   Truncate = (str, number) => {
-    return str.length > number ? str.substring(0, number) + "..." : str;
+    return str.length > number ? str.substring(0, number) + '...' : str;
   };
   render() {
     return (
@@ -312,7 +313,7 @@ class JobCategories extends Component {
                     className="btn btn-info btn-sm"
                     onClick={(e) =>
                       this.props.history.push({
-                        pathname: "/master-jobs/addjobcategory",
+                        pathname: '/master-jobs/addjobcategory',
                       })
                     }
                   >
@@ -341,8 +342,8 @@ class JobCategories extends Component {
                         className="btn btn-danger btn-sm"
                         href="# "
                       >
-                        {" "}
-                        Remove{" "}
+                        {' '}
+                        Remove{' '}
                       </a>
                     ) : null}
                   </div>

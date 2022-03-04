@@ -7,7 +7,7 @@ import * as Yup from "yup";
 import swal from "sweetalert";
 import { showErrorMessage } from "../../../../../shared/handle_error";
 import whitelogo from "../../../../../assets/images/drreddylogo_white.png";
-import Layout from "../../../layout/Layout";
+import Layout from "../../../../hr/layout/Layout";
 
 const initialValues = {
   category_name: "",
@@ -52,7 +52,7 @@ class AddJobCategories extends Component {
             text: "Record added successfully.",
             icon: "success",
           }).then(() => {
-            this.props.history.push("/master-jobs/jobcategories");
+            this.props.history.push("/hr/master-jobs/job-categories");
           });
         })
         .catch((err) => {

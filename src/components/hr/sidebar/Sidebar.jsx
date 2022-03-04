@@ -18,11 +18,11 @@ class Sidebar extends Component {
   }
 
   componentDidMount = () => {
-    var path = this.props.path_name; //console.log(path);
+    var path = this.props.path_name; // console.log(path);
 
     if (
-      path === '/hr/master-jobs/jobcategories' ||
-      path === '/hr/master-jobs/jobcategories'
+      path === '/hr/master-jobs/job-categories' ||
+      path === '/hr/master-jobs/job-roles'
     ) {
       this.setState({ shown: '5' });
     }
@@ -102,10 +102,10 @@ class Sidebar extends Component {
               </span>
             </Link>
             <ul className="treeview-menu">
-              {this.props.path_name === '/hr/master-jobs/jobcategories' ? (
+              {this.props.path_name === '/hr/master-jobs/job-categories' ? (
                 <li className="active">
                   {' '}
-                  <Link to="/hr/master-jobs/jobcategories">
+                  <Link to="/hr/master-jobs/job-categories">
                     {' '}
                     <i className="fas fa-compress"></i>{' '}
                     <span> Categories </span>
@@ -114,10 +114,27 @@ class Sidebar extends Component {
               ) : (
                 <li>
                   {' '}
-                  <Link to="/hr/master-jobs/jobcategories">
+                  <Link to="/hr/master-jobs/job-categories">
                     {' '}
                     <i className="fas fa-compress"></i>{' '}
                     <span> Categories </span>
+                  </Link>{' '}
+                </li>
+              )}
+              {this.props.path_name === '/hr/master-jobs/job-roles' ? (
+                <li className="active">
+                  {' '}
+                  <Link to="/hr/master-jobs/job-roles">
+                    {' '}
+                    <i className="fas fa-compress"></i> <span> Roles </span>
+                  </Link>{' '}
+                </li>
+              ) : (
+                <li>
+                  {' '}
+                  <Link to="/hr/master-jobs/job-roles">
+                    {' '}
+                    <i className="fas fa-compress"></i> <span> Roles </span>
                   </Link>{' '}
                 </li>
               )}

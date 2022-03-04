@@ -9,12 +9,13 @@ import Dashboard from '../components/hr/dashboard/Dashboard';
 
 import JobCategories from '../components/admin/hr/master-jobs/job-categories/JobCategories';
 import AddJobCategories from '../components/admin/hr/master-jobs/job-categories/AddJobCategories';
-import EditJobCategory from '../components/admin/hr/master-jobs/job-categories/EditJobCategory';
 
 import '../assets/css/all.css';
 import '../assets/css/admin-style.css';
 import '../assets/css/admin-skin-blue.css';
 import 'react-bootstrap-table/dist/react-bootstrap-table.min.css';
+import Roles from '../components/hr/master-jobs/roles/Roles';
+import AddRoles from '../components/hr/master-jobs/roles/AddRoles';
 
 // Private Route for inner component
 const PrivateRoute = ({ component: RefComponent, ...rest }) => (
@@ -41,16 +42,20 @@ class HR extends Component {
           handler="Dashboard"
         />
         <PrivateRoute
-          path="/hr/master-jobs/jobcategories"
+          path="/hr/master-jobs/job-categories"
           component={JobCategories}
         />
         <PrivateRoute
-          path="/hr/master-jobs/addjobcategory"
+          path="/hr/master-jobs/add-job-category"
           component={AddJobCategories}
         />
+        {/* ===job roles==== */}
+
+        <PrivateRoute path="/hr/master-jobs/job-roles" component={Roles} />
+
         <PrivateRoute
-          path="/hr/master-jobs/editjobcategory/:id"
-          component={EditJobCategory}
+          path="/hr/master-jobs/add-job-roles"
+          component={AddRoles}
         />
 
         <Route from="*" component={AdminPageNotFound} />

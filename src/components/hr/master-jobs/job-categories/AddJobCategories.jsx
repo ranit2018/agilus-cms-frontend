@@ -1,77 +1,76 @@
-import React, { Component } from "react";
-import { Row, Col } from "react-bootstrap";
+import React, { Component } from 'react';
+import { Row, Col } from 'react-bootstrap';
 // import { Link } from "react-router-dom";
-import { Formik, Field, Form } from "formik";
-import API from "../../../../../shared/admin-axios"
-import * as Yup from "yup";
-import swal from "sweetalert";
-import { showErrorMessage } from "../../../../../shared/handle_error";
-import whitelogo from "../../../../../assets/images/drreddylogo_white.png";
-import Layout from "../../../layout/Layout";
+import { Formik, Field, Form } from 'formik';
+import API from '../../../../../shared/admin-axios';
+import * as Yup from 'yup';
+import swal from 'sweetalert';
+import { showErrorMessage } from '../../../../../shared/handle_error';
+import whitelogo from '../../../../../assets/images/drreddylogo_white.png';
+import Layout from '../../../layout/Layout';
 
 const initialValues = {
-  category_name: "",
-  status: "",
+  category_name: '',
+  status: '',
 };
 
 class AddJobCategories extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: "",
+      value: '',
       selectStatus: [
-        { value: "1", label: "Active" },
-        { value: "0", label: "Inactive" },
+        { value: '1', label: 'Active' },
+        { value: '0', label: 'Inactive' },
       ],
-      
     };
   }
 
   handleSubmitEvent = (values, actions) => {
     // const { value } = this.state;
-    
-    let post_data = {
-      category_name : values.category_name,
-      status: values.status,  
-    }
 
-    console.log('post_data',post_data)
+    let post_data = {
+      category_name: values.category_name,
+      status: values.status,
+    };
+
+    console.log('post_data', post_data);
 
     let url = `api/job_portal/job/category`;
-    let method = "POST";
-      API({
-        method: method,
-        url: url,
-        data: post_data,
+    let method = 'POST';
+    API({
+      method: method,
+      url: url,
+      data: post_data,
+    })
+      .then((res) => {
+        this.setState({ showModal: false });
+        swal({
+          closeOnClickOutside: false,
+          title: 'Success',
+          text: 'Record added successfully.',
+          icon: 'success',
+        }).then(() => {
+          this.props.history.push('/master-jobs/jobcategories');
+        });
       })
-        .then((res) => {
-          this.setState({ showModal: false });
-          swal({
-            closeOnClickOutside: false,
-            title: "Success",
-            text: "Record added successfully.",
-            icon: "success",
-          }).then(() => {
-            this.props.history.push("/master-jobs/jobcategories");
-          });
-        })
-        .catch((err) => {
+      .catch((err) => {
+        // this.setState({
+        //   value: "",
+        //   selectedValue: "",
+        // });
+        if (err.data.status === 3) {
           // this.setState({
           //   value: "",
           //   selectedValue: "",
           // });
-          if (err.data.status === 3) {
-            // this.setState({
-            //   value: "",
-            //   selectedValue: "",
-            // });
-            showErrorMessage(err, this.props);
-          } else {
-            actions.setErrors(err.data.errors);
-            actions.setSubmitting(false);
-          }
-        });
-    }
+          showErrorMessage(err, this.props);
+        } else {
+          actions.setErrors(err.data.errors);
+          actions.setSubmitting(false);
+        }
+      });
+  };
 
   render() {
     const { selectedValue } = this.state;
@@ -81,11 +80,11 @@ class AddJobCategories extends Component {
     // });
 
     const validateStopFlag = Yup.object().shape({
-      category_name: Yup.string().required("Please enter category"),
+      category_name: Yup.string().required('Please enter category'),
       status: Yup.string()
         .trim()
-        .required("Please select status")
-        .matches(/^[0|1]$/, "Invalid status selected"),
+        .required('Please select status')
+        .matches(/^[0|1]$/, 'Invalid status selected'),
     });
     return (
       <Layout {...this.props}>
@@ -103,7 +102,7 @@ class AddJobCategories extends Component {
                 window.history.go(-1);
                 return false;
               }}
-              style={{ right: "9px", position: "absolute", top: "13px" }}
+              style={{ right: '9px', position: 'absolute', top: '13px' }}
             />
           </section>
           <section className="content">
@@ -133,7 +132,7 @@ class AddJobCategories extends Component {
                             </div>
                           </div>
                         ) : (
-                          ""
+                          ''
                         )}
                         <div className="contBox">
                           <Row>
@@ -148,7 +147,7 @@ class AddJobCategories extends Component {
                                   type="text"
                                   className={`form-control`}
                                   placeholder="Enter job category"
-                                  // onChange={handleChange}                                 
+                                  // onChange={handleChange}
                                   // autoComplete="off"
                                   value={values.category_name}
                                 />
@@ -196,7 +195,7 @@ class AddJobCategories extends Component {
                         </div>
                         <button
                           className={`btn btn-success btn-sm ${
-                            isValid ? "btn-custom-green" : "btn-disable"
+                            isValid ? 'btn-custom-green' : 'btn-disable'
                           } m-r-10`}
                           type="submit"
                           disabled={
@@ -205,11 +204,11 @@ class AddJobCategories extends Component {
                         >
                           {this.state.banner_id > 0
                             ? isSubmitting
-                              ? "Updating..."
-                              : "Update"
+                              ? 'Updating...'
+                              : 'Update'
                             : isSubmitting
-                            ? "Submitting..."
-                            : "Submit"}
+                            ? 'Submitting...'
+                            : 'Submit'}
                         </button>
                       </Form>
                     );
