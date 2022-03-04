@@ -1,13 +1,13 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import { getSuperAdmin } from "../../../shared/helper";
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import { getSuperAdmin } from '../../../shared/helper';
 
 class SidebarAdmin extends Component {
   constructor() {
     super();
     this.state = {
-      shown: "",
-      innerShown: "",
+      shown: '',
+      innerShown: '',
       super_admin: 0,
     };
   }
@@ -20,82 +20,85 @@ class SidebarAdmin extends Component {
   componentDidMount = () => {
     var path = this.props.path_name; //console.log(path);
     if (
-      path === "/pages/privacy-policy" ||
-      path === "/pages/disclaimer" ||
-      path === "/pages/terms-and-conditions" ||
-      path === "/pages/covidantibody"
+      path === '/admin/pages/privacy-policy' ||
+      path === '/admin/pages/disclaimer' ||
+      path === '/admin/pages/terms-and-conditions' ||
+      path === '/admin/pages/covidantibody'
     ) {
-      this.setState({ shown: "1" });
-    }
-
-    if (path === "/home/know-who-we-are" || path === "/home/sample-journey") {
-      this.setState({ shown: "1", innerShown: "1" });
+      this.setState({ shown: '1' });
     }
 
     if (
-      path === "/contact-us/numbers" ||
-      path === "/contact-us/office-addresses"
+      path === '/admin/home/know-who-we-are' ||
+      path === '/admin/home/sample-journey'
     ) {
-      this.setState({ shown: "1", innerShown: "2" });
+      this.setState({ shown: '1', innerShown: '1' });
     }
 
     if (
-      path === "/covid19/faq" ||
-      path === "/covid19/speciality" ||
-      path === "/covid19/ebook-upload" ||
-      path === "/covid19/testing-center" ||
-      path === "/covid19/testing-center"
+      path === '/admin/contact-us/numbers' ||
+      path === '/admin/contact-us/office-addresses'
     ) {
-      this.setState({ shown: "1", innerShown: "3" });
+      this.setState({ shown: '1', innerShown: '2' });
     }
 
     if (
-      path === "/investors/members" ||
-      path === "/investors/code-of-conduct" ||
-      path === "/investors/documents" ||
-      path === "/investors/memberstype"
+      path === '/admin/covid19/faq' ||
+      path === '/admin/covid19/speciality' ||
+      path === '/admin/covid19/ebook-upload' ||
+      path === '/admin/covid19/testing-center' ||
+      path === '/admin/covid19/testing-center'
     ) {
-      this.setState({ shown: "1", innerShown: "4" });
+      this.setState({ shown: '1', innerShown: '3' });
     }
 
     if (
-      path === "/about-us/about-srl" ||
-      path === "/about-us/why-us" ||
-      path === "/about-us/values" ||
-      path === "/about-us/awards-accreditation" ||
-      path === "/about-us/key-members"
+      path === '/admin/investors/members' ||
+      path === '/admin/investors/code-of-conduct' ||
+      path === '/admin/investors/documents' ||
+      path === '/admin/investors/memberstype'
     ) {
-      this.setState({ shown: "1", innerShown: "5" });
+      this.setState({ shown: '1', innerShown: '4' });
     }
 
     if (
-      path === "/app/splash-schreen" ||
-      path === "/app/helptour" ||
-      path === "/app/application-banner"
+      path === '/admin/about-us/about-srl' ||
+      path === '/admin/about-us/why-us' ||
+      path === '/admin/about-us/values' ||
+      path === '/admin/about-us/awards-accreditation' ||
+      path === '/admin/about-us/key-members'
     ) {
-      this.setState({ shown: "2" });
-    }
-    if (
-      path === "/ordering/banner" ||
-      path === "/ordering/speciality" ||
-      path === "/ordering/code-of-conduct" ||
-      path === "/ordering/faq"
-    ) {
-      this.setState({ shown: "3" });
+      this.setState({ shown: '1', innerShown: '5' });
     }
 
     if (
-      path === "/lead_landing_page/product" ||
-      path === "/lead_landing_page/health&benefits"
+      path === '/admin/app/splash-schreen' ||
+      path === '/admin/app/helptour' ||
+      path === '/admin/app/application-banner'
     ) {
-      this.setState({ shown: "4" });
+      this.setState({ shown: '2' });
+    }
+    if (
+      path === '/admin/ordering/banner' ||
+      path === '/admin/ordering/speciality' ||
+      path === '/admin/ordering/code-of-conduct' ||
+      path === '/admin/ordering/faq'
+    ) {
+      this.setState({ shown: '3' });
     }
 
     if (
-      path === "/product-details/accordion" ||
-      path === "/product-details/add-accordion"
+      path === '/admin/lead_landing_page/product' ||
+      path === '/admin/lead_landing_page/health&benefits'
     ) {
-      this.setState({ shown: "5" });
+      this.setState({ shown: '4' });
+    }
+
+    if (
+      path === '/admin/product-details/accordion' ||
+      path === '/admin/product-details/add-accordion'
+    ) {
+      this.setState({ shown: '5' });
     }
 
     if (this.props.isLoggedIn === true) {
@@ -110,19 +113,19 @@ class SidebarAdmin extends Component {
 
   handlePlus = (event) => {
     event.preventDefault();
-    const id = event.target.getAttribute("data-id");
+    const id = event.target.getAttribute('data-id');
     id != this.state.shown
       ? this.setState({ shown: id })
-      : this.setState({ shown: "" });
+      : this.setState({ shown: '' });
   };
 
   innerHandlePlus = (event) => {
     event.preventDefault();
-    const id = event.target.getAttribute("inner-data-id");
+    const id = event.target.getAttribute('inner-data-id');
     console.log(id);
     id != this.state.innerShown
       ? this.setState({ innerShown: id })
-      : this.setState({ innerShown: "" });
+      : this.setState({ innerShown: '' });
   };
 
   getAdminMenu = () => {
@@ -131,864 +134,868 @@ class SidebarAdmin extends Component {
     return (
       <section className="sidebar">
         <ul className="sidebar-menu">
-          {this.props.path_name === "/dashboard" ? (
+          {this.props.path_name === '/admin/dashboard' ? (
             <li className="active">
-              {" "}
-              <Link to="/dashboard">
-                {" "}
+              {' '}
+              <Link to="/admin/dashboard">
+                {' '}
                 <i className="fas fa-tachometer-alt"></i> <span>Dashboard</span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           ) : (
             <li>
-              {" "}
-              <Link to="/dashboard">
-                {" "}
+              {' '}
+              <Link to="/admin/dashboard">
+                {' '}
                 <i className="fas fa-tachometer-alt"></i> <span>Dashboard</span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           )}
 
-          {this.props.path_name === "/banner" ? (
+          {this.props.path_name === '/admin/banner' ? (
             <li className="active">
-              {" "}
-              <Link to="/banner">
-                {" "}
+              {' '}
+              <Link to="/admin/banner">
+                {' '}
                 <i className="fa fa-flag"></i> <span> Banners</span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           ) : (
             <li>
-              {" "}
-              <Link to="/banner">
-                {" "}
+              {' '}
+              <Link to="/admin/banner">
+                {' '}
                 <i className="fa fa-flag"></i> <span> Banners</span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           )}
-          {this.props.path_name === "/testimonials" ? (
+          {this.props.path_name === '/admin/testimonials' ? (
             <li className="active">
-              {" "}
-              <Link to="/testimonials">
-                {" "}
+              {' '}
+              <Link to="/admin/testimonials">
+                {' '}
                 <i className="fa fa-quote-left"></i> <span> Testimonial </span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           ) : (
             <li>
-              {" "}
-              <Link to="/testimonials">
-                {" "}
+              {' '}
+              <Link to="/admin/testimonials">
+                {' '}
                 <i className="fa fa-quote-left"></i> <span> Testimonial </span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           )}
-          {this.props.path_name === "/categories" ? (
+          {this.props.path_name === '/admin/categories' ? (
             <li className="active">
-              {" "}
-              <Link to="/categories">
-                {" "}
+              {' '}
+              <Link to="/admin/categories">
+                {' '}
                 <i className="fa fa-list-alt"></i> <span>Blog Categories </span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           ) : (
             <li>
-              {" "}
-              <Link to="/categories">
-                {" "}
+              {' '}
+              <Link to="/admin/categories">
+                {' '}
                 <i className="fa fa-list-alt"></i> <span>Blog Categories </span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           )}
-          {this.props.path_name === "/blogs" ? (
+          {this.props.path_name === '/admin/blogs' ? (
             <li className="active">
-              {" "}
-              <Link to="/blogs">
-                {" "}
+              {' '}
+              <Link to="/admin/blogs">
+                {' '}
                 <i className="fa fa-rss"></i> <span> Blogs </span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           ) : (
             <li>
-              {" "}
-              <Link to="/blogs">
-                {" "}
+              {' '}
+              <Link to="/admin/blogs">
+                {' '}
                 <i className="fa fa-rss"></i> <span> Blogs </span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           )}
-          {this.props.path_name === "/events" ? (
+          {this.props.path_name === '/admin/events' ? (
             <li className="active">
-              {" "}
-              <Link to="/events">
-                {" "}
+              {' '}
+              <Link to="/admin/events">
+                {' '}
                 <i className="fa fa-calendar"></i> <span> Events & Camps </span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           ) : (
             <li>
-              {" "}
-              <Link to="/events">
-                {" "}
+              {' '}
+              <Link to="/admin/events">
+                {' '}
                 <i className="fa fa-calendar"></i> <span> Events & Camps </span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           )}
-          {this.props.path_name === "/offers" ||
-          this.props.path_name === "/add-offer" ? (
+          {this.props.path_name === '/admin/offers' ||
+          this.props.path_name === '/admin/add-offer' ? (
             <li className="active">
-              {" "}
-              <Link to="/offers">
-                {" "}
+              {' '}
+              <Link to="/admin/offers">
+                {' '}
                 <i className="fa fa-percent"></i> <span> Offers </span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           ) : (
             <li>
-              {" "}
-              <Link to="/offers">
-                {" "}
+              {' '}
+              <Link to="/admin/offers">
+                {' '}
                 <i className="fa fa-percent"></i> <span> Offers </span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           )}
-          {this.props.path_name === "/auto-popup" ||
-          this.props.path_name === "/auto-popup" ? (
+          {this.props.path_name === '/admin/auto-popup' ||
+          this.props.path_name === '/admin/auto-popup' ? (
             <li className="active">
-              {" "}
-              <Link to="/auto-popup">
-                {" "}
+              {' '}
+              <Link to="/admin/auto-popup">
+                {' '}
                 <i className="fa fa-magic"></i> <span> Auto Popup </span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           ) : (
             <li>
-              {" "}
-              <Link to="/auto-popup">
-                {" "}
+              {' '}
+              <Link to="/admin/auto-popup">
+                {' '}
                 <i className="fa fa-magic"></i> <span> Auto Popup </span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           )}
 
           {/* =================================================== */}
-          <li className={rotate == "4" ? "treeview active" : "treeview"}>
-            <Link to="#" data-id="4" onClick={this.handlePlus}>
+          <li className={rotate == '4' ? 'treeview active' : 'treeview'}>
+            <Link to="/admin/#" data-id="4" onClick={this.handlePlus}>
               <i
                 className="fas fa-certificate sub-menu"
                 data-id="4"
                 onClick={this.handlePlus}
-              ></i>{" "}
+              ></i>{' '}
               <span data-id="4" onClick={this.handlePlus}>
-                Lead Landing Page{" "}
+                Lead Landing Page{' '}
               </span>
               <span className="pull-right-container">
                 <i
                   data-id="4"
                   onClick={this.handlePlus}
                   className={
-                    rotate == "4"
-                      ? "fa pull-right fa-minus"
-                      : "fa pull-right fa-plus"
+                    rotate == '4'
+                      ? 'fa pull-right fa-minus'
+                      : 'fa pull-right fa-plus'
                   }
                 ></i>
               </span>
             </Link>
 
             <ul className="treeview-menu">
-              {this.props.path_name === "/lead_landing_page/product" ? (
+              {this.props.path_name === '/admin/lead_landing_page/product' ? (
                 <li className="active">
-                  {" "}
-                  <Link to="/lead_landing_page/product">
-                    {" "}
+                  {' '}
+                  <Link to="/admin/lead_landing_page/product">
+                    {' '}
                     <i className="fas fa-compress"></i> <span> Products </span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               ) : (
                 <li>
-                  {" "}
-                  <Link to="/lead_landing_page/product">
-                    {" "}
+                  {' '}
+                  <Link to="/admin/lead_landing_page/product">
+                    {' '}
                     <i className="fas fa-compress"></i> <span> Products </span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               )}
             </ul>
             <ul className="treeview-menu">
-              {this.props.path_name === "/lead_landing_page/health&benefits" ? (
+              {this.props.path_name ===
+              '/admin/lead_landing_page/health&benefits' ? (
                 <li className="active">
-                  {" "}
-                  <Link to="/lead_landing_page/health&benefits">
-                    {" "}
-                    <i className="fas fa-file-medical"></i>{" "}
+                  {' '}
+                  <Link to="/admin/lead_landing_page/health&benefits">
+                    {' '}
+                    <i className="fas fa-file-medical"></i>{' '}
                     <span> Health with Benefits </span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               ) : (
                 <li>
-                  {" "}
-                  <Link to="/lead_landing_page/health&benefits">
-                    {" "}
-                    <i className="fas fa-file-medical"></i>{" "}
+                  {' '}
+                  <Link to="/admin/lead_landing_page/health&benefits">
+                    {' '}
+                    <i className="fas fa-file-medical"></i>{' '}
                     <span> Health with Benefits </span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               )}
             </ul>
           </li>
 
           {/* =================================================== */}
-          {this.props.path_name === "/sociallink" ? (
+          {this.props.path_name === '/admin/sociallink' ? (
             <li className="active">
-              {" "}
-              <Link to="/sociallink">
-                {" "}
+              {' '}
+              <Link to="/admin/sociallink">
+                {' '}
                 <i className="fa fa-link"></i> <span> Social Links </span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           ) : (
             <li>
-              {" "}
-              <Link to="/sociallink">
-                {" "}
+              {' '}
+              <Link to="/admin/sociallink">
+                {' '}
                 <i className="fa fa-link"></i> <span> Social Links </span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           )}
-          {this.props.path_name === "/message" ? (
+          {this.props.path_name === '/admin/message' ? (
             <li className="active">
-              {" "}
-              <Link to="/message">
-                {" "}
+              {' '}
+              <Link to="/admin/message">
+                {' '}
                 <i className="fa fa-envelope"></i> <span> Messages </span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           ) : (
             <li>
-              {" "}
-              <Link to="/message">
-                {" "}
+              {' '}
+              <Link to="/admin/message">
+                {' '}
                 <i className="fa fa-envelope"></i> <span> Messages </span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           )}
 
-          <li className={rotate == "5" ? "treeview active" : "treeview"}>
-            <Link to="#" data-id="5" onClick={this.handlePlus}>
+          <li className={rotate == '5' ? 'treeview active' : 'treeview'}>
+            <Link to="/admin/#" data-id="5" onClick={this.handlePlus}>
               <i
                 className="fas fa-certificate sub-menu"
                 data-id="5"
                 onClick={this.handlePlus}
-              ></i>{" "}
+              ></i>{' '}
               <span data-id="5" onClick={this.handlePlus}>
-                Product Details{" "}
+                Product Details{' '}
               </span>
               <span className="pull-right-container">
                 <i
                   data-id="5"
                   onClick={this.handlePlus}
                   className={
-                    rotate == "5"
-                      ? "fa pull-right fa-minus"
-                      : "fa pull-right fa-plus"
+                    rotate == '5'
+                      ? 'fa pull-right fa-minus'
+                      : 'fa pull-right fa-plus'
                   }
                 ></i>
               </span>
             </Link>
             <ul className="treeview-menu">
-              {this.props.path_name === "/lead_landing_page/product" ? (
+              {this.props.path_name === '/admin/lead_landing_page/product' ? (
                 <li className="active">
-                  {" "}
-                  <Link to="/product-details/accordion">
-                    {" "}
+                  {' '}
+                  <Link to="/admin/product-details/accordion">
+                    {' '}
                     <i className="fas fa-compress"></i> <span> Accordion </span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               ) : (
                 <li>
-                  {" "}
-                  <Link to="/product-details/accordion">
-                    {" "}
+                  {' '}
+                  <Link to="/admin/product-details/accordion">
+                    {' '}
                     <i className="fas fa-compress"></i> <span> Accordion </span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               )}
             </ul>
           </li>
 
-          <li className={rotate == "1" ? "treeview active" : "treeview"}>
-            <Link to="#" data-id="1" onClick={this.handlePlus}>
+          <li className={rotate == '1' ? 'treeview active' : 'treeview'}>
+            <Link to="/admin/#" data-id="1" onClick={this.handlePlus}>
               <i
                 className="fas fa-clipboard-list sub-menu"
                 data-id="1"
                 onClick={this.handlePlus}
-              ></i>{" "}
+              ></i>{' '}
               <span data-id="1" onClick={this.handlePlus}>
-                Pages{" "}
+                Pages{' '}
               </span>
               <span className="pull-right-container">
                 <i
                   data-id="1"
                   onClick={this.handlePlus}
                   className={
-                    rotate == "1"
-                      ? "fa pull-right fa-minus"
-                      : "fa pull-right fa-plus"
+                    rotate == '1'
+                      ? 'fa pull-right fa-minus'
+                      : 'fa pull-right fa-plus'
                   }
                 ></i>
               </span>
             </Link>
 
             <ul className="treeview-menu">
-              {this.props.path_name === "/pages/privacy-policy" ? (
+              {this.props.path_name === '/admin/pages/privacy-policy' ? (
                 <li className="active">
-                  {" "}
-                  <Link to="/pages/privacy-policy">
-                    {" "}
-                    <i className="fa fa-user-secret"></i>{" "}
+                  {' '}
+                  <Link to="/admin/pages/privacy-policy">
+                    {' '}
+                    <i className="fa fa-user-secret"></i>{' '}
                     <span>Privacy Policy</span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               ) : (
                 <li>
-                  {" "}
-                  <Link to="/pages/privacy-policy">
-                    {" "}
-                    <i className="fa fa-user-secret"></i>{" "}
+                  {' '}
+                  <Link to="/admin/pages/privacy-policy">
+                    {' '}
+                    <i className="fa fa-user-secret"></i>{' '}
                     <span>Privacy Policy</span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               )}
-              {this.props.path_name === "/pages/disclaimer" ? (
+              {this.props.path_name === '/admin/pages/disclaimer' ? (
                 <li className="active">
-                  {" "}
-                  <Link to="/pages/disclaimer">
-                    {" "}
+                  {' '}
+                  <Link to="/admin/pages/disclaimer">
+                    {' '}
                     <i className="fa fa-exclamation-triangle"></i>
                     <span>Disclaimer</span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               ) : (
                 <li>
-                  {" "}
-                  <Link to="/pages/disclaimer">
-                    {" "}
-                    <i className="fa fa-exclamation-triangle"></i>{" "}
+                  {' '}
+                  <Link to="/admin/pages/disclaimer">
+                    {' '}
+                    <i className="fa fa-exclamation-triangle"></i>{' '}
                     <span>Disclaimer</span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               )}
-              {this.props.path_name === "/pages/terms-and-conditions" ? (
+              {this.props.path_name === '/admin/pages/terms-and-conditions' ? (
                 <li className="active">
-                  {" "}
-                  <Link to="/pages/terms-and-conditions">
-                    {" "}
+                  {' '}
+                  <Link to="/admin/pages/terms-and-conditions">
+                    {' '}
                     <i className="fa fa-list-ol"></i>
                     <span>Terms and Conditions</span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               ) : (
                 <li>
-                  {" "}
-                  <Link to="/pages/terms-and-conditions">
-                    {" "}
-                    <i className="fa fa-list-ol"></i>{" "}
+                  {' '}
+                  <Link to="/admin/pages/terms-and-conditions">
+                    {' '}
+                    <i className="fa fa-list-ol"></i>{' '}
                     <span>Terms and Conditions</span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               )}
-              {this.props.path_name === "/pages/covidantibody" ? (
+              {this.props.path_name === '/admin/pages/covidantibody' ? (
                 <li className="active">
-                  {" "}
-                  <Link to="/pages/covidantibody">
-                    {" "}
+                  {' '}
+                  <Link to="/admin/pages/covidantibody">
+                    {' '}
                     <i className="fas fa-vial"></i>
                     <span>Covid Antibody</span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               ) : (
                 <li>
-                  {" "}
-                  <Link to="/pages/covidantibody">
-                    {" "}
+                  {' '}
+                  <Link to="/admin/pages/covidantibody">
+                    {' '}
                     <i className="fas fa-vial"></i> <span>Covid Antibody</span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               )}
 
               <li
-                className={innerRotate == "1" ? "treeview active" : "treeview"}
+                className={innerRotate == '1' ? 'treeview active' : 'treeview'}
               >
-                <Link to="#" inner-data-id="1" onClick={this.innerHandlePlus}>
+                <Link to="/admin/#" inner-data-id="1" onClick={this.innerHandlePlus}>
                   <i
                     className="fas fa-home sub-menu"
                     inner-data-id="1"
                     onClick={this.innerHandlePlus}
-                  ></i>{" "}
+                  ></i>{' '}
                   <span inner-data-id="1" onClick={this.innerHandlePlus}>
-                    Home{" "}
+                    Home{' '}
                   </span>
                   <span className="pull-right-container">
                     <i
                       inner-data-id="1"
                       onClick={this.innerHandlePlus}
                       className={
-                        innerRotate == "1"
-                          ? "fa pull-right fa-minus"
-                          : "fa pull-right fa-plus"
+                        innerRotate == '1'
+                          ? 'fa pull-right fa-minus'
+                          : 'fa pull-right fa-plus'
                       }
                     ></i>
                   </span>
                 </Link>
 
                 <ul className="treeview-menu">
-                  {this.props.path_name === "/home/know-who-we-are" ? (
+                  {this.props.path_name === '/admin/home/know-who-we-are' ? (
                     <li className="active">
-                      {" "}
-                      <Link to="/home/know-who-we-are">
-                        {" "}
-                        <i className="fas fa-child"></i>{" "}
+                      {' '}
+                      <Link to="/admin/home/know-who-we-are">
+                        {' '}
+                        <i className="fas fa-child"></i>{' '}
                         <span>Know Who We Are</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   ) : (
                     <li>
-                      {" "}
-                      <Link to="/home/know-who-we-are">
-                        {" "}
-                        <i className="fas fa-child"></i>{" "}
+                      {' '}
+                      <Link to="/admin/home/know-who-we-are">
+                        {' '}
+                        <i className="fas fa-child"></i>{' '}
                         <span>Know Who We Are</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   )}
                 </ul>
                 <ul className="treeview-menu">
-                  {this.props.path_name === "/home/sample-journey" ? (
+                  {this.props.path_name === '/admin/home/sample-journey' ? (
                     <li className="active">
-                      {" "}
-                      <Link to="/home/sample-journey">
-                        {" "}
-                        <i className="fas fa-file-medical"></i>{" "}
+                      {' '}
+                      <Link to="/admin/home/sample-journey">
+                        {' '}
+                        <i className="fas fa-file-medical"></i>{' '}
                         <span>Patient Sample Journey</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   ) : (
                     <li>
-                      {" "}
-                      <Link to="/home/sample-journey">
-                        {" "}
-                        <i className="fas fa-file-medical"></i>{" "}
+                      {' '}
+                      <Link to="/admin/home/sample-journey">
+                        {' '}
+                        <i className="fas fa-file-medical"></i>{' '}
                         <span>Patient Sample Journey</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   )}
                 </ul>
               </li>
               <li
-                className={innerRotate == "2" ? "treeview active" : "treeview"}
+                className={innerRotate == '2' ? 'treeview active' : 'treeview'}
               >
-                <Link to="#" inner-data-id="2" onClick={this.innerHandlePlus}>
+                <Link to="/admin/#" inner-data-id="2" onClick={this.innerHandlePlus}>
                   <i
                     className="fa fa-address-book sub-menu"
                     inner-data-id="2"
                     onClick={this.innerHandlePlus}
-                  ></i>{" "}
+                  ></i>{' '}
                   <span inner-data-id="2" onClick={this.innerHandlePlus}>
-                    Contact Us{" "}
+                    Contact Us{' '}
                   </span>
                   <span className="pull-right-container">
                     <i
                       inner-data-id="2"
                       onClick={this.innerHandlePlus}
                       className={
-                        innerRotate == "2"
-                          ? "fa pull-right fa-minus"
-                          : "fa pull-right fa-plus"
+                        innerRotate == '2'
+                          ? 'fa pull-right fa-minus'
+                          : 'fa pull-right fa-plus'
                       }
                     ></i>
                   </span>
                 </Link>
 
                 <ul className="treeview-menu">
-                  {this.props.path_name === "/contact-us/numbers" ? (
+                  {this.props.path_name === '/admin/contact-us/numbers' ? (
                     <li className="active">
-                      {" "}
-                      <Link to="/contact-us/numbers">
-                        {" "}
+                      {' '}
+                      <Link to="/admin/contact-us/numbers">
+                        {' '}
                         <i className="fa fa-phone"></i> <span>Numbers</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   ) : (
                     <li>
-                      {" "}
-                      <Link to="/contact-us/numbers">
-                        {" "}
+                      {' '}
+                      <Link to="/admin/contact-us/numbers">
+                        {' '}
                         <i className="fa fa-phone"></i> <span>Numbers</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   )}
-                  {this.props.path_name === "/contact-us/office-addresses" ? (
+                  {this.props.path_name ===
+                  '/admin/contact-us/office-addresses' ? (
                     <li className="active">
-                      {" "}
-                      <Link to="/contact-us/office-addresses">
-                        {" "}
+                      {' '}
+                      <Link to="/admin/contact-us/office-addresses">
+                        {' '}
                         <i class="fa fa-building"></i>
                         <span>Office Addresses</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   ) : (
                     <li>
-                      {" "}
-                      <Link to="/contact-us/office-addresses">
-                        {" "}
-                        <i className="fa fa-building"></i>{" "}
+                      {' '}
+                      <Link to="/admin/contact-us/office-addresses">
+                        {' '}
+                        <i className="fa fa-building"></i>{' '}
                         <span>Office Addresses</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   )}
                 </ul>
               </li>
 
               <li
-                className={innerRotate == "3" ? "treeview active" : "treeview"}
+                className={innerRotate == '3' ? 'treeview active' : 'treeview'}
               >
-                <Link to="#" inner-data-id="3" onClick={this.innerHandlePlus}>
+                <Link to="/admin/#" inner-data-id="3" onClick={this.innerHandlePlus}>
                   <i
                     className="fa fa-heartbeat sub-menu sub-menu"
                     inner-data-id="3"
                     onClick={this.innerHandlePlus}
-                  ></i>{" "}
+                  ></i>{' '}
                   <span inner-data-id="3" onClick={this.innerHandlePlus}>
-                    Covid 19{" "}
+                    Covid 19{' '}
                   </span>
                   <span className="pull-right-container">
                     <i
                       inner-data-id="3"
                       onClick={this.innerHandlePlus}
                       className={
-                        innerRotate == "3"
-                          ? "fa pull-right fa-minus"
-                          : "fa pull-right fa-plus"
+                        innerRotate == '3'
+                          ? 'fa pull-right fa-minus'
+                          : 'fa pull-right fa-plus'
                       }
                     ></i>
                   </span>
                 </Link>
 
                 <ul className="treeview-menu">
-                  {this.props.path_name === "/covid19/faq" ? (
+                  {this.props.path_name === '/admin/covid19/faq' ? (
                     <li className="active">
-                      {" "}
-                      <Link to="/covid19/faq">
-                        {" "}
+                      {' '}
+                      <Link to="/admin/covid19/faq">
+                        {' '}
                         <i className="fas fa-book"></i> <span>FAQ</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   ) : (
                     <li>
-                      {" "}
-                      <Link to="/covid19/faq">
-                        {" "}
+                      {' '}
+                      <Link to="/admin/covid19/faq">
+                        {' '}
                         <i className="fas fa-book"></i> <span>FAQ</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   )}
                 </ul>
                 <ul className="treeview-menu">
-                  {this.props.path_name === "/covid19/speciality" ? (
+                  {this.props.path_name === '/admin/covid19/speciality' ? (
                     <li className="active">
-                      {" "}
-                      <Link to="/covid19/speciality">
-                        {" "}
-                        <i className="fas fa-notes-medical"></i>{" "}
+                      {' '}
+                      <Link to="/admin/covid19/speciality">
+                        {' '}
+                        <i className="fas fa-notes-medical"></i>{' '}
                         <span>Speciality</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   ) : (
                     <li>
-                      {" "}
-                      <Link to="/covid19/speciality">
-                        {" "}
-                        <i className="fas fa-notes-medical"></i>{" "}
+                      {' '}
+                      <Link to="/admin/covid19/speciality">
+                        {' '}
+                        <i className="fas fa-notes-medical"></i>{' '}
                         <span>Speciality</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   )}
                 </ul>
                 <ul className="treeview-menu">
-                  {this.props.path_name === "/covid19/ebook-upload" ? (
+                  {this.props.path_name === '/admin/covid19/ebook-upload' ? (
                     <li className="active">
-                      {" "}
-                      <Link to="/covid19/ebook-upload">
-                        {" "}
-                        <i className="fas fa-book-open"></i>{" "}
+                      {' '}
+                      <Link to="/admin/covid19/ebook-upload">
+                        {' '}
+                        <i className="fas fa-book-open"></i>{' '}
                         <span>E-Book Upload</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   ) : (
                     <li>
-                      {" "}
-                      <Link to="/covid19/ebook-upload">
-                        {" "}
-                        <i className="fas fa-book-open"></i>{" "}
+                      {' '}
+                      <Link to="/admin/covid19/ebook-upload">
+                        {' '}
+                        <i className="fas fa-book-open"></i>{' '}
                         <span>E-Book Upload</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   )}
                 </ul>
                 <ul className="treeview-menu">
-                  {this.props.path_name === "/covid19/testing-center" ? (
+                  {this.props.path_name === '/admin/covid19/testing-center' ? (
                     <li className="active">
-                      {" "}
-                      <Link to="/covid19/testing-center">
-                        {" "}
-                        <i className="fas fa-microscope"></i>{" "}
+                      {' '}
+                      <Link to="/admin/covid19/testing-center">
+                        {' '}
+                        <i className="fas fa-microscope"></i>{' '}
                         <span>Testing Centers</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   ) : (
                     <li>
-                      {" "}
-                      <Link to="/covid19/testing-center">
-                        {" "}
-                        <i className="fas fa-microscope"></i>{" "}
+                      {' '}
+                      <Link to="/admin/covid19/testing-center">
+                        {' '}
+                        <i className="fas fa-microscope"></i>{' '}
                         <span>Testing Centers</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   )}
                 </ul>
               </li>
 
               <li
-                className={innerRotate == "4" ? "treeview active" : "treeview"}
+                className={innerRotate == '4' ? 'treeview active' : 'treeview'}
               >
-                <Link to="#" inner-data-id="4" onClick={this.innerHandlePlus}>
+                <Link to="/admin/#" inner-data-id="4" onClick={this.innerHandlePlus}>
                   <i
                     className="fas fa-coins sub-menu"
                     inner-data-id="4"
                     onClick={this.innerHandlePlus}
-                  ></i>{" "}
+                  ></i>{' '}
                   <span inner-data-id="4" onClick={this.innerHandlePlus}>
-                    Investors{" "}
+                    Investors{' '}
                   </span>
                   <span className="pull-right-container">
                     <i
                       inner-data-id="4"
                       onClick={this.innerHandlePlus}
                       className={
-                        innerRotate == "4"
-                          ? "fa pull-right fa-minus"
-                          : "fa pull-right fa-plus"
+                        innerRotate == '4'
+                          ? 'fa pull-right fa-minus'
+                          : 'fa pull-right fa-plus'
                       }
                     ></i>
                   </span>
                 </Link>
 
                 <ul className="treeview-menu">
-                  {this.props.path_name === "/investors/members" ? (
+                  {this.props.path_name === '/admin/investors/members' ? (
                     <li className="active">
-                      {" "}
-                      <Link to="/investors/members">
-                        {" "}
-                        <i className="fas fa-chalkboard-teacher"></i>{" "}
+                      {' '}
+                      <Link to="/admin/investors/members">
+                        {' '}
+                        <i className="fas fa-chalkboard-teacher"></i>{' '}
                         <span>Members</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   ) : (
                     <li>
-                      {" "}
-                      <Link to="/investors/members">
-                        {" "}
-                        <i className="fas fa-chalkboard-teacher"></i>{" "}
+                      {' '}
+                      <Link to="/admin/investors/members">
+                        {' '}
+                        <i className="fas fa-chalkboard-teacher"></i>{' '}
                         <span>Members</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   )}
-                  {this.props.path_name === "/investors/memberstype" ? (
+                  {this.props.path_name === '/admin/investors/memberstype' ? (
                     <li className="active">
-                      {" "}
-                      <Link to="/investors/memberstype">
-                        {" "}
-                        <i className="fas fa-portrait"></i>{" "}
+                      {' '}
+                      <Link to="/admin/investors/memberstype">
+                        {' '}
+                        <i className="fas fa-portrait"></i>{' '}
                         <span>Members Type</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   ) : (
                     <li>
-                      {" "}
-                      <Link to="/investors/memberstype">
-                        {" "}
-                        <i className="fas fa-portrait"></i>{" "}
+                      {' '}
+                      <Link to="/admin/investors/memberstype">
+                        {' '}
+                        <i className="fas fa-portrait"></i>{' '}
                         <span>Members Type</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   )}
                 </ul>
                 <ul className="treeview-menu">
-                  {this.props.path_name === "/investors/code-of-conduct" ? (
+                  {this.props.path_name ===
+                  '/admin/investors/code-of-conduct' ? (
                     <li className="active">
-                      {" "}
-                      <Link to="/investors/code-of-conduct">
-                        {" "}
-                        <i className="fas fa-receipt"></i>{" "}
+                      {' '}
+                      <Link to="/admin/investors/code-of-conduct">
+                        {' '}
+                        <i className="fas fa-receipt"></i>{' '}
                         <span>Code Of Conduct</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   ) : (
                     <li>
-                      {" "}
-                      <Link to="/investors/code-of-conduct">
-                        {" "}
-                        <i className="fas fa-receipt"></i>{" "}
+                      {' '}
+                      <Link to="/admin/investors/code-of-conduct">
+                        {' '}
+                        <i className="fas fa-receipt"></i>{' '}
                         <span>Code Of Conduct</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   )}
                 </ul>
                 <ul className="treeview-menu">
-                  {this.props.path_name === "/investors/documents" ? (
+                  {this.props.path_name === '/admin/investors/documents' ? (
                     <li className="active">
-                      {" "}
-                      <Link to="/investors/documents">
-                        {" "}
-                        <i className="fas fa-file-alt"></i>{" "}
+                      {' '}
+                      <Link to="/admin/investors/documents">
+                        {' '}
+                        <i className="fas fa-file-alt"></i>{' '}
                         <span>Documents</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   ) : (
                     <li>
-                      {" "}
-                      <Link to="/investors/documents">
-                        {" "}
-                        <i className="fas fa-file-alt"></i>{" "}
+                      {' '}
+                      <Link to="/admin/investors/documents">
+                        {' '}
+                        <i className="fas fa-file-alt"></i>{' '}
                         <span>Documents</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   )}
                 </ul>
               </li>
               <li
-                className={innerRotate == "5" ? "treeview active" : "treeview"}
+                className={innerRotate == '5' ? 'treeview active' : 'treeview'}
               >
-                <Link to="#" inner-data-id="5" onClick={this.innerHandlePlus}>
+                <Link to="/admin/#" inner-data-id="5" onClick={this.innerHandlePlus}>
                   <i
                     className="fas fa-hiking sub-menu"
                     inner-data-id="5"
                     onClick={this.innerHandlePlus}
-                  ></i>{" "}
+                  ></i>{' '}
                   <span inner-data-id="5" onClick={this.innerHandlePlus}>
-                    About Us{" "}
+                    About Us{' '}
                   </span>
                   <span className="pull-right-container">
                     <i
                       inner-data-id="5"
                       onClick={this.innerHandlePlus}
                       className={
-                        innerRotate == "5"
-                          ? "fa pull-right fa-minus"
-                          : "fa pull-right fa-plus"
+                        innerRotate == '5'
+                          ? 'fa pull-right fa-minus'
+                          : 'fa pull-right fa-plus'
                       }
                     ></i>
                   </span>
                 </Link>
 
                 <ul className="treeview-menu">
-                  {this.props.path_name === "/about-us/about-srl" ? (
+                  {this.props.path_name === '/admin/about-us/about-srl' ? (
                     <li className="active">
-                      {" "}
-                      <Link to="/about-us/about-srl">
-                        {" "}
-                        <i className="fas fa-chalkboard-teacher"></i>{" "}
+                      {' '}
+                      <Link to="/admin/about-us/about-srl">
+                        {' '}
+                        <i className="fas fa-chalkboard-teacher"></i>{' '}
                         <span>About SRL</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   ) : (
                     <li>
-                      {" "}
-                      <Link to="/about-us/about-srl">
-                        {" "}
-                        <i className="fas fa-chalkboard-teacher"></i>{" "}
+                      {' '}
+                      <Link to="/admin/about-us/about-srl">
+                        {' '}
+                        <i className="fas fa-chalkboard-teacher"></i>{' '}
                         <span>About SRL</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   )}
                 </ul>
                 <ul className="treeview-menu">
-                  {this.props.path_name === "/about-us/why-us" ? (
+                  {this.props.path_name === '/admin/about-us/why-us' ? (
                     <li className="active">
-                      {" "}
-                      <Link to="/about-us/why-us">
-                        {" "}
+                      {' '}
+                      <Link to="/admin/about-us/why-us">
+                        {' '}
                         <i className="fas fa-receipt"></i> <span>Why Us</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   ) : (
                     <li>
-                      {" "}
-                      <Link to="/about-us/why-us">
-                        {" "}
+                      {' '}
+                      <Link to="/admin/about-us/why-us">
+                        {' '}
                         <i className="fas fa-receipt"></i> <span>Why Us</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   )}
                 </ul>
                 <ul className="treeview-menu">
-                  {this.props.path_name === "/about-us/values" ? (
+                  {this.props.path_name === '/admin/about-us/values' ? (
                     <li className="active">
-                      {" "}
-                      <Link to="/about-us/values">
-                        {" "}
+                      {' '}
+                      <Link to="/admin/about-us/values">
+                        {' '}
                         <i className="fas fa-lightbulb"></i> <span>Values</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   ) : (
                     <li>
-                      {" "}
-                      <Link to="/about-us/values">
-                        {" "}
+                      {' '}
+                      <Link to="/admin/about-us/values">
+                        {' '}
                         <i className="fas fa-lightbulb"></i> <span>Values</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   )}
                 </ul>
                 <ul className="treeview-menu">
-                  {this.props.path_name === "/about-us/key-members" ? (
+                  {this.props.path_name === '/admin/about-us/key-members' ? (
                     <li className="active">
-                      {" "}
-                      <Link to="/about-us/key-members">
-                        {" "}
-                        <i className="fab fa-black-tie"></i>{" "}
+                      {' '}
+                      <Link to="/admin/about-us/key-members">
+                        {' '}
+                        <i className="fab fa-black-tie"></i>{' '}
                         <span>Key Members</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   ) : (
                     <li>
-                      {" "}
-                      <Link to="/about-us/key-members">
-                        {" "}
-                        <i className="fab fa-black-tie"></i>{" "}
+                      {' '}
+                      <Link to="/admin/about-us/key-members">
+                        {' '}
+                        <i className="fab fa-black-tie"></i>{' '}
                         <span>Key Members</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   )}
                 </ul>
                 <ul className="treeview-menu">
-                  {this.props.path_name === "/about-us/awards-accreditation" ? (
+                  {this.props.path_name ===
+                  '/admin/about-us/awards-accreditation' ? (
                     <li className="active">
-                      {" "}
-                      <Link to="/about-us/awards-accreditation">
-                        {" "}
-                        <i className="fas fa-award"></i>{" "}
+                      {' '}
+                      <Link to="/admin/about-us/awards-accreditation">
+                        {' '}
+                        <i className="fas fa-award"></i>{' '}
                         <span>Awards & Accreditations</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   ) : (
                     <li>
-                      {" "}
-                      <Link to="/about-us/awards-accreditation">
-                        {" "}
-                        <i className="fas fa-award"></i>{" "}
+                      {' '}
+                      <Link to="/admin/about-us/awards-accreditation">
+                        {' '}
+                        <i className="fas fa-award"></i>{' '}
                         <span>Awards & Accreditations</span>
-                      </Link>{" "}
+                      </Link>{' '}
                     </li>
                   )}
                 </ul>
@@ -996,231 +1003,231 @@ class SidebarAdmin extends Component {
             </ul>
           </li>
 
-          {this.props.path_name === "/lead-forms" ? (
+          {this.props.path_name === '/admin/lead-forms' ? (
             <li className="active">
-              {" "}
-              <Link to="/lead-forms">
-                {" "}
-                <i className="fa fa-magic" aria-hidden="true"></i>{" "}
+              {' '}
+              <Link to="/admin/lead-forms">
+                {' '}
+                <i className="fa fa-magic" aria-hidden="true"></i>{' '}
                 <span> Lead Form Responses </span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           ) : (
             <li>
-              {" "}
-              <Link to="/lead-forms">
-                {" "}
-                <i className="fa fa-magic" aria-hidden="true"></i>{" "}
+              {' '}
+              <Link to="/admin/lead-forms">
+                {' '}
+                <i className="fa fa-magic" aria-hidden="true"></i>{' '}
                 <span> Lead Form Responses </span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           )}
-          {this.props.path_name === "/gallery" ? (
+          {this.props.path_name === '/admin/gallery' ? (
             <li className="active">
-              {" "}
-              <Link to="/gallery">
-                {" "}
-                <i className="fas fa-file-image" aria-hidden="true"></i>{" "}
+              {' '}
+              <Link to="/admin/gallery">
+                {' '}
+                <i className="fas fa-file-image" aria-hidden="true"></i>{' '}
                 <span> Gallery </span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           ) : (
             <li>
-              {" "}
-              <Link to="/gallery">
-                {" "}
-                <i className="fas fa-file-image" aria-hidden="true"></i>{" "}
+              {' '}
+              <Link to="/admin/gallery">
+                {' '}
+                <i className="fas fa-file-image" aria-hidden="true"></i>{' '}
                 <span> Gallery </span>
-              </Link>{" "}
+              </Link>{' '}
             </li>
           )}
-          <li className={rotate == "2" ? "treeview active" : "treeview"}>
-            <Link to="#" data-id="2" onClick={this.handlePlus}>
+          <li className={rotate == '2' ? 'treeview active' : 'treeview'}>
+            <Link to="/admin/#" data-id="2" onClick={this.handlePlus}>
               <i
                 className="fas fa-certificate sub-menu"
                 data-id="2"
                 onClick={this.handlePlus}
-              ></i>{" "}
+              ></i>{' '}
               <span data-id="2" onClick={this.handlePlus}>
-                Application{" "}
+                Application{' '}
               </span>
               <span className="pull-right-container">
                 <i
                   data-id="2"
                   onClick={this.handlePlus}
                   className={
-                    rotate == "2"
-                      ? "fa pull-right fa-minus"
-                      : "fa pull-right fa-plus"
+                    rotate == '2'
+                      ? 'fa pull-right fa-minus'
+                      : 'fa pull-right fa-plus'
                   }
                 ></i>
               </span>
             </Link>
 
             <ul className="treeview-menu">
-              {this.props.path_name === "/app/splash-schreen" ? (
+              {this.props.path_name === '/admin/app/splash-schreen' ? (
                 <li className="active">
-                  {" "}
-                  <Link to="/app/splash-schreen">
-                    {" "}
-                    <i className="fas fa-compress"></i>{" "}
+                  {' '}
+                  <Link to="/admin/app/splash-schreen">
+                    {' '}
+                    <i className="fas fa-compress"></i>{' '}
                     <span> Splash Screen </span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               ) : (
                 <li>
-                  {" "}
-                  <Link to="/app/splash-schreen">
-                    {" "}
-                    <i className="fas fa-compress"></i>{" "}
+                  {' '}
+                  <Link to="/admin/app/splash-schreen">
+                    {' '}
+                    <i className="fas fa-compress"></i>{' '}
                     <span> Splash Screen </span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               )}
             </ul>
             <ul className="treeview-menu">
-              {this.props.path_name === "/app/helptour" ? (
+              {this.props.path_name === '/admin/app/helptour' ? (
                 <li className="active">
-                  {" "}
-                  <Link to="/app/helptour">
-                    {" "}
-                    <i className="fas fa-file-medical"></i>{" "}
+                  {' '}
+                  <Link to="/admin/app/helptour">
+                    {' '}
+                    <i className="fas fa-file-medical"></i>{' '}
                     <span> Help Tour </span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               ) : (
                 <li>
-                  {" "}
-                  <Link to="/app/helptour">
-                    {" "}
-                    <i className="fas fa-file-medical"></i>{" "}
+                  {' '}
+                  <Link to="/admin/app/helptour">
+                    {' '}
+                    <i className="fas fa-file-medical"></i>{' '}
                     <span> Help Tour </span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               )}
             </ul>
             <ul className="treeview-menu">
-              {this.props.path_name === "/app/application-banner" ? (
+              {this.props.path_name === '/admin/app/application-banner' ? (
                 <li className="active">
-                  {" "}
-                  <Link to="/app/application-banner">
-                    {" "}
-                    <i className="fas fa-file-medical"></i>{" "}
+                  {' '}
+                  <Link to="/admin/app/application-banner">
+                    {' '}
+                    <i className="fas fa-file-medical"></i>{' '}
                     <span> Application Banner </span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               ) : (
                 <li>
-                  {" "}
-                  <Link to="/app/application-banner">
-                    {" "}
-                    <i className="fas fa-file-medical"></i>{" "}
+                  {' '}
+                  <Link to="/admin/app/application-banner">
+                    {' '}
+                    <i className="fas fa-file-medical"></i>{' '}
                     <span> Application Banner </span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               )}
             </ul>
           </li>
-          <li className={rotate == "3" ? "treeview active" : "treeview"}>
-            <Link to="#" data-id="3" onClick={this.handlePlus}>
+          <li className={rotate == '3' ? 'treeview active' : 'treeview'}>
+            <Link to="/admin/#" data-id="3" onClick={this.handlePlus}>
               <i
                 className="fas fa-sort-amount-down sub-menu"
                 data-id="3"
                 onClick={this.handlePlus}
-              ></i>{" "}
+              ></i>{' '}
               <span data-id="3" onClick={this.handlePlus}>
-                Ordering{" "}
+                Ordering{' '}
               </span>
               <span className="pull-right-container">
                 <i
                   data-id="3"
                   onClick={this.handlePlus}
                   className={
-                    rotate == "3"
-                      ? "fa pull-right fa-minus"
-                      : "fa pull-right fa-plus"
+                    rotate == '3'
+                      ? 'fa pull-right fa-minus'
+                      : 'fa pull-right fa-plus'
                   }
                 ></i>
               </span>
             </Link>
 
             <ul className="treeview-menu">
-              {this.props.path_name === "/ordering/banner" ? (
+              {this.props.path_name === '/admin/ordering/banner' ? (
                 <li className="active">
-                  {" "}
-                  <Link to="/ordering/banner">
-                    {" "}
+                  {' '}
+                  <Link to="/admin/ordering/banner">
+                    {' '}
                     <i className="fas fa-image"></i> <span> Banner </span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               ) : (
                 <li>
-                  {" "}
-                  <Link to="/ordering/banner">
-                    {" "}
+                  {' '}
+                  <Link to="/admin/ordering/banner">
+                    {' '}
                     <i className="fas fa-image"></i> <span> Banner </span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               )}
             </ul>
             <ul className="treeview-menu">
-              {this.props.path_name === "/ordering/speciality" ? (
+              {this.props.path_name === '/admin/ordering/speciality' ? (
                 <li className="active">
-                  {" "}
-                  <Link to="/ordering/speciality">
-                    {" "}
+                  {' '}
+                  <Link to="/admin/ordering/speciality">
+                    {' '}
                     <i className="fas fa-sun"></i> <span> Speciality </span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               ) : (
                 <li>
-                  {" "}
-                  <Link to="/ordering/speciality">
-                    {" "}
+                  {' '}
+                  <Link to="/admin/ordering/speciality">
+                    {' '}
                     <i className="fas fa-sun"></i> <span> Speciality </span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               )}
             </ul>
             <ul className="treeview-menu">
-              {this.props.path_name === "/ordering/code-of-conduct" ? (
+              {this.props.path_name === '/admin/ordering/code-of-conduct' ? (
                 <li className="active">
-                  {" "}
-                  <Link to="/ordering/code-of-conduct">
-                    {" "}
-                    <i className="fas fa-laptop-code"></i>{" "}
+                  {' '}
+                  <Link to="/admin/ordering/code-of-conduct">
+                    {' '}
+                    <i className="fas fa-laptop-code"></i>{' '}
                     <span> Code of Conduct </span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               ) : (
                 <li>
-                  {" "}
-                  <Link to="/ordering/code-of-conduct">
-                    {" "}
-                    <i className="fas fa-laptop-code"></i>{" "}
+                  {' '}
+                  <Link to="/admin/ordering/code-of-conduct">
+                    {' '}
+                    <i className="fas fa-laptop-code"></i>{' '}
                     <span> Code of Conduct </span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               )}
             </ul>
             <ul className="treeview-menu">
-              {this.props.path_name === "/ordering/faq" ? (
+              {this.props.path_name === '/admin/ordering/faq' ? (
                 <li className="active">
-                  {" "}
-                  <Link to="/ordering/faq">
-                    {" "}
-                    <i className="fas fa-question-circle"></i>{" "}
+                  {' '}
+                  <Link to="/admin/ordering/faq">
+                    {' '}
+                    <i className="fas fa-question-circle"></i>{' '}
                     <span> FAQ </span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               ) : (
                 <li>
-                  {" "}
-                  <Link to="/ordering/faq">
-                    {" "}
-                    <i className="fas fa-question-circle"></i>{" "}
+                  {' '}
+                  <Link to="/admin/ordering/faq">
+                    {' '}
+                    <i className="fas fa-question-circle"></i>{' '}
                     <span> FAQ </span>
-                  </Link>{" "}
+                  </Link>{' '}
                 </li>
               )}
             </ul>

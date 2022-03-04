@@ -15,10 +15,8 @@ import logoImage from "../../../assets/images/cipla_logo_white.png";
 import userImage from "../../../assets/images/user2-160x160.jpg";
 import SRLLogo from "../../../assets/images/SRL-Logo.png";
 import SRLLogoNew from "../../../assets/images/logoJpg.933b09051.png";
-
 import swal from "sweetalert";
 import { showErrorMessage } from "../../../shared/handle_error";
-import Logo from "../logo/Logo"
 
 const initialValues = {
   first_name: "",
@@ -180,7 +178,7 @@ class Header extends Component {
     });
     return (
       <header className="main-header">
-        <Link to="/" className="logo">
+        <Link to="/admin" className="logo">
           {/* <!-- mini logo for sidebar mini 50x50 pixels --> */}
           <span className="logo-mini"><img src={SRLLogoNew} width="50" alt="SRL" /></span>
           {/*<!-- logo for regular state and mobile devices -->*/}
