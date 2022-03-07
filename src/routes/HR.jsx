@@ -10,12 +10,16 @@ import Dashboard from '../components/hr/dashboard/Dashboard';
 import JobCategories from '../components/admin/hr/master-jobs/job-categories/JobCategories';
 import AddJobCategories from '../components/admin/hr/master-jobs/job-categories/AddJobCategories';
 
+import Roles from '../components/hr/master-jobs/roles/Roles';
+import AddRoles from '../components/hr/master-jobs/roles/AddRoles';
+import JobSkills from '../components/hr/master-jobs/job-skills/JobSkills';
+import AddJobSkill from '../components/hr/master-jobs/job-skills/AddJobSkill';
+
 import '../assets/css/all.css';
 import '../assets/css/admin-style.css';
 import '../assets/css/admin-skin-blue.css';
 import 'react-bootstrap-table/dist/react-bootstrap-table.min.css';
-import Roles from '../components/hr/master-jobs/roles/Roles';
-import AddRoles from '../components/hr/master-jobs/roles/AddRoles';
+
 
 // Private Route for inner component
 const PrivateRoute = ({ component: RefComponent, ...rest }) => (
@@ -57,6 +61,15 @@ class HR extends Component {
           path="/hr/master-jobs/add-job-roles"
           component={AddRoles}
         />
+
+        {/* ===job skills==== */}
+
+        <PrivateRoute path="/hr/master-jobs/job-skills" component={JobSkills} />
+
+        <PrivateRoute
+          path="/hr/master-jobs/add-job-skills"
+          component={AddJobSkill}
+        /> 
 
         <Route from="*" component={AdminPageNotFound} />
       </Switch>
