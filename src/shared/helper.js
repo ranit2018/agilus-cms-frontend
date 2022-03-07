@@ -35,6 +35,15 @@ export function getSuperAdmin(token) {
   }
 }
 
+export function isAdminCheck(token){
+  if(token){
+    let isAdmin = false;
+    // logic for checking is admin
+    return isAdmin;
+  }
+  return false;
+}
+
 
 
 export function getUserDisplayName() {

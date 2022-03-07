@@ -8,6 +8,7 @@ import { Link, Redirect } from "react-router-dom";
 // redux store
 import { connect } from "react-redux";
 import { adminLogin } from "../../../store/actions/auth";
+import { isAdminCheck } from "../../../shared/helper";
 
 const validateLogin = Yup.object().shape({
   username: Yup.string().trim().required("Please enter your username"),
@@ -36,7 +37,12 @@ class Login extends Component {
       () => {
         var element = document.getElementsByTagName("body");
         element[0].classList.remove("bg_color_adm");
-        this.props.history.push("/dashboard");
+        // check to confirm isadmin
+        if(isAdminCheck("token")){
+          this.props.history.push("/admin/dashboard");
+        }else{
+          this.props.history.push("/hr/dashboard");
+        }
       },
       setErrors
     );
@@ -50,7 +56,11 @@ class Login extends Component {
 
     let token = localStorage.getItem("admin_token");
     if (token) {
-      return <Redirect to="/dashboard" />;
+      if(isAdminCheck(token)){
+        return <Redirect to="/admin/dashboard" />;
+      }else{
+        return <Redirect to="/hr/dashboard" />;
+      }
     }
 
     return (

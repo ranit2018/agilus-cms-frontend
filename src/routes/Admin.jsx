@@ -91,7 +91,7 @@ class Admin extends Component {
   render() {
     return (
       <Switch>
-        <Route exact path="/admin/" component={Login} />
+        <Route exact path="/" component={Login} />
         <PrivateRoute
           exact
           path="/admin/dashboard"

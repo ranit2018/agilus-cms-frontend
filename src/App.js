@@ -2,6 +2,7 @@ import React, { Component, lazy, Suspense } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { withRouter } from 'react-router';
 import { createBrowserHistory } from 'history';
+import { isAdminCheck } from './shared/helper';
 
 //import "./App.css";
 
@@ -24,12 +25,13 @@ class App extends Component {
         const currentLoginType = history.location.pathname.split('/')[1];
         const isAdmin = currentLoginType && currentLoginType.indexOf('admin') > -1;
         const isHR = currentLoginType && currentLoginType.indexOf('hr') > -1;
+        const token = localStorage.getItem("admin_token");
 
-        if (isAdmin) {
+        if (token && isAdminCheck(token)) {
             return (
                 <div className='wrapper' style={{ height: 'auto' }}>
                     <Switch>
-                        <Route path='/admin' component={WaitingComponent(AdminComponent)} />
+                        <Route path='/' component={WaitingComponent(AdminComponent)} />
                     </Switch>
                 </div>
             );
