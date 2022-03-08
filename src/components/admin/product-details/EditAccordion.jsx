@@ -10,7 +10,7 @@ import swal from "sweetalert";
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { showErrorMessage } from "../../../shared/handle_error";
 import whitelogo from "../../../assets/images/drreddylogo_white.png";
-import { htmlDecode } from "../../../shared/helper";
+import { htmlDecode, DEFAULT_CITY } from "../../../shared/helper";
 import Layout from "../layout/Layout";
 import SRL_API from "../../../shared/srl-axios";
 import ReactHtmlParser from "react-html-parser";
@@ -586,13 +586,15 @@ class AddAccordion extends Component {
             swiData[i].type === "1"
               ? swiData[i].newContent
               : swiData[i].newDescription,
-          type: swiData[i].type,
+          type: swiData[i].type, 
         });
       }
 
       let post_data_product = {
         product_name: NewAccordionDetails.product_name,
         product_code: NewAccordionDetails.product_code,
+        product_type: NewAccordionDetails.PROFILE_FLAG,
+        product_city: NewAccordionDetails.CITY_NM ? selectedValue.CITY_NM  : DEFAULT_CITY, 
         product_id: NewAccordionDetails.product_id,
       };
 
