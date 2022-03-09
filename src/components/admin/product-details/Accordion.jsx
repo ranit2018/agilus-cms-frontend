@@ -248,7 +248,9 @@ class Accordion extends Component {
         if (res.data && res.data.data && res.data.data.length > 0) {
           const searchDetails = res.data.data[0];
           resolve(searchDetails);
-        }
+        }else{
+          resolve(null)
+        } 
       })
       .catch((error) => {
         console.log(error);
