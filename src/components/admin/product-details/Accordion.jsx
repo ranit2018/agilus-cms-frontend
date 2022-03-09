@@ -270,6 +270,9 @@ class Accordion extends Component {
       if(product_data){
         product_city = product_data.CITY_NM;
         product_type = product_data.PROFILE_FLAG === 'T' ? 'test' : 'package';
+      }else{
+        product_type = 'test'; 
+        product_city = DEFAULT_CITY;
       }
     }
     window.open(`${process.env.REACT_APP_SRL}/${product_type}/${stringToSlug(product_city)}/${row.product_id}/${stringToSlug(row.product_name)}`,'_blank')
