@@ -268,6 +268,12 @@ const resolution_arr = [
     height: `183`,
   },
 
+  {
+    tag: `jobs`,
+    width: `919`,
+    height: `692`,
+  },
+
 ]
 
 export const generateResolutionText = (tag) => {

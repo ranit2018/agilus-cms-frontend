@@ -147,6 +147,7 @@ class HealthAndBenefits extends Component {
       )}`
     )
       .then((res) => {
+        console.log('res.data.data',res.data.data)
         this.setState({
           HealthAndBenefits: res.data.data,
           totalCount: res.data.count,
@@ -307,6 +308,7 @@ class HealthAndBenefits extends Component {
         getHeightWidth(this.state.file).then((dimension) => {
           const { height, width } = dimension;
           const offerDimension = getResolution("health-and-benefits");
+
           if (
             height != offerDimension.height ||
             width != offerDimension.width

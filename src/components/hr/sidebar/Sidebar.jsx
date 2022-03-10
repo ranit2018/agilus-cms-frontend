@@ -23,7 +23,8 @@ class Sidebar extends Component {
     if (
       path === '/hr/master-jobs/job-categories' ||
       path === '/hr/master-jobs/job-roles' ||
-      path === '/hr/master-jobs/job-skills'
+      path === '/hr/master-jobs/job-skills' ||
+      path === '/hr/master-jobs/job-location'
     ) {
       this.setState({ shown: '5' });
     }
@@ -79,6 +80,23 @@ class Sidebar extends Component {
             </li>
           )}
 
+          {this.props.path_name === '/hr/jobs' ? (
+            <li className="active">
+              {' '}
+              <Link to="/hr/jobs">
+                {' '}
+                <i className="fa fa-rss"></i> <span> Jobs </span>
+              </Link>{' '}
+            </li>
+          ) : (
+            <li>
+              {' '}
+              <Link to="/hr/jobs">
+                {' '}
+                <i className="fa fa-rss"></i> <span> Jobs </span>
+              </Link>{' '}
+            </li>
+          )}
           {/* ===================================== */}
           <li className={rotate == '5' ? 'treeview active' : 'treeview'}>
             <Link to="#" data-id="5" onClick={this.handlePlus}>
@@ -144,7 +162,8 @@ class Sidebar extends Component {
                   {' '}
                   <Link to="/hr/master-jobs/job-skills">
                     {' '}
-                    <i className="fas fa-compress"></i> <span> Job Skills </span>
+                    <i className="fas fa-compress"></i>{' '}
+                    <span> Job Skills </span>
                   </Link>{' '}
                 </li>
               ) : (
@@ -152,7 +171,27 @@ class Sidebar extends Component {
                   {' '}
                   <Link to="/hr/master-jobs/job-skills">
                     {' '}
-                    <i className="fas fa-compress"></i> <span> Job Skills </span>
+                    <i className="fas fa-compress"></i>{' '}
+                    <span> Job Skills </span>
+                  </Link>{' '}
+                </li>
+              )}
+              {this.props.path_name === '/hr/master-jobs/job-location' ? (
+                <li className="active">
+                  {' '}
+                  <Link to="/hr/master-jobs/job-location">
+                    {' '}
+                    <i className="fas fa-compress"></i>{' '}
+                    <span> Job Location </span>
+                  </Link>{' '}
+                </li>
+              ) : (
+                <li>
+                  {' '}
+                  <Link to="/hr/master-jobs/job-location">
+                    {' '}
+                    <i className="fas fa-compress"></i>{' '}
+                    <span> Job Location </span>
                   </Link>{' '}
                 </li>
               )}

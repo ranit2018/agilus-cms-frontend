@@ -80,19 +80,19 @@ const actionFormatter = (refObj) => (cell, row) => {
 };
 
 const initialValues = {
-  job_role: '',
+  job_location: '',
   status: '',
 };
 
-class Roles extends Component {
+class JobLocation extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      NewRoleDetails: {},
-      roleList: [],
-      roleDetails: {},
-      roleId: 0,
+      NewJobLocationDetails: {},
+      jobLocationList: [],
+      jobLocationDetails: {},
+      jobLocationId: 0,
       isLoading: false,
       showModal: false,
       showModalUpdate: false,
@@ -106,20 +106,21 @@ class Roles extends Component {
       value: '',
       selectedValue: '',
       suggestions: [],
-      search_job_role: '',
+      search_job_location: '',
     };
   }
 
-  getJobRoleList = (page = 1) => {
-    let { search_job_role } = this.state;
+  getJobLocationList = (page = 1) => {
+    let { search_job_location } = this.state;
+   
     API.get(
-      `api/job_portal/job/role?page=${page}&job_role=${encodeURIComponent(
-        search_job_role
+      `api/job_portal/job/location?page=${page}&job_location=${encodeURIComponent(
+        search_job_location
       )}`
     )
       .then((res) => {
         this.setState({
-          roleList: res.data.data,
+          jobLocationList: res.data.data,
           totalCount: res.data.count,
           isLoading: false,
         });
@@ -143,13 +144,14 @@ class Roles extends Component {
       dangerMode: true,
     }).then((willDelete) => {
       if (willDelete) {
-        this.deleteJobRole(id, row);
+        this.deleteJobLocation(id, row);
       }
     });
   };
 
-  deleteJobRole = (id, row) => {
-    API.post(`api/job_portal/job/role/${row.id}`)
+  deleteJobLocation = (id, row) => {
+    
+    API.post(`api/job_portal/job/location/${row.id}`)
       .then((res) => {
         swal({
           closeOnClickOutside: false,
@@ -157,7 +159,7 @@ class Roles extends Component {
           text: 'Record deleted successfully.',
           icon: 'success',
         }).then(() => {
-          this.getJobRoleList(this.state.activePage);
+          this.getJobLocationList(this.state.activePage);
         });
       })
       .catch((err) => {
@@ -168,13 +170,13 @@ class Roles extends Component {
       });
   };
 
-  getjobRoleDetails(id) {
-    API.get(`api/job_portal/job/role/${id}`)
+  getjobLocationDetails(id) {
+    API.get(`api/job_portal/job/location/${id}`)
       .then((res) => {
         this.setState({
           showModalUpdate: true,
-          roleDetails: res.data.data[0],
-          roleId: id,
+          jobLocationDetails: res.data.data[0],
+          jobLocationId: id,
         });
       })
       .catch((err) => {
@@ -183,7 +185,8 @@ class Roles extends Component {
   }
 
   changeStatus = (cell, status, row) => {
-    API.put(`api/job_portal/job/role/change_status/${row.id}`, {
+    
+    API.put(`api/job_portal/job/location/change_status/${row.id}`, {
       status: status == 1 ? String(0) : String(1),
     })
       .then((res) => {
@@ -193,7 +196,7 @@ class Roles extends Component {
           text: 'Record updated successfully.',
           icon: 'success',
         }).then(() => {
-          this.getJobRoleList(this.state.activePage);
+          this.getJobLocationList(this.state.activePage);
         });
       })
       .catch((err) => {
@@ -205,19 +208,19 @@ class Roles extends Component {
   };
 
   componentDidMount() {
-    this.getJobRoleList();
+    this.getJobLocationList();
   }
 
   //for edit part
   modalCloseHandler = () => {
-    this.setState({ showModal: false, job_role: '', status: '' });
+    this.setState({ showModal: false, job_location: '', status: '' });
   };
 
   //for edit part
   modalShowHandler = (event, id) => {
     if (id) {
       event.preventDefault();
-      this.getjobRoleDetails(id);
+      this.getjobLocationDetails(id);
       this.setState({ showModal: true });
     } else {
       this.setState({ showModal: false });
@@ -226,15 +229,15 @@ class Roles extends Component {
 
   handleEditSubmit = (values, actions) => {
     let postdata = {
-      job_role: values.job_role,
-      status: String(values.status),
+      job_location: values.job_location,
+      status: String(values.status), /////////
     };
-
+    
     let method = '';
-    let url = 'api/job_portal/job/role/';
+    let url = 'api/job_portal/job/location/';
 
     method = 'PUT';
-    url = `api/job_portal/job/role/${this.state.roleDetails.id}`;
+    url = `api/job_portal/job/location/${this.state.jobLocationDetails.id}`;
 
     API({
       method: method,
@@ -249,7 +252,7 @@ class Roles extends Component {
           text: 'Record updated successfully.',
           icon: 'success',
         }).then(() => {
-          this.props.history.push('/hr/master-jobs/job-roles');
+          this.props.history.push('/hr/master-jobs/job-location');
         });
       })
       .catch((err) => {
@@ -268,29 +271,29 @@ class Roles extends Component {
 
   handlePageChange = (pageNumber) => {
     this.setState({ activePage: pageNumber });
-    this.getJobRoleList(pageNumber > 0 ? pageNumber : 1);
+    this.getJobLocationList(pageNumber > 0 ? pageNumber : 1);
   };
 
   JobRoleSearch = (e) => {
     e.preventDefault();
-    const search_job_role = document.getElementById('search_job_role').value;
+    const search_job_location = document.getElementById('search_job_location').value;
 
-    if (search_job_role === '') {
+    if (search_job_location === '') {
       return false;
     }
 
     API.get(
-      `api/job_portal/job/role?page=1&job_role=${encodeURIComponent(
-        search_job_role
+      `api/job_portal/job/location?page=1&job_location=${encodeURIComponent(
+        search_job_location
       )}`
     )
       .then((res) => {
         this.setState({
-          roleList: res.data.data,
+          jobLocationList: res.data.data,
           totalCount: res.data.count,
           isLoading: false,
           activePage: 1,
-          search_job_role: search_job_role,
+          search_job_location: search_job_location,
 
           remove_search: true,
         });
@@ -304,17 +307,17 @@ class Roles extends Component {
   };
 
   clearSearch = () => {
-    document.getElementById('search_job_role').value = '';
+    document.getElementById('search_job_location').value = '';
 
     this.setState(
       {
-        search_job_role: '',
+        search_job_location: '',
 
         remove_search: false,
       },
       () => {
         this.setState({ activePage: 1 });
-        this.getJobRoleList();
+        this.getJobLocationList();
       }
     );
   };
@@ -325,12 +328,12 @@ class Roles extends Component {
 
   render() {
     const newInitialValues = Object.assign(initialValues, {
-      job_role: this.state.roleDetails.job_role,
-      status: this.state.roleDetails.status,
+      job_location: this.state.jobLocationDetails.job_location,
+      status: this.state.jobLocationDetails.status,
     });
 
     const validateStopFlag = Yup.object().shape({
-      job_role: Yup.string().required('Please enter job role'),
+      job_location: Yup.string().required('Please enter job location'),
       status: Yup.string()
         .trim()
         .required('Please select status')
@@ -343,7 +346,7 @@ class Roles extends Component {
             <div className="row">
               <div className="col-lg-12 col-sm-12 col-xs-12">
                 <h1>
-                  Manage Job Roles
+                  Manage Job Locations
                   <small />
                 </h1>
               </div>
@@ -355,19 +358,19 @@ class Roles extends Component {
                     className="btn btn-info btn-sm"
                     onClick={(e) =>
                       this.props.history.push({
-                        pathname: '/hr/master-jobs/add-job-roles',
+                        pathname: '/hr/master-jobs/add-job-location',
                       })
                     }
                   >
-                    <i className="fas fa-plus m-r-5" /> Add Roles
+                    <i className="fas fa-plus m-r-5" /> Add Job Location
                   </button>
                 </div>
                 <form className="form">
                   <div className="">
                     <input
                       className="form-control"
-                      id="search_job_role"
-                      placeholder="Filter by Role"
+                      id="search_job_location"
+                      placeholder="Filter by location"
                     />
                   </div>
 
@@ -397,13 +400,13 @@ class Roles extends Component {
           <section className="content">
             <div className="box">
               <div className="box-body">
-                <BootstrapTable data={this.state.roleList}>
+                <BootstrapTable data={this.state.jobLocationList}>
                   <TableHeaderColumn
                     isKey
-                    dataField="job_role"
+                    dataField="job_location"
                     dataFormat={__htmlDecode(this)}
                   >
-                    Roles Name
+                    Job Location
                   </TableHeaderColumn>
 
                   <TableHeaderColumn
@@ -475,7 +478,7 @@ class Roles extends Component {
                             ''
                           )} */}
                           <Modal.Header closeButton>
-                            <Modal.Title>Edit Job Role</Modal.Title>
+                            <Modal.Title>Edit Job Location</Modal.Title>
                           </Modal.Header>
                           <Modal.Body>
                             <div className="contBox">
@@ -483,15 +486,15 @@ class Roles extends Component {
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
-                                      Job Roles
+                                      Job Location
                                       <span className="impField">*</span>
                                     </label>
                                     <Field
-                                      name="job_role"
+                                      name="job_location"
                                       type="text"
                                       className={`form-control`}
                                       placeholder="Enter job role"
-                                      value={values.job_role || ''}
+                                      value={values.job_location || ''}
                                     />
                                   </div>
                                 </Col>
@@ -530,6 +533,7 @@ class Roles extends Component {
                             </div>
                           </Modal.Body>
                           <Modal.Footer>
+                         
                             <button
                               className={`btn btn-success btn-sm ${
                                 isValid ? 'btn-custom-green' : 'btn-disable'
@@ -539,7 +543,7 @@ class Roles extends Component {
                                 isValid ? (isSubmitting ? true : false) : true
                               }
                             >
-                              {this.state.roleDetails.id > 0
+                              {this.state.jobLocationDetails.id > 0
                                 ? isSubmitting
                                   ? 'Updating...'
                                   : 'Update'
@@ -568,4 +572,4 @@ class Roles extends Component {
     );
   }
 }
-export default Roles;
+export default JobLocation;

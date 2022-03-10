@@ -466,7 +466,7 @@ class JobSkills extends Component {
                     }) => {
                       return (
                         <Form>
-                          {this.state.showModalUpdate === true ? (
+                          {/* {this.state.showModalUpdate === true ? (
                             <div className="loading_reddy_outer">
                               <div className="loading_reddy">
                                 <img src={whitelogo} alt="loader" />
@@ -474,9 +474,9 @@ class JobSkills extends Component {
                             </div>
                           ) : (
                             ''
-                          )}
+                          )} */}
                           <Modal.Header closeButton>
-                            <Modal.Title>Edit Job Role</Modal.Title>
+                            <Modal.Title>Edit Job Skill</Modal.Title>
                           </Modal.Header>
                           <Modal.Body>
                             <div className="contBox">
@@ -484,7 +484,7 @@ class JobSkills extends Component {
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
-                                      Job Roles
+                                      Job Skill
                                       <span className="impField">*</span>
                                     </label>
                                     <Field

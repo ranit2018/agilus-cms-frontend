@@ -174,22 +174,22 @@ class JobCategories extends Component {
         showErrorMessage(err, this.props);
       });
   }
-  editCategories(e, id, row) {
-    e.preventDefault();
+  // editCategories(e, id, row) {
+  //   e.preventDefault();
 
-    API.get(`api/job_portal/job/category/${row.id}`)
-      .then((res) => {
-        this.props.history.push({
-          pathname: '/master-jobs/editjobcategory/' + id,
-          state: {
-            NewCategoryDetails: res.data.data,
-          },
-        });
-      })
-      .catch((err) => {
-        showErrorMessage(err, this.props);
-      });
-  }
+  //   API.get(`api/job_portal/job/category/${row.id}`)
+  //     .then((res) => {
+  //       this.props.history.push({
+  //         pathname: '/master-jobs/editjobcategory/' + id,
+  //         state: {
+  //           NewCategoryDetails: res.data.data,
+  //         },
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       showErrorMessage(err, this.props);
+  //     });
+  // }
   changeStatus = (cell, status, row) => {
     console.log('row.id', row.id);
     API.put(`api/job_portal/job/category/change_status/${row.id}`, {
