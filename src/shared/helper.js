@@ -1,5 +1,5 @@
 //SATYAJIT
-import jwt_decode from "jwt-decode";
+import jwt_decode from 'jwt-decode';
 
 export function getMyId() {
   try {
@@ -7,11 +7,9 @@ export function getMyId() {
     return token_data.did;
   } catch (error) {
     localStorage.clear();
-    window.location.href = "";
+    window.location.href = '';
   }
 }
-
-
 
 export function getAdminName(token) {
   try {
@@ -19,10 +17,9 @@ export function getAdminName(token) {
     return token_data.name;
   } catch (error) {
     localStorage.clear();
-    window.location.href = "";
+    window.location.href = '';
   }
 }
-
 
 export function getSuperAdmin(token) {
   try {
@@ -31,20 +28,18 @@ export function getSuperAdmin(token) {
     return token_data.admin;
   } catch (error) {
     localStorage.clear();
-    window.location.href = "";
+    window.location.href = '';
   }
 }
 
-export function isAdminCheck(token){
-  if(token){
+export function isAdminCheck(token) {
+  if (token) {
     let isAdmin = false;
     // logic for checking is admin
     return isAdmin;
   }
   return false;
 }
-
-
 
 export function getUserDisplayName() {
   try {
@@ -55,45 +50,54 @@ export function getUserDisplayName() {
     };
   } catch (error) {
     localStorage.clear();
-    window.location.href = "/";
+    window.location.href = '/';
   }
 }
 
 export function htmlDecode(string) {
-  const Entities = require("html-entities").AllHtmlEntities;
+  const Entities = require('html-entities').AllHtmlEntities;
   const entities = new Entities();
   return entities.decode(string);
 }
 
-export const stringToSlug = (str, seperator = "-") => {
-	if (str) {
-		str = str.replace(/[`~!@#$%^&*()_\-+=\[\]{};:'"\\|\/,.<>?\s]/g, ' ').toLowerCase(); // replace with space
-		str = str.replace(/^\s+|\s+$/gm, ''); //remove whitespace
-		str = str.replace(/\s+/g, seperator);	// replace with seperator
-		return str;
-	}
-	return '-';
-}
+export const stringToSlug = (str, seperator = '-') => {
+  if (str) {
+    str = str
+      .replace(/[`~!@#$%^&*()_\-+=\[\]{};:'"\\|\/,.<>?\s]/g, ' ')
+      .toLowerCase(); // replace with space
+    str = str.replace(/^\s+|\s+$/gm, ''); //remove whitespace
+    str = str.replace(/\s+/g, seperator); // replace with seperator
+    return str;
+  }
+  return '-';
+};
 
 export function localDate(cell) {
-  var date_time = cell.split(" ");
-  var date = date_time[0].split("-");
+  var date_time = cell.split(' ');
+  var date = date_time[0].split('-');
   var date_format = new Date(date[0], date[1] - 1, date[2]);
   return date_format;
 }
 
 export function localDateTime(cell) {
   if (cell) {
-    var date_time = cell.split(" ");
-    var date = date_time[0].split("-");
-    var time = date_time[1].split(":");
-    var date_format = new Date(date[0], date[1] - 1, date[2], time[0], time[1], time[2]);
+    var date_time = cell.split(' ');
+    var date = date_time[0].split('-');
+    var time = date_time[1].split(':');
+    var date_format = new Date(
+      date[0],
+      date[1] - 1,
+      date[2],
+      time[0],
+      time[1],
+      time[2]
+    );
     return date_format;
   }
 }
 
 export function localDateOnly(cell) {
-  var date = cell.split("-");
+  var date = cell.split('-');
   var date_format = new Date(date[0], date[1] - 1, date[2]);
   return date_format;
 }
@@ -103,7 +107,6 @@ export function trimString(length, string) {
   return `${trimmedString}...`;
 }
 
-
 export function inArray(needle, haystack) {
   var length = haystack.length;
   for (var i = 0; i < length; i++) {
@@ -112,13 +115,19 @@ export function inArray(needle, haystack) {
   return false;
 }
 
-export const setFieldName = (fieldName, sperator = "_") => {
-	if (fieldName) {
-		return fieldName.split(sperator).map((word) => {
-			return `${word.charAt(0).toUpperCase()}${word.substr(1).toLowerCase()} `;
-		}).join("").trim();
-	}
-	return fieldName;
+export const setFieldName = (fieldName, sperator = '_') => {
+  if (fieldName) {
+    return fieldName
+      .split(sperator)
+      .map((word) => {
+        return `${word.charAt(0).toUpperCase()}${word
+          .substr(1)
+          .toLowerCase()} `;
+      })
+      .join('')
+      .trim();
+  }
+  return fieldName;
 };
 
 export function getUserEmail() {
@@ -147,12 +156,12 @@ export const getHeightWidth = (file) => {
 
         resolve({
           height: height,
-          width: width
-        })
+          width: width,
+        });
       };
     };
-  })
-}
+  });
+};
 
 export const getHeightWidthFromURL = (url) => {
   console.log(url);
@@ -165,32 +174,32 @@ export const getHeightWidthFromURL = (url) => {
       console.log(height, width);
       resolve({
         height: this.height,
-        width: this.width
-      })
+        width: this.width,
+      });
     };
-  })
-}
+  });
+};
 
 const resolution_arr = [
   {
     tag: `home-banner-images`,
     width: `1920`,
-    height: `698`
+    height: `698`,
   },
   {
     tag: `landening-banner-images`,
     width: `1920`,
-    height: `620`
+    height: `620`,
   },
   {
     tag: `others-banner-images`,
     width: `1920`,
-    height: `350`
+    height: `350`,
   },
   {
     tag: `testimonial-images`,
     width: `257`,
-    height: `188`
+    height: `188`,
   },
   {
     tag: `event-images`,
@@ -233,7 +242,7 @@ const resolution_arr = [
     tag: `code_of_conduct`,
     width: `75`,
     height: `75`,
-  }, 
+  },
   {
     tag: `event`,
     width: `329`,
@@ -273,28 +282,27 @@ const resolution_arr = [
     width: `919`,
     height: `692`,
   },
-
-]
+];
 
 export const generateResolutionText = (tag) => {
   for (let i in resolution_arr) {
     if (resolution_arr[i].tag === tag) {
-      return `(The image resolution should be of width '${resolution_arr[i].width}px' and height '${resolution_arr[i].height}px')`
+      return `(The image resolution should be of width '${resolution_arr[i].width}px' and height '${resolution_arr[i].height}px')`;
     }
   }
-}
+};
 
 export const getResolution = (tag) => {
   for (let i in resolution_arr) {
     if (resolution_arr[i].tag === tag) {
-      return resolution_arr[i]
+      return resolution_arr[i];
     }
   }
-}
+};
 export const FILE_SIZE = 2097152;
 export const MB = 2;
-export const FILE_VALIDATION_MASSAGE = `(Image type should be .png,.jpeg,.jpg and maximum file size is ${MB} mb.)`
-export const FILE_VALIDATION_MASSAGE_SVG = `(Image type should be .png,.jpeg,.jpg,.svg and maximum file size is ${MB} mb.)`
-export const FILE_VALIDATION_TYPE_ERROR_MASSAGE = `The file does not match height and width validations.`
-export const FILE_VALIDATION_SIZE_ERROR_MASSAGE = `The file exceeds maximum size.`
+export const FILE_VALIDATION_MASSAGE = `(Image type should be .png,.jpeg,.jpg and maximum file size is ${MB} mb.)`;
+export const FILE_VALIDATION_MASSAGE_SVG = `(Image type should be .png,.jpeg,.jpg,.svg and maximum file size is ${MB} mb.)`;
+export const FILE_VALIDATION_TYPE_ERROR_MASSAGE = `The file does not match height and width validations.`;
+export const FILE_VALIDATION_SIZE_ERROR_MASSAGE = `The file exceeds maximum size.`;
 export const DEFAULT_CITY = 'Mumbai';

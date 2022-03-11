@@ -7,8 +7,8 @@ import AdminPageNotFound from '../components/404/AdminPageNotFound';
 
 import Dashboard from '../components/hr/dashboard/Dashboard';
 
-import JobCategories from '../components/admin/hr/master-jobs/job-categories/JobCategories';
-import AddJobCategories from '../components/admin/hr/master-jobs/job-categories/AddJobCategories';
+import JobCategories from '../components/hr/master-jobs/job-categories/JobCategories';
+import AddJobCategories from '../components/hr/master-jobs/job-categories/AddJobCategories';
 import Roles from '../components/hr/master-jobs/roles/Roles';
 import AddRoles from '../components/hr/master-jobs/roles/AddRoles';
 import JobSkills from '../components/hr/master-jobs/job-skills/JobSkills';
@@ -81,15 +81,7 @@ class HR extends Component {
           component={AddJobLocation}
         />
         {/* ===jobs==== */}
-        <PrivateRoute
-          path="/hr/jobs"
-          component={Jobs}
-        />
-
-        {/* <PrivateRoute
-          path="/hr/master-jobs/add-job-location"
-          component={AddJobLocation}
-        /> */}
+        <PrivateRoute path="/hr/jobs" component={Jobs} />
 
         <Route from="*" component={AdminPageNotFound} />
       </Switch>

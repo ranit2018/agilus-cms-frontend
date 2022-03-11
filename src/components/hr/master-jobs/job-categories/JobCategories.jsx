@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Link } from 'react-router-dom';
-import { Row, Col, Tooltip, OverlayTrigger } from 'react-bootstrap';
-import API from '../../../../../shared/admin-axios';
+import { Row, Col, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
+import API from "../../../../shared/admin-axios"
 import swal from 'sweetalert';
-import { showErrorMessage } from '../../../../../shared/handle_error';
+import { showErrorMessage } from '../../../../shared/handle_error';
 import Pagination from 'react-js-pagination';
-import { htmlDecode } from '../../../../../shared/helper';
+import { htmlDecode } from '../../../../shared/helper';
 import Switch from 'react-switch';
-import Layout from '../../../layout/Layout';
+import Layout from '../../layout/Layout';
+
+import { Formik, Field, Form } from 'formik'; // for edit part
+import * as Yup from 'yup'; // for edit part
 
 const __htmlDecode = (refObj) => (cell) => {
   return htmlDecode(cell);
@@ -45,8 +48,8 @@ const actionFormatter = (refObj) => (cell, row) => {
       <LinkWithTooltip
         tooltip="Click to edit"
         href="#"
-        //clicked={(e) => refObj.modalShowHandler(e, cell)}
-        clicked={(e) => refObj.editCategories(e, cell, row)}
+        clicked={(e) => refObj.modalShowHandler(e, cell)}
+        // clicked={(e) => refObj.editCategories(e, cell, row)}
         id="tooltip-1"
       >
         <i className="far fa-edit" />
@@ -75,6 +78,11 @@ const actionFormatter = (refObj) => (cell, row) => {
       </LinkWithTooltip>
     </div>
   );
+};
+
+const initialValues = {
+  category_name: '',
+  status: '',
 };
 
 class JobCategories extends Component {
@@ -174,24 +182,8 @@ class JobCategories extends Component {
         showErrorMessage(err, this.props);
       });
   }
-  // editCategories(e, id, row) {
-  //   e.preventDefault();
 
-  //   API.get(`api/job_portal/job/category/${row.id}`)
-  //     .then((res) => {
-  //       this.props.history.push({
-  //         pathname: '/master-jobs/editjobcategory/' + id,
-  //         state: {
-  //           NewCategoryDetails: res.data.data,
-  //         },
-  //       });
-  //     })
-  //     .catch((err) => {
-  //       showErrorMessage(err, this.props);
-  //     });
-  // }
   changeStatus = (cell, status, row) => {
-    console.log('row.id', row.id);
     API.put(`api/job_portal/job/category/change_status/${row.id}`, {
       status: status == 1 ? String(0) : String(1),
     })
@@ -217,22 +209,62 @@ class JobCategories extends Component {
     this.getCategoryList();
   }
 
+  //for edit part
   modalCloseHandler = () => {
-    this.setState({
-      categoryId: '',
-      showModal: false,
-      value: '',
-      selectedValue: '',
-    });
+    this.setState({ showModal: false, category_name: '', status: '' });
   };
 
+  //for edit part
   modalShowHandler = (event, id) => {
-    event.preventDefault();
     if (id) {
+      event.preventDefault();
       this.getcategoryDetails(id);
+      this.setState({ showModal: true });
     } else {
-      this.setState({ categoryDetails: {}, categoryId: '' });
+      this.setState({ showModal: false });
     }
+  };
+
+  handleEditSubmit = (values, actions) => {
+    let postdata = {
+      category_name: values.category_name,
+      status: values.status,
+    };
+
+    let method = '';
+    let url = 'api/job_portal/job/category/';
+
+    method = 'PUT';
+    url = `api/job_portal/job/category/${this.state.categoryDetails.id}`;
+
+    API({
+      method: method,
+      url: url,
+      data: postdata,
+    })
+      .then((res) => {
+        this.setState({ showModal: false });
+        swal({
+          closeOnClickOutside: false,
+          title: 'Success',
+          text: 'Record updated successfully.',
+          icon: 'success',
+        }).then(() => {
+          this.props.history.push('/hr/master-jobs/job-categories');
+        });
+      })
+      .catch((err) => {
+        this.setState({ showModalLoader: false });
+        if (err.data.status === 3) {
+          // this.setState({
+          //   showModal: false,
+          // });
+          showErrorMessage(err, this.props);
+        } else {
+          actions.setErrors(err.data.errors);
+          actions.setSubmitting(false);
+        }
+      });
   };
 
   handlePageChange = (pageNumber) => {
@@ -242,7 +274,6 @@ class JobCategories extends Component {
 
   CategorySearch = (e) => {
     e.preventDefault();
-
     const search_category_name = document.getElementById(
       'search_category_name'
     ).value;
@@ -290,10 +321,24 @@ class JobCategories extends Component {
       }
     );
   };
+
   Truncate = (str, number) => {
     return str.length > number ? str.substring(0, number) + '...' : str;
   };
+
   render() {
+    const newInitialValues = Object.assign(initialValues, {
+      category_name: this.state.categoryDetails.category_name,
+      status: this.state.categoryDetails.status,
+    });
+
+    const validateStopFlag = Yup.object().shape({
+      category_name: Yup.string().required('Please enter category'),
+      status: Yup.string()
+        .trim()
+        .required('Please select status')
+        .matches(/^[0|1]$/, 'Invalid status selected'),
+    });
     return (
       <Layout {...this.props}>
         <div className="content-wrapper">
@@ -301,7 +346,7 @@ class JobCategories extends Component {
             <div className="row">
               <div className="col-lg-12 col-sm-12 col-xs-12">
                 <h1>
-                  Manage Masters Job
+                  Manage Categories
                   <small />
                 </h1>
               </div>
@@ -313,7 +358,7 @@ class JobCategories extends Component {
                     className="btn btn-info btn-sm"
                     onClick={(e) =>
                       this.props.history.push({
-                        pathname: '/master-jobs/addjobcategory',
+                        pathname: '/hr/master-jobs/add-job-category',
                       })
                     }
                   >
@@ -397,6 +442,119 @@ class JobCategories extends Component {
                     </Col>
                   </Row>
                 ) : null}
+
+                {/* ======= Edit category Modal ======== */}
+
+                <Modal
+                  show={this.state.showModal}
+                  onHide={() => this.modalCloseHandler()}
+                  backdrop="static"
+                >
+                  <Formik
+                    initialValues={newInitialValues}
+                    validationSchema={validateStopFlag}
+                    onSubmit={this.handleEditSubmit}
+                  >
+                    {({
+                      values,
+                      errors,
+                      touched,
+                      isValid,
+                      isSubmitting,
+                      setFieldValue,
+                      setFieldTouched,
+                      handleChange,
+                      setErrors,
+                    }) => {
+                      return (
+                        <Form>
+                      
+                          <Modal.Header closeButton>
+                            <Modal.Title>Edit Category</Modal.Title>
+                          </Modal.Header>
+                          <Modal.Body>
+                            <div className="contBox">
+                              <Row>
+                                <Col xs={12} sm={12} md={12}>
+                                  <div className="form-group">
+                                    <label>
+                                      Category Name
+                                      <span className="impField">*</span>
+                                    </label>
+                                    <Field
+                                      name="category_name"
+                                      type="text"
+                                      className={`form-control`}
+                                      placeholder="Enter Category name"
+                                      value={values.category_name || ''}
+                                    />
+                                  </div>
+                                </Col>
+                              </Row>
+                              <Row>
+                                <Col xs={12} sm={12} md={12}>
+                                  <div className="form-group">
+                                    <label>
+                                      Status
+                                      <span className="impField">*</span>
+                                    </label>
+                                    <Field
+                                      name="status"
+                                      component="select"
+                                      className={`selectArowGray form-control`}
+                                      autoComplete="off"
+                                      value={values.status}
+                                    >
+                                      <option key="-1" value="">
+                                        Select
+                                      </option>
+                                      {this.state.selectStatus.map((val, i) => (
+                                        <option key={i} value={val.value}>
+                                          {val.label}
+                                        </option>
+                                      ))}
+                                    </Field>
+                                    {errors.status && touched.status ? (
+                                      <span className="errorMsg">
+                                        {errors.status}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                </Col>
+                              </Row>
+                            </div>
+                          </Modal.Body>
+                          <Modal.Footer>
+                            <button
+                              className={`btn btn-success btn-sm ${
+                                isValid ? 'btn-custom-green' : 'btn-disable'
+                              } m-r-10`}
+                              type="submit"
+                              disabled={
+                                isValid ? (isSubmitting ? true : false) : true
+                              }
+                            >
+                              {this.state.categoryDetails.id > 0
+                                ? isSubmitting
+                                  ? 'Updating...'
+                                  : 'Update'
+                                : isSubmitting
+                                ? 'Submitting...'
+                                : 'Submit'}
+                            </button>
+                            <button
+                              onClick={(e) => this.modalCloseHandler()}
+                              className={`btn btn-danger btn-sm`}
+                              type="button"
+                            >
+                              Close
+                            </button>
+                          </Modal.Footer>
+                        </Form>
+                      );
+                    }}
+                  </Formik>
+                </Modal>
               </div>
             </div>
           </section>

@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 // import { Link } from "react-router-dom";
 import { Formik, Field, Form } from 'formik';
-import API from '../../../../../shared/admin-axios';
+import API from "../../../../shared/admin-axios"
 import * as Yup from 'yup';
 import swal from 'sweetalert';
-import { showErrorMessage } from '../../../../../shared/handle_error';
-import whitelogo from '../../../../../assets/images/drreddylogo_white.png';
-import Layout from '../../../layout/Layout';
+import { showErrorMessage } from '../../../../shared/handle_error';
+import whitelogo from "../../../../assets/images/drreddylogo_white.png";
+import Layout from '../../layout/Layout';
 
 const initialValues = {
   category_name: '',

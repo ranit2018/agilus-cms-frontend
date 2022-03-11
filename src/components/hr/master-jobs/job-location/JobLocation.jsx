@@ -443,7 +443,7 @@ class JobLocation extends Component {
                   </Row>
                 ) : null}
 
-                {/* ======= Edit Job Role Modal ======== */}
+                {/* ======= Edit Job Location Modal ======== */}
 
                 <Modal
                   show={this.state.showModal}
@@ -468,15 +468,6 @@ class JobLocation extends Component {
                     }) => {
                       return (
                         <Form>
-                          {/* {this.state.showModalUpdate === true ? (
-                            <div className="loading_reddy_outer">
-                              <div className="loading_reddy">
-                                <img src={whitelogo} alt="loader" />
-                              </div>
-                            </div>
-                          ) : (
-                            ''
-                          )} */}
                           <Modal.Header closeButton>
                             <Modal.Title>Edit Job Location</Modal.Title>
                           </Modal.Header>

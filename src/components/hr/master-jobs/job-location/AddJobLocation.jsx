@@ -6,8 +6,10 @@ import API from '../../../../shared/admin-axios';
 import * as Yup from 'yup';
 import swal from 'sweetalert';
 import { showErrorMessage } from '../../../../shared/handle_error';
-import whitelogo from '../../../../assets/images/drreddylogo_white.png';
+// import whitelogo from '../../../../assets/images/drreddylogo_white.png';
+// import Layout from '../../layout/Layout';
 import Layout from '../../layout/Layout';
+
 
 const initialValues = {
   job_location: '',
@@ -75,7 +77,7 @@ class AddJobLocation extends Component {
         <div className="content-wrapper">
           <section className="content-header">
             <h1>
-              Add Job Role
+              Add Job Location
               <small />
             </h1>
             <input

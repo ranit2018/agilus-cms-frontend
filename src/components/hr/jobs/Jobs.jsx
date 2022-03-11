@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import {
   Row,
   Col,
-  Button,
   Modal,
   Tooltip,
   OverlayTrigger,
@@ -17,7 +16,6 @@ import { showErrorMessage } from '../../../shared/handle_error';
 import {
   htmlDecode,
   getHeightWidth,
-  getHeightWidthFromURL,
   generateResolutionText,
   getResolution,
   FILE_VALIDATION_MASSAGE,
@@ -730,10 +728,6 @@ class Jobs extends Component {
         jobDetails.status || jobDetails.status === 0
           ? jobDetails.status.toString()
           : '',
-      // desired_skill_set: jobDetails.desired_skill_set || jobDetails.desired_skill_set === 0 ? jobDetails.desired_skill_set.toString()
-      //   : '',
-      // job_category: jobDetails.job_category || jobDetails.job_category === 0 ? jobDetails.job_category.toString()
-      //   : '',
     });
 
     const validateStopFlagUpdate = Yup.object().shape({
@@ -753,7 +747,6 @@ class Jobs extends Component {
       job_title: Yup.string().required('Please enter job title'),
       job_role: Yup.string().required('Please select job role'),
       job_location: Yup.string().required('Please select job location'),
-      // job_category: Yup.string().required('Please enter job category'),
       category_name: Yup.string().required('Please select category name'),
       job_description: Yup.string().required('Please enter job description'),
       job_skill: Yup.string().required('Please select job_skill'),
@@ -771,7 +764,6 @@ class Jobs extends Component {
       job_title: Yup.string().required('Please enter job title'),
       job_role: Yup.string().required('Please select job role'),
       job_location: Yup.string().required('Please select job location'),
-      // job_category: Yup.string().required('Please enter job category'),
       category_name: Yup.string().required('Please select category name'),
       job_description: Yup.string().required('Please enter job description'),
       job_skill: Yup.string().required('Please enter job_skill '),
@@ -820,7 +812,6 @@ class Jobs extends Component {
                       {this.state.job_role_arr.map((val, i) => {
                         return (
                           <option key={i} value={val.value}>
-                           
                             {val.label}
                           </option>
                         );
@@ -837,7 +828,6 @@ class Jobs extends Component {
                       {this.state.job_location_arr.map((val, i) => {
                         return (
                           <option key={i} value={val.value}>
-                           
                             {val.label}
                           </option>
                         );
@@ -854,7 +844,6 @@ class Jobs extends Component {
                       {this.state.job_category_arr.map((val, i) => {
                         return (
                           <option key={i} value={val.value}>
-                           
                             {val.label}
                           </option>
                         );
@@ -871,7 +860,6 @@ class Jobs extends Component {
                       {this.state.job_skill_arr.map((val, i) => {
                         return (
                           <option key={i} value={val.value}>
-              
                             {val.label}
                           </option>
                         );
@@ -1121,7 +1109,7 @@ class Jobs extends Component {
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
-                                      job location
+                                      Job Location
                                       <span className="impField">*</span>
                                     </label>
                                     <Field
@@ -1156,7 +1144,7 @@ class Jobs extends Component {
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
-                                      job category
+                                      Job Category
                                       <span className="impField">*</span>
                                     </label>
                                     <Field
@@ -1194,7 +1182,7 @@ class Jobs extends Component {
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
-                                      desired skill set
+                                      Job Skill
                                       <span className="impField">*</span>
                                     </label>
                                     <Field
@@ -1228,7 +1216,7 @@ class Jobs extends Component {
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
-                                      job description
+                                      Job Description
                                       <span className="impField">*</span>
                                     </label>
                                     <Field
@@ -1254,9 +1242,7 @@ class Jobs extends Component {
                                   <div className="form-group">
                                     <label>
                                       Upload Image
-                                      {this.state.job_id == 0 ? (
-                                        <span className="impField">*</span>
-                                      ) : null}
+                                      <span className="impField">*</span>
                                       <br />{' '}
                                       <i>{this.state.fileValidationMessage}</i>
                                       <br />{' '}
