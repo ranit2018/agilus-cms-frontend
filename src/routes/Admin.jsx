@@ -72,6 +72,7 @@ import "../assets/css/all.css";
 import "../assets/css/admin-style.css";
 import "../assets/css/admin-skin-blue.css";
 import "react-bootstrap-table/dist/react-bootstrap-table.min.css";
+import DemographicUpdate from "../components/admin/demographic-update/DemographicUpdate";
 
 // Private Route for inner component
 const PrivateRoute = ({ component: RefComponent, ...rest }) => (
@@ -113,6 +114,7 @@ class Admin extends Component {
         <PrivateRoute path="/edit-offer/:id" component={EditOffer} />
         <PrivateRoute path="/sociallink" component={SocialLink} />
         <PrivateRoute path="/message" component={Message} />
+        <PrivateRoute path="/demographic-update" component={DemographicUpdate} />
 
         <PrivateRoute
           path="/lead_landing_page/product"

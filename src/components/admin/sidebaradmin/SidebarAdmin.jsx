@@ -1015,6 +1015,25 @@ class SidebarAdmin extends Component {
               </Link>{" "}
             </li>
           )}
+          {this.props.path_name === "/demographic-update" ? (
+            <li className="active">
+              {" "}
+              <Link to="/demographic-update">
+                {" "}
+                <i className="fa fa-magic" aria-hidden="true"></i>{" "}
+                <span> Demographic Update </span>
+              </Link>{" "}
+            </li>
+          ) : (
+            <li>
+              {" "}
+              <Link to="/demographic-update">
+                {" "}
+                <i className="fa fa-magic" aria-hidden="true"></i>{" "}
+                <span> Demographic Update </span>
+              </Link>{" "}
+            </li>
+          )}
           {this.props.path_name === "/gallery" ? (
             <li className="active">
               {" "}
