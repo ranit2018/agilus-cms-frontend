@@ -9,7 +9,7 @@ import {
   OverlayTrigger,
 } from 'react-bootstrap';
 import { Formik, Field, Form } from 'formik';
-import API from '../../../shared/admin-axios';
+import API from "../../../shared/hr-axios"
 import * as Yup from 'yup';
 import swal from 'sweetalert';
 import { showErrorMessage } from '../../../shared/handle_error';

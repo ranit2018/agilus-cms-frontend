@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 
 import { Route, Switch, Redirect } from 'react-router-dom';
 
-import Login from '../components/admin/login/Login';
+// import Login from '../components/admin/login/Login';
+import Login from "../components/hr/login/Login"
 import AdminPageNotFound from '../components/404/AdminPageNotFound';
 
 import Dashboard from '../components/hr/dashboard/Dashboard';

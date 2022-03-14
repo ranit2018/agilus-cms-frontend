@@ -20,7 +20,7 @@ class Layout extends Component {
       <Fragment>
         <Header isLoggedIn={isLoggedIn} />
         <Sidebar isLoggedIn={isLoggedIn} path_name={path_name} />
-        {this.props.children}
+          {this.props.children}
         <Footer isLoggedIn={isLoggedIn} />
       </Fragment>
     );

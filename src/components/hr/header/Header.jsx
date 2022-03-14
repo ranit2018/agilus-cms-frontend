@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import { getAdminName } from '../../../shared/helper';
+import { getHRName } from '../../../shared/helper';
 import { Row, Col, Button, Modal } from 'react-bootstrap';
 import { Formik, Field, Form } from 'formik';
-import API from '../../../shared/admin-axios';
+import API from '../../../shared/hr-axios';
 import * as Yup from 'yup';
 
 // connect to store
 import { connect } from 'react-redux';
-import { adminLogout } from '../../../store/actions/auth';
+import { hrLogout } from '../../../store/actions/auth';
 
 import logoImage from '../../../assets/images/cipla_logo_white.png';
 // import logoImageMini from '../../../assets/images/drreddylogosmall_white.png';
@@ -102,9 +102,10 @@ class Header extends Component {
   };
 
   logout = () => {
-    this.props.dispatch(adminLogout());
+    this.props.dispatch(hrLogout());
     this.props.history.push('/');
   };
+  
   handleSubmitEvent = (values, actions) => {
     const post_data = {
       first_name: values.first_name,
@@ -141,7 +142,7 @@ class Header extends Component {
     if (this.props.isLoggedIn === false) return null;
 
     // display name
-    const displayAdminName = getAdminName(localStorage.admin_token);
+    const displayHRName = getHRName(localStorage.hr_token);
     const { userDetails } = this.state;
     const newInitialValues = Object.assign(initialValues, {
       first_name: userDetails.first_name,

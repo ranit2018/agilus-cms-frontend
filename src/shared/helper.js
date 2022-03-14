@@ -21,10 +21,19 @@ export function getAdminName(token) {
   }
 }
 
+export function getHRName(token) {
+  try {
+    let token_data = jwt_decode(token);
+    return token_data.name;
+  } catch (error) {
+    localStorage.clear();
+    window.location.href = '';
+  }
+}
+
 export function getSuperAdmin(token) {
   try {
     let token_data = jwt_decode(token);
-    // console.log(token_data.admin)
     return token_data.admin;
   } catch (error) {
     localStorage.clear();
@@ -33,13 +42,25 @@ export function getSuperAdmin(token) {
 }
 
 export function isAdminCheck(token) {
-  if (token) {
+  let token_data = jwt_decode(token);
+  if (token_data.admin) {
+
     let isAdmin = false;
     // logic for checking is admin
     return isAdmin;
   }
   return false;
 }
+
+export function isHRCheck(token) {
+  let token_data = jwt_decode(token);
+  if (token_data && token_data.hr) {
+    // logic for checking is hr
+    return true;
+  }
+  return false;
+}
+
 
 export function getUserDisplayName() {
   try {

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Link } from 'react-router-dom';
 import { Row, Col, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
-import API from "../../../../shared/admin-axios"
+import API from "../../../../shared/hr-axios"
 import swal from 'sweetalert';
 import { showErrorMessage } from '../../../../shared/handle_error';
 import Pagination from 'react-js-pagination';

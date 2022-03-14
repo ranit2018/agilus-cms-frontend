@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 // import { Link } from "react-router-dom";
 import { Formik, Field, Form } from 'formik';
-import API from '../../../../shared/admin-axios';
+import API from '../../../../shared/hr-axios';
 import * as Yup from 'yup';
 import swal from 'sweetalert';
 import { showErrorMessage } from '../../../../shared/handle_error';
