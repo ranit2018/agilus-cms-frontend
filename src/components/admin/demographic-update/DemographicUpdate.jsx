@@ -226,11 +226,11 @@ class DemographicUpdate extends Component {
             activePage: 1,
             name: "",
             email: "",
-            mobile_no: "",
+            state: "",
             city: "",
-            type: "",
-            from: "",
-            to: "",
+            // type: "",
+            // from: "",
+            // to: "",
             showModal: false,
             selectedDay: '',
             post_data:null
@@ -238,33 +238,18 @@ class DemographicUpdate extends Component {
         }
     }
 
-    getLeadFormsList = (page = 1) => {
+    
 
-        const name = this.state.name;
-        const email = this.state.email;
-        const mobile_no = this.state.email;
-        const city = this.state.city;
-        let type = '';
-        if(this.state.selectedOption.length > 0){
-            type = this.state.selectedOption.map((val)=>{return val.value}).join(',');
-        }
-        let from = this.state.from;
-        let to = this.state.to;
-        if (from !== '' && to !== '') {
-            from = new Date(from);
-            to = new Date(to);
-            from = dateFormat(from, "yyyy-mm-dd");
-            to = dateFormat(to, "yyyy-mm-dd");
-        }
-
-
+    getPatientList = (page = 1) => {
+       
         API.get(
-            `/api/feed/lead_data?page=${page}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&mobile_no=${encodeURIComponent(mobile_no)}&city=${encodeURIComponent(city)}&type=${encodeURIComponent(type)}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(to)}`
+            `/api/home/demographic_list?page=1`
         )
             .then((res) => {
+                console.log('res list',res)
                 this.setState({
                     leadForms: res.data.data,
-                    totalCount: res.data.count,
+                    totalCount: Number(res.data.count),
                     isLoading: false,
                 });
             })
@@ -292,43 +277,25 @@ class DemographicUpdate extends Component {
         this.setState({showModal: false});
     };
 
-    leadFormSearch = (e) => {
+    patientSearch = (e) => {
         e.preventDefault();
 
         const name = document.getElementById("name").value;
         const email = document.getElementById("email").value;
-        const mobile_no = document.getElementById("mobile_no").value;
+        const state = document.getElementById("state").value;
         const city = document.getElementById("city").value;
 
-        let type = '';
-        if(this.state.selectedOption.length > 0){
-            type = this.state.selectedOption.map((val)=>{return val.value}).join(',');
-        }
-
-        let from = this.state.from;
-        let to = this.state.to;
-        if (name === "" && email === "" && mobile_no === "" && city === "" && type === "" && this.state.from === "" && this.state.to === "") {
-            return false;
-        }
-
-        if (this.state.from !== '' && this.state.to !== '') {
-            from = new Date(from);
-            to = new Date(to);
-            from = dateFormat(from, "yyyy-mm-dd");
-            to = dateFormat(to, "yyyy-mm-dd");
-        }
-
-        API.get(`/api/feed/lead_data?page=1&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&mobile_no=${encodeURIComponent(mobile_no)}&city=${encodeURIComponent(city)}&type=${encodeURIComponent(type)}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(to)}`)
+        API.get(`/api/feed/lead_data?page=1&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&city=${encodeURIComponent(city)}`)
             .then((res) => {
                 this.setState({
                     leadForms: res.data.data,
-                    totalCount: res.data.count,
+                    totalCount: Number(res.data.count),
                     isLoading: false,
                     name: name,
                     email: email,
-                    mobile_no: mobile_no,
+                    state: state,
                     city: city,
-                    type: type,
+                    // type: type,
                     activePage: 1,
                     remove_search: true
                 });
@@ -346,26 +313,11 @@ class DemographicUpdate extends Component {
 
         const name = document.getElementById("name").value;
         const email = document.getElementById("email").value;
-        const mobile_no = document.getElementById("mobile_no").value;
+        const state = document.getElementById("state").value;
         const city = document.getElementById("city").value;
-        let type = this.state.type;
 
-        let lead_id = '';
-        if(this.state.checkedRows.length > 0){
-            console.log(this.state.checkedRows);
-            lead_id = this.state.checkedRows.join(',');
-        }
 
-        let from = this.state.from;
-        let to = this.state.to;
-        if (from !== '' && to !== '') {
-            from = new Date(from);
-            to = new Date(to);
-            from = dateFormat(from, "yyyy-mm-dd");
-            to = dateFormat(to, "yyyy-mm-dd");
-        }
-
-        API.get(`/api/feed/download_lead_data?page=1&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&mobile_no=${encodeURIComponent(mobile_no)}&city=${encodeURIComponent(city)}&type=${encodeURIComponent(type)}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(to)}&lead_id=${encodeURIComponent(lead_id)}`, { responseType: 'blob' })
+        API.get(`/api/home/demographic_list?page=1&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&city=${encodeURIComponent(city)}`, { responseType: 'blob' })
             .then(res => {
                 let url = window.URL.createObjectURL(res.data);
                 let a = document.createElement('a');
@@ -383,69 +335,40 @@ class DemographicUpdate extends Component {
     };
 
     clearSearch = () => {
-
         document.getElementById("name").value = '';
         document.getElementById("email").value = '';
-        document.getElementById("mobile_no").value = '';
+        document.getElementById("state").value = '';
         document.getElementById("city").value = '';
-        //document.getElementById("type").value = '';
 
         this.setState(
             {
                 name: "",
                 email: "",
-                mobile_no: "",
+                state: "",
                 city: "",
                 selectedOption: [],
-                from: "",
-                to: "",
+                
                 remove_search: false,
             },
             () => {
                 this.setState({ activePage: 1 });
-                this.getLeadFormsList();
+                this.getPatientList();
 
             }
         );
     };
 
 
-
-
     componentDidMount() {
-        this.getLeadFormsList();
+        this.getPatientList();
     }
 
     handlePageChange = (pageNumber) => {
         this.setState({ activePage: pageNumber });
-        this.getLeadFormsList(pageNumber > 0 ? pageNumber : 1);
+        this.getPatientList(pageNumber > 0 ? pageNumber : 1);
     };
 
-    showFromMonth = () => {
-        const { from, to } = this.state;
-        if (!from) {
-            return;
-        }
-        if (moment(to).diff(moment(from), 'months') < 2) {
-            this.to.getDayPicker().showMonth(from);
-        }
-    }
-
-    handleFromChange = (from) => {
-        // Change the from date and focus the "to" input field
-        this.setState({
-            from: from
-        });
-    }
-
-    handleToChange = (to) => {
-        this.setState({ to: to }, this.showFromMonth);
-    }
-
     render() {
-        const { from, to } = this.state;
-        const modifiers = { start: from, end: to };
-
         return (
             <Layout {...this.props}>
                 <div className="content-wrapper">
@@ -453,7 +376,7 @@ class DemographicUpdate extends Component {
                         <div className="row">
                             <div className="col-lg-12 col-sm-12 col-xs-12 m-b-15">
                                 <h1>
-                                    Manage Lead Form Responses
+                                    Manage Patient Demography
                                     <small />
                                 </h1>
                             </div>
@@ -480,9 +403,9 @@ class DemographicUpdate extends Component {
                                     <div>
                                         <input
                                             className="form-control"
-                                            name="mobile_no"
-                                            id="mobile_no"
-                                            placeholder="Filter by Mobile Number"
+                                            name="state"
+                                            id="state"
+                                            placeholder="Filter by State"
                                         />
                                     </div>
                                     <div>
@@ -493,7 +416,7 @@ class DemographicUpdate extends Component {
                                             placeholder="Filter by City"
                                         />
                                     </div>
-                                    <div>
+                                    {/* <div>
                                         <DayPickerInput
                                             value={from}
                                             placeholder="Date From"
@@ -514,7 +437,7 @@ class DemographicUpdate extends Component {
                                             onDayChange={this.handleFromChange}
 
                                         />{' '}
-                                        {/* <DayPicker
+                                        / <DayPicker
                                             initialMonth={new Date(2017, 3)}
                                             selectedDays={this.state.selectedDay}
                                             onDayClick={this.handleDayClick}
@@ -526,9 +449,9 @@ class DemographicUpdate extends Component {
                                         //         before: new Date(2017, 3, 25),
                                         //     },
                                         // ]}
-                                        /> */}
-                                    </div>
-                                    <div>
+                                        /> /
+                                    </div> */}
+                                    {/* <div>
                                         <DayPickerInput
                                             ref={el => (this.to = el)}
                                             value={to}
@@ -548,7 +471,7 @@ class DemographicUpdate extends Component {
                                         />
                                     </div>
                                     <div>
-                                        {/* <select
+                                        / <select
                                             name="type"
                                             id="type"
                                             className="form-control auto"
@@ -563,7 +486,7 @@ class DemographicUpdate extends Component {
                                             <option value="10">Feedback</option>
                                             <option value="11">Prescription Upload</option>
 
-                                        </select> */}
+                                        </select> /
 
                                         <Select
                                             placeholder="Select Type"
@@ -582,14 +505,14 @@ class DemographicUpdate extends Component {
                                             options={options}
                                         />
 
-                                    </div>
+                                    </div> */}
                                     <div>
                                         <div>
                                             <input
                                                 type="submit"
                                                 value="Search"
                                                 className="btn btn-warning btn-sm"
-                                                onClick={(e) => this.leadFormSearch(e)}
+                                                onClick={(e) => this.patientSearch(e)}
                                             />
                                             {this.state.remove_search ? (
                                                 <a
@@ -646,12 +569,12 @@ class DemographicUpdate extends Component {
 
                                         }} /> */}
                                     </TableHeaderColumn>
-                                    <TableHeaderColumn
+                                    {/* <TableHeaderColumn
                                         dataField="type"
                                         dataFormat={setType(this)}
                                     >
                                         Type
-                                    </TableHeaderColumn>
+                                    </TableHeaderColumn> */}
 
                                     <TableHeaderColumn
                                         isKey
@@ -667,10 +590,10 @@ class DemographicUpdate extends Component {
                                         Email
                                     </TableHeaderColumn>
                                     <TableHeaderColumn
-                                        dataField="mobile_no"
+                                        dataField="state"
                                     // dataFormat={htmlDecode(this)}
                                     >
-                                        Mobile Number
+                                        State
                                     </TableHeaderColumn>
                                     <TableHeaderColumn
                                         dataField="city"
@@ -703,7 +626,7 @@ class DemographicUpdate extends Component {
                     
                                     <Modal.Header closeButton>
                                     <Modal.Title>
-                                            Lead Form Details
+                                            Patient Details
                                     </Modal.Title>
                                     </Modal.Header>
                                     <Modal.Body>
@@ -722,7 +645,7 @@ class DemographicUpdate extends Component {
                                     </Modal.Footer>
                                 </Modal>
 
-
+                                {console.log('this.state.totalCount',this.state.totalCount)}
                                 {this.state.totalCount > 10 ? (
                                     <Row>
                                         <Col md={12}>

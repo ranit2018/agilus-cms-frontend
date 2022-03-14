@@ -262,6 +262,7 @@ class LeadForms extends Component {
             `/api/feed/lead_data?page=${page}&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&mobile_no=${encodeURIComponent(mobile_no)}&city=${encodeURIComponent(city)}&type=${encodeURIComponent(type)}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(to)}`
         )
             .then((res) => {
+                console.log('resr',res.data.data)
                 this.setState({
                     leadForms: res.data.data,
                     totalCount: res.data.count,
