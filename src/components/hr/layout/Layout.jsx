@@ -12,7 +12,7 @@ class Layout extends Component {
 
   render() {
     const isLoggedIn =
-      localStorage.getItem('admin_token') !== null ? true : false;
+      localStorage.getItem('hr_token') !== null ? true : false;
 
     const path_name = this.props.history.location.pathname;
 

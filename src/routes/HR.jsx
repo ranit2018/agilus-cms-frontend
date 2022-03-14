@@ -27,7 +27,7 @@ const PrivateRoute = ({ component: RefComponent, ...rest }) => (
   <Route
     {...rest}
     render={(props) =>
-      localStorage.getItem('admin_token') ? (
+      localStorage.getItem('hr_token') ? (
         <RefComponent {...props} />
       ) : (
         <Redirect to="/" />

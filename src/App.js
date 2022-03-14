@@ -25,9 +25,9 @@ class App extends Component {
         const currentLoginType = history.location.pathname.split('/')[1];
         const isAdmin = currentLoginType && currentLoginType.indexOf('admin') > -1;
         const isHR = currentLoginType && currentLoginType.indexOf('hr') > -1;
-        const token = localStorage.getItem("admin_token");
+        // const token = localStorage.getItem("admin_token");
 
-        if (token && isAdminCheck(token)) {
+        if (isAdmin) {
             return (
                 <div className='wrapper' style={{ height: 'auto' }}>
                     <Switch>
