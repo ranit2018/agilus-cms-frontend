@@ -224,7 +224,7 @@ class DemographicUpdate extends Component {
 
         this.setState({
           leadForms: filterData,
-          totalCount: Number(filterData.length),
+          totalCount: Number(res.data.count),
           post_data: dataArr,
           isLoading: false,
         });
@@ -357,7 +357,7 @@ class DemographicUpdate extends Component {
   };
 
   componentDidMount() {
-    this.getPatientList();
+    this.getPatientList(this.state.activePage);
   }
 
   handlePageChange = (pageNumber) => {
