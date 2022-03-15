@@ -337,14 +337,12 @@ class Banner extends Component {
       } else {
         let dimension = await getHeightWidth(this.state.banner_file);
         const { height, width } = dimension;
-        console.log(height, width, values.page_name);
         const page = values.page_name;
         let err_count = 0;
         let bannerDimension;
         if (page == 1) { bannerDimension = getResolution("home-banner-images") }
         else if (page == 10) { bannerDimension = getResolution("landening-banner-images") }
         else { bannerDimension = getResolution("others-banner-images") }
-        console.log(bannerDimension);
         if (Number(values.page_name) == 10 && (height != bannerDimension.height || width != bannerDimension.width)) {
           actions.setErrors({ banner_file: FILE_VALIDATION_TYPE_ERROR_MASSAGE });
           actions.setSubmitting(false);
@@ -412,7 +410,7 @@ class Banner extends Component {
     } else {
       getHeightWidthFromURL(values.banner_url).then(dimension => {
         const { height, width } = dimension;
-        console.log(height, width, values.page_name);
+        // console.log(height, width, values.page_name);
         const page = this.state.page;
         let err_count = 0;
         if (Number(values.page_name) == 10 && (height != 620 || width != 1920)) {
@@ -595,7 +593,6 @@ class Banner extends Component {
     //console.log(event.target.files);
     setFieldTouched("banner_file");
     setFieldValue("banner_file", event.target.value);
-    console.log(event.target.files);
     const SUPPORTED_FORMATS = ["image/png", "image/jpeg", "image/jpg"];
     if (!event.target.files[0]) {
       //Supported

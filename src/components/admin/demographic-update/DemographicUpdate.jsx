@@ -50,7 +50,6 @@ const generateHTML = (data) => {
     if (Object.hasOwnProperty.call(data, key)) {
       const element = data[key];
       let uploadData = data["File"];
-      console.log('uploadData',uploadData)
       if (
         [
           "Company Profile",
@@ -200,8 +199,6 @@ class DemographicUpdate extends Component {
   getPatientList = (page) => {
     API.get(`/api/home/demographic_list?page=${page}`)
       .then((res) => {
-        console.log('res.data.data',res.data.data)
-        console.log('res',res)
 
         let filterData = [];
         let dataArr = [];
@@ -218,9 +215,6 @@ class DemographicUpdate extends Component {
             });
           }
         }
-        console.log('dataArr',dataArr)
-        console.log('filterData',filterData)
-        console.log('filterData',filterData.length)
 
         this.setState({
           leadForms: filterData,
@@ -262,7 +256,6 @@ class DemographicUpdate extends Component {
       )}&city=${encodeURIComponent(city)}`
     )
       .then((res) => {
-        console.log('res.data.data',res.data.data)
         let filterData = [];
         let dataArr = [];
 
@@ -278,12 +271,9 @@ class DemographicUpdate extends Component {
             });
           }
         }
-        console.log('dataArr',dataArr)
-        console.log('filterData',filterData)
-        console.log('filterData',filterData.length)
         this.setState({
           leadForms: filterData,
-          totalCount: Number(filterData.length),
+          totalCount: Number(res.data.count),
           isLoading: false,
           name: name,
           email: email,
@@ -531,7 +521,6 @@ class DemographicUpdate extends Component {
                     </button>
                   </Modal.Footer>
                 </Modal>
-                { console.log('this.state.totalCount',this.state.totalCount)}
 
                 {this.state.totalCount > 10 ? (
                   <Row>

@@ -265,7 +265,7 @@ class LeadForms extends Component {
 
                 this.setState({
                     leadForms: res.data.data,
-                    totalCount: res.data.count,
+                    totalCount: Number(res.data.count),
                     isLoading: false,
                 });
             })
@@ -323,7 +323,7 @@ class LeadForms extends Component {
             .then((res) => {
                 this.setState({
                     leadForms: res.data.data,
-                    totalCount: res.data.count,
+                    totalCount: Number(res.data.count),
                     isLoading: false,
                     name: name,
                     email: email,
