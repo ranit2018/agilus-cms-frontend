@@ -38,11 +38,11 @@ class Login extends Component {
         var element = document.getElementsByTagName("body");
         element[0].classList.remove("bg_color_adm");
         // check to confirm isadmin
-        if(isAdminCheck("token")){
-          this.props.history.push("/admin/dashboard");
-        }else{
-          this.props.history.push("/hr/dashboard");
-        }
+        // if(isAdminCheck("token")){
+        //   this.props.history.push("/admin/dashboard");
+        // }else{
+        //   this.props.history.push("/hr/dashboard");
+        // }
       },
       setErrors
     );

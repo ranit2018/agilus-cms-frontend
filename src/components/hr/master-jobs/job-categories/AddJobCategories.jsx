@@ -34,8 +34,6 @@ class AddJobCategories extends Component {
       status: values.status,
     };
 
-    console.log('post_data', post_data);
-
     let url = `api/job_portal/job/category`;
     let method = 'POST';
     API({
@@ -51,7 +49,7 @@ class AddJobCategories extends Component {
           text: 'Record added successfully.',
           icon: 'success',
         }).then(() => {
-          this.props.history.push('/master-jobs/jobcategories');
+          this.props.history.push('/hr/master-jobs/job-categories');
         });
       })
       .catch((err) => {

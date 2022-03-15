@@ -362,6 +362,7 @@ class Jobs extends Component {
     document.getElementById('search_category_name').value = '';
     document.getElementById('search_job_skill').value = '';
     document.getElementById('search_job_location').value = '';
+    document.getElementById('search_status').value = '';
 
     this.setState(
       {
@@ -370,6 +371,7 @@ class Jobs extends Component {
         search_job_location: '',
         search_category_name: '',
         search_job_skill: '',
+        search_status: '',
 
         remove_search: false,
       },
@@ -555,20 +557,6 @@ class Jobs extends Component {
   };
 
   handleSubmitEventUpdate = async (values, actions) => {
-    // let postdata = {
-    //   job_id: this.state.jobDetails.job_id ? this.state.jobDetails.job_id : '',
-    //   feature_image: values.feature_image,
-    //   job_title: values.job_title,
-    //   job_role: values.job_role,
-    //   job_location: values.job_location,
-    //   job_category: values.job_category,
-    //   job_description: values.job_description,
-    //   job_skill: values.desired_skill_set,
-    //   desired_skill_set: values.desired_skill_set,
-    //   date_posted: new Date().toLocaleString(),
-    //   status: String(values.status),
-    // };
-    // console.log('postdata', postdata);
 
     let formData = new FormData();
 
