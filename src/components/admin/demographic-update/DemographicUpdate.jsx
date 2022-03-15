@@ -50,6 +50,7 @@ const generateHTML = (data) => {
     if (Object.hasOwnProperty.call(data, key)) {
       const element = data[key];
       let uploadData = data["File"];
+      console.log('uploadData',uploadData)
       if (
         [
           "Company Profile",
@@ -196,22 +197,34 @@ class DemographicUpdate extends Component {
     };
   }
 
-  getPatientList = (page = 1) => {
+  getPatientList = (page) => {
     API.get(`/api/home/demographic_list?page=${page}`)
       .then((res) => {
+        console.log('res.data.data',res.data.data)
+        console.log('res',res)
+
+        let filterData = [];
         let dataArr = [];
+
         for (let i = 0; i < res.data.data.length; i++) {
-          dataArr = {
-            Name: res.data.data[i].name,
-            Email: res.data.data[i].email,
-            City: res.data.data[i].city,
-            State: res.data.data[i].state,
-            File: res.data.data[i].demographic_doc,
-          };
+          if(res.data.data[i].demographic_doc){
+            filterData.push(res.data.data[i]);
+            dataArr.push ({
+              Name: res.data.data[i].name,
+              Email: res.data.data[i].email,
+              City: res.data.data[i].city,
+              State: res.data.data[i].state,
+              File: res.data.data[i].demographic_doc,
+            });
+          }
         }
+        console.log('dataArr',dataArr)
+        console.log('filterData',filterData)
+        console.log('filterData',filterData.length)
+
         this.setState({
-          leadForms: res.data.data,
-          totalCount: Number(res.data.count),
+          leadForms: filterData,
+          totalCount: Number(filterData.length),
           post_data: dataArr,
           isLoading: false,
         });
@@ -249,19 +262,28 @@ class DemographicUpdate extends Component {
       )}&city=${encodeURIComponent(city)}`
     )
       .then((res) => {
+        console.log('res.data.data',res.data.data)
+        let filterData = [];
         let dataArr = [];
+
         for (let i = 0; i < res.data.data.length; i++) {
-          dataArr = {
-            Name: res.data.data[i].name,
-            Email: res.data.data[i].email,
-            City: res.data.data[i].city,
-            State: res.data.data[i].state,
-            File: res.data.data[i].demographic_doc,
-          };
+          if(res.data.data[i].demographic_doc){
+            filterData.push(res.data.data[i]);
+            dataArr.push ({
+              Name: res.data.data[i].name,
+              Email: res.data.data[i].email,
+              City: res.data.data[i].city,
+              State: res.data.data[i].state,
+              File: res.data.data[i].demographic_doc,
+            });
+          }
         }
+        console.log('dataArr',dataArr)
+        console.log('filterData',filterData)
+        console.log('filterData',filterData.length)
         this.setState({
-          leadForms: res.data.data,
-          totalCount: Number(res.data.count),
+          leadForms: filterData,
+          totalCount: Number(filterData.length),
           isLoading: false,
           name: name,
           email: email,
@@ -509,6 +531,7 @@ class DemographicUpdate extends Component {
                     </button>
                   </Modal.Footer>
                 </Modal>
+                { console.log('this.state.totalCount',this.state.totalCount)}
 
                 {this.state.totalCount > 10 ? (
                   <Row>
