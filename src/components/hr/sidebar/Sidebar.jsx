@@ -79,13 +79,13 @@ class Sidebar extends Component {
               </Link>{' '}
             </li>
           )}
-
+          {/*====jobs======*/}
           {this.props.path_name === '/hr/jobs' ? (
             <li className="active">
               {' '}
               <Link to="/hr/jobs">
                 {' '}
-                <i className="fa fa-rss"></i> <span> Jobs </span>
+                <i className="fa fa-building"></i> <span> Jobs </span>
               </Link>{' '}
             </li>
           ) : (
@@ -93,7 +93,7 @@ class Sidebar extends Component {
               {' '}
               <Link to="/hr/jobs">
                 {' '}
-                <i className="fa fa-rss"></i> <span> Jobs </span>
+                <i className="fa fa-building"></i> <span> Jobs </span>
               </Link>{' '}
             </li>
           )}
@@ -197,6 +197,42 @@ class Sidebar extends Component {
               )}
             </ul>
           </li>
+          {/*====applied jobs======*/}
+          {this.props.path_name === '/hr/appliedjobs' ? (
+            <li className="active">
+              {' '}
+              <Link to="/hr/appliedjobs">
+                {' '}
+                <i className="fab fa-black-tie"></i> <span> Applied Jobs </span>
+              </Link>{' '}
+            </li>
+          ) : (
+            <li>
+              {' '}
+              <Link to="/hr/appliedjobs">
+                {' '}
+                <i className="fab fa-black-tie"></i> <span> Applied Jobs </span>
+              </Link>{' '}
+            </li>
+          )}
+          {/*====registers users======*/}
+          {this.props.path_name === '/hr/registered-users' ? (
+            <li className="active">
+              {' '}
+              <Link to="/hr/registered-users">
+                {' '}
+                <i className="fa fa-users"></i> <span> Registered Users </span>
+              </Link>{' '}
+            </li>
+          ) : (
+            <li>
+              {' '}
+              <Link to="/hr/registered-users">
+                {' '}
+                <i className="fa fa-users"></i> <span> Registered Users </span>
+              </Link>{' '}
+            </li>
+          )}
         </ul>
       </section>
     );

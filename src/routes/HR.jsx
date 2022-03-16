@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 import { Route, Switch, Redirect } from 'react-router-dom';
 
-// import Login from '../components/admin/login/Login';
 import Login from "../components/hr/login/Login"
 import AdminPageNotFound from '../components/404/AdminPageNotFound';
 
@@ -16,12 +15,16 @@ import JobSkills from '../components/hr/master-jobs/job-skills/JobSkills';
 import AddJobSkill from '../components/hr/master-jobs/job-skills/AddJobSkill';
 import JobLocation from '../components/hr/master-jobs/job-location/JobLocation';
 import AddJobLocation from '../components/hr/master-jobs/job-location/AddJobLocation';
+import Jobs from '../components/hr/jobs/Jobs';
+import AppliedJobs from '../components/hr/applied-jobs/AppliedJobs';
+import RegisteredUsers from '../components/hr/registered-users/RegisteredUsers';
+
 
 import '../assets/css/all.css';
 import '../assets/css/admin-style.css';
 import '../assets/css/admin-skin-blue.css';
 import 'react-bootstrap-table/dist/react-bootstrap-table.min.css';
-import Jobs from '../components/hr/jobs/Jobs';
+
 
 // Private Route for inner component
 const PrivateRoute = ({ component: RefComponent, ...rest }) => (
@@ -83,6 +86,13 @@ class HR extends Component {
         />
         {/* ===jobs==== */}
         <PrivateRoute path="/hr/jobs" component={Jobs} />
+
+        {/* ====Applied jobs====*/}
+        <PrivateRoute path="/hr/appliedjobs" component={AppliedJobs} />
+
+        {/*====registered users====*/}
+        <PrivateRoute path="/hr/registered-users" component={RegisteredUsers} />
+
 
         <Route from="*" component={AdminPageNotFound} />
       </Switch>

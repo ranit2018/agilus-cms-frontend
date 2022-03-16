@@ -190,7 +190,29 @@ class Jobs extends Component {
   }
 
   getJobsList = (page = 1) => {
-    API.get(`/api/job_portal/job?page=${page}`)
+
+    const search_job_title = document.getElementById('search_job_title').value;
+    const search_job_role = document.getElementById('search_job_role').value;
+    const search_category_name = document.getElementById(
+      'search_category_name'
+    ).value;
+    const search_job_skill = document.getElementById('search_job_skill').value;
+    const search_job_location = document.getElementById(
+      'search_job_location'
+    ).value;
+    const search_status = document.getElementById('search_status').value;
+
+    API.get(`/api/job_portal/job?page=${page}&job_title=${encodeURIComponent(
+        search_job_title
+      )}&job_role=${encodeURIComponent(
+        search_job_role
+      )}&job_category=${encodeURIComponent(
+        search_category_name
+      )}&job_desired_skill_set=${encodeURIComponent(
+        search_job_skill
+      )}&job_location=${encodeURIComponent(
+        search_job_location
+      )}&status=${encodeURIComponent(search_status)}`)
       .then((res) => {
         this.setState({
           jobs: res.data.data,
@@ -284,10 +306,8 @@ class Jobs extends Component {
     API.get(`api/job_portal/job/${id}`)
       .then((res) => {
         this.setState({
-          // jobs: res.data.data,
           jobDetails: res.data.data[0],
           jobId: res.data.data[0].job_id,
-          // totalCount: Number(res.data.count),
           isLoading: false,
           showModal: true,
           showModalLoader: true,
@@ -635,7 +655,7 @@ class Jobs extends Component {
             text: 'Updated Successfully',
             icon: 'success',
           }).then(() => {
-            this.getHealthAndBenefitList();
+            this.getJobsList();
           });
         })
         .catch((err) => {
