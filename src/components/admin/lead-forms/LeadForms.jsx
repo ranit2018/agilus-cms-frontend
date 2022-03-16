@@ -46,32 +46,32 @@ const generateHTML = (data) => {
         if (Object.hasOwnProperty.call(data, key)) {
             const element = data[key];
 
-            if( ['Company Profile','Product Specification','Prescription', 'UTM'].includes(key)){
-                if(key == 'Prescription'){
-                    let map_data = element.map((val,index)=>{
+            if (['Company Profile', 'Product Specification', 'Prescription', 'UTM'].includes(key)) {
+                if (key == 'Prescription') {
+                    let map_data = element.map((val, index) => {
                         return <Row>
-                                    <Col xs={6} sm={6} md={6} key={index} >
-                                        {key} {index+1}
-                                    </Col>
-                                    <Col xs={6} sm={6} md={6}>
-                                        <a target="_blank" href={val} >Download</a>
-                                    </Col>
-                                </Row>
+                            <Col xs={6} sm={6} md={6} key={index} >
+                                {key} {index + 1}
+                            </Col>
+                            <Col xs={6} sm={6} md={6}>
+                                <a target="_blank" href={val} >Download</a>
+                            </Col>
+                        </Row>
                     })
 
                     ret.push(map_data);
-                }else if(key == 'UTM'){
+                } else if (key == 'UTM') {
                     const items = element ? element.split('&') : [];
-                    if(items.length > 0){
-                        let utm_data = items.map((item,index) => {
+                    if (items.length > 0) {
+                        let utm_data = items.map((item, index) => {
                             const values = item ? item.split('=') : [];
-                            if(values && values.length > 1){
+                            if (values && values.length > 1) {
                                 return (
                                     <Row>
                                         <Col xs={6} sm={6} md={6} key={`utm_${index}`} >
                                             {`${setFieldName(values[0])}`}
                                         </Col>
-                                        <Col xs={6} sm={6} md={6} key={`utm_${index}`} style={{wordWrap: 'break-word'}}>
+                                        <Col xs={6} sm={6} md={6} key={`utm_${index}`} style={{ wordWrap: 'break-word' }}>
                                             {`${values[1]}`}
                                         </Col>
                                     </Row>
@@ -80,7 +80,7 @@ const generateHTML = (data) => {
                         })
                         ret.push(utm_data);
                     }
-                }else{
+                } else {
                     ret.push(
                         <Row>
                             <Col xs={6} sm={6} md={6} key={key} >
@@ -93,8 +93,8 @@ const generateHTML = (data) => {
                     );
                 }
 
-                
-            }else{
+
+            } else {
                 ret.push(
                     <Row>
                         <Col xs={6} sm={6} md={6} key={key} >
@@ -106,7 +106,7 @@ const generateHTML = (data) => {
                     </Row>
                 );
             }
-            
+
         }
     }
 
@@ -135,28 +135,28 @@ const setType = (refObj) => (cell) => {
     }
 };
 
-const generateCheckbox = (refObj) => (cell,row) => {
-    
+const generateCheckbox = (refObj) => (cell, row) => {
+
     let defaultChecked = false;
 
-    if(refObj.state.checkedRows.includes(row.id)){
+    if (refObj.state.checkedRows.includes(row.id)) {
         defaultChecked = true;
     }
 
-    return <input 
-        type="checkbox" 
-        checked={defaultChecked} 
-        onChange={(e)=>{
+    return <input
+        type="checkbox"
+        checked={defaultChecked}
+        onChange={(e) => {
             let prev = refObj.state.checkedRows;
-            if(e.target.checked){
+            if (e.target.checked) {
                 prev.push(row.id);
-            }else{
+            } else {
                 let index = prev.indexOf(row.id);
-                prev.splice(index,  1);
+                prev.splice(index, 1);
             }
-            refObj.setState({checkedRows:prev});
+            refObj.setState({ checkedRows: prev });
         }}
-        className={`genCheck`} 
+        className={`genCheck`}
     />
 }
 
@@ -182,35 +182,35 @@ const setDate = (refOBj) => (cell) => {
 
 const actionFormatter = (refObj) => (cell, row) => {
 
-    if(row.post_data === null){
+    if (row.post_data === null) {
         return null;
-    }else{
+    } else {
         return (
             <div className="actionStyle">
                 <LinkWithTooltip
-                  tooltip="Click to View"
-                  href="#"
-                  clicked={(e) => refObj.modalShowHandler(e, row.post_data)}
-                  id="tooltip-1"
+                    tooltip="Click to View"
+                    href="#"
+                    clicked={(e) => refObj.modalShowHandler(e, row.post_data)}
+                    id="tooltip-1"
                 >
-                  <i className="far fa-eye" />
+                    <i className="far fa-eye" />
                 </LinkWithTooltip>
             </div>
-          );
+        );
     }
-  };
+};
 
 
-  const options = [
-    { value:"1", label:"Request A Callback"},
-    { value:"2", label:"Home Collection"},
-    { value:"3", label:"Covid19 Enquiry"},
-    { value:"7", label:"Become A Partner"},
-    { value:"8", label:"Become A Vendor"},
-    { value:"9", label:"Contact Us"},
-    { value:"10", label:"Feedback"},
-    { value:"11", label:"Prescription Upload"}
-  ];
+const options = [
+    { value: "1", label: "Request A Callback" },
+    { value: "2", label: "Home Collection" },
+    { value: "3", label: "Covid19 Enquiry" },
+    { value: "7", label: "Become A Partner" },
+    { value: "8", label: "Become A Vendor" },
+    { value: "9", label: "Contact Us" },
+    { value: "10", label: "Feedback" },
+    { value: "11", label: "Prescription Upload" }
+];
 
 class LeadForms extends Component {
     constructor(props) {
@@ -218,8 +218,8 @@ class LeadForms extends Component {
 
         this.state = {
             leadForms: [],
-            selectedOption:[],
-            checkedRows:[],
+            selectedOption: [],
+            checkedRows: [],
             isLoading: false,
             totalCount: 0,
             itemPerPage: 10,
@@ -233,7 +233,7 @@ class LeadForms extends Component {
             to: "",
             showModal: false,
             selectedDay: '',
-            post_data:null
+            post_data: null
 
         }
     }
@@ -245,8 +245,8 @@ class LeadForms extends Component {
         const mobile_no = this.state.email;
         const city = this.state.city;
         let type = '';
-        if(this.state.selectedOption.length > 0){
-            type = this.state.selectedOption.map((val)=>{return val.value}).join(',');
+        if (this.state.selectedOption.length > 0) {
+            type = this.state.selectedOption.map((val) => { return val.value }).join(',');
         }
         let from = this.state.from;
         let to = this.state.to;
@@ -276,21 +276,21 @@ class LeadForms extends Component {
                 showErrorMessage(err, this.props);
             });
 
-    } 
+    }
 
     handleDayClick = (day, { selected }) => {
         this.setState({
-          selectedDay: selected ? undefined : day,
+            selectedDay: selected ? undefined : day,
         });
     }
 
     modalShowHandler = (event, post_data) => {
-          event.preventDefault();
-          this.setState({showModal: true,post_data:JSON.parse(post_data)});
+        event.preventDefault();
+        this.setState({ showModal: true, post_data: JSON.parse(post_data) });
     };
-    
+
     modalCloseHandler = () => {
-        this.setState({showModal: false});
+        this.setState({ showModal: false });
     };
 
     leadFormSearch = (e) => {
@@ -302,8 +302,8 @@ class LeadForms extends Component {
         const city = document.getElementById("city").value;
 
         let type = '';
-        if(this.state.selectedOption.length > 0){
-            type = this.state.selectedOption.map((val)=>{return val.value}).join(',');
+        if (this.state.selectedOption.length > 0) {
+            type = this.state.selectedOption.map((val) => { return val.value }).join(',');
         }
 
         let from = this.state.from;
@@ -352,7 +352,7 @@ class LeadForms extends Component {
         let type = this.state.type;
 
         let lead_id = '';
-        if(this.state.checkedRows.length > 0){
+        if (this.state.checkedRows.length > 0) {
             lead_id = this.state.checkedRows.join(',');
         }
 
@@ -461,60 +461,60 @@ class LeadForms extends Component {
                             <div className="col-lg-12 col-sm-12 col-xs-12">
                                 <form>
                                     <div className="leadForm">
-                                    <div>
-                                        <input
-                                            className="form-control"
-                                            name="name"
-                                            id="name"
-                                            placeholder="Filter by Name"
-                                        />
-                                    </div>
-                                    <div>
-                                        <input
-                                            className="form-control"
-                                            name="email"
-                                            id="email"
-                                            placeholder="Filter by Email"
-                                        />
-                                    </div>
-                                    <div>
-                                        <input
-                                            className="form-control"
-                                            name="mobile_no"
-                                            id="mobile_no"
-                                            placeholder="Filter by Mobile Number"
-                                        />
-                                    </div>
-                                    <div>
-                                        <input
-                                            className="form-control"
-                                            name="city"
-                                            id="city"
-                                            placeholder="Filter by City"
-                                        />
-                                    </div>
-                                    <div>
-                                        <DayPickerInput
-                                            value={from}
-                                            placeholder="Date From"
-                                            format="LL"
-                                            formatDate={formatDate}
-                                            parseDate={parseDate}
-                                            dayPickerProps={{
-                                                selectedDays: [from, { from, to }],
-                                                disabledDays: { after: to },
-                                                toMonth: to,
-                                                modifiers,
-                                                numberOfMonths: 1,
-                                                disabledDays: {
-                                                    before: new Date(2021, 5, 1),
-                                                },
-                                                onDayClick: () => this.to.getInput().focus(),
-                                            }}
-                                            onDayChange={this.handleFromChange}
+                                        <div>
+                                            <input
+                                                className="form-control"
+                                                name="name"
+                                                id="name"
+                                                placeholder="Filter by Name"
+                                            />
+                                        </div>
+                                        <div>
+                                            <input
+                                                className="form-control"
+                                                name="email"
+                                                id="email"
+                                                placeholder="Filter by Email"
+                                            />
+                                        </div>
+                                        <div>
+                                            <input
+                                                className="form-control"
+                                                name="mobile_no"
+                                                id="mobile_no"
+                                                placeholder="Filter by Mobile Number"
+                                            />
+                                        </div>
+                                        <div>
+                                            <input
+                                                className="form-control"
+                                                name="city"
+                                                id="city"
+                                                placeholder="Filter by City"
+                                            />
+                                        </div>
+                                        <div>
+                                            <DayPickerInput
+                                                value={from}
+                                                placeholder="Date From"
+                                                format="LL"
+                                                formatDate={formatDate}
+                                                parseDate={parseDate}
+                                                dayPickerProps={{
+                                                    selectedDays: [from, { from, to }],
+                                                    disabledDays: { after: to },
+                                                    toMonth: to,
+                                                    modifiers,
+                                                    numberOfMonths: 1,
+                                                    disabledDays: {
+                                                        before: new Date(2021, 5, 1),
+                                                    },
+                                                    onDayClick: () => this.to.getInput().focus(),
+                                                }}
+                                                onDayChange={this.handleFromChange}
 
-                                        />{' '}
-                                        {/* <DayPicker
+                                            />{' '}
+                                            {/* <DayPicker
                                             initialMonth={new Date(2017, 3)}
                                             selectedDays={this.state.selectedDay}
                                             onDayClick={this.handleDayClick}
@@ -527,28 +527,28 @@ class LeadForms extends Component {
                                         //     },
                                         // ]}
                                         /> */}
-                                    </div>
-                                    <div>
-                                        <DayPickerInput
-                                            ref={el => (this.to = el)}
-                                            value={to}
-                                            placeholder="Date To"
-                                            format="LL"
-                                            formatDate={formatDate}
-                                            parseDate={parseDate}
-                                            dayPickerProps={{
-                                                selectedDays: [from, { from, to }],
-                                                disabledDays: { before: from },
-                                                modifiers,
-                                                month: from,
-                                                fromMonth: from,
-                                                numberOfMonths: 1,
-                                            }}
-                                            onDayChange={this.handleToChange}
-                                        />
-                                    </div>
-                                    <div>
-                                        {/* <select
+                                        </div>
+                                        <div>
+                                            <DayPickerInput
+                                                ref={el => (this.to = el)}
+                                                value={to}
+                                                placeholder="Date To"
+                                                format="LL"
+                                                formatDate={formatDate}
+                                                parseDate={parseDate}
+                                                dayPickerProps={{
+                                                    selectedDays: [from, { from, to }],
+                                                    disabledDays: { before: from },
+                                                    modifiers,
+                                                    month: from,
+                                                    fromMonth: from,
+                                                    numberOfMonths: 1,
+                                                }}
+                                                onDayChange={this.handleToChange}
+                                            />
+                                        </div>
+                                        <div>
+                                            {/* <select
                                             name="type"
                                             id="type"
                                             className="form-control auto"
@@ -565,44 +565,44 @@ class LeadForms extends Component {
 
                                         </select> */}
 
-                                        <Select
-                                            placeholder="Select Type"
-                                            width={250}
-                                            isMulti
-                                            isClearable={true}
-                                            isSearchable={true}
-                                            value={this.state.selectedOption}
-                                            onChange={(e)=>{
-                                                let sel = [];
-                                                if(e != null){
-                                                    sel = e
-                                                }
-                                                this.setState({ selectedOption:sel });
-                                            }}
-                                            options={options}
-                                        />
-
-                                    </div>
-                                    <div>
-                                        <div>
-                                            <input
-                                                type="submit"
-                                                value="Search"
-                                                className="btn btn-warning btn-sm"
-                                                onClick={(e) => this.leadFormSearch(e)}
+                                            <Select
+                                                placeholder="Select Type"
+                                                width={250}
+                                                isMulti
+                                                isClearable={true}
+                                                isSearchable={true}
+                                                value={this.state.selectedOption}
+                                                onChange={(e) => {
+                                                    let sel = [];
+                                                    if (e != null) {
+                                                        sel = e
+                                                    }
+                                                    this.setState({ selectedOption: sel });
+                                                }}
+                                                options={options}
                                             />
-                                            {this.state.remove_search ? (
-                                                <a
-                                                    onClick={() => this.clearSearch()}
-                                                    className="btn btn-danger btn-sm"
-                                                >
-                                                    {" "}
-                                                    Remove{" "}
-                                                </a>
-                                            ) : null}
 
                                         </div>
-                                    </div>
+                                        <div>
+                                            <div>
+                                                <input
+                                                    type="submit"
+                                                    value="Search"
+                                                    className="btn btn-warning btn-sm"
+                                                    onClick={(e) => this.leadFormSearch(e)}
+                                                />
+                                                {this.state.remove_search ? (
+                                                    <a
+                                                        onClick={() => this.clearSearch()}
+                                                        className="btn btn-danger btn-sm"
+                                                    >
+                                                        {" "}
+                                                        Remove{" "}
+                                                    </a>
+                                                ) : null}
+
+                                            </div>
+                                        </div>
                                     </div>
                                 </form>
                             </div>
@@ -700,25 +700,25 @@ class LeadForms extends Component {
                                     onHide={() => this.modalCloseHandler()}
                                     backdrop="static"
                                 >
-                    
+
                                     <Modal.Header closeButton>
-                                    <Modal.Title>
+                                        <Modal.Title>
                                             Lead Form Details
-                                    </Modal.Title>
+                                        </Modal.Title>
                                     </Modal.Header>
                                     <Modal.Body>
-                                    <div className="contBox">
-                                        {generateHTML(this.state.post_data)}
-                                    </div>
+                                        <div className="contBox">
+                                            {generateHTML(this.state.post_data)}
+                                        </div>
                                     </Modal.Body>
                                     <Modal.Footer>
-                                    <button
-                                        onClick={(e) => this.modalCloseHandler()}
-                                        className={`btn btn-danger btn-sm`}
-                                        type="button"
-                                    >
-                                        Close
-                                    </button>
+                                        <button
+                                            onClick={(e) => this.modalCloseHandler()}
+                                            className={`btn btn-danger btn-sm`}
+                                            type="button"
+                                        >
+                                            Close
+                                        </button>
                                     </Modal.Footer>
                                 </Modal>
 

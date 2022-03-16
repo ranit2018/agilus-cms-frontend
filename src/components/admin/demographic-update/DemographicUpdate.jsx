@@ -106,7 +106,6 @@ const generateHTML = (data) => {
 
 const generateCheckbox = (refObj) => (cell, row) => {
   let defaultChecked = false;
-
   if (refObj.state.checkedRows.includes(row.id)) {
     defaultChecked = true;
   }
@@ -179,7 +178,7 @@ class DemographicUpdate extends Component {
     super(props);
 
     this.state = {
-      leadForms: [],
+      demographyForms: [],
       checkedRows: [],
       isLoading: false,
       totalCount: 0,
@@ -189,6 +188,9 @@ class DemographicUpdate extends Component {
       email: "",
       state: "",
       city: "",
+      type: "",
+      from: "",
+      to: "",
       showModal: false,
       selectedDay: "",
       post_data: null,
@@ -197,16 +199,35 @@ class DemographicUpdate extends Component {
   }
 
   getPatientList = (page) => {
-    API.get(`/api/home/demographic_list?page=${page}`)
-      .then((res) => {
 
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const state = document.getElementById("state").value;
+    const city = document.getElementById("city").value;
+
+    let from = this.state.from;
+    let to = this.state.to;
+
+    if (this.state.from !== '' && this.state.to !== '') {
+      from = new Date(from);
+      to = new Date(to);
+      from = dateFormat(from, "yyyy-mm-dd");
+      to = dateFormat(to, "yyyy-mm-dd");
+    }
+
+    API.get(`/api/home/demographic_list?page=${page}&name=${encodeURIComponent(
+      name
+    )}&email=${encodeURIComponent(email)}&state=${encodeURIComponent(
+      state
+    )}&city=${encodeURIComponent(city)}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(to)}`)
+      .then((res) => {
         let filterData = [];
         let dataArr = [];
 
         for (let i = 0; i < res.data.data.length; i++) {
-          if(res.data.data[i].demographic_doc){
+          if (res.data.data[i].demographic_doc) {
             filterData.push(res.data.data[i]);
-            dataArr.push ({
+            dataArr.push({
               Name: res.data.data[i].name,
               Email: res.data.data[i].email,
               City: res.data.data[i].city,
@@ -217,7 +238,7 @@ class DemographicUpdate extends Component {
         }
 
         this.setState({
-          leadForms: filterData,
+          demographyForms: filterData,
           totalCount: Number(res.data.count),
           post_data: dataArr,
           isLoading: false,
@@ -231,6 +252,12 @@ class DemographicUpdate extends Component {
       });
   };
 
+  handleDayClick = (day, { selected }) => {
+    this.setState({
+      selectedDay: selected ? undefined : day,
+    });
+  }
+
   modalShowHandler = (event, dataArr) => {
     event.preventDefault();
     this.setState({ showModal: true, post_data: dataArr });
@@ -242,27 +269,39 @@ class DemographicUpdate extends Component {
 
   patientSearch = (e) => {
     e.preventDefault();
-
     const name = document.getElementById("name").value;
     const email = document.getElementById("email").value;
     const state = document.getElementById("state").value;
     const city = document.getElementById("city").value;
+
+    let from = this.state.from;
+    let to = this.state.to;
+    if (name === "" && email === "" && city === "" && state === "" && this.state.from === "" && this.state.to === "") {
+      return false;
+    }
+
+    if (this.state.from !== '' && this.state.to !== '') {
+      from = new Date(from);
+      to = new Date(to);
+      from = dateFormat(from, "yyyy-mm-dd");
+      to = dateFormat(to, "yyyy-mm-dd");
+    }
 
     API.get(
       `/api/home/demographic_list?page=1&name=${encodeURIComponent(
         name
       )}&email=${encodeURIComponent(email)}&state=${encodeURIComponent(
         state
-      )}&city=${encodeURIComponent(city)}`
+      )}&city=${encodeURIComponent(city)}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(to)}`
     )
       .then((res) => {
         let filterData = [];
         let dataArr = [];
 
         for (let i = 0; i < res.data.data.length; i++) {
-          if(res.data.data[i].demographic_doc){
+          if (res.data.data[i].demographic_doc) {
             filterData.push(res.data.data[i]);
-            dataArr.push ({
+            dataArr.push({
               Name: res.data.data[i].name,
               Email: res.data.data[i].email,
               City: res.data.data[i].city,
@@ -272,7 +311,7 @@ class DemographicUpdate extends Component {
           }
         }
         this.setState({
-          leadForms: filterData,
+          demographyForms: filterData,
           totalCount: Number(res.data.count),
           isLoading: false,
           name: name,
@@ -295,24 +334,41 @@ class DemographicUpdate extends Component {
   downloadXLSX = (e) => {
     e.preventDefault();
 
+
     const name = document.getElementById("name").value;
     const email = document.getElementById("email").value;
     const state = document.getElementById("state").value;
     const city = document.getElementById("city").value;
 
+    let demographic_id = '';
+    if (this.state.checkedRows.length > 0) {
+      demographic_id = this.state.checkedRows.join(',');
+    }
+
+    let from = this.state.from;
+    let to = this.state.to;
+    if (from !== '' && to !== '') {
+      from = new Date(from);
+      to = new Date(to);
+      from = dateFormat(from, "yyyy-mm-dd");
+      to = dateFormat(to, "yyyy-mm-dd");
+    }
+
     API.get(
-      `/api/home/demographic_list?page=1&name=${encodeURIComponent(
+      `/api/home/download_demographic_data?page=1&name=${encodeURIComponent(
         name
       )}&email=${encodeURIComponent(email)}&state=${encodeURIComponent(
         state
-      )}&city=${encodeURIComponent(city)}`,
+      )}&city=${encodeURIComponent(city)}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(
+        to
+        )}&demographic_id=${encodeURIComponent(demographic_id)}`,
       { responseType: "blob" }
     )
       .then((res) => {
         let url = window.URL.createObjectURL(res.data);
         let a = document.createElement("a");
         a.href = url;
-        a.download = "leadforms.csv";
+        a.download = "patientforms.csv";
         a.click();
       })
       .catch((err) => {
@@ -336,12 +392,14 @@ class DemographicUpdate extends Component {
         email: "",
         state: "",
         city: "",
+        from: "",
+        to: "",
 
         remove_search: false,
       },
       () => {
         this.setState({ activePage: 1 });
-        this.getPatientList();
+        this.getPatientList(this.state.activePage);
       }
     );
   };
@@ -355,7 +413,30 @@ class DemographicUpdate extends Component {
     this.getPatientList(pageNumber > 0 ? pageNumber : 1);
   };
 
+  showFromMonth = () => {
+    const { from, to } = this.state;
+    if (!from) {
+      return;
+    }
+    if (moment(to).diff(moment(from), 'months') < 2) {
+      this.to.getDayPicker().showMonth(from);
+    }
+  }
+
+  handleFromChange = (from) => {
+    // Change the from date and focus the "to" input field
+    this.setState({
+      from: from
+    });
+  }
+
+  handleToChange = (to) => {
+    this.setState({ to: to }, this.showFromMonth);
+  }
   render() {
+    const { from, to } = this.state;
+    const modifiers = { start: from, end: to };
+
     return (
       <Layout {...this.props}>
         <div className="content-wrapper">
@@ -403,7 +484,46 @@ class DemographicUpdate extends Component {
                         placeholder="Filter by City"
                       />
                     </div>
+                    <div>
+                      <DayPickerInput
+                        value={from}
+                        placeholder="Date From"
+                        format="LL"
+                        formatDate={formatDate}
+                        parseDate={parseDate}
+                        dayPickerProps={{
+                          selectedDays: [from, { from, to }],
+                          disabledDays: { after: to },
+                          toMonth: to,
+                          modifiers,
+                          numberOfMonths: 1,
+                          disabledDays: {
+                            before: new Date(2021, 5, 1),
+                          },
+                          onDayClick: () => this.to.getInput().focus(),
+                        }}
+                        onDayChange={this.handleFromChange}
 
+                      />{' '}
+                    </div><div>
+                      <DayPickerInput
+                        ref={el => (this.to = el)}
+                        value={to}
+                        placeholder="Date To"
+                        format="LL"
+                        formatDate={formatDate}
+                        parseDate={parseDate}
+                        dayPickerProps={{
+                          selectedDays: [from, { from, to }],
+                          disabledDays: { before: from },
+                          modifiers,
+                          month: from,
+                          fromMonth: from,
+                          numberOfMonths: 1,
+                        }}
+                        onDayChange={this.handleToChange}
+                      />
+                    </div>
                     <div>
                       <div>
                         <input
@@ -450,7 +570,7 @@ class DemographicUpdate extends Component {
                   </ul>
                 </div>
 
-                <BootstrapTable data={this.state.leadForms}>
+                <BootstrapTable data={this.state.demographyForms}>
                   <TableHeaderColumn
                     dataField="type"
                     dataFormat={generateCheckbox(this)}
@@ -460,25 +580,25 @@ class DemographicUpdate extends Component {
                   <TableHeaderColumn
                     isKey
                     dataField="name"
-                    // dataFormat={htmlDecode(this)}
+                  // dataFormat={htmlDecode(this)}
                   >
                     Name
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="email"
-                    // dataFormat={htmlDecode(this)}
+                  // dataFormat={htmlDecode(this)}
                   >
                     Email
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="state"
-                    // dataFormat={htmlDecode(this)}
+                  // dataFormat={htmlDecode(this)}
                   >
                     State
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="city"
-                    // dataFormat={htmlDecode(this)}
+                  // dataFormat={htmlDecode(this)}
                   >
                     City
                   </TableHeaderColumn>

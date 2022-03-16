@@ -1020,7 +1020,7 @@ class SidebarAdmin extends Component {
               {" "}
               <Link to="/demographic-update">
                 {" "}
-                <i className="fa fa-magic" aria-hidden="true"></i>{" "}
+                <i className="fa fa-file" aria-hidden="true"></i>{" "}
                 <span> Demographic Update </span>
               </Link>{" "}
             </li>
@@ -1029,7 +1029,7 @@ class SidebarAdmin extends Component {
               {" "}
               <Link to="/demographic-update">
                 {" "}
-                <i className="fa fa-magic" aria-hidden="true"></i>{" "}
+                <i className="fa fa-file" aria-hidden="true"></i>{" "}
                 <span> Demographic Update </span>
               </Link>{" "}
             </li>
