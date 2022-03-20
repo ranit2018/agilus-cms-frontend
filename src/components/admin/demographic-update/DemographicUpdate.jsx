@@ -199,7 +199,6 @@ class DemographicUpdate extends Component {
   }
 
   getPatientList = (page) => {
-
     const name = document.getElementById("name").value;
     const email = document.getElementById("email").value;
     const state = document.getElementById("state").value;
@@ -208,18 +207,22 @@ class DemographicUpdate extends Component {
     let from = this.state.from;
     let to = this.state.to;
 
-    if (this.state.from !== '' && this.state.to !== '') {
+    if (this.state.from !== "" && this.state.to !== "") {
       from = new Date(from);
       to = new Date(to);
       from = dateFormat(from, "yyyy-mm-dd");
       to = dateFormat(to, "yyyy-mm-dd");
     }
 
-    API.get(`/api/home/demographic_list?page=${page}&name=${encodeURIComponent(
-      name
-    )}&email=${encodeURIComponent(email)}&state=${encodeURIComponent(
-      state
-    )}&city=${encodeURIComponent(city)}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(to)}`)
+    API.get(
+      `/api/home/demographic_list?page=${page}&name=${encodeURIComponent(
+        name
+      )}&email=${encodeURIComponent(email)}&state=${encodeURIComponent(
+        state
+      )}&city=${encodeURIComponent(city)}&date_from=${encodeURIComponent(
+        from
+      )}&date_to=${encodeURIComponent(to)}`
+    )
       .then((res) => {
         let filterData = [];
         let dataArr = [];
@@ -256,7 +259,7 @@ class DemographicUpdate extends Component {
     this.setState({
       selectedDay: selected ? undefined : day,
     });
-  }
+  };
 
   modalShowHandler = (event, dataArr) => {
     event.preventDefault();
@@ -276,11 +279,18 @@ class DemographicUpdate extends Component {
 
     let from = this.state.from;
     let to = this.state.to;
-    if (name === "" && email === "" && city === "" && state === "" && this.state.from === "" && this.state.to === "") {
+    if (
+      name === "" &&
+      email === "" &&
+      city === "" &&
+      state === "" &&
+      this.state.from === "" &&
+      this.state.to === ""
+    ) {
       return false;
     }
 
-    if (this.state.from !== '' && this.state.to !== '') {
+    if (this.state.from !== "" && this.state.to !== "") {
       from = new Date(from);
       to = new Date(to);
       from = dateFormat(from, "yyyy-mm-dd");
@@ -292,7 +302,9 @@ class DemographicUpdate extends Component {
         name
       )}&email=${encodeURIComponent(email)}&state=${encodeURIComponent(
         state
-      )}&city=${encodeURIComponent(city)}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(to)}`
+      )}&city=${encodeURIComponent(city)}&date_from=${encodeURIComponent(
+        from
+      )}&date_to=${encodeURIComponent(to)}`
     )
       .then((res) => {
         let filterData = [];
@@ -334,20 +346,19 @@ class DemographicUpdate extends Component {
   downloadXLSX = (e) => {
     e.preventDefault();
 
-
     const name = document.getElementById("name").value;
     const email = document.getElementById("email").value;
     const state = document.getElementById("state").value;
     const city = document.getElementById("city").value;
 
-    let demographic_id = '';
+    let demographic_id = "";
     if (this.state.checkedRows.length > 0) {
-      demographic_id = this.state.checkedRows.join(',');
+      demographic_id = this.state.checkedRows.join(",");
     }
 
     let from = this.state.from;
     let to = this.state.to;
-    if (from !== '' && to !== '') {
+    if (from !== "" && to !== "") {
       from = new Date(from);
       to = new Date(to);
       from = dateFormat(from, "yyyy-mm-dd");
@@ -359,9 +370,11 @@ class DemographicUpdate extends Component {
         name
       )}&email=${encodeURIComponent(email)}&state=${encodeURIComponent(
         state
-      )}&city=${encodeURIComponent(city)}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(
-        to
-        )}&demographic_id=${encodeURIComponent(demographic_id)}`,
+      )}&city=${encodeURIComponent(city)}&date_from=${encodeURIComponent(
+        from
+      )}&date_to=${encodeURIComponent(to)}&demographic_id=${encodeURIComponent(
+        demographic_id
+      )}`,
       { responseType: "blob" }
     )
       .then((res) => {
@@ -418,21 +431,21 @@ class DemographicUpdate extends Component {
     if (!from) {
       return;
     }
-    if (moment(to).diff(moment(from), 'months') < 2) {
+    if (moment(to).diff(moment(from), "months") < 2) {
       this.to.getDayPicker().showMonth(from);
     }
-  }
+  };
 
   handleFromChange = (from) => {
     // Change the from date and focus the "to" input field
     this.setState({
-      from: from
+      from: from,
     });
-  }
+  };
 
   handleToChange = (to) => {
     this.setState({ to: to }, this.showFromMonth);
-  }
+  };
   render() {
     const { from, to } = this.state;
     const modifiers = { start: from, end: to };
@@ -503,11 +516,11 @@ class DemographicUpdate extends Component {
                           onDayClick: () => this.to.getInput().focus(),
                         }}
                         onDayChange={this.handleFromChange}
-
-                      />{' '}
-                    </div><div>
+                      />{" "}
+                    </div>
+                    <div>
                       <DayPickerInput
-                        ref={el => (this.to = el)}
+                        ref={(el) => (this.to = el)}
                         value={to}
                         placeholder="Date To"
                         format="LL"
@@ -580,25 +593,25 @@ class DemographicUpdate extends Component {
                   <TableHeaderColumn
                     isKey
                     dataField="name"
-                  // dataFormat={htmlDecode(this)}
+                    // dataFormat={htmlDecode(this)}
                   >
                     Name
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="email"
-                  // dataFormat={htmlDecode(this)}
+                    // dataFormat={htmlDecode(this)}
                   >
                     Email
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="state"
-                  // dataFormat={htmlDecode(this)}
+                    // dataFormat={htmlDecode(this)}
                   >
                     State
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="city"
-                  // dataFormat={htmlDecode(this)}
+                    // dataFormat={htmlDecode(this)}
                   >
                     City
                   </TableHeaderColumn>
@@ -617,7 +630,7 @@ class DemographicUpdate extends Component {
                     Action
                   </TableHeaderColumn>
                 </BootstrapTable>
-
+                {/*=====modal for patient details==== */}
                 <Modal
                   show={this.state.showModal}
                   onHide={() => this.modalCloseHandler()}
