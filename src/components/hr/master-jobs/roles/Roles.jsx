@@ -502,7 +502,7 @@ class Roles extends Component {
                   </Row>
                 ) : null}
 
-                {/* ======= Edit Job Role Modal ======== */}
+                {/* ======= Edit/Add Job Role Modal ======== */}
 
                 <Modal
                   show={this.state.showModal}
@@ -548,7 +548,7 @@ class Roles extends Component {
                           )} */}
                           <Modal.Header closeButton>
                             <Modal.Title>
-                            {this.state.roleId == 0 ? 'Add' : 'Edit'} Role
+                            {this.state.roleId == 0 ? 'Add' : 'Edit'} Job Role
 
                             </Modal.Title>
                           </Modal.Header>
@@ -558,7 +558,7 @@ class Roles extends Component {
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
-                                      Job Roles
+                                      Job Role
                                       <span className="impField">*</span>
                                     </label>
                                     <Field

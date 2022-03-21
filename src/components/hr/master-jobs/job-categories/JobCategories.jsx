@@ -538,7 +538,7 @@ class JobCategories extends Component {
                   </Row>
                 ) : null}
 
-                {/* ======= Edit category Modal ======== */}
+                {/* ======= Edit/Add category Modal ======== */}
 
                 <Modal
                   show={this.state.showModal}
@@ -574,7 +574,7 @@ class JobCategories extends Component {
 
                           <Modal.Header closeButton>
                             <Modal.Title>
-                              {this.state.categoryId == 0 ? 'Add' : 'Edit'} Category
+                              {this.state.categoryId == 0 ? 'Add' : 'Edit'} Job Category
                             </Modal.Title>
                           </Modal.Header>
                           <Modal.Body>

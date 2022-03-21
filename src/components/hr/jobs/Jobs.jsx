@@ -756,9 +756,9 @@ class Jobs extends Component {
       job_title: Yup.string().required('Please enter job title'),
       job_role: Yup.string().required('Please select job role'),
       job_location: Yup.string().required('Please select job location'),
-      category_name: Yup.string().required('Please select category name'),
+      category_name: Yup.string().required('Please select job category'),
       job_description: Yup.string().required('Please enter job description'),
-      job_skill: Yup.string().required('Please select job_skill'),
+      job_skill: Yup.string().required('Please select job skill'),
       status: Yup.number().required('Please select status'),
     });
 

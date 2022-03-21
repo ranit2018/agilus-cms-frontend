@@ -521,7 +521,7 @@ class JobLocation extends Component {
                   </Row>
                 ) : null}
 
-                {/* ======= Edit Job Location Modal ======== */}
+                {/* ======= Edit/Add Job Location Modal ======== */}
 
                 <Modal
                   show={this.state.showModal}
@@ -558,7 +558,7 @@ class JobLocation extends Component {
                         <Form>
                           <Modal.Header closeButton>
                             <Modal.Title>
-                              {this.state.jobLocationId == 0 ? 'Add' : 'Edit'} Location
+                              {this.state.jobLocationId == 0 ? 'Add' : 'Edit'} Job Location
                             </Modal.Title>
                           </Modal.Header>
                           <Modal.Body>

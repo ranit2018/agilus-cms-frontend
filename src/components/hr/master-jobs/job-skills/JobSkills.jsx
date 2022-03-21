@@ -506,7 +506,7 @@ class JobSkills extends Component {
                   </Row>
                 ) : null}
 
-                {/* ======= Edit Job Role Modal ======== */}
+                {/* ======= Edit/ Add Job Role Modal ======== */}
 
                 <Modal
                   show={this.state.showModal}
@@ -552,7 +552,7 @@ class JobSkills extends Component {
                           )} */}
                           <Modal.Header closeButton>
                             <Modal.Title>
-                              {this.state.jobSkillId == 0 ? 'Add' : 'Edit'} Skill
+                              {this.state.jobSkillId == 0 ? 'Add' : 'Edit'} Job Skill
 
                             </Modal.Title>
                           </Modal.Header>
