@@ -106,7 +106,7 @@ class Sidebar extends Component {
                 onClick={this.handlePlus}
               ></i>{' '}
               <span data-id="5" onClick={this.handlePlus}>
-                master jobs{' '}
+                Master Jobs{' '}
               </span>
               <span className="pull-right-container">
                 <i
