@@ -205,8 +205,9 @@ class RegisteredUsers extends Component {
         const state = document.getElementById("state").value;
         const city = document.getElementById("city").value;
 
+        // https://srlcmsbackend.indusnettechnologies.com/api/job_portal/user/list?page=1&name=lala&email=gopal&phone_no=31
 
-        API.get(`/api/home/demographic_list?page=${page}&name=${encodeURIComponent(
+        API.get(`api/job_portal/user/list?page=1${page}&name=${encodeURIComponent(
             name
         )}&email=${encodeURIComponent(email)}&state=${encodeURIComponent(
             state

@@ -178,6 +178,8 @@ class Roles extends Component {
           showModalUpdate: true,
           roleDetails: res.data.data[0],
           roleId: id,
+          showModal: true,
+          showModalLoader: true,
         });
       })
       .catch((err) => {
@@ -221,23 +223,19 @@ class Roles extends Component {
     if (id) {
       event.preventDefault();
       this.getjobRoleDetails(id);
-      this.setState({ showModal: true });
     } else {
-      this.setState({ showModal: false });
+      this.setState({ showModal: true });
     }
   };
 
-  handleEditSubmit = (values, actions) => {
+  handleSubmitEventUpdate = (values, actions) => {
     let postdata = {
       job_role: values.job_role,
       status: String(values.status),
     };
 
-    let method = '';
-    let url = 'api/job_portal/job/role/';
-
-    method = 'PUT';
-    url = `api/job_portal/job/role/${this.state.roleDetails.id}`;
+    let method = 'PUT';
+    let url = `api/job_portal/job/role/${this.state.roleDetails.id}`;
 
     API({
       method: method,
@@ -268,6 +266,42 @@ class Roles extends Component {
         }
       });
   };
+
+  //add
+  handleSubmitEventAdd = (values, actions) => {
+    let post_data = {
+      job_role: values.job_role,
+      status: String(values.status),
+    };
+
+    let url = `api/job_portal/job/role`;
+    let method = 'POST';
+    API({
+      method: method,
+      url: url,
+      data: post_data,
+    })
+      .then((res) => {
+        this.setState({ showModal: false });
+        swal({
+          closeOnClickOutside: false,
+          title: 'Success',
+          text: 'Record added successfully.',
+          icon: 'success',
+        }).then(() => {
+          this.props.history.push('/hr/master-jobs/job-roles');
+        });
+      })
+      .catch((err) => {
+        if (err.data.status === 3) {
+          showErrorMessage(err, this.props);
+        } else {
+          actions.setErrors(err.data.errors);
+          actions.setSubmitting(false);
+        }
+      });
+  };
+
 
   handlePageChange = (pageNumber) => {
     this.setState({ activePage: pageNumber });
@@ -338,8 +372,16 @@ class Roles extends Component {
       status: this.state.roleDetails.status,
     });
 
-    const validateStopFlag = Yup.object().shape({
+    const validateStopFlagUpdate = Yup.object().shape({
       job_role: Yup.string().required('Please enter job role'),
+      status: Yup.string()
+        .trim()
+        .required('Please select status')
+        .matches(/^[0|1]$/, 'Invalid status selected'),
+    });
+
+    const validateStopFlag = Yup.object().shape({
+      job_role: Yup.string().required('Please enter category'),
       status: Yup.string()
         .trim()
         .required('Please select status')
@@ -359,16 +401,12 @@ class Roles extends Component {
 
               <div className="col-lg-12 col-sm-12 col-xs-12  topSearchSection">
                 <div className="">
-                  <button
+                   <button
                     type="button"
                     className="btn btn-info btn-sm"
-                    onClick={(e) =>
-                      this.props.history.push({
-                        pathname: '/hr/master-jobs/add-job-roles',
-                      })
-                    }
+                    onClick={(e) => this.modalShowHandler(e, '')}
                   >
-                    <i className="fas fa-plus m-r-5" /> Add Role
+                    <i className="fas fa-plus m-r-5" /> Add Job Role
                   </button>
                 </div>
                 <form className="form">
@@ -376,7 +414,7 @@ class Roles extends Component {
                     <input
                       className="form-control"
                       id="search_job_role"
-                      placeholder="Filter by Role"
+                      placeholder="Filter by Job Role"
                     />
                   </div>
                   <div className="">
@@ -473,8 +511,18 @@ class Roles extends Component {
                 >
                   <Formik
                     initialValues={newInitialValues}
-                    validationSchema={validateStopFlag}
-                    onSubmit={this.handleEditSubmit}
+                    validationSchema={
+                      this.state.roleId > 0
+                        ? validateStopFlagUpdate
+                        : validateStopFlag
+                    }
+                    onSubmit={
+                      this.state.roleId > 0
+                        ? this.handleSubmitEventUpdate
+                        : this.handleSubmitEventAdd
+                    }
+                    // validationSchema={validateStopFlag}
+                    // onSubmit={this.handleEditSubmit}
                   >
                     {({
                       values,
@@ -499,7 +547,10 @@ class Roles extends Component {
                             ''
                           )} */}
                           <Modal.Header closeButton>
-                            <Modal.Title>Edit Job Role</Modal.Title>
+                            <Modal.Title>
+                            {this.state.roleId == 0 ? 'Add' : 'Edit'} Role
+
+                            </Modal.Title>
                           </Modal.Header>
                           <Modal.Body>
                             <div className="contBox">

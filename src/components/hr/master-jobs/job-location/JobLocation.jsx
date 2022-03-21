@@ -180,6 +180,8 @@ class JobLocation extends Component {
           showModalUpdate: true,
           jobLocationDetails: res.data.data[0],
           jobLocationId: id,
+          showModal: true,
+          showModalLoader: true,
         });
       })
       .catch((err) => {
@@ -224,13 +226,12 @@ class JobLocation extends Component {
     if (id) {
       event.preventDefault();
       this.getjobLocationDetails(id);
-      this.setState({ showModal: true });
     } else {
-      this.setState({ showModal: false });
+      this.setState({ showModal: true });
     }
   };
 
-  handleEditSubmit = (values, actions) => {
+  handleSubmitEventUpdate = (values, actions) => {
     let postdata = {
       job_location: values.job_location,
       status: String(values.status), /////////
@@ -271,6 +272,42 @@ class JobLocation extends Component {
         }
       });
   };
+
+  //add submit
+  handleSubmitEventAdd = (values, actions) => {
+    let post_data = {
+      job_location: values.job_location,
+      status: String(values.status),
+    };
+
+    let url = `api/job_portal/job/location`;
+    let method = 'POST';
+    API({
+      method: method,
+      url: url,
+      data: post_data,
+    })
+      .then((res) => {
+        this.setState({ showModal: false });
+        swal({
+          closeOnClickOutside: false,
+          title: 'Success',
+          text: 'Record added successfully.',
+          icon: 'success',
+        }).then(() => {
+          this.props.history.push('/hr/master-jobs/job-location');
+        });
+      })
+      .catch((err) => {
+        if (err.data.status === 3) {
+          showErrorMessage(err, this.props);
+        } else {
+          actions.setErrors(err.data.errors);
+          actions.setSubmitting(false);
+        }
+      });
+  };
+
 
   handlePageChange = (pageNumber) => {
     this.setState({ activePage: pageNumber });
@@ -341,8 +378,16 @@ class JobLocation extends Component {
       status: this.state.jobLocationDetails.status,
     });
 
-    const validateStopFlag = Yup.object().shape({
+    const validateStopFlagUpdate = Yup.object().shape({
       job_location: Yup.string().required('Please enter job location'),
+      status: Yup.string()
+        .trim()
+        .required('Please select status')
+        .matches(/^[0|1]$/, 'Invalid status selected'),
+    });
+
+    const validateStopFlag = Yup.object().shape({
+      job_location: Yup.string().required('Please enter Job location'),
       status: Yup.string()
         .trim()
         .required('Please select status')
@@ -362,7 +407,7 @@ class JobLocation extends Component {
 
               <div className="col-lg-12 col-sm-12 col-xs-12  topSearchSection">
                 <div className="">
-                  <button
+                  {/* <button
                     type="button"
                     className="btn btn-info btn-sm"
                     onClick={(e) =>
@@ -372,6 +417,14 @@ class JobLocation extends Component {
                     }
                   >
                     <i className="fas fa-plus m-r-5" /> Add Job Location
+                  </button> 
+                */}
+                  <button
+                    type="button"
+                    className="btn btn-info btn-sm"
+                    onClick={(e) => this.modalShowHandler(e, '')}
+                  >
+                    <i className="fas fa-plus m-r-5" /> Add Job Location
                   </button>
                 </div>
                 <form className="form">
@@ -379,7 +432,7 @@ class JobLocation extends Component {
                     <input
                       className="form-control"
                       id="search_job_location"
-                      placeholder="Filter by Location"
+                      placeholder="Filter by Job Location"
                     />
                   </div>
                   <div className="">
@@ -477,8 +530,18 @@ class JobLocation extends Component {
                 >
                   <Formik
                     initialValues={newInitialValues}
-                    validationSchema={validateStopFlag}
-                    onSubmit={this.handleEditSubmit}
+                    validationSchema={
+                      this.state.jobLocationId > 0
+                        ? validateStopFlagUpdate
+                        : validateStopFlag
+                    }
+                    onSubmit={
+                      this.state.jobLocationId > 0
+                        ? this.handleSubmitEventUpdate
+                        : this.handleSubmitEventAdd
+                    }
+                  // validationSchema={validateStopFlag}
+                  // onSubmit={this.handleEditSubmit}
                   >
                     {({
                       values,
@@ -494,7 +557,9 @@ class JobLocation extends Component {
                       return (
                         <Form>
                           <Modal.Header closeButton>
-                            <Modal.Title>Edit Job Location</Modal.Title>
+                            <Modal.Title>
+                              {this.state.jobLocationId == 0 ? 'Add' : 'Edit'} Location
+                            </Modal.Title>
                           </Modal.Header>
                           <Modal.Body>
                             <div className="contBox">
@@ -509,7 +574,7 @@ class JobLocation extends Component {
                                       name="job_location"
                                       type="text"
                                       className={`form-control`}
-                                      placeholder="Enter job role"
+                                      placeholder="Enter Job Location"
                                       value={values.job_location || ''}
                                     />
                                   </div>

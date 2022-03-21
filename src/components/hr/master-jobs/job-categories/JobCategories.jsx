@@ -110,6 +110,7 @@ class JobCategories extends Component {
       search_category_name: '',
       search_status: '',
     };
+
   }
 
   getCategoryList = (page = 1) => {
@@ -123,7 +124,6 @@ class JobCategories extends Component {
       )}`
     )
       .then((res) => {
-        console.log(res.data.data)
 
         this.setState({
           categoryList: res.data.data,
@@ -182,6 +182,8 @@ class JobCategories extends Component {
           showModalUpdate: true,
           categoryDetails: res.data.data[0],
           categoryId: id,
+          showModal: true,
+          showModalLoader: true,
         });
       })
       .catch((err) => {
@@ -225,16 +227,16 @@ class JobCategories extends Component {
     if (id) {
       event.preventDefault();
       this.getcategoryDetails(id);
-      this.setState({ showModal: true });
+      // this.setState({ showModal: true });
     } else {
-      this.setState({ showModal: false });
+      this.setState({ showModal: true });
     }
   };
 
-  handleEditSubmit = (values, actions) => {
+  handleSubmitEventUpdate = (values, actions) => {
     let postdata = {
       category_name: values.category_name,
-      status: values.status,
+      status: String(values.status),
     };
 
     let method = '';
@@ -273,6 +275,52 @@ class JobCategories extends Component {
       });
   };
 
+  handleSubmitEventAdd = (values, actions) => {
+    // const { value } = this.state;
+
+    let post_data = {
+      category_name: values.category_name,
+      status: String(values.status),
+    };
+
+    let url = `api/job_portal/job/category`;
+    let method = 'POST';
+    API({
+      method: method,
+      url: url,
+      data: post_data,
+    })
+      .then((res) => {
+        this.setState({ showModal: false });
+        swal({
+          closeOnClickOutside: false,
+          title: 'Success',
+          text: 'Record added successfully.',
+          icon: 'success',
+        }).then(() => {
+          this.props.history.push('/hr/master-jobs/job-categories');
+        });
+      })
+      .catch((err) => {
+        // this.setState({
+        //   value: "",
+        //   selectedValue: "",
+        // });
+        if (err.data.status === 3) {
+          // this.setState({
+          //   value: "",
+          //   selectedValue: "",
+          // });
+          showErrorMessage(err, this.props);
+        } else {
+          actions.setErrors(err.data.errors);
+          actions.setSubmitting(false);
+        }
+      });
+  };
+
+
+
   handlePageChange = (pageNumber) => {
     this.setState({ activePage: pageNumber });
     this.getCategoryList(pageNumber > 0 ? pageNumber : 1);
@@ -286,7 +334,6 @@ class JobCategories extends Component {
     const search_status = document.getElementById(
       'search_status'
     ).value;
-    console.log('search_status', search_status)
 
     if (search_category_name === '' && search_status === '') {
       return false;
@@ -348,6 +395,14 @@ class JobCategories extends Component {
       status: this.state.categoryDetails.status,
     });
 
+    const validateStopFlagUpdate = Yup.object().shape({
+      category_name: Yup.string().required('Please enter category'),
+      status: Yup.string()
+        .trim()
+        .required('Please select status')
+        .matches(/^[0|1]$/, 'Invalid status selected'),
+    });
+
     const validateStopFlag = Yup.object().shape({
       category_name: Yup.string().required('Please enter category'),
       status: Yup.string()
@@ -355,6 +410,7 @@ class JobCategories extends Component {
         .required('Please select status')
         .matches(/^[0|1]$/, 'Invalid status selected'),
     });
+
     return (
       <Layout {...this.props}>
         <div className="content-wrapper">
@@ -369,7 +425,7 @@ class JobCategories extends Component {
 
               <div className="col-lg-12 col-sm-12 col-xs-12  topSearchSection">
                 <div className="">
-                  <button
+                  {/* <button
                     type="button"
                     className="btn btn-info btn-sm"
                     onClick={(e) =>
@@ -379,6 +435,13 @@ class JobCategories extends Component {
                     }
                   >
                     <i className="fas fa-plus m-r-5" /> Add Category
+                  </button> */}
+                  <button
+                    type="button"
+                    className="btn btn-info btn-sm"
+                    onClick={(e) => this.modalShowHandler(e, '')}
+                  >
+                    <i className="fas fa-plus m-r-5" /> Add Job Category
                   </button>
                 </div>
                 <form className="form">
@@ -386,7 +449,7 @@ class JobCategories extends Component {
                     <input
                       className="form-control"
                       id="search_category_name"
-                      placeholder="Filter by Category"
+                      placeholder="Filter by Job Category"
                     />
                   </div>
 
@@ -484,8 +547,16 @@ class JobCategories extends Component {
                 >
                   <Formik
                     initialValues={newInitialValues}
-                    validationSchema={validateStopFlag}
-                    onSubmit={this.handleEditSubmit}
+                    validationSchema={
+                      this.state.categoryId > 0
+                        ? validateStopFlagUpdate
+                        : validateStopFlag
+                    }
+                    onSubmit={
+                      this.state.categoryId > 0
+                        ? this.handleSubmitEventUpdate
+                        : this.handleSubmitEventAdd
+                    }
                   >
                     {({
                       values,
@@ -502,7 +573,9 @@ class JobCategories extends Component {
                         <Form>
 
                           <Modal.Header closeButton>
-                            <Modal.Title>Edit Category</Modal.Title>
+                            <Modal.Title>
+                              {this.state.categoryId == 0 ? 'Add' : 'Edit'} Category
+                            </Modal.Title>
                           </Modal.Header>
                           <Modal.Body>
                             <div className="contBox">
@@ -510,14 +583,14 @@ class JobCategories extends Component {
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
-                                      Category Name
+                                      Job Category
                                       <span className="impField">*</span>
                                     </label>
                                     <Field
                                       name="category_name"
                                       type="text"
                                       className={`form-control`}
-                                      placeholder="Enter Category name"
+                                      placeholder="Enter Job Category"
                                       value={values.category_name || ''}
                                     />
                                   </div>

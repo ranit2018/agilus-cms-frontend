@@ -1019,7 +1019,7 @@ class Jobs extends Component {
                 </Modal>
 
                 {/* ======= Add/Edit Jobs Modal ======== */}
-
+                  {console.log('this.state.showModal',this.state.showModal)}
                 <Modal
                   show={this.state.showModal}
                   onHide={() => this.modalCloseHandler()}

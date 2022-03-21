@@ -179,6 +179,8 @@ class JobSkills extends Component {
           showModalUpdate: true,
           jobSkillDetails: res.data.data[0],
           jobSkillId: id,
+          showModal: true,
+          showModalLoader: true,
         });
       })
       .catch((err) => {
@@ -222,13 +224,12 @@ class JobSkills extends Component {
     if (id) {
       event.preventDefault();
       this.getjobSkillDetails(id);
-      this.setState({ showModal: true });
     } else {
-      this.setState({ showModal: false });
+      this.setState({ showModal: true });
     }
   };
 
-  handleEditSubmit = (values, actions) => {
+  handleSubmitEventUpdate = (values, actions) => {
     let postdata = {
       job_skill: values.job_skill,
       status: String(values.status), /////////
@@ -262,6 +263,41 @@ class JobSkills extends Component {
           // this.setState({
           //   showModal: false,
           // });
+          showErrorMessage(err, this.props);
+        } else {
+          actions.setErrors(err.data.errors);
+          actions.setSubmitting(false);
+        }
+      });
+  };
+
+  //add submit
+  handleSubmitEventAdd = (values, actions) => {
+    let post_data = {
+      job_skill: values.job_skill,
+      status: String(values.status),
+    };
+
+    let url = `api/job_portal/job/skill`;
+    let method = 'POST';
+    API({
+      method: method,
+      url: url,
+      data: post_data,
+    })
+      .then((res) => {
+        this.setState({ showModal: false });
+        swal({
+          closeOnClickOutside: false,
+          title: 'Success',
+          text: 'Record added successfully.',
+          icon: 'success',
+        }).then(() => {
+          this.props.history.push('/hr/master-jobs/job-skills');
+        });
+      })
+      .catch((err) => {
+        if (err.data.status === 3) {
           showErrorMessage(err, this.props);
         } else {
           actions.setErrors(err.data.errors);
@@ -340,6 +376,14 @@ class JobSkills extends Component {
     });
 
     const validateStopFlag = Yup.object().shape({
+      job_skill: Yup.string().required('Please enter job skill'),
+      status: Yup.string()
+        .trim()
+        .required('Please select status')
+        .matches(/^[0|1]$/, 'Invalid status selected'),
+    });
+
+    const validateStopFlagUpdate = Yup.object().shape({
       job_skill: Yup.string().required('Please enter job role'),
       status: Yup.string()
         .trim()
@@ -363,11 +407,7 @@ class JobSkills extends Component {
                   <button
                     type="button"
                     className="btn btn-info btn-sm"
-                    onClick={(e) =>
-                      this.props.history.push({
-                        pathname: '/hr/master-jobs/add-job-skills',
-                      })
-                    }
+                    onClick={(e) => this.modalShowHandler(e, '')}
                   >
                     <i className="fas fa-plus m-r-5" /> Add Job Skill
                   </button>
@@ -377,7 +417,7 @@ class JobSkills extends Component {
                     <input
                       className="form-control"
                       id="search_job_skill"
-                      placeholder="Filter by Skill"
+                      placeholder="Filter by Job Skill"
                     />
                   </div>
                   <div className="">
@@ -475,8 +515,18 @@ class JobSkills extends Component {
                 >
                   <Formik
                     initialValues={newInitialValues}
-                    validationSchema={validateStopFlag}
-                    onSubmit={this.handleEditSubmit}
+                    validationSchema={
+                      this.state.jobSkillId > 0
+                        ? validateStopFlagUpdate
+                        : validateStopFlag
+                    }
+                    onSubmit={
+                      this.state.categoryId > 0
+                        ? this.handleSubmitEventUpdate
+                        : this.handleSubmitEventAdd
+                    }
+                  // validationSchema={validateStopFlag}
+                  // onSubmit={this.handleEditSubmit}
                   >
                     {({
                       values,
@@ -501,7 +551,10 @@ class JobSkills extends Component {
                             ''
                           )} */}
                           <Modal.Header closeButton>
-                            <Modal.Title>Edit Job Skill</Modal.Title>
+                            <Modal.Title>
+                              {this.state.jobSkillId == 0 ? 'Add' : 'Edit'} Skill
+
+                            </Modal.Title>
                           </Modal.Header>
                           <Modal.Body>
                             <div className="contBox">
@@ -516,7 +569,7 @@ class JobSkills extends Component {
                                       name="job_skill"
                                       type="text"
                                       className={`form-control`}
-                                      placeholder="Enter job role"
+                                      placeholder="Enter Job Skill"
                                       value={values.job_skill || ''}
                                     />
                                   </div>
