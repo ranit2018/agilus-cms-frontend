@@ -73,7 +73,7 @@ const actionFormatter = (refObj) => (cell, row) => {
       <LinkWithTooltip
         tooltip="Click to Resend email"
         href="#"
-        clicked={(e) => refObj.resendEmail(e, cell, row.id)}
+        clicked={(e) => refObj.confirmMail(e, cell, row.id)}
         id="tooltip-1"
       >
         <i className="fa fa-envelope" />
@@ -118,13 +118,17 @@ class AppliedJobs extends Component {
       selectedDay: '',
       application_status_arr: [],
     };
+    console.log('this.state.activePage',this.state.activePage )
   }
+  
 
-  getPatientList = (page) => {
+  getPatientList = (page = 1) => {
+    console.log('this.state.activePage',this.state.activePage )
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
     const job_title = document.getElementById('job_title').value;
-    // const city = document.getElementById('city').value;
+    const application_status =
+      document.getElementById('application_status').value;
 
     let from = this.state.from;
     let to = this.state.to;
@@ -143,21 +147,13 @@ class AppliedJobs extends Component {
         job_title
       )}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(
         to
-      )}`
+      )}&application_status=${encodeURIComponent(application_status)}`
     )
       .then((res) => {
-        let dataArr = [];
-
-        for (let i = 0; i < res.data.data.length; i++) {
-          dataArr.push({
-            value: res.data.data[i].application_status_id,
-            label: res.data.data[i].application_status,
-          });
-        }
+      
         this.setState({
           appliedjobForms: res.data.data,
           totalCount: Number(res.data.count),
-          application_status_arr: dataArr,
           isLoading: false,
         });
       })
@@ -166,6 +162,27 @@ class AppliedJobs extends Component {
         this.setState({
           isLoading: false,
         });
+        showErrorMessage(err, this.props);
+      });
+  };
+
+  getApplicationStatusArr = () => {
+    API.get(`api/job_portal/job/application_status`)
+      .then((res) => {
+      
+        let dataArr = [];
+        for (var i = 0; i < res.data.data.length; i++) {
+          dataArr.push({
+            value: res.data.data[i].id,
+            label: res.data.data[i].application_status,
+          });
+        }
+      
+        this.setState({
+          application_status_arr: dataArr,
+        });
+      })
+      .catch((err) => {
         showErrorMessage(err, this.props);
       });
   };
@@ -261,7 +278,7 @@ class AppliedJobs extends Component {
     document.getElementById('email').value = '';
     document.getElementById('job_title').value = '';
     document.getElementById('application_status').value = '';
-
+    let pageNumber = 1;
     this.setState(
       {
         name: '',
@@ -275,7 +292,7 @@ class AppliedJobs extends Component {
       },
       () => {
         this.setState({ activePage: 1 });
-        this.getPatientList(this.state.activePage);
+        this.getPatientList();
       }
     );
   };
@@ -296,6 +313,7 @@ class AppliedJobs extends Component {
 
   componentDidMount() {
     this.getPatientList(this.state.activePage);
+    this.getApplicationStatusArr();
   }
 
   handlePageChange = (pageNumber) => {
@@ -325,7 +343,23 @@ class AppliedJobs extends Component {
   };
 
   //resend email part
-  resendEmail = (e, row, id) => {
+  confirmMail = (event, row, id) => {
+    event.preventDefault();
+    swal({
+      closeOnClickOutside: false,
+      title: 'Are you sure?',
+      text: 'This will send mail to the applicant!',
+      icon: 'warning',
+      buttons: true,
+      dangerMode: true,
+    }).then((willResend) => {
+      if (willResend) {
+        this.resendEmail(id);
+      }
+    });
+  };
+
+  resendEmail = (id) => {
     API.put(`api/job_portal/job/user/apply/resendEmail/${id}`)
       .then((res) => {
         swal({
@@ -372,7 +406,7 @@ class AppliedJobs extends Component {
   //for edit part
   handleEditSubmit = (values, actions) => {
     let postdata = {
-      application_status: values.application_status,
+      application_status: String(values.application_status),
     };
 
     let method = 'PUT';
@@ -423,6 +457,10 @@ class AppliedJobs extends Component {
       //you have to pass id for dropdown values
     });
 
+    const validateStopFlagUpdate = Yup.object().shape({
+      application_status: Yup.number().required('Please select application status'),
+    });
+
     return (
       <Layout {...this.props}>
         <div className="content-wrapper">
@@ -467,7 +505,7 @@ class AppliedJobs extends Component {
                         name="application_status"
                         id="application_status"
                         className="form-control"
-                      >
+                      > 
                         <option value="">Select Application Status</option>
                         {this.state.application_status_arr.map((val, i) => {
                           return (
@@ -622,6 +660,7 @@ class AppliedJobs extends Component {
                 >
                   <Formik
                     initialValues={newInitialValues}
+                    validationSchema={validateStopFlagUpdate}
                     onSubmit={this.handleEditSubmit}
                   >
                     {({
@@ -750,7 +789,7 @@ class AppliedJobs extends Component {
                                       value={values.application_status}
                                     >
                                       <option key="-1" value="">
-                                        Application Status
+                                        Select
                                       </option>
                                       {this.state.application_status_arr.map(
                                         (val, i) => (
