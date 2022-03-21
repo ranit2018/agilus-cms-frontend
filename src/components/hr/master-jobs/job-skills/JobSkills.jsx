@@ -107,15 +107,18 @@ class JobSkills extends Component {
       selectedValue: '',
       suggestions: [],
       search_job_skill: '',
+      search_status: '',
     };
   }
 
   getJobSkillList = (page = 1) => {
-    let { search_job_skill } = this.state;
-   
+    let { search_job_skill, search_status } = this.state;
+
     API.get(
       `api/job_portal/job/skill?page=${page}&job_skill=${encodeURIComponent(
         search_job_skill
+      )}&status=${encodeURIComponent(
+        search_status
       )}`
     )
       .then((res) => {
@@ -230,7 +233,7 @@ class JobSkills extends Component {
       job_skill: values.job_skill,
       status: String(values.status), /////////
     };
-    
+
     let method = '';
     let url = 'api/job_portal/job/skill/';
 
@@ -275,14 +278,17 @@ class JobSkills extends Component {
   JobRoleSearch = (e) => {
     e.preventDefault();
     const search_job_skill = document.getElementById('search_job_skill').value;
+    const search_status = document.getElementById('search_status').value;
 
-    if (search_job_skill === '') {
+    if (search_job_skill === '' & search_status === '') {
       return false;
     }
 
     API.get(
       `api/job_portal/job/skill?page=1&job_skill=${encodeURIComponent(
         search_job_skill
+      )}&status=${encodeURIComponent(
+        search_status
       )}`
     )
       .then((res) => {
@@ -292,6 +298,7 @@ class JobSkills extends Component {
           isLoading: false,
           activePage: 1,
           search_job_skill: search_job_skill,
+          search_status: search_status,
 
           remove_search: true,
         });
@@ -306,10 +313,12 @@ class JobSkills extends Component {
 
   clearSearch = () => {
     document.getElementById('search_job_skill').value = '';
+    document.getElementById('search_status').value = '';
 
     this.setState(
       {
         search_job_skill: '',
+        search_status: '',
 
         remove_search: false,
       },
@@ -368,8 +377,24 @@ class JobSkills extends Component {
                     <input
                       className="form-control"
                       id="search_job_skill"
-                      placeholder="Filter by Skills"
+                      placeholder="Filter by Skill"
                     />
+                  </div>
+                  <div className="">
+                    <select
+                      name="search_status"
+                      id="search_status"
+                      className="form-control"
+                    >
+                      <option value="">Select Status</option>
+                      {this.state.selectStatus.map((val, i) => {
+                        return (
+                          <option key={i} value={val.value}>
+                            {val.label}
+                          </option>
+                        );
+                      })}
+                    </select>
                   </div>
 
                   <div className="">
@@ -532,9 +557,8 @@ class JobSkills extends Component {
                           </Modal.Body>
                           <Modal.Footer>
                             <button
-                              className={`btn btn-success btn-sm ${
-                                isValid ? 'btn-custom-green' : 'btn-disable'
-                              } m-r-10`}
+                              className={`btn btn-success btn-sm ${isValid ? 'btn-custom-green' : 'btn-disable'
+                                } m-r-10`}
                               type="submit"
                               disabled={
                                 isValid ? (isSubmitting ? true : false) : true
@@ -545,8 +569,8 @@ class JobSkills extends Component {
                                   ? 'Updating...'
                                   : 'Update'
                                 : isSubmitting
-                                ? 'Submitting...'
-                                : 'Submit'}
+                                  ? 'Submitting...'
+                                  : 'Submit'}
                             </button>
                             <button
                               onClick={(e) => this.modalCloseHandler()}

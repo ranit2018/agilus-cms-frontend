@@ -107,15 +107,18 @@ class JobLocation extends Component {
       selectedValue: '',
       suggestions: [],
       search_job_location: '',
+      search_status: '',
     };
   }
 
   getJobLocationList = (page = 1) => {
-    let { search_job_location } = this.state;
-   
+    let { search_job_location, search_status } = this.state;
+
     API.get(
       `api/job_portal/job/location?page=${page}&job_location=${encodeURIComponent(
         search_job_location
+      )}&status=${encodeURIComponent(
+        search_status
       )}`
     )
       .then((res) => {
@@ -150,7 +153,7 @@ class JobLocation extends Component {
   };
 
   deleteJobLocation = (id, row) => {
-    
+
     API.post(`api/job_portal/job/location/${row.id}`)
       .then((res) => {
         swal({
@@ -185,7 +188,7 @@ class JobLocation extends Component {
   }
 
   changeStatus = (cell, status, row) => {
-    
+
     API.put(`api/job_portal/job/location/change_status/${row.id}`, {
       status: status == 1 ? String(0) : String(1),
     })
@@ -232,7 +235,7 @@ class JobLocation extends Component {
       job_location: values.job_location,
       status: String(values.status), /////////
     };
-    
+
     let method = '';
     let url = 'api/job_portal/job/location/';
 
@@ -277,14 +280,17 @@ class JobLocation extends Component {
   JobRoleSearch = (e) => {
     e.preventDefault();
     const search_job_location = document.getElementById('search_job_location').value;
+    const search_status = document.getElementById('search_status').value;
 
-    if (search_job_location === '') {
+    if (search_job_location === '' & search_status === '') {
       return false;
     }
 
     API.get(
       `api/job_portal/job/location?page=1&job_location=${encodeURIComponent(
         search_job_location
+      )}&status=${encodeURIComponent(
+        search_status
       )}`
     )
       .then((res) => {
@@ -294,6 +300,7 @@ class JobLocation extends Component {
           isLoading: false,
           activePage: 1,
           search_job_location: search_job_location,
+          search_status: search_status,
 
           remove_search: true,
         });
@@ -308,10 +315,12 @@ class JobLocation extends Component {
 
   clearSearch = () => {
     document.getElementById('search_job_location').value = '';
+    document.getElementById('search_status').value = '';
 
     this.setState(
       {
         search_job_location: '',
+        search_status: '',
 
         remove_search: false,
       },
@@ -370,8 +379,24 @@ class JobLocation extends Component {
                     <input
                       className="form-control"
                       id="search_job_location"
-                      placeholder="Filter by location"
+                      placeholder="Filter by Location"
                     />
+                  </div>
+                  <div className="">
+                    <select
+                      name="search_status"
+                      id="search_status"
+                      className="form-control"
+                    >
+                      <option value="">Select Status</option>
+                      {this.state.selectStatus.map((val, i) => {
+                        return (
+                          <option key={i} value={val.value}>
+                            {val.label}
+                          </option>
+                        );
+                      })}
+                    </select>
                   </div>
 
                   <div className="">
@@ -524,11 +549,10 @@ class JobLocation extends Component {
                             </div>
                           </Modal.Body>
                           <Modal.Footer>
-                         
+
                             <button
-                              className={`btn btn-success btn-sm ${
-                                isValid ? 'btn-custom-green' : 'btn-disable'
-                              } m-r-10`}
+                              className={`btn btn-success btn-sm ${isValid ? 'btn-custom-green' : 'btn-disable'
+                                } m-r-10`}
                               type="submit"
                               disabled={
                                 isValid ? (isSubmitting ? true : false) : true
@@ -539,8 +563,8 @@ class JobLocation extends Component {
                                   ? 'Updating...'
                                   : 'Update'
                                 : isSubmitting
-                                ? 'Submitting...'
-                                : 'Submit'}
+                                  ? 'Submitting...'
+                                  : 'Submit'}
                             </button>
                             <button
                               onClick={(e) => this.modalCloseHandler()}

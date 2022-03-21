@@ -935,7 +935,7 @@ class Jobs extends Component {
                     dataField="category_name"
                     dataFormat={__htmlDecode(this)}
                   >
-                    Category name
+                    Job Category
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="job_description"

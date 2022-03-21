@@ -108,17 +108,23 @@ class JobCategories extends Component {
       selectedValue: '',
       suggestions: [],
       search_category_name: '',
+      search_status: '',
     };
   }
 
   getCategoryList = (page = 1) => {
-    let { search_category_name } = this.state;
+    let { search_category_name, search_status } = this.state;
+
     API.get(
       `api/job_portal/job/category?page=${page}&category_name=${encodeURIComponent(
         search_category_name
+      )}&status=${encodeURIComponent(
+        search_status
       )}`
     )
       .then((res) => {
+        console.log(res.data.data)
+
         this.setState({
           categoryList: res.data.data,
           totalCount: res.data.count,
@@ -277,14 +283,20 @@ class JobCategories extends Component {
     const search_category_name = document.getElementById(
       'search_category_name'
     ).value;
+    const search_status = document.getElementById(
+      'search_status'
+    ).value;
+    console.log('search_status', search_status)
 
-    if (search_category_name === '') {
+    if (search_category_name === '' && search_status === '') {
       return false;
     }
 
     API.get(
       `api/job_portal/job/category?page=1&category_name=${encodeURIComponent(
         search_category_name
+      )}&status=${encodeURIComponent(
+        search_status
       )}`
     )
       .then((res) => {
@@ -294,6 +306,7 @@ class JobCategories extends Component {
           isLoading: false,
           activePage: 1,
           search_category_name: search_category_name,
+          search_status: search_status,
 
           remove_search: true,
         });
@@ -308,10 +321,13 @@ class JobCategories extends Component {
 
   clearSearch = () => {
     document.getElementById('search_category_name').value = '';
+    document.getElementById('search_status').value = '';
+
 
     this.setState(
       {
         search_category_name: '',
+        search_status: '',
 
         remove_search: false,
       },
@@ -362,7 +378,7 @@ class JobCategories extends Component {
                       })
                     }
                   >
-                    <i className="fas fa-plus m-r-5" /> Add Categories
+                    <i className="fas fa-plus m-r-5" /> Add Category
                   </button>
                 </div>
                 <form className="form">
@@ -370,10 +386,26 @@ class JobCategories extends Component {
                     <input
                       className="form-control"
                       id="search_category_name"
-                      placeholder="Filter by Categories name"
+                      placeholder="Filter by Category"
                     />
                   </div>
 
+                  <div className="">
+                    <select
+                      name="search_status"
+                      id="search_status"
+                      className="form-control"
+                    >
+                      <option value="">Select Status</option>
+                      {this.state.selectStatus.map((val, i) => {
+                        return (
+                          <option key={i} value={val.value}>
+                            {val.label}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
                   <div className="">
                     <input
                       type="submit"
@@ -406,7 +438,7 @@ class JobCategories extends Component {
                     dataField="category_name"
                     dataFormat={__htmlDecode(this)}
                   >
-                    Category Name
+                    Job Category
                   </TableHeaderColumn>
 
                   <TableHeaderColumn
@@ -468,7 +500,7 @@ class JobCategories extends Component {
                     }) => {
                       return (
                         <Form>
-                      
+
                           <Modal.Header closeButton>
                             <Modal.Title>Edit Category</Modal.Title>
                           </Modal.Header>
@@ -526,9 +558,8 @@ class JobCategories extends Component {
                           </Modal.Body>
                           <Modal.Footer>
                             <button
-                              className={`btn btn-success btn-sm ${
-                                isValid ? 'btn-custom-green' : 'btn-disable'
-                              } m-r-10`}
+                              className={`btn btn-success btn-sm ${isValid ? 'btn-custom-green' : 'btn-disable'
+                                } m-r-10`}
                               type="submit"
                               disabled={
                                 isValid ? (isSubmitting ? true : false) : true
@@ -539,8 +570,8 @@ class JobCategories extends Component {
                                   ? 'Updating...'
                                   : 'Update'
                                 : isSubmitting
-                                ? 'Submitting...'
-                                : 'Submit'}
+                                  ? 'Submitting...'
+                                  : 'Submit'}
                             </button>
                             <button
                               onClick={(e) => this.modalCloseHandler()}

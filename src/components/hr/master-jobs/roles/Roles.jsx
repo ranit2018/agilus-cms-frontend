@@ -107,14 +107,17 @@ class Roles extends Component {
       selectedValue: '',
       suggestions: [],
       search_job_role: '',
+      search_status: '',
     };
   }
 
   getJobRoleList = (page = 1) => {
-    let { search_job_role } = this.state;
+    let { search_job_role, search_status } = this.state;
     API.get(
       `api/job_portal/job/role?page=${page}&job_role=${encodeURIComponent(
         search_job_role
+      )}&status=${encodeURIComponent(
+        search_status
       )}`
     )
       .then((res) => {
@@ -274,14 +277,17 @@ class Roles extends Component {
   JobRoleSearch = (e) => {
     e.preventDefault();
     const search_job_role = document.getElementById('search_job_role').value;
+    const search_status = document.getElementById('search_status').value;
 
-    if (search_job_role === '') {
+    if (search_job_role === '' & search_status === '') {
       return false;
     }
 
     API.get(
       `api/job_portal/job/role?page=1&job_role=${encodeURIComponent(
         search_job_role
+      )}&status=${encodeURIComponent(
+        search_status
       )}`
     )
       .then((res) => {
@@ -291,6 +297,7 @@ class Roles extends Component {
           isLoading: false,
           activePage: 1,
           search_job_role: search_job_role,
+          search_status: search_status,
 
           remove_search: true,
         });
@@ -305,10 +312,12 @@ class Roles extends Component {
 
   clearSearch = () => {
     document.getElementById('search_job_role').value = '';
+    document.getElementById('search_status').value = '';
 
     this.setState(
       {
         search_job_role: '',
+        search_status: '',
 
         remove_search: false,
       },
@@ -359,7 +368,7 @@ class Roles extends Component {
                       })
                     }
                   >
-                    <i className="fas fa-plus m-r-5" /> Add Roles
+                    <i className="fas fa-plus m-r-5" /> Add Role
                   </button>
                 </div>
                 <form className="form">
@@ -370,7 +379,22 @@ class Roles extends Component {
                       placeholder="Filter by Role"
                     />
                   </div>
-
+                  <div className="">
+                    <select
+                      name="search_status"
+                      id="search_status"
+                      className="form-control"
+                    >
+                      <option value="">Select Status</option>
+                      {this.state.selectStatus.map((val, i) => {
+                        return (
+                          <option key={i} value={val.value}>
+                            {val.label}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
                   <div className="">
                     <input
                       type="submit"
@@ -403,7 +427,7 @@ class Roles extends Component {
                     dataField="job_role"
                     dataFormat={__htmlDecode(this)}
                   >
-                    Roles Name
+                    Job Role
                   </TableHeaderColumn>
 
                   <TableHeaderColumn
@@ -531,9 +555,8 @@ class Roles extends Component {
                           </Modal.Body>
                           <Modal.Footer>
                             <button
-                              className={`btn btn-success btn-sm ${
-                                isValid ? 'btn-custom-green' : 'btn-disable'
-                              } m-r-10`}
+                              className={`btn btn-success btn-sm ${isValid ? 'btn-custom-green' : 'btn-disable'
+                                } m-r-10`}
                               type="submit"
                               disabled={
                                 isValid ? (isSubmitting ? true : false) : true
@@ -544,8 +567,8 @@ class Roles extends Component {
                                   ? 'Updating...'
                                   : 'Update'
                                 : isSubmitting
-                                ? 'Submitting...'
-                                : 'Submit'}
+                                  ? 'Submitting...'
+                                  : 'Submit'}
                             </button>
                             <button
                               onClick={(e) => this.modalCloseHandler()}

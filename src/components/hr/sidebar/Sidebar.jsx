@@ -127,7 +127,7 @@ class Sidebar extends Component {
                   <Link to="/hr/master-jobs/job-categories">
                     {' '}
                     <i className="fas fa-compress"></i>{' '}
-                    <span> Categories </span>
+                    <span> Job Categories </span>
                   </Link>{' '}
                 </li>
               ) : (
@@ -136,7 +136,7 @@ class Sidebar extends Component {
                   <Link to="/hr/master-jobs/job-categories">
                     {' '}
                     <i className="fas fa-compress"></i>{' '}
-                    <span> Categories </span>
+                    <span> Job Categories </span>
                   </Link>{' '}
                 </li>
               )}
@@ -145,7 +145,7 @@ class Sidebar extends Component {
                   {' '}
                   <Link to="/hr/master-jobs/job-roles">
                     {' '}
-                    <i className="fas fa-compress"></i> <span> Roles </span>
+                    <i className="fas fa-compress"></i> <span> Job  Roles </span>
                   </Link>{' '}
                 </li>
               ) : (
@@ -153,7 +153,7 @@ class Sidebar extends Component {
                   {' '}
                   <Link to="/hr/master-jobs/job-roles">
                     {' '}
-                    <i className="fas fa-compress"></i> <span> Roles </span>
+                    <i className="fas fa-compress"></i> <span> Job Roles </span>
                   </Link>{' '}
                 </li>
               )}
@@ -182,7 +182,7 @@ class Sidebar extends Component {
                   <Link to="/hr/master-jobs/job-location">
                     {' '}
                     <i className="fas fa-compress"></i>{' '}
-                    <span> Job Location </span>
+                    <span> Job Locations </span>
                   </Link>{' '}
                 </li>
               ) : (
@@ -191,7 +191,7 @@ class Sidebar extends Component {
                   <Link to="/hr/master-jobs/job-location">
                     {' '}
                     <i className="fas fa-compress"></i>{' '}
-                    <span> Job Location </span>
+                    <span> Job Locations </span>
                   </Link>{' '}
                 </li>
               )}
