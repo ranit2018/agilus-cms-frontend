@@ -3,7 +3,7 @@ import { Link, withRouter } from 'react-router-dom';
 import { getHRName } from '../../../shared/helper';
 import { Row, Col, Button, Modal } from 'react-bootstrap';
 import { Formik, Field, Form } from 'formik';
-import API from '../../../shared/hr-axios';
+import API from '../../../shared/hrAxios';
 import * as Yup from 'yup';
 
 // connect to store

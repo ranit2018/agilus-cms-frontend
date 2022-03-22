@@ -10,7 +10,7 @@ import {
   OverlayTrigger,
 } from 'react-bootstrap';
 import { Formik, Field, Form } from 'formik';
-import API from "../../../shared/hr-axios"
+import API from "../../../shared/hrAxios"
 import * as Yup from 'yup';
 import swal from 'sweetalert';
 import { showErrorMessage } from '../../../shared/handle_error';
@@ -764,7 +764,7 @@ class Jobs extends Component {
 
     const validateStopFlag = Yup.object().shape({
       feature_image: Yup.mixed()
-        .required('Please select the image')
+        .required('Please select image')
         .test(
           'jobimage',
           'Only files with the following extensions are allowed: png jpg jpeg',
@@ -773,9 +773,9 @@ class Jobs extends Component {
       job_title: Yup.string().required('Please enter job title'),
       job_role: Yup.string().required('Please select job role'),
       job_location: Yup.string().required('Please select job location'),
-      category_name: Yup.string().required('Please select category name'),
+      category_name: Yup.string().required('Please select job category'),
       job_description: Yup.string().required('Please enter job description'),
-      job_skill: Yup.string().required('Please enter job_skill '),
+      job_skill: Yup.string().required('Please enter job skill '),
       status: Yup.number().required('Please select status'),
     });
 
@@ -784,14 +784,16 @@ class Jobs extends Component {
         <div className="content-wrapper">
           <section className="content-header">
             <div className="row">
-              <div className="col-lg-12 col-sm-12 col-xs-12">
+              <div className="col-lg-12 col-sm-12 col-xs-12  m-b-15">
                 <h1>
                   Manage Jobs
                   <small />
                 </h1>
               </div>
 
-              <div className="col-lg-12 col-sm-12 col-xs-12  topSearchSection">
+              <div className="col-lg-12 col-sm-12 col-xs-12">
+                
+                <form className="leadForm">
                 <div className="">
                   <button
                     type="button"
@@ -800,9 +802,7 @@ class Jobs extends Component {
                   >
                     <i className="fas fa-plus m-r-5" /> Add Jobs
                   </button>
-                  {/*========= search ===============*/}
                 </div>
-                <form className="form">
                   <div className="">
                     <input
                       className="form-control"
@@ -813,11 +813,11 @@ class Jobs extends Component {
                   </div>
                   <div className="">
                     <select
-                      name="job_role_arr"
-                      id="search_job_role"
                       className="form-control"
+                      name="status"
+                      id="search_job_role"
                     >
-                      <option value="">Select Job Role</option>
+                      <option value="">  Select Job Role  </option>
                       {this.state.job_role_arr.map((val, i) => {
                         return (
                           <option key={i} value={val.value}>
@@ -829,9 +829,9 @@ class Jobs extends Component {
                   </div>
                   <div className="">
                     <select
+                      className="form-control"
                       name="status"
                       id="search_job_location"
-                      className="form-control"
                     >
                       <option value="">Select Job Location</option>
                       {this.state.job_location_arr.map((val, i) => {
@@ -845,9 +845,9 @@ class Jobs extends Component {
                   </div>
                   <div className="">
                     <select
+                      className="form-control"
                       name="status"
                       id="search_category_name"
-                      className="form-control"
                     >
                       <option value="">Select Job Category</option>
                       {this.state.job_category_arr.map((val, i) => {
@@ -861,11 +861,11 @@ class Jobs extends Component {
                   </div>
                   <div className="">
                     <select
-                      name="job_skill_arr"
-                      id="search_job_skill"
                       className="form-control"
+                      name="status"
+                      id="search_job_skill"
                     >
-                      <option value="">Select Job Skill</option>
+                      <option value="">  Select Job Skill  </option>
                       {this.state.job_skill_arr.map((val, i) => {
                         return (
                           <option key={i} value={val.value}>
@@ -877,11 +877,11 @@ class Jobs extends Component {
                   </div>
                   <div className="">
                     <select
+                      className="form-control"
                       name="status"
                       id="search_status"
-                      className="form-control"
                     >
-                      <option value="">Select Jobs Status</option>
+                      <option value="">Select Job Status</option>
                       {this.state.selectStatus.map((val) => {
                         return (
                           <option key={val.value} value={val.value}>
@@ -1019,7 +1019,7 @@ class Jobs extends Component {
                 </Modal>
 
                 {/* ======= Add/Edit Jobs Modal ======== */}
-                  {console.log('this.state.showModal',this.state.showModal)}
+                 
                 <Modal
                   show={this.state.showModal}
                   onHide={() => this.modalCloseHandler()}

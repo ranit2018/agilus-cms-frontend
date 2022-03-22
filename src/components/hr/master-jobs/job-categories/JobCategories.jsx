@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Link } from 'react-router-dom';
 import { Row, Col, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
-import API from "../../../../shared/hr-axios"
+import API from "../../../../shared/hrAxios"
 import swal from 'sweetalert';
 import { showErrorMessage } from '../../../../shared/handle_error';
 import Pagination from 'react-js-pagination';
@@ -396,7 +396,7 @@ class JobCategories extends Component {
     });
 
     const validateStopFlagUpdate = Yup.object().shape({
-      category_name: Yup.string().required('Please enter category'),
+      category_name: Yup.string().required('Please enter job category'),
       status: Yup.string()
         .trim()
         .required('Please select status')
@@ -404,7 +404,7 @@ class JobCategories extends Component {
     });
 
     const validateStopFlag = Yup.object().shape({
-      category_name: Yup.string().required('Please enter category'),
+      category_name: Yup.string().required('Please enter job category'),
       status: Yup.string()
         .trim()
         .required('Please select status')
@@ -480,7 +480,6 @@ class JobCategories extends Component {
                       <a
                         onClick={() => this.clearSearch()}
                         className="btn btn-danger btn-sm"
-                        href="# "
                       >
                         {' '}
                         Remove{' '}
@@ -593,6 +592,11 @@ class JobCategories extends Component {
                                       placeholder="Enter Job Category"
                                       value={values.category_name || ''}
                                     />
+                                     {errors.category_name && touched.category_name ? (
+                                      <span className="errorMsg">
+                                        {errors.category_name}
+                                      </span>
+                                    ) : null}
                                   </div>
                                 </Col>
                               </Row>

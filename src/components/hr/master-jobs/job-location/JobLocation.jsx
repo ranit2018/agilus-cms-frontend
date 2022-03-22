@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Link } from 'react-router-dom';
 import { Row, Col, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
-import API from '../../../../shared/hr-axios';
+import API from '../../../../shared/hrAxios';
 import swal from 'sweetalert';
 import { showErrorMessage } from '../../../../shared/handle_error';
 import Pagination from 'react-js-pagination';
@@ -117,9 +117,7 @@ class JobLocation extends Component {
     API.get(
       `api/job_portal/job/location?page=${page}&job_location=${encodeURIComponent(
         search_job_location
-      )}&status=${encodeURIComponent(
-        search_status
-      )}`
+      )}&status=${encodeURIComponent(search_status)}`
     )
       .then((res) => {
         this.setState({
@@ -153,7 +151,6 @@ class JobLocation extends Component {
   };
 
   deleteJobLocation = (id, row) => {
-
     API.post(`api/job_portal/job/location/${row.id}`)
       .then((res) => {
         swal({
@@ -190,7 +187,6 @@ class JobLocation extends Component {
   }
 
   changeStatus = (cell, status, row) => {
-
     API.put(`api/job_portal/job/location/change_status/${row.id}`, {
       status: status == 1 ? String(0) : String(1),
     })
@@ -308,7 +304,6 @@ class JobLocation extends Component {
       });
   };
 
-
   handlePageChange = (pageNumber) => {
     this.setState({ activePage: pageNumber });
     this.getJobLocationList(pageNumber > 0 ? pageNumber : 1);
@@ -316,19 +311,19 @@ class JobLocation extends Component {
 
   JobRoleSearch = (e) => {
     e.preventDefault();
-    const search_job_location = document.getElementById('search_job_location').value;
+    const search_job_location = document.getElementById(
+      'search_job_location'
+    ).value;
     const search_status = document.getElementById('search_status').value;
 
-    if (search_job_location === '' & search_status === '') {
+    if ((search_job_location === '') & (search_status === '')) {
       return false;
     }
 
     API.get(
       `api/job_portal/job/location?page=1&job_location=${encodeURIComponent(
         search_job_location
-      )}&status=${encodeURIComponent(
-        search_status
-      )}`
+      )}&status=${encodeURIComponent(search_status)}`
     )
       .then((res) => {
         this.setState({
@@ -387,7 +382,7 @@ class JobLocation extends Component {
     });
 
     const validateStopFlag = Yup.object().shape({
-      job_location: Yup.string().required('Please enter Job location'),
+      job_location: Yup.string().required('Please enter job location'),
       status: Yup.string()
         .trim()
         .required('Please select status')
@@ -460,10 +455,10 @@ class JobLocation extends Component {
                       onClick={(e) => this.JobRoleSearch(e)}
                     />
                     {this.state.remove_search ? (
+                      // eslint-disable-next-line jsx-a11y/anchor-is-valid
                       <a
                         onClick={() => this.clearSearch()}
                         className="btn btn-danger btn-sm"
-                        href="# "
                       >
                         {' '}
                         Remove{' '}
@@ -540,8 +535,8 @@ class JobLocation extends Component {
                         ? this.handleSubmitEventUpdate
                         : this.handleSubmitEventAdd
                     }
-                  // validationSchema={validateStopFlag}
-                  // onSubmit={this.handleEditSubmit}
+                    // validationSchema={validateStopFlag}
+                    // onSubmit={this.handleEditSubmit}
                   >
                     {({
                       values,
@@ -558,7 +553,8 @@ class JobLocation extends Component {
                         <Form>
                           <Modal.Header closeButton>
                             <Modal.Title>
-                              {this.state.jobLocationId == 0 ? 'Add' : 'Edit'} Job Location
+                              {this.state.jobLocationId == 0 ? 'Add' : 'Edit'}{' '}
+                              Job Location
                             </Modal.Title>
                           </Modal.Header>
                           <Modal.Body>
@@ -577,6 +573,12 @@ class JobLocation extends Component {
                                       placeholder="Enter Job Location"
                                       value={values.job_location || ''}
                                     />
+                                    {errors.job_location &&
+                                    touched.job_location ? (
+                                      <span className="errorMsg">
+                                        {errors.job_location}
+                                      </span>
+                                    ) : null}
                                   </div>
                                 </Col>
                               </Row>
@@ -614,10 +616,10 @@ class JobLocation extends Component {
                             </div>
                           </Modal.Body>
                           <Modal.Footer>
-
                             <button
-                              className={`btn btn-success btn-sm ${isValid ? 'btn-custom-green' : 'btn-disable'
-                                } m-r-10`}
+                              className={`btn btn-success btn-sm ${
+                                isValid ? 'btn-custom-green' : 'btn-disable'
+                              } m-r-10`}
                               type="submit"
                               disabled={
                                 isValid ? (isSubmitting ? true : false) : true
@@ -628,8 +630,8 @@ class JobLocation extends Component {
                                   ? 'Updating...'
                                   : 'Update'
                                 : isSubmitting
-                                  ? 'Submitting...'
-                                  : 'Submit'}
+                                ? 'Submitting...'
+                                : 'Submit'}
                             </button>
                             <button
                               onClick={(e) => this.modalCloseHandler()}

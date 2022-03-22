@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Link } from 'react-router-dom';
 import { Row, Col, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
-import API from '../../../../shared/hr-axios';
+import API from '../../../../shared/hrAxios';
 import swal from 'sweetalert';
 import { showErrorMessage } from '../../../../shared/handle_error';
 import Pagination from 'react-js-pagination';
@@ -12,7 +12,6 @@ import Layout from '../../layout/Layout';
 
 import { Formik, Field, Form } from 'formik'; // for edit part
 import * as Yup from 'yup'; // for edit part
-import whitelogo from '../../../../assets/images/drreddylogo_white.png';
 
 const __htmlDecode = (refObj) => (cell) => {
   return htmlDecode(cell);
@@ -116,9 +115,7 @@ class Roles extends Component {
     API.get(
       `api/job_portal/job/role?page=${page}&job_role=${encodeURIComponent(
         search_job_role
-      )}&status=${encodeURIComponent(
-        search_status
-      )}`
+      )}&status=${encodeURIComponent(search_status)}`
     )
       .then((res) => {
         this.setState({
@@ -302,7 +299,6 @@ class Roles extends Component {
       });
   };
 
-
   handlePageChange = (pageNumber) => {
     this.setState({ activePage: pageNumber });
     this.getJobRoleList(pageNumber > 0 ? pageNumber : 1);
@@ -313,16 +309,14 @@ class Roles extends Component {
     const search_job_role = document.getElementById('search_job_role').value;
     const search_status = document.getElementById('search_status').value;
 
-    if (search_job_role === '' & search_status === '') {
+    if ((search_job_role === '') & (search_status === '')) {
       return false;
     }
 
     API.get(
       `api/job_portal/job/role?page=1&job_role=${encodeURIComponent(
         search_job_role
-      )}&status=${encodeURIComponent(
-        search_status
-      )}`
+      )}&status=${encodeURIComponent(search_status)}`
     )
       .then((res) => {
         this.setState({
@@ -381,7 +375,7 @@ class Roles extends Component {
     });
 
     const validateStopFlag = Yup.object().shape({
-      job_role: Yup.string().required('Please enter category'),
+      job_role: Yup.string().required('Please enter job role'),
       status: Yup.string()
         .trim()
         .required('Please select status')
@@ -401,7 +395,7 @@ class Roles extends Component {
 
               <div className="col-lg-12 col-sm-12 col-xs-12  topSearchSection">
                 <div className="">
-                   <button
+                  <button
                     type="button"
                     className="btn btn-info btn-sm"
                     onClick={(e) => this.modalShowHandler(e, '')}
@@ -441,10 +435,10 @@ class Roles extends Component {
                       onClick={(e) => this.JobRoleSearch(e)}
                     />
                     {this.state.remove_search ? (
+                      // eslint-disable-next-line jsx-a11y/anchor-is-valid
                       <a
                         onClick={() => this.clearSearch()}
                         className="btn btn-danger btn-sm"
-                        href="# "
                       >
                         {' '}
                         Remove{' '}
@@ -537,19 +531,9 @@ class Roles extends Component {
                     }) => {
                       return (
                         <Form>
-                          {/* {this.state.showModalUpdate === true ? (
-                            <div className="loading_reddy_outer">
-                              <div className="loading_reddy">
-                                <img src={whitelogo} alt="loader" />
-                              </div>
-                            </div>
-                          ) : (
-                            ''
-                          )} */}
                           <Modal.Header closeButton>
                             <Modal.Title>
-                            {this.state.roleId == 0 ? 'Add' : 'Edit'} Job Role
-
+                              {this.state.roleId == 0 ? 'Add' : 'Edit'} Job Role
                             </Modal.Title>
                           </Modal.Header>
                           <Modal.Body>
@@ -568,6 +552,11 @@ class Roles extends Component {
                                       placeholder="Enter job role"
                                       value={values.job_role || ''}
                                     />
+                                    {errors.job_role && touched.job_role ? (
+                                      <span className="errorMsg">
+                                        {errors.job_role}
+                                      </span>
+                                    ) : null}
                                   </div>
                                 </Col>
                               </Row>
@@ -606,8 +595,9 @@ class Roles extends Component {
                           </Modal.Body>
                           <Modal.Footer>
                             <button
-                              className={`btn btn-success btn-sm ${isValid ? 'btn-custom-green' : 'btn-disable'
-                                } m-r-10`}
+                              className={`btn btn-success btn-sm ${
+                                isValid ? 'btn-custom-green' : 'btn-disable'
+                              } m-r-10`}
                               type="submit"
                               disabled={
                                 isValid ? (isSubmitting ? true : false) : true
@@ -618,8 +608,8 @@ class Roles extends Component {
                                   ? 'Updating...'
                                   : 'Update'
                                 : isSubmitting
-                                  ? 'Submitting...'
-                                  : 'Submit'}
+                                ? 'Submitting...'
+                                : 'Submit'}
                             </button>
                             <button
                               onClick={(e) => this.modalCloseHandler()}

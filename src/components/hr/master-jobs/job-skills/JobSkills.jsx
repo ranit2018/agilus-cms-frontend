@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Link } from 'react-router-dom';
 import { Row, Col, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
-import API from '../../../../shared/hr-axios';
+import API from '../../../../shared/hrAxios';
 import swal from 'sweetalert';
 import { showErrorMessage } from '../../../../shared/handle_error';
 import Pagination from 'react-js-pagination';
@@ -117,9 +117,7 @@ class JobSkills extends Component {
     API.get(
       `api/job_portal/job/skill?page=${page}&job_skill=${encodeURIComponent(
         search_job_skill
-      )}&status=${encodeURIComponent(
-        search_status
-      )}`
+      )}&status=${encodeURIComponent(search_status)}`
     )
       .then((res) => {
         this.setState({
@@ -316,16 +314,14 @@ class JobSkills extends Component {
     const search_job_skill = document.getElementById('search_job_skill').value;
     const search_status = document.getElementById('search_status').value;
 
-    if (search_job_skill === '' & search_status === '') {
+    if ((search_job_skill === '') & (search_status === '')) {
       return false;
     }
 
     API.get(
       `api/job_portal/job/skill?page=1&job_skill=${encodeURIComponent(
         search_job_skill
-      )}&status=${encodeURIComponent(
-        search_status
-      )}`
+      )}&status=${encodeURIComponent(search_status)}`
     )
       .then((res) => {
         this.setState({
@@ -384,7 +380,7 @@ class JobSkills extends Component {
     });
 
     const validateStopFlagUpdate = Yup.object().shape({
-      job_skill: Yup.string().required('Please enter job role'),
+      job_skill: Yup.string().required('Please enter job skill'),
       status: Yup.string()
         .trim()
         .required('Please select status')
@@ -445,10 +441,10 @@ class JobSkills extends Component {
                       onClick={(e) => this.JobRoleSearch(e)}
                     />
                     {this.state.remove_search ? (
+                      // eslint-disable-next-line jsx-a11y/anchor-is-valid
                       <a
                         onClick={() => this.clearSearch()}
                         className="btn btn-danger btn-sm"
-                        href="# "
                       >
                         {' '}
                         Remove{' '}
@@ -525,8 +521,8 @@ class JobSkills extends Component {
                         ? this.handleSubmitEventUpdate
                         : this.handleSubmitEventAdd
                     }
-                  // validationSchema={validateStopFlag}
-                  // onSubmit={this.handleEditSubmit}
+                    // validationSchema={validateStopFlag}
+                    // onSubmit={this.handleEditSubmit}
                   >
                     {({
                       values,
@@ -541,19 +537,10 @@ class JobSkills extends Component {
                     }) => {
                       return (
                         <Form>
-                          {/* {this.state.showModalUpdate === true ? (
-                            <div className="loading_reddy_outer">
-                              <div className="loading_reddy">
-                                <img src={whitelogo} alt="loader" />
-                              </div>
-                            </div>
-                          ) : (
-                            ''
-                          )} */}
                           <Modal.Header closeButton>
                             <Modal.Title>
-                              {this.state.jobSkillId == 0 ? 'Add' : 'Edit'} Job Skill
-
+                              {this.state.jobSkillId == 0 ? 'Add' : 'Edit'} Job
+                              Skill
                             </Modal.Title>
                           </Modal.Header>
                           <Modal.Body>
@@ -572,6 +559,11 @@ class JobSkills extends Component {
                                       placeholder="Enter Job Skill"
                                       value={values.job_skill || ''}
                                     />
+                                    {errors.job_skill && touched.job_skill ? (
+                                      <span className="errorMsg">
+                                        {errors.job_skill}
+                                      </span>
+                                    ) : null}
                                   </div>
                                 </Col>
                               </Row>
@@ -610,8 +602,9 @@ class JobSkills extends Component {
                           </Modal.Body>
                           <Modal.Footer>
                             <button
-                              className={`btn btn-success btn-sm ${isValid ? 'btn-custom-green' : 'btn-disable'
-                                } m-r-10`}
+                              className={`btn btn-success btn-sm ${
+                                isValid ? 'btn-custom-green' : 'btn-disable'
+                              } m-r-10`}
                               type="submit"
                               disabled={
                                 isValid ? (isSubmitting ? true : false) : true
@@ -622,8 +615,8 @@ class JobSkills extends Component {
                                   ? 'Updating...'
                                   : 'Update'
                                 : isSubmitting
-                                  ? 'Submitting...'
-                                  : 'Submit'}
+                                ? 'Submitting...'
+                                : 'Submit'}
                             </button>
                             <button
                               onClick={(e) => this.modalCloseHandler()}
