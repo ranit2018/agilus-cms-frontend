@@ -97,7 +97,6 @@ const actionFormatter = (refObj) => (cell, row) => {
     Email: row.email,
     PhoneNumber: row.phone_no,
   };
-  console.log(' dataArr', dataArr);
 
   if (dataArr === null) {
     return null;
@@ -184,7 +183,6 @@ class RegisteredUsers extends Component {
     const email = document.getElementById('email').value;
     const phone_no = document.getElementById('phone_no').value;
 
-    console.log('fist_name', name, email);
     if (name === '' && email === '' && phone_no == '') {
       return false;
     }
@@ -313,19 +311,19 @@ class RegisteredUsers extends Component {
                   <TableHeaderColumn
                     isKey
                     dataField="fullname"
-                    // dataFormat={htmlDecode(this)}
+                  // dataFormat={htmlDecode(this)}
                   >
                     Name
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="email"
-                    // dataFormat={htmlDecode(this)}
+                  // dataFormat={htmlDecode(this)}
                   >
                     Email
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="phone_no"
-                    // dataFormat={htmlDecode(this)}
+                  // dataFormat={htmlDecode(this)}
                   >
                     Phone Number
                   </TableHeaderColumn>

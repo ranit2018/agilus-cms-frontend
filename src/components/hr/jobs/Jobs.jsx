@@ -500,21 +500,7 @@ class Jobs extends Component {
     }
   };
 
-  handleSubmitEventAdd = (values, actions) => {
-    // let postdata = {
-    //   // job_id: this.state.jobDetails.job_id ? this.state.jobDetails.job_id : '',
-    //   feature_image: values.feature_image,
-    //   job_title: values.job_title,
-    //   job_role: values.job_role,
-    //   job_location: values.job_location,
-    //   job_category: values.category_name,
-    //   job_description: values.job_description,
-    //   desired_skill_set: values.job_skill,
-    //   date_posted: new Date().toLocaleString(),
-    //   status: String(values.status),
-    // };
-    // console.log('postdata', postdata);
-
+  handleSubmitEventAdd = (values, actions) => { 
     let formData = new FormData();
 
     // formData.append('job_id',this.state.jobDetails.job_id)
