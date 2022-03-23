@@ -68,6 +68,12 @@ import HealthandBenefits from "../components/admin/lead-landing-page/HealthwithB
 import Accordian from "../components/admin/product-details/Accordion";
 import AddAccordian from "../components/admin/product-details/AddAccordion";
 import EditAccordion from "../components/admin/product-details/EditAccordion";
+
+import Doctor from "../components/admin/department/Doctor";
+import Equipment from "../components/admin/department/Equipment";
+import Test from "../components/admin/department/Test";
+import Publications from "../components/admin/department/Publications";
+
 import "../assets/css/all.css";
 import "../assets/css/admin-style.css";
 import "../assets/css/admin-skin-blue.css";
@@ -217,6 +223,12 @@ class Admin extends Component {
         />
         <PrivateRoute path="/ordering/faq" component={FaqOrdering} />
         <PrivateRoute path="/investors/memberstype" component={MembersType} />
+
+        <PrivateRoute path="/department/doctor" component={Doctor} />
+        <PrivateRoute path="/department/equipment" component={Equipment} />
+        <PrivateRoute path="/department/test" component={Test} />
+        <PrivateRoute path="/department/publications" component={Publications} />
+
         <Route from="*" component={AdminPageNotFound} />
       </Switch>
     );

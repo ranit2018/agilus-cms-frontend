@@ -98,6 +98,16 @@ class SidebarAdmin extends Component {
       this.setState({ shown: "5" });
     }
 
+    if (
+      path === "/department/doctor" ||
+      path === "/department/equipment" ||
+      path === "/department/test" ||
+      path === "/department/publications"
+    ) {
+      this.setState({ shown: "6" });
+    }
+
+
     if (this.props.isLoggedIn === true) {
       const superAdmin = getSuperAdmin(localStorage.admin_token);
       if (superAdmin) {
@@ -252,6 +262,111 @@ class SidebarAdmin extends Component {
               </Link>{" "}
             </li>
           )}
+
+           {/* =================================================== */}
+           <li className={rotate == "6" ? "treeview active" : "treeview"}>
+            <Link to="#" data-id="6" onClick={this.handlePlus}>
+              <i
+                className="fas fa-certificate sub-menu"
+                data-id="6"
+                onClick={this.handlePlus}
+              ></i>{" "}
+              <span data-id="6" onClick={this.handlePlus}>
+                Departments Page{" "}
+              </span>
+              <span className="pull-right-container">
+                <i
+                  data-id="6"
+                  onClick={this.handlePlus}
+                  className={
+                    rotate == "6"
+                      ? "fa pull-right fa-minus"
+                      : "fa pull-right fa-plus"
+                  }
+                ></i>
+              </span>
+            </Link>
+
+            <ul className="treeview-menu">
+              {this.props.path_name === "/department/doctor" ? (
+                <li className="active">
+                  {" "}
+                  <Link to="/department/doctor">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> Doctors </span>
+                  </Link>{" "}
+                </li>
+              ) : (
+                <li>
+                  {" "}
+                  <Link to="/department/doctor">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> Doctors </span>
+                  </Link>{" "}
+                </li>
+              )}
+            </ul>
+            <ul className="treeview-menu">
+              {this.props.path_name === "/department/equipment" ? (
+                <li className="active">
+                  {" "}
+                  <Link to="/department/equipment">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> Equipments & Insturments </span>
+                  </Link>{" "}
+                </li>
+              ) : (
+                <li>
+                  {" "}
+                  <Link to="/department/equipment">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> Equipments & Insturments </span>
+                  </Link>{" "}
+                </li>
+              )}
+            </ul>
+            <ul className="treeview-menu">
+              {this.props.path_name === "/department/test" ? (
+                <li className="active">
+                  {" "}
+                  <Link to="/department/test">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> Test </span>
+                  </Link>{" "}
+                </li>
+              ) : (
+                <li>
+                  {" "}
+                  <Link to="/department/test">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> Test </span>
+                  </Link>{" "}
+                </li>
+              )}
+            </ul>
+            <ul className="treeview-menu">
+              {this.props.path_name === "/department/publications" ? (
+                <li className="active">
+                  {" "}
+                  <Link to="/department/publications">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> Publications </span>
+                  </Link>{" "}
+                </li>
+              ) : (
+                <li>
+                  {" "}
+                  <Link to="/department/publications">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> Publication </span>
+                  </Link>{" "}
+                </li>
+              )}
+            </ul>
+          </li>
+
+          {/* =================================================== */}
+
           {this.props.path_name === "/auto-popup" ||
           this.props.path_name === "/auto-popup" ? (
             <li className="active">
