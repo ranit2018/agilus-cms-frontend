@@ -1,67 +1,47 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable jsx-a11y/img-redundant-alt */
 import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
-import { Link } from "react-router-dom";
 import {
   Row,
   Col,
+  ButtonToolbar,
   Button,
-  Modal,
   Tooltip,
   OverlayTrigger,
+  Modal,
 } from "react-bootstrap";
-import { Formik, Field, Form } from "formik";
-import { Editor } from "@tinymce/tinymce-react";
+import { Link } from "react-router-dom";
 import API from "../../../shared/admin-axios";
-import * as Yup from "yup";
+import { Formik, Field, Form } from "formik"; // for add/edit only
+import * as Yup from "yup"; // for add/edit only
 import swal from "sweetalert";
-import { showErrorMessage } from "../../../shared/handle_error";
-import whitelogo from "../../../assets/images/drreddylogo_white.png";
-import Pagination from "react-js-pagination";
 import Select from "react-select";
-import Switch from "react-switch";
+
 import Layout from "../layout/Layout";
-import ReactHtmlParser from "react-html-parser";
 import {
   htmlDecode,
   getHeightWidth,
+  getHeightWidthFromURL,
   generateResolutionText,
-  FILE_VALIDATION_TYPE_ERROR_MASSAGE,
   getResolution,
   FILE_VALIDATION_MASSAGE,
   FILE_SIZE,
   FILE_VALIDATION_SIZE_ERROR_MASSAGE,
+  FILE_VALIDATION_TYPE_ERROR_MASSAGE,
 } from "../../../shared/helper";
+// import whitelogo from "../../../assets/images/drreddylogo_white.png";
+import Switch from "react-switch";
+
+import SRL from "../../../assets/images/SRL.png";
+
+import exclamationImage from "../../../assets/images/exclamation-icon-black.svg";
+import Pagination from "react-js-pagination";
+import { showErrorMessage } from "../../../shared/handle_error";
 import dateFormat from "dateformat";
+import { values } from "methods";
 
-
-const initialValues = {
-  heading: "",
-  description: "",
-  date_added: "",
-  status: "",
-  file: "",
-};
-const __htmlDecode = (refObj) => (cell) => {
-  return ReactHtmlParser(htmlDecode(cell));
-};
-
-const custStatus = (refObj) => (cell) => {
-  //return cell === 1 ? "Active" : "Inactive";
-  if (cell === 1) {
-    return "Active";
-  } else if (cell === 0) {
-    return "Inactive";
-  }
-};
-
-const setDate = (refOBj) => (cell) => {
-    if (cell && cell != "") {
-      var mydate = new Date(cell);
-      return dateFormat(mydate, "dd-mm-yyyy");
-    } else {
-      return "---";
-    }
-  };  
+/*For Tooltip*/
 
 function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
   return (
@@ -78,36 +58,29 @@ function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
     </OverlayTrigger>
   );
 }
+/*For Tooltip*/
 
 const actionFormatter = (refObj) => (cell, row) => {
   return (
     <div className="actionStyle">
-      {/* <LinkWithTooltip
-                tooltip="Click to Delete"
-                href="#"
-                clicked={(e) => refObj.confirmDelete(e, cell)}
-                id="tooltip-1"
-            >
-                <i className="far fa-trash-alt" />
-            </LinkWithTooltip> */}
       <LinkWithTooltip
-        tooltip="Click to edit"
-        href="#"
+        tooltip={"Click to Edit"}
         clicked={(e) => refObj.modalShowHandler(e, cell)}
+        href="#"
         id="tooltip-1"
       >
         <i className="far fa-edit" />
       </LinkWithTooltip>
       <LinkWithTooltip
         tooltip={"Click to change status"}
-        // clicked={(e) => refObj.changeStatus(e, cell, row.status)}
+        // clicked={(e) => refObj.chageStatus(e, cell, row.status)}
         href="#"
         id="tooltip-1"
       >
         <Switch
           checked={row.status == 1 ? true : false}
           uncheckedIcon={false}
-          onChange={() => refObj.changeStatus(row.id, row.status)}
+          onChange={(e) => refObj.chageStatus(cell, row.status)}
           height={20}
           width={45}
         />
@@ -123,57 +96,199 @@ const actionFormatter = (refObj) => (cell, row) => {
     </div>
   );
 };
+
+const __htmlDecode = (refObj) => (cell) => {
+  return htmlDecode(cell);
+};
+
+const setName = (refObj) => (cell) => {
+  return cell.replace(".png", " ");
+};
+
+const PublicationsStatus = (refObj) => (cell) => {
+  //return cell === 1 ? "Active" : "Inactive";
+  if (cell === 1) {
+    return "Active";
+  } else if (cell === 0) {
+    return "Inactive";
+  }
+};
+
+const setPublicationsImage = (refObj) => (cell, row) => {
+  return (
+    <img
+      src={row.publication_image}
+      alt="Publications"
+      height="100"
+      onClick={(e) => refObj.imageModalShowHandler(row.publication_image)}
+    ></img>
+  );
+};
+
+const setDate = (refOBj) => (cell) => {
+  if (cell && cell != "") {
+    var mydate = new Date(cell);
+    return dateFormat(mydate, "dd-mm-yyyy");
+  } else {
+    return "---";
+  }
+};
+
+const initialValues = {
+  id: "",
+  publication_heading: "",
+  publication_description: "",
+  publication_image: "",
+  date_posted: "",
+  status: "",
+};
+
 class Publications extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      publications: [],
-      searchDetails: {},
-      publicationId: 0,
+      publicationDetails: [],
       isLoading: false,
       showModal: false,
-      thumbNailModal: false,
-      search_by_heading: '',
+      publication_id: 0,
+      publication_heading: "",
+      publication_description: "",
+      publication_image: "",
+      date_posted: "",
+      status: "",
+
+      alldata: [],
+      publicationSearch: [],
+      selectStatus: [
+        { value: "1", label: "Active" },
+        { value: "0", label: "Inactive" },
+      ],
+      activePage: 1,
       totalCount: 0,
       itemPerPage: 10,
-      activePage: 1,
-      selectStatus: [
-        { value: "0", label: "Inactive" },
-        { value: "1", label: "Active" },
-      ],
+      thumbNailModal: false,
+      message: "",
     };
   }
 
-  getPublicationsList = (page = 1) => {
-  
-    API.get(
-      `/api/lead_landing/health_benifits?page=${page}`
-    )
-      .then((res) => {
-        this.setState({
-          publications: res.data.data,
-          totalCount: res.data.count,
-          isLoading: false,
-          healthId: 0,
-        });
-      })
-      .catch((err) => {
-        this.setState({
-          isLoading: false,
-        });
-        showErrorMessage(err, this.props);
-      });
-  };
-
   componentDidMount() {
-    // this.getPublicationsList();
-    // this.setState({
-    //   validationMessage: generateResolutionText("health-and-benefits"),
-    //   fileValidationMessage: FILE_VALIDATION_MASSAGE,
-    // });
+    this.getPublicationsList(this.state.activePage);
   }
 
+  handlePageChange = (pageNumber) => {
+    this.setState({ activePage: pageNumber });
+    this.getPublicationsList(pageNumber > 0 ? pageNumber : 1);
+  };
+
+  getPublicationsList = (page = 1) => {
+    // var publication_heading = document.getElementById("publication_heading").value;
+    // var publication_description = document.getElementById("publication_description").value;
+    // let status = document.getElementById("status").value;
+    // API.get(`/api/department/Publications?page=${page}&publication_heading=${encodeURIComponent(
+    //   publication_heading
+    // )}&publication_description=${encodeURIComponent(
+    //   publication_description
+    // )}&status=${encodeURIComponent(
+    //   status
+    // )}`)
+    //   .then((res) => {
+    //     this.setState({
+    //       publicationDetails: res.data.data,
+    //       totalCount: Number(res.data.count),
+    //       isLoading: false,
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     this.setState({
+    //       isLoading: false,
+    //     });
+    //     showErrorMessage(err, this.props);
+    //   });
+  };
+
+  publicationSearch = (e) => {
+    // e.preventDefault();
+    // var publication_heading = document.getElementById("publication_heading").value;
+    // var publication_description = document.getElementById("publication_description").value;
+    // let status = document.getElementById("status").value;
+    // if (
+    //   publication_heading === "" &&
+    //   publication_description === "" &&
+    //   status === ""
+    // ) {
+    //   return false;
+    // }
+    // API.get(
+    //   `/api/department/Publications?page=1&publication_heading=${encodeURIComponent(
+    //     publication_heading
+    //   )}&publication_description=${encodeURIComponent(
+    //     publication_description
+    //   )}&status=${encodeURIComponent(
+    //     status
+    //   )}`
+    // )
+    //   .then((res) => {
+    //     this.setState({
+    //       publicationDetails: res.data.data,
+    //       totalCount: Number(res.data.count),
+    //       isLoading: false,
+    //       publication_heading: publication_heading,
+    //       publication_description: publication_description,
+    //       status: status,
+    //       activePage: 1,
+    //       remove_search: true,
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     this.setState({
+    //       isLoading: false,
+    //     });
+    //     showErrorMessage(err, this.props);
+    //   });
+  };
+
+  clearSearch = () => {
+    // document.getElementById("publication_heading").value = "";
+    // document.getElementById("publication_description").value = "";
+    // document.getElementById("status").value = "";
+    // this.setState(
+    //   {
+    //     publication_description: "",
+    //     publication_heading: "",
+    //     status: "",
+    //     remove_search: false,
+    //   },
+    //   () => {
+    //     this.setState({ activePage: 1 });
+    //     this.getPublicationsList();
+    //   }
+    // );
+  };
+
+  //change status
+  chageStatus = (cell, status) => {
+    // API.put(`/api/department/Publications/change_status/${cell}`, {
+    //   status: status == 1 ? String(0) : String(1),
+    // })
+    //   .then((res) => {
+    //     swal({
+    //       closeOnClickOutside: false,
+    //       title: "Success",
+    //       text: "Record updated successfully.",
+    //       icon: "success",
+    //     }).then(() => {
+    //       this.getPublicationsList(this.state.activePage);
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     if (err.data.status === 3) {
+    //       this.setState({ closeModal: true });
+    //       showErrorMessage(err, this.props);
+    //     }
+    //   });
+  };
+
+  //delete
   confirmDelete = (event, id) => {
     event.preventDefault();
     swal({
@@ -185,102 +300,94 @@ class Publications extends Component {
       dangerMode: true,
     }).then((willDelete) => {
       if (willDelete) {
-        this.deletePublication(id);
+        this.deletePublications(id);
       }
     });
   };
 
-  deletePublication = (id) => {
-    API.delete(`api/lead_landing/health_benifits/${id}`)
-      .then((res) => {
-        swal({
-          closeOnClickOutside: false,
-          title: "Success",
-          text: "Record deleted successfully.",
-          icon: "success",
-        }).then(() => {
-          this.getPublicationsList(this.state.activePage);
-        });
-      })
-      .catch((err) => {
-        if (err.data.status === 3) {
-          this.setState({ closeModal: true });
-          showErrorMessage(err, this.props);
-        }
-      });
+  deletePublications = (id) => {
+    // API.post(`/api/department/Publications/${id}`)
+    //   .then((res) => {
+    //     swal({
+    //       closeOnClickOutside: false,
+    //       title: "Success",
+    //       text: "Record deleted successfully.",
+    //       icon: "success",
+    //     }).then(() => {
+    //       this.getPublicationsList(this.state.activePage);
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     if (err.data.status === 3) {
+    //       this.setState({ closeModal: true });
+    //       showErrorMessage(err, this.props);
+    //     }
+    //   });
   };
 
-  getPublicationDetailsById(id) {
-    API.get(`/api/lead_landing/health_benifits/${id}`)
-      .then((res) => {
-        this.setState({
-          showModal: true,
-          healthDetails: res.data.data[0],
-          healthId: id,
-        });
-      })
-      .catch((err) => {
-        showErrorMessage(err, this.props);
-      });
+  renderShowsTotal = (start, to, total) => {
+    return (
+      <span className="pageShow">
+        Showing {start} to {to}, of {total} records
+      </span>
+    );
+  };
+
+  checkHandler = (event) => {
+    event.preventDefault();
+  };
+  //get data by id
+  getIndividualPublications(id) {
+    // API.get(`/api/department/Publications/${id}`)
+    //   .then((res) => {
+    //     this.setState({
+    //       alldata: res.data.data[0],
+    //       publication_id: id,
+    //       showModal: true,
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     showErrorMessage(err, this.props);
+    //   });
   }
 
-  changeStatus = (cell, status) => {
-    API.put(`/api/lead_landing/health_benifits/change_status/${cell}`, {
-      status: status == 1 ? String(0) : String(1),
-    })
-      .then((res) => {
-        swal({
-          closeOnClickOutside: false,
-          title: "Success",
-          text: "Record updated successfully.",
-          icon: "success",
-        }).then(() => {
-          this.getPublicationsList(this.state.activePage);
-        });
-      })
-      .catch((err) => {
-        if (err.data.status === 3) {
-          this.setState({ closeModal: true });
-          showErrorMessage(err, this.props);
-        }
-      });
-  };
-
-  
+  //for edit/add part
   modalCloseHandler = () => {
-    this.setState({ searchDetails: {}, publicationId: 0, showModal: false });
+    this.setState({
+      showModal: false,
+      // id: "",
+      alldata: "",
+      publication_heading: "",
+      publication_description: "",
+      publication_image: "",
+      date_posted: "",
+      status: "",
+      publicationDetails: "",
+      publication_id: 0,
+      message: "",
+      fileValidationMessage: "",
+    });
   };
 
   modalShowHandler = (event, id) => {
-    event.preventDefault();
+    this.setState({ fileValidationMessage: FILE_VALIDATION_MASSAGE });
     if (id) {
-      this.getPublicationDetailsById(id);
+      event.preventDefault();
+      this.getIndividualPublications(id);
     } else {
-      this.setState({ searchDetails: {}, publicationId: 0, showModal: true });
+      this.setState({ showModal: true });
     }
   };
 
-  imageModalShowHandler = (url) => {
-    console.log(url);
-    this.setState({ thumbNailModal: true, banner_url: url });
-  };
-  imageModalCloseHandler = () => {
-    this.setState({ thumbNailModal: false, banner_url: "" });
-  };
-  handlePageChange = (pageNumber) => {
-    this.setState({ activePage: pageNumber });
-    this.getPublicationsList(pageNumber > 0 ? pageNumber : 1);
-  };
-
   fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
-    //console.log(event.target.files);
-    setFieldTouched("file");
-    setFieldValue("file", event.target.value);
+    setFieldTouched("publication_image");
+    setFieldValue("publication_image", event.target.value);
+
     const SUPPORTED_FORMATS = ["image/png", "image/jpeg", "image/jpg"];
     if (!event.target.files[0]) {
       //Supported
       this.setState({
-        file: "",
+        publication_image: "",
         isValidFile: true,
       });
       return;
@@ -291,79 +398,72 @@ class Publications extends Component {
     ) {
       //Supported
       this.setState({
-        file: event.target.files[0],
+        publication_image: event.target.files[0],
         isValidFile: true,
       });
     } else {
       //Unsupported
       setErrors({
-        file: "Only files with the following extensions are allowed: png jpg jpeg",
+        publication_image:
+          "Only files with the following extensions are allowed: png jpg jpeg",
       }); //Not working- So Added validation in "yup"
       this.setState({
-        file: "",
+        publication_image: "",
         isValidFile: false,
       });
     }
   };
-  
-  setPublicationsImage = (refObj) => (cell, row) => {
-    if (row.publication_image !== null) {
-      return (
-        <img
-          src={row.publication_image}
-          alt="Health with Benefits Image"
-          height="100"
-          onClick={(e) => refObj.imageModalShowHandler(row.publication_image)}
-        ></img>
-      );
-    } else {
-      return null;
-    }
-  };
 
   handleSubmitEventAdd = (values, actions) => {
+    // // let postdata = {
+    // //   publication_heading: values.publication_heading,
+    // //   publication_description: values.publication_description,
+    // //   publication_image: values.publication_image,
+    // //   date_posted: new Date().toLocaleString(),
+    // //   status: String(values.status),
+    // // };
+    // // console.log("postdata", postdata);
     // let formData = new FormData();
-
-    // formData.append("heading", values.heading);
-    // formData.append("description", values.description);
-    // formData.append("status", values.status);
-    // let url = `api/lead_landing/health_benifits`;
+    // formData.append("publication_heading", values.publication_heading);
+    // formData.append("publication_description", values.publication_description);
+    // formData.append("status", String(values.status));
+    // let url = `/api/department/Publications`;
     // let method = "POST";
-
-    // if (this.state.file.size > FILE_SIZE) {
-    //   actions.setErrors({ file: FILE_VALIDATION_SIZE_ERROR_MASSAGE });
+    // if (this.state.publication_image.size > FILE_SIZE) {
+    //   actions.setErrors({ publication_image: FILE_VALIDATION_SIZE_ERROR_MASSAGE });
     //   actions.setSubmitting(false);
     // } else {
-    //   getHeightWidth(this.state.file).then((dimension) => {
+    //   getHeightWidth(this.state.publication_image).then((dimension) => {
     //     const { height, width } = dimension;
-    //     const offerDimension = getResolution("health-and-benefits");
+    //     const offerDimension = getResolution("Publications");
     //     if (height != offerDimension.height || width != offerDimension.width) {
-    //       //    actions.setErrors({ file: "The file is not of desired height and width" });
-    //       actions.setErrors({ file: FILE_VALIDATION_TYPE_ERROR_MASSAGE });
+    //       actions.setErrors({
+    //         publication_image: FILE_VALIDATION_TYPE_ERROR_MASSAGE,
+    //       });
     //       actions.setSubmitting(false);
     //     } else {
-    //       formData.append("benifit_image", this.state.file);
+    //       formData.append("publication_image", this.state.publication_image);
     //       API({
     //         method: method,
     //         url: url,
     //         data: formData,
     //       })
     //         .then((res) => {
-    //           this.setState({ showModal: false, file: "" });
+    //           this.setState({ showModal: false, publication_image: "" });
     //           swal({
     //             closeOnClickOutside: false,
     //             title: "Success",
     //             text: "Added Successfully",
     //             icon: "success",
     //           }).then(() => {
-    //             this.getHealthAndBenefitList();
+    //             this.getPublicationsList();
     //           });
     //         })
     //         .catch((err) => {
     //           this.setState({
     //             closeModal: true,
     //             showModalLoader: false,
-    //             file: "",
+    //             publication_image: "",
     //           });
     //           if (err.data.status === 3) {
     //             showErrorMessage(err, this.props);
@@ -377,32 +477,42 @@ class Publications extends Component {
     // }
   };
 
-  handleSubmitEventUpdate = (values, actions) => {
+  handleSubmitEventUpdate = async (values, actions) => {
+    // // let postdata = {
+    // //   publication_heading: values.publication_heading,
+    // //   publication_description: values.publication_description,
+    // //   publication_image: values.publication_image,
+    // //   date_posted: new Date().toLocaleString(),
+    // //   status: String(values.status),
+    // // };
+    // // console.log("postdata edit", postdata);
     // let formData = new FormData();
-
-    // formData.append("title", values.title);
-    // formData.append("content", values.content);
-    // formData.append("status", values.status);
-    // let url = `/api/lead_landing/health_benifits/${this.state.healthId}`;
+    // formData.append("publication_heading", values.publication_heading);
+    // formData.append("publication_description", values.publication_description);
+    // formData.append("status", String(values.status));
+    // let url = `/api/department/Publications/${this.state.publication_id}`;
     // let method = "PUT";
-
-    // if (this.state.file) {
-    //   if (this.state.file.size > FILE_SIZE) {
-    //     actions.setErrors({ file: FILE_VALIDATION_SIZE_ERROR_MASSAGE });
+    // if (this.state.publication_image) {
+    //   if (this.state.publication_image.size > FILE_SIZE) {
+    //     actions.setErrors({
+    //       publication_image: FILE_VALIDATION_SIZE_ERROR_MASSAGE,
+    //     });
     //     actions.setSubmitting(false);
     //   } else {
-    //     getHeightWidth(this.state.file).then((dimension) => {
+    //     getHeightWidth(this.state.publication_image).then((dimension) => {
     //       const { height, width } = dimension;
-    //       const offerDimension = getResolution("health-and-benefits");
+    //       const offerDimension = getResolution("Publications");
     //       if (
     //         height != offerDimension.height ||
     //         width != offerDimension.width
     //       ) {
     //         //    actions.setErrors({ file: "The file is not of desired height and width" });
-    //         actions.setErrors({ file: FILE_VALIDATION_TYPE_ERROR_MASSAGE });
+    //         actions.setErrors({
+    //           publication_image: FILE_VALIDATION_TYPE_ERROR_MASSAGE,
+    //         });
     //         actions.setSubmitting(false);
     //       } else {
-    //         formData.append("benifit_image", this.state.file);
+    //         formData.append("publication_image", this.state.publication_image);
     //         API({
     //           method: method,
     //           url: url,
@@ -416,7 +526,7 @@ class Publications extends Component {
     //               text: "Updated Successfully",
     //               icon: "success",
     //             }).then(() => {
-    //               this.getHealthAndBenefitList();
+    //               this.getPublicationsList();
     //             });
     //           })
     //           .catch((err) => {
@@ -445,7 +555,7 @@ class Publications extends Component {
     //         text: "Updated Successfully",
     //         icon: "success",
     //       }).then(() => {
-    //         this.getHealthAndBenefitList();
+    //         this.getPublicationsList();
     //       });
     //     })
     //     .catch((err) => {
@@ -460,8 +570,68 @@ class Publications extends Component {
     // }
   };
 
+  //image modal
+  imageModalShowHandler = (url) => {
+    this.setState({ thumbNailModal: true, publication_image: url });
+  };
+  imageModalCloseHandler = () => {
+    this.setState({ thumbNailModal: false, publication_image: "" });
+  };
+
   render() {
-   
+    const { alldata } = this.state;
+
+    const newInitialValues = Object.assign(initialValues, {
+      publication_image: "",
+      publication_heading: alldata.publication_heading
+        ? alldata.publication_heading
+        : "",
+      publication_description: alldata.publication_description
+        ? alldata.publication_description
+        : "",
+      status:
+        alldata.status || alldata.status === 0 ? alldata.status.toString() : "",
+    });
+
+    const validateStopFlagUpdate = Yup.object().shape({
+      publication_image: Yup.string()
+        .notRequired()
+        .test(
+          "Publicationsimage",
+          "Only files with the following extensions are allowed: png jpg jpeg",
+          (publication_image) => {
+            if (publication_image) {
+              return this.state.isValidFile;
+            } else {
+              return true;
+            }
+          }
+        ),
+      publication_heading: Yup.string().required(
+        "Please enter publication heading"
+      ),
+      publication_description: Yup.string().required(
+        "Please enter description"
+      ),
+      status: Yup.number().required("Please select status"),
+    });
+
+    const validateStopFlag = Yup.object().shape({
+      publication_image: Yup.mixed()
+        .required("Please select image")
+        .test(
+          "Publicationsimage",
+          "Only files with the following extensions are allowed: png jpg jpeg",
+          () => this.state.isValidFile
+        ),
+      publication_heading: Yup.string().required(
+        "Please enter publication heading"
+      ),
+      publication_description: Yup.string().required(
+        "Please enter description"
+      ),
+      status: Yup.number().required("Please select status"),
+    });
 
     return (
       <Layout {...this.props}>
@@ -482,18 +652,38 @@ class Publications extends Component {
                     className="btn btn-info btn-sm"
                     onClick={(e) => this.modalShowHandler(e, "")}
                   >
-                    <i className="fas fa-plus m-r-5" /> Add Publications
+                    <i className="fas fa-plus m-r-5" /> Add Publication
                   </button>
                 </div>
-
                 <form className="form">
                   <div className="">
                     <input
                       className="form-control"
-                      name="search_by_heading"
-                      id="search_by_heading"
-                      placeholder="Filter by heading"
+                      name="publication_heading"
+                      id="publication_heading"
+                      placeholder="Filter by Publication Heading"
                     />
+                  </div>
+                  <div className="">
+                    <input
+                      className="form-control"
+                      name="publication_description"
+                      id="publication_description"
+                      placeholder="Filter by Description"
+                    />
+                  </div>
+
+                  <div className="">
+                    <select name="status" id="status" className="form-control">
+                      <option value="">Select Status</option>
+                      {this.state.selectStatus.map((val) => {
+                        return (
+                          <option key={val.value} value={val.value}>
+                            {val.label}
+                          </option>
+                        );
+                      })}
+                    </select>
                   </div>
 
                   <div className="">
@@ -501,7 +691,7 @@ class Publications extends Component {
                       type="submit"
                       value="Search"
                       className="btn btn-warning btn-sm"
-                      onClick={(e) => this.publicationsSearch(e)}
+                      onClick={(e) => this.publicationSearch(e)}
                     />
                     {this.state.remove_search ? (
                       <a
@@ -521,28 +711,35 @@ class Publications extends Component {
           <section className="content">
             <div className="box">
               <div className="box-body">
-                <BootstrapTable data={this.state.publications}>
-                <TableHeaderColumn
+                <BootstrapTable
+                  wrapperClasses="table-responsive"
+                  data={this.state.publicationDetails}
+                >
+                  <TableHeaderColumn
                     isKey
-                    dataField="content"
-                    dataFormat={this.setPublicationsImage(this)}
+                    dataField="publication_image"
+                    dataFormat={setPublicationsImage(this)}
+                    tdStyle={{ wordBreak: "break-word" }}
                   >
                     Image
                   </TableHeaderColumn>
                   <TableHeaderColumn
-                    dataField="heading"
-                    dataFormat={__htmlDecode(this)}
+                    dataField="publication_heading"
+                    dataFormat={setName(this)}
+                    tdStyle={{ wordBreak: "break-word" }}
                   >
-                    Heading
+                    Publication Heading
                   </TableHeaderColumn>
                   <TableHeaderColumn
-                    dataField="description"
+                    dataField="publication_description"
                     dataFormat={__htmlDecode(this)}
+                    tdStyle={{ wordBreak: "break-word" }}
                   >
                     Description
                   </TableHeaderColumn>
+
                   <TableHeaderColumn
-                    dataField="date_added"
+                    dataField="date_posted"
                     dataFormat={setDate(this)}
                     tdStyle={{ wordBreak: "break-word" }}
                   >
@@ -550,7 +747,8 @@ class Publications extends Component {
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="status"
-                    dataFormat={custStatus(this)}
+                    dataFormat={PublicationsStatus(this)}
+                    tdStyle={{ wordBreak: "break-word" }}
                   >
                     Status
                   </TableHeaderColumn>
@@ -559,11 +757,12 @@ class Publications extends Component {
                     dataField="id"
                     dataFormat={actionFormatter(this)}
                     dataAlign=""
+                    width="125"
+                    tdStyle={{ wordBreak: "break-word" }}
                   >
                     Action
                   </TableHeaderColumn>
                 </BootstrapTable>
-
                 {this.state.totalCount > 10 ? (
                   <Row>
                     <Col md={12}>
@@ -581,23 +780,21 @@ class Publications extends Component {
                     </Col>
                   </Row>
                 ) : null}
-                
-                
-                {/* ======= Add Health with Benefits Modal ======== */}
+                {/* ======= Add/ Edit  Modal ======== */}
                 <Modal
                   show={this.state.showModal}
                   onHide={() => this.modalCloseHandler()}
                   backdrop="static"
                 >
                   <Formik
-                    initialValues={initialValues}
-                    // validationSchema={
-                    //   this.state.publicationId > 0
-                    //     ? validateStopFlagUpdate
-                    //     : validateStopFlag
-                    // }
+                    initialValues={newInitialValues}
+                    validationSchema={
+                      this.state.publication_id > 0
+                        ? validateStopFlagUpdate
+                        : validateStopFlag
+                    }
                     onSubmit={
-                      this.state.publicationId > 0
+                      this.state.publication_id > 0
                         ? this.handleSubmitEventUpdate
                         : this.handleSubmitEventAdd
                     }
@@ -615,21 +812,10 @@ class Publications extends Component {
                     }) => {
                       return (
                         <Form>
-                        
-                          {this.state.showModalLoader === true ? (
-                            <div className="loading_reddy_outer">
-                              <div className="loading_reddy">
-                                <img src={whitelogo} alt="loader" />
-                              </div>
-                            </div>
-                          ) : (
-                            ""
-                          )}
                           <Modal.Header closeButton>
                             <Modal.Title>
-                              {this.state.healthId > 0
-                                ? "Edit "
-                                : "Add "} Publications
+                              {this.state.publication_id == 0 ? "Add" : "Edit"}{" "}
+                              Publication Details
                             </Modal.Title>
                           </Modal.Header>
                           <Modal.Body>
@@ -638,44 +824,21 @@ class Publications extends Component {
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
-                                      Heading
+                                      Publication Heading
                                       <span className="impField">*</span>
                                     </label>
                                     <Field
-                                      name="heading"
+                                      name="publication_heading"
                                       type="text"
                                       className={`form-control`}
-                                      placeholder="Enter Title"
+                                      placeholder="Enter Publications Name"
                                       autoComplete="off"
-                                      value={values.title}
+                                      value={values.publication_heading}
                                     />
-                                    {errors.title && touched.title ? (
+                                    {errors.publication_heading &&
+                                    touched.publication_heading ? (
                                       <span className="errorMsg">
-                                        {errors.title}
-                                      </span>
-                                    ) : null}
-                                  </div>
-                                </Col>
-                              </Row>
-                              <Row>
-                                <Col xs={12} sm={12} md={12}>
-                                  <div className="form-group">
-                                    <label>
-                                      Descrption
-                                      {/*  <span className="impField">*</span> */}
-                                    </label>
-                                    <Field
-                                      name="content"
-                                      as="textarea"
-                                      className={`form-control`}
-                                      placeholder="Enter Description"
-                                      autoComplete="off"
-                                      value={values.description}
-                                    
-                                    />
-                                    {errors.content && touched.content ? (
-                                      <span className="errorMsg">
-                                        {errors.content}
+                                        {errors.publication_heading}
                                       </span>
                                     ) : null}
                                   </div>
@@ -686,21 +849,49 @@ class Publications extends Component {
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
-                                      Upload Image
-                                      {this.state.healthId > 0 ? null : (
-                                        <span className="impField">*</span>
-                                      )}
-                                      <br />{" "}
-                                      <i> {this.state.fileValidationMessage}</i>
-                                      <br />{" "}
-                                      <i>{this.state.validationMessage}</i>
+                                      Description
+                                      <span className="impField">*</span>
                                     </label>
                                     <Field
-                                      name="file"
+                                      name="publication_description"
+                                      type="text"
+                                      className={`form-control`}
+                                      placeholder="Enter Description"
+                                      autoComplete="off"
+                                      value={values.publication_description}
+                                    />
+                                    {errors.publication_description &&
+                                    touched.publication_description ? (
+                                      <span className="errorMsg">
+                                        {errors.publication_description}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                </Col>
+                              </Row>
+                              <Row>
+                                <Col xs={12} sm={12} md={12}>
+                                  <div className="form-group">
+                                    <label>
+                                      Upload Image
+                                      {this.state.publication_id == 0 ? (
+                                        <span className="impField">*</span>
+                                      ) : null}
+                                      <br />{" "}
+                                      <i>{this.state.fileValidationMessage}</i>
+                                      {this.state.message != "" ? (
+                                        <>
+                                          <br /> <i>{this.state.message}</i>
+                                        </>
+                                      ) : null}
+                                    </label>
+                                    <Field
+                                      name="publication_image"
                                       type="file"
                                       className={`form-control`}
-                                      placeholder="Select Image"
+                                      placeholder="Publications Image"
                                       autoComplete="off"
+                                      id=""
                                       onChange={(e) => {
                                         this.fileChangedHandler(
                                           e,
@@ -710,15 +901,15 @@ class Publications extends Component {
                                         );
                                       }}
                                     />
-                                    {errors.file && touched.file ? (
+                                    {errors.publication_image &&
+                                    touched.publication_image ? (
                                       <span className="errorMsg">
-                                        {errors.file}
+                                        {errors.publication_image}
                                       </span>
                                     ) : null}
                                   </div>
                                 </Col>
                               </Row>
-
                               <Row>
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
@@ -762,7 +953,7 @@ class Publications extends Component {
                                 isValid ? (isSubmitting ? true : false) : true
                               }
                             >
-                              {this.state.healthId > 0
+                              {this.state.publication_id > 0
                                 ? isSubmitting
                                   ? "Updating..."
                                   : "Update"
@@ -783,22 +974,20 @@ class Publications extends Component {
                     }}
                   </Formik>
                 </Modal>
-               
-                {/* MODAL FOR IMAGE*/}
+
+                {/* =====Image modal===== */}
                 <Modal
                   show={this.state.thumbNailModal}
                   onHide={() => this.imageModalCloseHandler()}
                   backdrop="static"
                 >
-                  <Modal.Header closeButton>
-                    Publication Image
-                  </Modal.Header>
+                  <Modal.Header closeButton>Publication Image</Modal.Header>
                   <Modal.Body>
                     <center>
                       <div className="imgUi">
                         <img
-                          src={this.state.banner_url}
-                          alt="Publications Image"
+                          src={this.state.publication_image}
+                          alt="Publication Image"
                         ></img>
                       </div>
                     </center>

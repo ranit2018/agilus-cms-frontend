@@ -259,6 +259,28 @@ const resolution_arr = [
     height: `183`,
   },
 
+  {
+    tag: `doctor`,
+    // min_width: `788`,
+    // min_height: `700`,
+    width: `1085`,
+    height: `488`,
+  },
+  {
+    tag: `equipment`,
+    // min_width: `788`,
+    // min_height: `700`,
+    width: `1085`,
+    height: `488`,
+  },
+  {
+    tag: `Publications`,
+    // min_width: `788`,
+    // min_height: `700`,
+    width: `1085`,
+    height: `488`,
+  },
+
 ]
 
 export const generateResolutionText = (tag) => {

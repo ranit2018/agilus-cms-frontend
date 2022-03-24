@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable jsx-a11y/img-redundant-alt */
 import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import {
@@ -17,21 +19,29 @@ import swal from "sweetalert";
 import Select from "react-select";
 
 import Layout from "../layout/Layout";
-import { htmlDecode, getHeightWidth, getHeightWidthFromURL, generateResolutionText, getResolution, FILE_VALIDATION_MASSAGE, FILE_SIZE, FILE_VALIDATION_SIZE_ERROR_MASSAGE, FILE_VALIDATION_TYPE_ERROR_MASSAGE } from "../../../shared/helper";
+import {
+  htmlDecode,
+  getHeightWidth,
+  getHeightWidthFromURL,
+  generateResolutionText,
+  getResolution,
+  FILE_VALIDATION_MASSAGE,
+  FILE_SIZE,
+  FILE_VALIDATION_SIZE_ERROR_MASSAGE,
+  FILE_VALIDATION_TYPE_ERROR_MASSAGE,
+} from "../../../shared/helper";
 // import whitelogo from "../../../assets/images/drreddylogo_white.png";
 import Switch from "react-switch";
 
-// import SRL from '../../../assets/images/SRL.png'
+import SRL from "../../../assets/images/SRL.png";
 
-// import exclamationImage from '../../../assets/images/exclamation-icon-black.svg';
+import exclamationImage from "../../../assets/images/exclamation-icon-black.svg";
 import Pagination from "react-js-pagination";
-// import { showErrorMessage } from "../../../shared/handle_error";
+import { showErrorMessage } from "../../../shared/handle_error";
 import dateFormat from "dateformat";
 import { values } from "methods";
 
 /*For Tooltip*/
-
-
 
 function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
   return (
@@ -54,12 +64,11 @@ const actionFormatter = (refObj) => (cell, row) => {
   return (
     <div className="actionStyle">
       <LinkWithTooltip
-        tooltip={'Click to Edit'}
+        tooltip={"Click to Edit"}
         clicked={(e) => refObj.modalShowHandler(e, cell)}
         href="#"
         id="tooltip-1"
       >
-
         <i className="far fa-edit" />
       </LinkWithTooltip>
       <LinkWithTooltip
@@ -93,8 +102,8 @@ const __htmlDecode = (refObj) => (cell) => {
 };
 
 const setName = (refObj) => (cell) => {
-  return cell.replace('.png', " ")
-}
+  return cell.replace(".png", " ");
+};
 
 const doctorStatus = (refObj) => (cell) => {
   //return cell === 1 ? "Active" : "Inactive";
@@ -106,15 +115,13 @@ const doctorStatus = (refObj) => (cell) => {
 };
 
 const setDoctorImage = (refObj) => (cell, row) => {
-
   return (
-    // <LinkWithTooltip
-    //   tooltip={"View Image"}
-    //   id="tooltip-1"
-    //   clicked={(e) => refObj.imageModalShowHandler(row.banner_image)}
-    // >
-    <img src={row.banner_image} alt="Banner Image" height="100" onClick={(e) => refObj.imageModalShowHandler(row.banner_image)}></img>
-    // </LinkWithTooltip>
+    <img
+      src={row.doctor_image}
+      alt="Doctor"
+      height="100"
+      onClick={(e) => refObj.imageModalShowHandler(row.doctor_image)}
+    ></img>
   );
 };
 
@@ -127,15 +134,15 @@ const setDate = (refOBj) => (cell) => {
   }
 };
 
-
-
 const initialValues = {
-  doctor_name: '',
-  doctor_education: '',
-  doctor_expertise: '',
-  doctor_designation: '',
-  doctor_url: '',
-  status: ""
+  id: "",
+  doctor_name: "",
+  education: "",
+  expertise: "",
+  designation: "",
+  doctor_image: "",
+  date_posted: "",
+  status: "",
 };
 
 class Doctor extends Component {
@@ -146,29 +153,30 @@ class Doctor extends Component {
       isLoading: false,
       showModal: false,
       doctor_id: 0,
-      doctor_name: '',
-      doctor_education: '',
-      doctor_expertise: '',
-      doctor_designation: '',
-      doctor_url: '',
-      doctor_status: '',
-      
-    //   doctorSearch: [],
-      status_doctor: [
-        { value: '1', label: 'Active' },
-        { value: '0', label: 'Inactive' }
+      doctor_name: "",
+      education: "",
+      expertise: "",
+      designation: "",
+      doctor_image: "",
+      date_posted: "",
+      status: "",
+
+      alldata: [],
+      doctorSearch: [],
+      selectStatus: [
+        { value: "1", label: "Active" },
+        { value: "0", label: "Inactive" },
       ],
       activePage: 1,
       totalCount: 0,
       itemPerPage: 10,
       thumbNailModal: false,
-      message: '',
+      message: "",
     };
   }
 
   componentDidMount() {
-    // this.getDoctorList();
-    
+    this.getDoctorList(this.state.activePage);
   }
 
   handlePageChange = (pageNumber) => {
@@ -177,143 +185,174 @@ class Doctor extends Component {
   };
 
   getDoctorList = (page = 1) => {
-    // let doctor_name = this.state.doctor_name;
-    // let doctor_designation = this.state.doctor_designation;
-    
-    // API.get(
-    //   `/api/banner?page=${page}&page_name=${encodeURIComponent(page_name)}&status=${encodeURIComponent(banner_status)}&banner_name=${encodeURIComponent(banner_name)}`
-    // ).then((res) => {
-    //   this.setState({
-    //     doctor: res.data.data,
-    //     totalCount: res.data.count,
-    //     isLoading: false,
+    var doctor_name = document.getElementById("doctor_name").value;
+    var designation = document.getElementById("designation").value;
+    var expertise = document.getElementById("expertise").value;
+    let education = document.getElementById("education").value;
+    let status = document.getElementById("status").value;
 
-    //     // doctor_name: doctor_name,
-    //     // doctor_designation: doctor_designation,
+    API.get(
+      `/api/department/doctor?page=${page}&doctor_name=${encodeURIComponent(
+        doctor_name
+      )}&education=${encodeURIComponent(
+        education
+      )}&designation=${encodeURIComponent(
+        designation
+      )}&expertise=${encodeURIComponent(expertise)}&status=${encodeURIComponent(
+        status
+      )}`
+    )
+      .then((res) => {
+        this.setState({
+          doctorDetails: res.data.data,
+          totalCount: Number(res.data.count),
 
-    //   });
-    // })
-    //   .catch((err) => {
-    //     this.setState({
-    //       isLoading: false,
-    //     });
-    //     showErrorMessage(err, this.props);
-    //   });
-  }
-
-
+          isLoading: false,
+        });
+      })
+      .catch((err) => {
+        this.setState({
+          isLoading: false,
+        });
+        showErrorMessage(err, this.props);
+      });
+  };
 
   doctorSearch = (e) => {
-    // e.preventDefault();
+    e.preventDefault();
+    var doctor_name = document.getElementById("doctor_name").value;
+    var designation = document.getElementById("designation").value;
+    var expertise = document.getElementById("expertise").value;
+    let education = document.getElementById("education").value;
+    let status = document.getElementById("status").value;
 
-    // var doctor_name = document.getElementById("doctor_name").value;
-    // var doctor_designation = document.getElementById("doctor_designation").value;
-
-    // if (banner_name === "" && doctor_designation === "") {
-    //   return false;
-    // }
-
-    // API.get(`/api/banner?page=1&status=${encodeURIComponent(banner_status)}&banner_name=${encodeURIComponent(banner_name)}`)
-    //   .then((res) => {
-    //     this.setState({
-    //       doctor: res.data.data,
-    //       totalcount: res.data.count,
-    //       isLoading: false,
-    //       doctor_name: doctor_name,
-    //       doctor_designation: doctor_designation,
-    //       activePage: 1,
-    //       remove_search: true
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     this.setState({
-    //       isLoading: false
-    //     });
-    //     showErrorMessage(err, this.props);
-    //   });
-  };
-
-  getIndividualDoctor(id) {
-    // API.get(`/api/banner/${id}`)
-    //   .then((res) => {
-    //     this.setState({
-    //       docotrDetails: res.data.data[0],
-    //       docotor_id: id,
-    //       showModal: true
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     showErrorMessage(err, this.props);
-    //   });
-  }
-
-  modalCloseHandler = () => {
-    this.setState({ showModal: false, doctorDetails: "", doctor_id: 0, doctor_file: "", message: "", fileValidationMessage: "" });
-  };
-
-  modalShowHandler = (event, id) => {
-    this.setState({ fileValidationMessage: FILE_VALIDATION_MASSAGE })
-    if (id) {
-      event.preventDefault();
-      this.getIndividualDoctor(id);
-    } else {
-      this.setState({ showModal: true });
+    if (
+      doctor_name === "" &&
+      designation === "" &&
+      education === "" &&
+      expertise === "" &&
+      status === ""
+    ) {
+      return false;
     }
+
+    API.get(
+      `/api/department/doctor?page=1&doctor_name=${encodeURIComponent(
+        doctor_name
+      )}&education=${encodeURIComponent(
+        education
+      )}&designation=${encodeURIComponent(
+        designation
+      )}&expertise=${encodeURIComponent(expertise)}&status=${encodeURIComponent(
+        status
+      )}`
+    )
+      .then((res) => {
+        this.setState({
+          doctorDetails: res.data.data,
+          totalCount: Number(res.data.count),
+          isLoading: false,
+
+          doctor_name: doctor_name,
+          designation: designation,
+          education: education,
+          expertise: expertise,
+          status: status,
+
+          activePage: 1,
+          remove_search: true,
+        });
+      })
+      .catch((err) => {
+        this.setState({
+          isLoading: false,
+        });
+        showErrorMessage(err, this.props);
+      });
   };
 
-  handleBannerEdit = (id) => {
-    // swal({
-    //   closeOnClickOutside: false,
-    //   title: "Are you sure?",
-    //   text: "Click to edit the banner",
-    //   icon: "warning",
-    //   buttons: true,
-    //   dangerMode: true,
-    // }).then((willEdit) => {
-    //   if (willEdit) {
-    //     this.getIndividualDoctor(id);
-    //   }
-    // })
-  }
+  clearSearch = () => {
+    document.getElementById("doctor_name").value = "";
+    document.getElementById("designation").value = "";
+    document.getElementById("education").value = "";
+    document.getElementById("expertise").value = "";
+    document.getElementById("status").value = "";
 
-  handleSubmitEvent = async (values, actions) => {
+    this.setState(
+      {
+        designation: "",
+        doctor_name: "",
+        education: "",
+        expertise: "",
+        status: "",
 
-  }
+        remove_search: false,
+      },
+      () => {
+        this.setState({ activePage: 1 });
+        this.getDoctorList();
+      }
+    );
+  };
 
+  //change status
+  chageStatus = (cell, status) => {
+    API.put(`/api/department/doctor/change_status/${cell}`, {
+      status: status == 1 ? String(0) : String(1),
+    })
+      .then((res) => {
+        swal({
+          closeOnClickOutside: false,
+          title: "Success",
+          text: "Record updated successfully.",
+          icon: "success",
+        }).then(() => {
+          this.getDoctorList(this.state.activePage);
+        });
+      })
+      .catch((err) => {
+        if (err.data.status === 3) {
+          this.setState({ closeModal: true });
+          showErrorMessage(err, this.props);
+        }
+      });
+  };
+
+  //delete
   confirmDelete = (event, id) => {
-    // event.preventDefault();
-    // swal({
-    //   closeOnClickOutside: false,
-    //   title: "Are you sure?",
-    //   text: "Once deleted, you will not be able to recover this!",
-    //   icon: "warning",
-    //   buttons: true,
-    //   dangerMode: true,
-    // }).then((willDelete) => {
-    //   if (willDelete) {
-    //     this.deleteDoctor(id);
-    //   }
-    // });
+    event.preventDefault();
+    swal({
+      closeOnClickOutside: false,
+      title: "Are you sure?",
+      text: "Once deleted, you will not be able to recover this!",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        this.deleteDoctor(id);
+      }
+    });
   };
 
   deleteDoctor = (id) => {
-    // API.delete(`/api/banner/${id}`)
-    //   .then((res) => {
-    //     swal({
-    //       closeOnClickOutside: false,
-    //       title: "Success",
-    //       text: "Record deleted successfully.",
-    //       icon: "success",
-    //     }).then(() => {
-    //       this.getDoctorList(this.state.activePage);
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     if (err.data.status === 3) {
-    //       this.setState({ closeModal: true });
-    //       showErrorMessage(err, this.props);
-    //     }
-    //   });
+    API.post(`/api/department/doctor/${id}`)
+      .then((res) => {
+        swal({
+          closeOnClickOutside: false,
+          title: "Success",
+          text: "Record deleted successfully.",
+          icon: "success",
+        }).then(() => {
+          this.getDoctorList(this.state.activePage);
+        });
+      })
+      .catch((err) => {
+        if (err.data.status === 3) {
+          this.setState({ closeModal: true });
+          showErrorMessage(err, this.props);
+        }
+      });
   };
 
   renderShowsTotal = (start, to, total) => {
@@ -324,40 +363,326 @@ class Doctor extends Component {
     );
   };
 
-  clearSearch = () => {
-
-    document.getElementById("doctor_designation").value = "";
-    document.getElementById("doctor_name").value = "";
-
-    this.setState(
-      {
-        doctor_designation: "",
-        doctor_name: "",
-
-        remove_search: false,
-      },
-      () => {
-        this.setState({ activePage: 1 });
-        this.getDoctorList();
-
-      }
-    );
-  };
-
   checkHandler = (event) => {
     event.preventDefault();
   };
+  //get data by id
+  getIndividualDoctor(id) {
+    API.get(`/api/department/doctor/${id}`)
+      .then((res) => {
+        this.setState({
+          alldata: res.data.data[0],
+          doctor_id: id,
+          showModal: true,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  }
 
+  //for edit/add part
+  modalCloseHandler = () => {
+    this.setState({
+      showModal: false,
+      // id: "",
+      alldata: "",
+      doctor_name: "",
+      education: "",
+      expertise: "",
+      designation: "",
+      doctor_image: "",
+      date_posted: "",
+      status: "",
+      doctorDetails: "",
+      doctor_id: 0,
+      // doctor_file: "",
+      message: "",
+      fileValidationMessage: "",
+    });
+  };
+
+  modalShowHandler = (event, id) => {
+    this.setState({ fileValidationMessage: FILE_VALIDATION_MASSAGE });
+    if (id) {
+      event.preventDefault();
+      this.getIndividualDoctor(id);
+    } else {
+      this.setState({ showModal: true });
+    }
+  };
+
+  fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
+    setFieldTouched("doctor_image");
+    setFieldValue("doctor_image", event.target.value);
+
+    const SUPPORTED_FORMATS = ["image/png", "image/jpeg", "image/jpg"];
+    if (!event.target.files[0]) {
+      //Supported
+      this.setState({
+        doctor_image: "",
+        isValidFile: true,
+      });
+      return;
+    }
+    if (
+      event.target.files[0] &&
+      SUPPORTED_FORMATS.includes(event.target.files[0].type)
+    ) {
+      //Supported
+      this.setState({
+        doctor_image: event.target.files[0],
+        isValidFile: true,
+      });
+    } else {
+      //Unsupported
+      setErrors({
+        doctor_image:
+          "Only files with the following extensions are allowed: png jpg jpeg",
+      }); //Not working- So Added validation in "yup"
+      this.setState({
+        doctor_image: "",
+        isValidFile: false,
+      });
+    }
+  };
+
+  handleSubmitEventAdd = (values, actions) => {
+    // let postdata = {
+    //   // job_id: this.state.jobDetails.job_id ? this.state.jobDetails.job_id : '',
+    //   doctor_name: values.doctor_name,
+    //   education: values.education,
+    //   expertise: values.expertise,
+    //   designation: values.designation,
+    //   doctor_image: values.doctor_image,
+    //   date_posted: new Date().toLocaleString(),
+    //   status: String(values.status),
+    // };
+    // console.log("postdata", postdata);
+
+    let formData = new FormData();
+
+    // formData.append('job_id',this.state.jobDetails.job_id)
+    formData.append("doctor_name", values.doctor_name);
+    formData.append("education", values.education);
+    formData.append("expertise", values.expertise);
+    formData.append("designation", values.designation);
+    // formData.append('date_posted', new Date().toLocaleString());
+    formData.append("status", String(values.status));
+
+    let url = `/api/department/doctor`;
+    let method = "POST";
+    if (this.state.doctor_image.size > FILE_SIZE) {
+      actions.setErrors({ doctor_image: FILE_VALIDATION_SIZE_ERROR_MASSAGE });
+      actions.setSubmitting(false);
+    } else {
+      getHeightWidth(this.state.doctor_image).then((dimension) => {
+        const { height, width } = dimension;
+        const offerDimension = getResolution("doctor");
+        if (height != offerDimension.height || width != offerDimension.width) {
+          actions.setErrors({
+            doctor_image: FILE_VALIDATION_TYPE_ERROR_MASSAGE,
+          });
+          actions.setSubmitting(false);
+        } else {
+          formData.append("doctor_image", this.state.doctor_image);
+
+          API({
+            method: method,
+            url: url,
+            data: formData,
+          })
+            .then((res) => {
+              this.setState({ showModal: false, doctor_image: "" });
+              swal({
+                closeOnClickOutside: false,
+                title: "Success",
+                text: "Added Successfully",
+                icon: "success",
+              }).then(() => {
+                this.getDoctorList();
+              });
+            })
+            .catch((err) => {
+              this.setState({
+                closeModal: true,
+                showModalLoader: false,
+                doctor_image: "",
+              });
+              if (err.data.status === 3) {
+                showErrorMessage(err, this.props);
+              } else {
+                actions.setErrors(err.data.errors);
+                actions.setSubmitting(false);
+              }
+            });
+        }
+      });
+    }
+  };
+
+  handleSubmitEventUpdate = async (values, actions) => {
+    // let postdata = {
+    //   // job_id: this.state.jobDetails.job_id ? this.state.jobDetails.job_id : '',
+    //   doctor_name: values.doctor_name,
+    //   education: values.education,
+    //   expertise: values.expertise,
+    //   designation: values.designation,
+    //   doctor_image: values.doctor_image,
+    //   date_posted: new Date().toLocaleString(),
+    //   status: String(values.status),
+    // };
+    // console.log("postdata edit", postdata);
+
+    let formData = new FormData();
+
+    // formData.append('job_id',this.state.jobDetails.job_id)
+    formData.append("doctor_name", values.doctor_name);
+    formData.append("education", values.education);
+    formData.append("expertise", values.expertise);
+    formData.append("designation", values.designation);
+    // formData.append('date_posted', new Date().toLocaleString());
+    formData.append("status", String(values.status));
+
+    let url = `/api/department/doctor/${this.state.doctor_id}`;
+    let method = "PUT";
+
+    if (this.state.doctor_image) {
+      if (this.state.doctor_image.size > FILE_SIZE) {
+        actions.setErrors({
+          doctor_image: FILE_VALIDATION_SIZE_ERROR_MASSAGE,
+        });
+        actions.setSubmitting(false);
+      } else {
+        getHeightWidth(this.state.doctor_image).then((dimension) => {
+          const { height, width } = dimension;
+          const offerDimension = getResolution("doctor");
+
+          if (
+            height != offerDimension.height ||
+            width != offerDimension.width
+          ) {
+            //    actions.setErrors({ file: "The file is not of desired height and width" });
+            actions.setErrors({
+              doctor_image: FILE_VALIDATION_TYPE_ERROR_MASSAGE,
+            });
+            actions.setSubmitting(false);
+          } else {
+            formData.append("doctor_image", this.state.doctor_image);
+            API({
+              method: method,
+              url: url,
+              data: formData,
+            })
+              .then((res) => {
+                this.setState({ showModal: false });
+                swal({
+                  closeOnClickOutside: false,
+                  title: "Success",
+                  text: "Updated Successfully",
+                  icon: "success",
+                }).then(() => {
+                  this.getDoctorList();
+                });
+              })
+              .catch((err) => {
+                this.setState({ closeModal: true, showModalLoader: false });
+                if (err.data.status === 3) {
+                  showErrorMessage(err, this.props);
+                } else {
+                  actions.setErrors(err.data.errors);
+                  actions.setSubmitting(false);
+                }
+              });
+          }
+        });
+      }
+    } else {
+      API({
+        method: method,
+        url: url,
+        data: formData,
+      })
+        .then((res) => {
+          this.setState({ showModal: false });
+          swal({
+            closeOnClickOutside: false,
+            title: "Success",
+            text: "Updated Successfully",
+            icon: "success",
+          }).then(() => {
+            this.getDoctorList();
+          });
+        })
+        .catch((err) => {
+          this.setState({ closeModal: true, showModalLoader: false });
+          if (err.data.status === 3) {
+            showErrorMessage(err, this.props);
+          } else {
+            actions.setErrors(err.data.errors);
+            actions.setSubmitting(false);
+          }
+        });
+    }
+  };
+
+  //image modal
   imageModalShowHandler = (url) => {
-    console.log(url);
-    this.setState({ thumbNailModal: true, doctor_url: url });
-  }
+    this.setState({ thumbNailModal: true, doctor_image: url });
+  };
   imageModalCloseHandler = () => {
-    this.setState({ thumbNailModal: false, doctor_url: "" });
-  }
- 
+    this.setState({ thumbNailModal: false, doctor_image: "" });
+  };
+
   render() {
-    // const { doctorDetails } = this.state;
+    const { alldata } = this.state;
+
+    const newInitialValues = Object.assign(initialValues, {
+      doctor_image: "",
+      doctor_name: alldata.doctor_name ? alldata.doctor_name : "",
+      education: alldata.education ? alldata.education : "",
+      expertise: alldata.expertise ? alldata.expertise : "",
+      designation: alldata.designation ? alldata.designation : "",
+      // date_posted: doctorDetails.date_posted ? doctorDetails.date_posted : "",
+      status:
+        alldata.status || alldata.status === 0 ? alldata.status.toString() : "",
+    });
+
+    const validateStopFlagUpdate = Yup.object().shape({
+      doctor_image: Yup.string()
+        .notRequired()
+        .test(
+          "doctorimage",
+          "Only files with the following extensions are allowed: png jpg jpeg",
+          (doctor_image) => {
+            if (doctor_image) {
+              return this.state.isValidFile;
+            } else {
+              return true;
+            }
+          }
+        ),
+      doctor_name: Yup.string().required("Please enter doctor name"),
+      education: Yup.string().required("Please enter education"),
+      expertise: Yup.string().required("Please enter expetise"),
+      designation: Yup.string().required("Please enter designation"),
+      status: Yup.number().required("Please select status"),
+    });
+
+    const validateStopFlag = Yup.object().shape({
+      doctor_image: Yup.mixed()
+        .required("Please select image")
+        .test(
+          "doctorimage",
+          "Only files with the following extensions are allowed: png jpg jpeg",
+          () => this.state.isValidFile
+        ),
+      doctor_name: Yup.string().required("Please enter doctor name"),
+      education: Yup.string().required("Please enter education"),
+      expertise: Yup.string().required("Please enter expetise"),
+      designation: Yup.string().required("Please enter designation"),
+      status: Yup.number().required("Please select status"),
+    });
 
     return (
       <Layout {...this.props}>
@@ -372,7 +697,6 @@ class Doctor extends Component {
               </div>
 
               <div className="col-lg-12 col-sm-12 col-xs-12  topSearchSection">
-
                 <div className="">
                   <button
                     type="button"
@@ -386,30 +710,48 @@ class Doctor extends Component {
                   <div className="">
                     <input
                       className="form-control"
-                      name="banner_name"
-                      id="banner_name"
+                      name="doctor_name"
+                      id="doctor_name"
                       placeholder="Filter by Doctor Name"
                     />
                   </div>
-
-                  {/* <div className="">
-                    <select
-                      name="banner_status"
-                      id="banner_status"
+                  <div className="">
+                    <input
                       className="form-control"
-                    >
-                    doctor_name: '',
-      doctor_education: '',
-      doctor_expertise: '',
-      doctor_designation: '',
-                      <option value="">Select Doctor Status</option>
-                      {this.state.status.map((val) => {
+                      name="education"
+                      id="education"
+                      placeholder="Filter by Education"
+                    />
+                  </div>
+                  <div className="">
+                    <input
+                      className="form-control"
+                      name="expertise"
+                      id="expertise"
+                      placeholder="Filter by Expertise"
+                    />
+                  </div>
+                  <div className="">
+                    <input
+                      className="form-control"
+                      name="designation"
+                      id="designation"
+                      placeholder="Filter by Designation"
+                    />
+                  </div>
+
+                  <div className="">
+                    <select name="status" id="status" className="form-control">
+                      <option value="">Select Status</option>
+                      {this.state.selectStatus.map((val) => {
                         return (
-                          <option key={val.value} value={val.value}>{val.label}</option>
+                          <option key={val.value} value={val.value}>
+                            {val.label}
+                          </option>
                         );
                       })}
                     </select>
-                  </div> */}
+                  </div>
 
                   <div className="">
                     <input
@@ -436,8 +778,10 @@ class Doctor extends Component {
           <section className="content">
             <div className="box">
               <div className="box-body">
-
-                <BootstrapTable wrapperClasses="table-responsive" data={this.state.banner}>
+                <BootstrapTable
+                  wrapperClasses="table-responsive"
+                  data={this.state.doctorDetails}
+                >
                   <TableHeaderColumn
                     isKey
                     dataField="doctor_name"
@@ -448,37 +792,37 @@ class Doctor extends Component {
                     Doctor Name
                   </TableHeaderColumn>
                   <TableHeaderColumn
-                    dataField="image"
+                    dataField="doctor_image"
                     dataFormat={setDoctorImage(this)}
                     tdStyle={{ wordBreak: "break-word" }}
                   >
                     Image
                   </TableHeaderColumn>
-                  
+
                   <TableHeaderColumn
-                    dataField="doctor_education"
+                    dataField="education"
                     dataFormat={__htmlDecode(this)}
                     tdStyle={{ wordBreak: "break-word" }}
                   >
                     Education
                   </TableHeaderColumn>
                   <TableHeaderColumn
-                    dataField="doctor_expertise"
+                    dataField="expertise"
                     dataFormat={__htmlDecode(this)}
                     tdStyle={{ wordBreak: "break-word" }}
                   >
                     Expertise
                   </TableHeaderColumn>
                   <TableHeaderColumn
-                    dataField="doctor_designation"
+                    dataField="designation"
                     dataFormat={__htmlDecode(this)}
                     tdStyle={{ wordBreak: "break-word" }}
                   >
                     Designation
                   </TableHeaderColumn>
-                  
+
                   <TableHeaderColumn
-                    dataField="date_added"
+                    dataField="date_posted"
                     dataFormat={setDate(this)}
                     tdStyle={{ wordBreak: "break-word" }}
                   >
@@ -502,15 +846,14 @@ class Doctor extends Component {
                     Action
                   </TableHeaderColumn>
                 </BootstrapTable>
-
-                {this.state.banner_count > 10 ? (
+                {this.state.totalCount > 10 ? (
                   <Row>
                     <Col md={12}>
                       <div className="paginationOuter text-right">
                         <Pagination
                           activePage={this.state.activePage}
                           itemsCountPerPage={10}
-                          totalItemsCount={Number(this.state.banner_count)}
+                          totalItemsCount={this.state.totalCount}
                           itemClass="nav-item"
                           linkClass="nav-link"
                           activeClass="active"
@@ -520,8 +863,7 @@ class Doctor extends Component {
                     </Col>
                   </Row>
                 ) : null}
-
-                {/* ======= Add Banner Modal ========
+                {/* ======= Add/ Edit  Modal ======== */}
                 <Modal
                   show={this.state.showModal}
                   onHide={() => this.modalCloseHandler()}
@@ -529,8 +871,16 @@ class Doctor extends Component {
                 >
                   <Formik
                     initialValues={newInitialValues}
-                    validationSchema={validateStopFlag}
-                    onSubmit={this.handleSubmitEvent}
+                    validationSchema={
+                      this.state.doctor_id > 0
+                        ? validateStopFlagUpdate
+                        : validateStopFlag
+                    }
+                    onSubmit={
+                      this.state.doctor_id > 0
+                        ? this.handleSubmitEventUpdate
+                        : this.handleSubmitEventAdd
+                    }
                   >
                     {({
                       values,
@@ -541,22 +891,14 @@ class Doctor extends Component {
                       setFieldValue,
                       setFieldTouched,
                       handleChange,
-                      setErrors
+                      setErrors,
                     }) => {
                       return (
                         <Form>
-                          {this.state.showModalLoader === true ? (
-                            <div className="loading_reddy_outer">
-                              <div className="loading_reddy">
-                                <img src={whitelogo} alt="loader" />
-                              </div>
-                            </div>
-                          ) : (
-                            ""
-                          )}
                           <Modal.Header closeButton>
                             <Modal.Title>
-                              {this.state.banner_id == 0 ? "Add" : "Edit"} Banner
+                              {this.state.doctor_id == 0 ? "Add" : "Edit"}{" "}
+                              Doctor Details
                             </Modal.Title>
                           </Modal.Header>
                           <Modal.Body>
@@ -565,43 +907,21 @@ class Doctor extends Component {
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
-                                      Page Name
+                                      Doctor Name
                                       <span className="impField">*</span>
                                     </label>
                                     <Field
-                                      name="page_name"
-                                      component="select"
-                                      className={`selectArowGray form-control`}
+                                      name="doctor_name"
+                                      type="text"
+                                      className={`form-control`}
+                                      placeholder="Enter Doctor Name"
                                       autoComplete="off"
-                                      onChange={(e) => {
-                                        setFieldValue("page_name", e.target.value)
-                                        if (e.target.value == 1) {
-                                          this.setState({
-                                            message: generateResolutionText("home-banner-images")
-                                          });
-                                        }
-                                        else if (e.target.value == 10) {
-                                          this.setState({
-                                            message: generateResolutionText("landening-banner-images")
-                                          });
-                                        } else {
-                                          this.setState({
-                                            message: generateResolutionText("others-banner-images")
-                                          })
-                                        }
-                                      }}
-                                      value={values.page_name}
-                                    >
-                                      <option value="">Select</option>
-                                      {this.state.page_name_arr.map((val) => {
-                                        return (
-                                          <option value={val.value}>{val.label}</option>
-                                        );
-                                      })}
-                                    </Field>
-                                    {errors.page_name && touched.page_name ? (
+                                      value={values.doctor_name}
+                                    />
+                                    {errors.doctor_name &&
+                                    touched.doctor_name ? (
                                       <span className="errorMsg">
-                                        {errors.page_name}
+                                        {errors.doctor_name}
                                       </span>
                                     ) : null}
                                   </div>
@@ -611,29 +931,20 @@ class Doctor extends Component {
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
-                                      Screen Name
+                                      Education
+                                      <span className="impField">*</span>
                                     </label>
                                     <Field
-                                      name="screen_name"
-                                      component="select"
-                                      className={`selectArowGray form-control`}
+                                      name="education"
+                                      type="text"
+                                      className={`form-control`}
+                                      placeholder="Enter Education"
                                       autoComplete="off"
-                                      value={values.screen_name}
-                                    >
-                                      <option key="-1" value="">
-                                        Select
-                                      </option>
-                                      {this.state.screens.map(
-                                        (val, i) => (
-                                          <option key={i} value={val.value}>
-                                            {val.label}
-                                          </option>
-                                        )
-                                      )}
-                                    </Field>
-                                    {errors.screen_name && touched.screen_name ? (
+                                      value={values.education}
+                                    />
+                                    {errors.education && touched.education ? (
                                       <span className="errorMsg">
-                                        {errors.screen_name}
+                                        {errors.education}
                                       </span>
                                     ) : null}
                                   </div>
@@ -643,16 +954,22 @@ class Doctor extends Component {
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
-                                      Banner Text
+                                      Expertise
+                                      <span className="impField">*</span>
                                     </label>
                                     <Field
-                                      name="banner_text"
+                                      name="expertise"
                                       type="text"
                                       className={`form-control`}
-                                      placeholder="Enter Banner Text"
+                                      placeholder="Enter Expertise"
                                       autoComplete="off"
-                                      value={values.banner_text}
+                                      value={values.expertise}
                                     />
+                                    {errors.expertise && touched.expertise ? (
+                                      <span className="errorMsg">
+                                        {errors.expertise}
+                                      </span>
+                                    ) : null}
                                   </div>
                                 </Col>
                               </Row>
@@ -660,50 +977,23 @@ class Doctor extends Component {
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
-                                      Banner Subtext
+                                      Designation
+                                      <span className="impField">*</span>
                                     </label>
                                     <Field
-                                      name="banner_subtext"
+                                      name="designation"
                                       type="text"
                                       className={`form-control`}
-                                      placeholder="Enter Banner Subtext"
+                                      placeholder="Enter Designation"
                                       autoComplete="off"
-                                      value={values.banner_subtext}
+                                      value={values.designation}
                                     />
-                                  </div>
-                                </Col>
-                              </Row>
-                              <Row>
-                                <Col xs={12} sm={12} md={12}>
-                                  <div className="form-group">
-                                    <label>
-                                      Button Text
-                                    </label>
-                                    <Field
-                                      name="button_text"
-                                      type="text"
-                                      className={`form-control`}
-                                      placeholder="Enter Button Text"
-                                      autoComplete="off"
-                                      value={values.button_text}
-                                    />
-                                  </div>
-                                </Col>
-                              </Row>
-                              <Row>
-                                <Col xs={12} sm={12} md={12}>
-                                  <div className="form-group">
-                                    <label>
-                                      Button Url
-                                    </label>
-                                    <Field
-                                      name="button_url"
-                                      type="text"
-                                      className={`form-control`}
-                                      placeholder="Enter Button Url"
-                                      autoComplete="off"
-                                      value={values.button_url}
-                                    />
+                                    {errors.designation &&
+                                    touched.designation ? (
+                                      <span className="errorMsg">
+                                        {errors.designation}
+                                      </span>
+                                    ) : null}
                                   </div>
                                 </Col>
                               </Row>
@@ -712,27 +1002,24 @@ class Doctor extends Component {
                                   <div className="form-group">
                                     <label>
                                       Upload Image
-                                      {
-                                        this.state.banner_id == 0 ?
-                                          <span className="impField">*</span>
-                                          : null
-                                      }
-                                      <br /> <i>{this.state.fileValidationMessage}</i>
-                                      {
-                                        this.state.message != '' ?
-                                          <>
-                                            <br /> <i>{this.state.message}</i>
-                                          </>
-                                          : null
-                                      }
+                                      {this.state.doctor_id == 0 ? (
+                                        <span className="impField">*</span>
+                                      ) : null}
+                                      <br />{" "}
+                                      <i>{this.state.fileValidationMessage}</i>
+                                      {this.state.message != "" ? (
+                                        <>
+                                          <br /> <i>{this.state.message}</i>
+                                        </>
+                                      ) : null}
                                     </label>
                                     <Field
-                                      name="banner_file"
+                                      name="doctor_image"
                                       type="file"
                                       className={`form-control`}
-                                      placeholder="Banner File"
+                                      placeholder="Doctor Image"
                                       autoComplete="off"
-                                      id=''
+                                      id=""
                                       onChange={(e) => {
                                         this.fileChangedHandler(
                                           e,
@@ -742,8 +1029,11 @@ class Doctor extends Component {
                                         );
                                       }}
                                     />
-                                    {errors.banner_file && touched.banner_file ? (
-                                      <span className="errorMsg">{errors.banner_file}</span>
+                                    {errors.doctor_image &&
+                                    touched.doctor_image ? (
+                                      <span className="errorMsg">
+                                        {errors.doctor_image}
+                                      </span>
                                     ) : null}
                                   </div>
                                 </Col>
@@ -765,13 +1055,11 @@ class Doctor extends Component {
                                       <option key="-1" value="">
                                         Select
                                       </option>
-                                      {this.state.status_doctor.map(
-                                        (val, i) => (
-                                          <option key={i} value={val.value}>
-                                            {val.label}
-                                          </option>
-                                        )
-                                      )}
+                                      {this.state.selectStatus.map((val, i) => (
+                                        <option key={i} value={val.value}>
+                                          {val.label}
+                                        </option>
+                                      ))}
                                     </Field>
                                     {errors.status && touched.status ? (
                                       <span className="errorMsg">
@@ -785,18 +1073,21 @@ class Doctor extends Component {
                           </Modal.Body>
                           <Modal.Footer>
                             <button
-                              className={`btn btn-success btn-sm ${isValid ? "btn-custom-green" : "btn-disable"
-                                } m-r-10`}
+                              className={`btn btn-success btn-sm ${
+                                isValid ? "btn-custom-green" : "btn-disable"
+                              } m-r-10`}
                               type="submit"
-                              disabled={isValid ? (isSubmitting ? true : false) : true}
+                              disabled={
+                                isValid ? (isSubmitting ? true : false) : true
+                              }
                             >
-                              {this.state.banner_id > 0
+                              {this.state.doctor_id > 0
                                 ? isSubmitting
                                   ? "Updating..."
                                   : "Update"
                                 : isSubmitting
-                                  ? "Submitting..."
-                                  : "Submit"}
+                                ? "Submitting..."
+                                : "Submit"}
                             </button>
                             <button
                               onClick={(e) => this.modalCloseHandler()}
@@ -810,17 +1101,22 @@ class Doctor extends Component {
                       );
                     }}
                   </Formik>
-                </Modal> */}
+                </Modal>
+
+                {/* =====Image modal===== */}
                 <Modal
                   show={this.state.thumbNailModal}
                   onHide={() => this.imageModalCloseHandler()}
-                  backdrop='static'
+                  backdrop="static"
                 >
                   <Modal.Header closeButton>Doctor Image</Modal.Header>
                   <Modal.Body>
                     <center>
                       <div className="imgUi">
-                        <img src={this.state.doctor_url} alt="Doctor Image"></img>
+                        <img
+                          src={this.state.doctor_image}
+                          alt="Doctor Image"
+                        ></img>
                       </div>
                     </center>
                   </Modal.Body>
@@ -829,7 +1125,7 @@ class Doctor extends Component {
             </div>
           </section>
         </div>
-      </Layout >
+      </Layout>
     );
   }
 }
