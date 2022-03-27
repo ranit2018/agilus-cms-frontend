@@ -69,10 +69,21 @@ import Accordian from "../components/admin/product-details/Accordion";
 import AddAccordian from "../components/admin/product-details/AddAccordion";
 import EditAccordion from "../components/admin/product-details/EditAccordion";
 
-import Doctor from "../components/admin/department/Doctor";
-import Equipment from "../components/admin/department/Equipment";
-import Test from "../components/admin/department/Test";
-import Publications from "../components/admin/department/Publications";
+import Departments from "../components/admin/department-pages/department/Departments";
+
+import Doctor from "../components/admin/department-pages/doctors/Doctor";
+import AddDoctor from "../components/admin/department-pages/doctors/AddDoctor";
+import EditDoctor from "../components/admin/department-pages/doctors/EditDoctor";
+
+import Equipment from "../components/admin/department-pages/equipments/Equipment";
+import AddEquipment from "../components/admin/department-pages/equipments/AddEquipment";
+import EditEquipment from "../components/admin/department-pages/equipments/EditEquipment";
+
+import Publications from "../components/admin/department-pages/publications/Publications";
+import AddPublication from "../components/admin/department-pages/publications/AddPublication";
+import EditPublication from "../components/admin/department-pages/publications/EditPublication";
+
+import Test from "../components/admin/department-pages/test-page/Test";
 
 import "../assets/css/all.css";
 import "../assets/css/admin-style.css";
@@ -224,10 +235,38 @@ class Admin extends Component {
         <PrivateRoute path="/ordering/faq" component={FaqOrdering} />
         <PrivateRoute path="/investors/memberstype" component={MembersType} />
 
+        <PrivateRoute path="/department/departments" component={Departments} />
         <PrivateRoute path="/department/doctor" component={Doctor} />
+        <PrivateRoute path="/department/add-doctor" component={AddDoctor} />
+        <PrivateRoute
+          path="/department/edit-doctor/:id"
+          component={EditDoctor}
+        />
+
         <PrivateRoute path="/department/equipment" component={Equipment} />
+        <PrivateRoute
+          path="/department/add-equipment"
+          component={AddEquipment}
+        />
+        <PrivateRoute
+          path="/department/edit-equipment/:id"
+          component={EditEquipment}
+        />
+
+        <PrivateRoute
+          path="/department/publications"
+          component={Publications}
+        />
+        <PrivateRoute
+          path="/department/add-publication"
+          component={AddPublication}
+        />
+        <PrivateRoute
+          path="/department/edit-publication/:id"
+          component={EditPublication}
+        />
+
         <PrivateRoute path="/department/test" component={Test} />
-        <PrivateRoute path="/department/publications" component={Publications} />
 
         <Route from="*" component={AdminPageNotFound} />
       </Switch>

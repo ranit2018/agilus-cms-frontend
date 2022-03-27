@@ -1,47 +1,44 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/img-redundant-alt */
 import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
-import { Link } from "react-router-dom";
 import {
   Row,
   Col,
+  ButtonToolbar,
   Button,
-  Modal,
   Tooltip,
   OverlayTrigger,
+  Modal,
 } from "react-bootstrap";
-import { Formik, Field, Form } from "formik";
-import { Editor } from "@tinymce/tinymce-react";
-import API from "../../../shared/admin-axios";
-import * as Yup from "yup";
+import { Link } from "react-router-dom";
+import API from "../../../../shared/admin-axios";
+import { Formik, Field, Form } from "formik"; // for add/edit only
+import * as Yup from "yup"; // for add/edit only
 import swal from "sweetalert";
-import { showErrorMessage } from "../../../shared/handle_error";
-import whitelogo from "../../../assets/images/drreddylogo_white.png";
-import Pagination from "react-js-pagination";
-import { htmlDecode } from "../../../shared/helper";
-import Select from "react-select";
-import Layout from "../layout/Layout";
-import dateFormat from "dateformat";
+
+import Layout from "../../layout/Layout";
+
+import {
+  htmlDecode,
+  getHeightWidth,
+  getHeightWidthFromURL,
+  generateResolutionText,
+  getResolution,
+  FILE_VALIDATION_MASSAGE,
+  FILE_SIZE,
+  FILE_VALIDATION_SIZE_ERROR_MASSAGE,
+  FILE_VALIDATION_TYPE_ERROR_MASSAGE,
+} from "../../../../shared/helper";
 import Switch from "react-switch";
 
-const initialValues = {
-  featured_image: "",
-  title: "",
-  content: "",
-  status: "",
-};
-const __htmlDecode = (refObj) => (cell) => {
-  return htmlDecode(cell);
-};
 
-const custStatus = (refObj) => (cell) => {
-  //return cell === 1 ? "Active" : "Inactive";
-  if (cell === 1) {
-    return "Active";
-  } else if (cell === 0) {
-    return "Inactive";
-  }
-};
+import Pagination from "react-js-pagination";
+import { showErrorMessage } from "../../../../shared/handle_error";
+import dateFormat from "dateformat";
+
+/*For Tooltip*/
 
 function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
   return (
@@ -58,6 +55,7 @@ function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
     </OverlayTrigger>
   );
 }
+/*For Tooltip*/
 
 const actionFormatter = (refObj) => (cell, row) => {
   return (
@@ -65,7 +63,7 @@ const actionFormatter = (refObj) => (cell, row) => {
       <LinkWithTooltip
         tooltip="Click to edit"
         href="#"
-        clicked={(e) => refObj.editBlog(e, cell)}
+        clicked={(e) => refObj.editEquipment(e, cell)}
         id="tooltip-1"
       >
         <i className="far fa-edit" />
@@ -79,7 +77,7 @@ const actionFormatter = (refObj) => (cell, row) => {
         <Switch
           checked={row.status == 1 ? true : false}
           uncheckedIcon={false}
-          onChange={() => refObj.chageStatus(row.id, row.status)}
+          onChange={(e) => refObj.chageStatus(cell, row.status)}
           height={20}
           width={45}
         />
@@ -95,22 +93,32 @@ const actionFormatter = (refObj) => (cell, row) => {
     </div>
   );
 };
-const setBlogImage = (refObj) => (cell, row) => {
+
+const __htmlDecode = (refObj) => (cell) => {
+  return htmlDecode(cell);
+};
+
+const setName = (refObj) => (cell) => {
+  return cell.replace(".png", " ");
+};
+
+const EquipmentStatus = (refObj) => (cell) => {
+  //return cell === 1 ? "Active" : "Inactive";
+  if (cell === 1) {
+    return "Active";
+  } else if (cell === 0) {
+    return "Inactive";
+  }
+};
+
+const setEquipmentImage = (refObj) => (cell, row) => {
   return (
-    <div
-      style={{
-        width: "100px",
-        height: "100px",
-        overflow: "hidden",
-      }}
-    >
-      <img
-        src={cell}
-        alt="Blog Image"
-        width="100%"
-        onClick={(e) => refObj.imageModalShowHandler(row.blog_image)}
-      ></img>
-    </div>
+    <img
+      src={row.equipment_image}
+      alt="Equipment"
+      height="100"
+      onClick={(e) => refObj.imageModalShowHandler(row.equipment_image)}
+    ></img>
   );
 };
 
@@ -123,48 +131,71 @@ const setDate = (refOBj) => (cell) => {
   }
 };
 
-class Blog extends Component {
+const initialValues = {
+  id: "",
+  equipment_name: "",
+  equipment_description: "",
+  equipment_image: "",
+  date_posted: "",
+  status: "",
+};
+
+class Equipment extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      blogs: [],
-      blogDetails: {},
-      categoryList: [],
-      blog_id: 0,
+      equipmentDetails: [],
       isLoading: false,
       showModal: false,
+      equipment_id: 0,
+      equipment_name: "",
+      equipment_description: "",
+      equipment_image: "",
+      date_posted: "",
+      status: "",
+
+      alldata: [],
+      equipmentSearch: [],
+      selectStatus: [
+        { value: "1", label: "Active" },
+        { value: "0", label: "Inactive" },
+      ],
+      activePage: 1,
       totalCount: 0,
       itemPerPage: 10,
-      activePage: 1,
-      selectedCategoryList: [],
-      selectStatus: [
-        { value: "0", label: "Inactive" },
-        { value: "1", label: "Active" },
-      ],
       thumbNailModal: false,
-      blog_title: "",
-      status: "",
+      message: "",
     };
   }
+
   componentDidMount() {
-    this.getBlogsList();
-    this.getBlogCategory();
+    this.getEquipmentList();
   }
 
-  getBlogsList = (page = 1) => {
-    let blog_title = this.state.blog_title;
-    let status = this.state.status;
+  handlePageChange = (pageNumber) => {
+    this.setState({ activePage: pageNumber });
+    this.getEquipmentList(pageNumber > 0 ? pageNumber : 1);
+  };
+
+  getEquipmentList = (page = 1) => {
+    var equipment_name = document.getElementById("equipment_name").value;
+    var equipment_description = document.getElementById(
+      "equipment_description"
+    ).value;
+    let status = document.getElementById("status").value;
 
     API.get(
-      `/api/blog?page=${page}&blog_title=${encodeURIComponent(
-        blog_title
+      `/api/department/equipment?page=${page}&equipment_name=${encodeURIComponent(
+        equipment_name
+      )}&equipment_description=${encodeURIComponent(
+        equipment_description
       )}&status=${encodeURIComponent(status)}`
     )
       .then((res) => {
         this.setState({
-          blogs: res.data.data,
+          equipmentDetails: res.data.data,
           totalCount: Number(res.data.count),
+
           isLoading: false,
         });
       })
@@ -176,78 +207,39 @@ class Blog extends Component {
       });
   };
 
-  getBlogCategory = (page = 1) => {
-    API.get(`/api/feed/get_category_by_medium/1`)
-      .then((res) => {
-        this.setState({
-          categoryList: res.data.data,
-          isLoading: false,
-        });
-      })
-      .catch((err) => {
-        this.setState({
-          isLoading: false,
-        });
-        showErrorMessage(err, this.props);
-      });
-  };
-
-  editBlog(e, id) {
+  equipmentSearch = (e) => {
     e.preventDefault();
-    var selDetailsCategory = [];
-    var selCategory = [];
-    API.get(`/api/blog/${id}`)
-      .then((res) => {
-        for (
-          let index = 0;
-          index < res.data.data.blog_mapping_details.length;
-          index++
-        ) {
-          const element = res.data.data.blog_mapping_details[index];
-          selDetailsCategory.push({
-            value: element["value"],
-            label: element["label"],
-          });
+    var equipment_name = document.getElementById("equipment_name").value;
+    var equipment_description = document.getElementById(
+      "equipment_description"
+    ).value;
+    let status = document.getElementById("status").value;
 
-          selCategory.push(element["id"]);
-        }
-
-        this.props.history.push({
-          pathname: "/edit-blog/" + id,
-          state: {
-            blogDetails: res.data.data.blog_details,
-            selectedCategoryList: selDetailsCategory,
-            selectedCategory: selCategory,
-            categoryList: this.state.categoryList,
-          },
-        });
-      })
-      .catch((err) => {
-        showErrorMessage(err, this.props);
-      });
-  }
-
-  blogSearch = (e) => {
-    e.preventDefault();
-
-    const blog_title = document.getElementById("blog_title").value;
-    const status = document.getElementById("status").value;
-
-    if (blog_title === "" && status === "") {
+    if (
+      equipment_name === "" &&
+      equipment_description === "" &&
+      status === ""
+    ) {
       return false;
     }
+
     API.get(
-      `/api/blog?page=1&blog_title=${encodeURIComponent(
-        blog_title
+      `/api/department/equipment?page=1&equipment_name=${encodeURIComponent(
+        equipment_name
+      )}&equipment_description=${encodeURIComponent(
+        equipment_description
       )}&status=${encodeURIComponent(status)}`
     )
       .then((res) => {
         this.setState({
-          blogs: res.data.data,
+          equipmentDetails: res.data.data,
           totalCount: Number(res.data.count),
           isLoading: false,
-          blog_title: blog_title,
+
+          equipment_name: equipment_name,
+          equipment_description: equipment_description,
           status: status,
+
           activePage: 1,
           remove_search: true,
         });
@@ -261,23 +253,51 @@ class Blog extends Component {
   };
 
   clearSearch = () => {
-    document.getElementById("blog_title").value = "";
+    document.getElementById("equipment_name").value = "";
+    document.getElementById("equipment_description").value = "";
     document.getElementById("status").value = "";
 
     this.setState(
       {
-        blog_title: "",
+        equipment_description: "",
+        equipment_name: "",
         status: "",
+
         remove_search: false,
       },
       () => {
         this.setState({ activePage: 1 });
-        this.getBlogsList();
+        this.getEquipmentList();
       }
     );
   };
 
+  //change status
+  chageStatus = (cell, status) => {
+    API.put(`/api/department/equipment/change_status/${cell}`, {
+      status: status == 1 ? String(0) : String(1),
+    })
+      .then((res) => {
+        swal({
+          closeOnClickOutside: false,
+          title: "Success",
+          text: "Status updated successfully.",
+          icon: "success",
+        }).then(() => {
+          this.getEquipmentList(this.state.activePage);
+        });
+      })
+      .catch((err) => {
+        if (err.data.status === 3) {
+          this.setState({ closeModal: true });
+          showErrorMessage(err, this.props);
+        }
+      });
+  };
+
+  //delete
   confirmDelete = (event, id) => {
+    console.log("id confirm", id);
     event.preventDefault();
     swal({
       closeOnClickOutside: false,
@@ -288,13 +308,14 @@ class Blog extends Component {
       dangerMode: true,
     }).then((willDelete) => {
       if (willDelete) {
-        this.deleteBlogs(id);
+        this.deleteEquipment(id);
       }
     });
   };
 
-  deleteBlogs = (id) => {
-    API.delete(`/api/blog/${id}`)
+  deleteEquipment = (id) => {
+    console.log("id delete post", id);
+    API.post(`/api/department/equipment/${id}`)
       .then((res) => {
         swal({
           closeOnClickOutside: false,
@@ -302,7 +323,7 @@ class Blog extends Component {
           text: "Record deleted successfully.",
           icon: "success",
         }).then(() => {
-          this.getBlogsList(this.state.activePage);
+          this.getEquipmentList(this.state.activePage);
         });
       })
       .catch((err) => {
@@ -313,38 +334,72 @@ class Blog extends Component {
       });
   };
 
-  chageStatus = (cell, status) => {
-    API.put(`/api/blog/change_status/${cell}`, {
-      status: status == 1 ? String(0) : String(1),
-    })
+  renderShowsTotal = (start, to, total) => {
+    return (
+      <span className="pageShow">
+        Showing {start} to {to}, of {total} records
+      </span>
+    );
+  };
+
+  checkHandler = (event) => {
+    event.preventDefault();
+  };
+
+  //for edit/add part
+  editEquipment(e, id) {
+    e.preventDefault();
+
+    API.get(`/api/department/equipment/${id}`)
       .then((res) => {
-        swal({
-          closeOnClickOutside: false,
-          title: "Success",
-          text: "Record updated successfully.",
-          icon: "success",
-        }).then(() => {
-          this.getBlogsList(this.state.activePage);
+        console.log("res.data.data[0]", res.data.data[0]);
+
+        this.props.history.push({
+          pathname: "/department/edit-equipment/" + id,
+          state: {
+            alldata: res.data.data[0],
+          },
         });
       })
       .catch((err) => {
-        if (err.data.status === 3) {
-          this.setState({ closeModal: true });
-          showErrorMessage(err, this.props);
-        }
+        showErrorMessage(err, this.props);
       });
+  }
+
+  modalCloseHandler = () => {
+    this.setState({
+      showModal: false,
+      // id: "",
+      alldata: "",
+      equipment_name: "",
+      equipment_description: "",
+      equipment_image: "",
+      date_posted: "",
+      status: "",
+      // equipmentDetails: "",
+      equipment_id: 0,
+      message: "",
+      fileValidationMessage: "",
+    });
   };
 
+  modalShowHandler = (event, id) => {
+    this.setState({ fileValidationMessage: FILE_VALIDATION_MASSAGE });
+    if (id) {
+      event.preventDefault();
+      this.getIndividualEquipment(id);
+    } else {
+      this.setState({ showModal: true });
+    }
+  };
+
+  //image modal
   imageModalShowHandler = (url) => {
-    this.setState({ thumbNailModal: true, url: url });
+    console.log(url);
+    this.setState({ thumbNailModal: true, equipment_image: url });
   };
   imageModalCloseHandler = () => {
-    this.setState({ thumbNailModal: false, url: "" });
-  };
-
-  handlePageChange = (pageNumber) => {
-    this.setState({ activePage: pageNumber });
-    this.getBlogsList(pageNumber > 0 ? pageNumber : 1);
+    this.setState({ thumbNailModal: false, equipment_image: "" });
   };
 
   render() {
@@ -355,7 +410,7 @@ class Blog extends Component {
             <div className="row">
               <div className="col-lg-12 col-sm-12 col-xs-12">
                 <h1>
-                  Manage Blogs
+                  Manage Equipments
                   <small />
                 </h1>
               </div>
@@ -367,27 +422,36 @@ class Blog extends Component {
                     className="btn btn-info btn-sm"
                     onClick={(e) =>
                       this.props.history.push({
-                        pathname: "/add-blog",
-                        state: { categoryList: this.state.categoryList },
+                        pathname: "/department/add-equipment",
+                        state: { alldata: this.state.alldata },
                       })
                     }
                   >
-                    <i className="fas fa-plus m-r-5" /> Add Blog
+                    <i className="fas fa-plus m-r-5" /> Add Equipment &
+                    Instrument
                   </button>
                 </div>
                 <form className="form">
                   <div className="">
                     <input
                       className="form-control"
-                      name="blog_title"
-                      id="blog_title"
-                      placeholder="Filter by Blog Title"
+                      name="equipment_name"
+                      id="equipment_name"
+                      placeholder="Filter by Equipment Name"
+                    />
+                  </div>
+                  <div className="">
+                    <input
+                      className="form-control"
+                      name="equipment_description"
+                      id="equipment_description"
+                      placeholder="Filter by Description"
                     />
                   </div>
 
                   <div className="">
                     <select name="status" id="status" className="form-control">
-                      <option value="">Select Blog Status</option>
+                      <option value="">Select Status</option>
                       {this.state.selectStatus.map((val) => {
                         return (
                           <option key={val.value} value={val.value}>
@@ -397,12 +461,13 @@ class Blog extends Component {
                       })}
                     </select>
                   </div>
+
                   <div className="">
                     <input
                       type="submit"
                       value="Search"
                       className="btn btn-warning btn-sm"
-                      onClick={(e) => this.blogSearch(e)}
+                      onClick={(e) => this.equipmentSearch(e)}
                     />
                     {this.state.remove_search ? (
                       <a
@@ -422,47 +487,46 @@ class Blog extends Component {
           <section className="content">
             <div className="box">
               <div className="box-body">
-                <BootstrapTable data={this.state.blogs}>
+                <BootstrapTable
+                  wrapperClasses="table-responsive"
+                  data={this.state.equipmentDetails}
+                >
                   <TableHeaderColumn
                     isKey
-                    dataField="title"
+                    dataField="equipment_image"
+                    dataFormat={setEquipmentImage(this)}
+                    tdStyle={{ wordBreak: "break-word" }}
+                  >
+                    Image
+                  </TableHeaderColumn>
+                  <TableHeaderColumn
+                    dataField="equipment_name"
+                    dataFormat={setName(this)}
+                    width="125"
+                    tdStyle={{ wordBreak: "break-word" }}
+                  >
+                    Equipment & Instrument Name
+                  </TableHeaderColumn>
+                  
+                  <TableHeaderColumn
+                    dataField="equipment_description"
                     dataFormat={__htmlDecode(this)}
+                    tdStyle={{ wordBreak: "break-word" }}
                   >
-                    Title
+                    Description
                   </TableHeaderColumn>
+
                   <TableHeaderColumn
-                    dataField="blog_image"
-                    dataFormat={setBlogImage(this)}
-                  >
-                    Blog Image
-                  </TableHeaderColumn>
-                  <TableHeaderColumn
-                    dataField="permalink"
-                    dataFormat={__htmlDecode(this)}
-                  >
-                    Permalink
-                  </TableHeaderColumn>
-                  <TableHeaderColumn
-                    dataField="blog_subtext"
-                    dataFormat={__htmlDecode(this)}
-                  >
-                    Blog Subtext
-                  </TableHeaderColumn>
-                  {/* <TableHeaderColumn
-                                        dataField="keywords"
-                                        dataFormat={__htmlDecode(this)}
-                                    >
-                                        Keywords
-                    </TableHeaderColumn> */}
-                  <TableHeaderColumn
-                    dataField="date_added"
+                    dataField="date_posted"
                     dataFormat={setDate(this)}
+                    tdStyle={{ wordBreak: "break-word" }}
                   >
                     Post Date
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="status"
-                    dataFormat={custStatus(this)}
+                    dataFormat={EquipmentStatus(this)}
+                    tdStyle={{ wordBreak: "break-word" }}
                   >
                     Status
                   </TableHeaderColumn>
@@ -471,6 +535,8 @@ class Blog extends Component {
                     dataField="id"
                     dataFormat={actionFormatter(this)}
                     dataAlign=""
+                    width="125"
+                    tdStyle={{ wordBreak: "break-word" }}
                   >
                     Action
                   </TableHeaderColumn>
@@ -483,7 +549,7 @@ class Blog extends Component {
                         <Pagination
                           activePage={this.state.activePage}
                           itemsCountPerPage={10}
-                          totalItemsCount={this.state.totalCount}
+                          totalItemsCount={Number(this.state.totalCount)}
                           itemClass="nav-item"
                           linkClass="nav-link"
                           activeClass="active"
@@ -493,16 +559,23 @@ class Blog extends Component {
                     </Col>
                   </Row>
                 ) : null}
+
+                {/* =====Image modal===== */}
                 <Modal
                   show={this.state.thumbNailModal}
                   onHide={() => this.imageModalCloseHandler()}
                   backdrop="static"
                 >
-                  <Modal.Header closeButton>Blog Image</Modal.Header>
+                  <Modal.Header closeButton>
+                    Equipment & Instrument Image
+                  </Modal.Header>
                   <Modal.Body>
                     <center>
                       <div className="imgUi">
-                        <img src={this.state.url} alt="Blog Image"></img>
+                        <img
+                          src={this.state.equipment_image}
+                          alt="Equipment Image"
+                        ></img>
                       </div>
                     </center>
                   </Modal.Body>
@@ -515,5 +588,4 @@ class Blog extends Component {
     );
   }
 }
-
-export default Blog;
+export default Equipment;

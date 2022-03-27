@@ -261,24 +261,18 @@ const resolution_arr = [
 
   {
     tag: `doctor`,
-    // min_width: `788`,
-    // min_height: `700`,
-    width: `1085`,
-    height: `488`,
+    width: `626`,
+    height: `626`,
   },
   {
     tag: `equipment`,
-    // min_width: `788`,
-    // min_height: `700`,
-    width: `1085`,
-    height: `488`,
+    width: `626`,
+    height: `626`,
   },
   {
-    tag: `Publications`,
-    // min_width: `788`,
-    // min_height: `700`,
-    width: `1085`,
-    height: `488`,
+    tag: `publications`,
+    width: `626`,
+    height: `626`,
   },
 
 ]

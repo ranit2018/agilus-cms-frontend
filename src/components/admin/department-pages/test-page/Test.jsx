@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/img-redundant-alt */
 import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import { Row, Col, Tooltip, OverlayTrigger, Modal } from "react-bootstrap";
@@ -16,12 +17,13 @@ import {
   getResolution,
   FILE_VALIDATION_MASSAGE,
   FILE_SIZE,
-} from "../../../shared/helper";
-import API from "../../../shared/admin-axios";
-import SRL_API from "../../../shared/srl-axios";
-import Layout from "../layout/Layout";
+} from "../../../../shared/helper";
+import API from "../../../../shared/admin-axios";
+import SRL_API from "../../../../shared/srl-axios";
+import Layout from "../../layout/Layout";
+
 import Pagination from "react-js-pagination";
-import { showErrorMessage } from "../../../shared/handle_error";
+import { showErrorMessage } from "../../../../shared/handle_error";
 import Autosuggest from "react-autosuggest";
 
 /*For Tooltip*/

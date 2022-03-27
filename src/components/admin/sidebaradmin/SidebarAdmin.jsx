@@ -99,6 +99,7 @@ class SidebarAdmin extends Component {
     }
 
     if (
+      path === "/department/departments" ||
       path === "/department/doctor" ||
       path === "/department/equipment" ||
       path === "/department/test" ||
@@ -106,7 +107,6 @@ class SidebarAdmin extends Component {
     ) {
       this.setState({ shown: "6" });
     }
-
 
     if (this.props.isLoggedIn === true) {
       const superAdmin = getSuperAdmin(localStorage.admin_token);
@@ -263,8 +263,8 @@ class SidebarAdmin extends Component {
             </li>
           )}
 
-           {/* =================================================== */}
-           <li className={rotate == "6" ? "treeview active" : "treeview"}>
+          {/* =================================================== */}
+          <li className={rotate == "6" ? "treeview active" : "treeview"}>
             <Link to="#" data-id="6" onClick={this.handlePlus}>
               <i
                 className="fas fa-certificate sub-menu"
@@ -287,6 +287,27 @@ class SidebarAdmin extends Component {
               </span>
             </Link>
 
+            <ul className="treeview-menu">
+              {this.props.path_name === "/department/departments" ? (
+                <li className="active">
+                  {" "}
+                  <Link to="/department/departments">
+                    {" "}
+                    <i className="fas fa-compress"></i>{" "}
+                    <span> Departments </span>
+                  </Link>{" "}
+                </li>
+              ) : (
+                <li>
+                  {" "}
+                  <Link to="/department/departments">
+                    {" "}
+                    <i className="fas fa-compress"></i>{" "}
+                    <span> Departments </span>
+                  </Link>{" "}
+                </li>
+              )}
+            </ul>
             <ul className="treeview-menu">
               {this.props.path_name === "/department/doctor" ? (
                 <li className="active">
@@ -312,7 +333,8 @@ class SidebarAdmin extends Component {
                   {" "}
                   <Link to="/department/equipment">
                     {" "}
-                    <i className="fas fa-compress"></i> <span> Equipments & Insturments </span>
+                    <i className="fas fa-compress"></i>{" "}
+                    <span> Equipments & Insturments </span>
                   </Link>{" "}
                 </li>
               ) : (
@@ -320,7 +342,8 @@ class SidebarAdmin extends Component {
                   {" "}
                   <Link to="/department/equipment">
                     {" "}
-                    <i className="fas fa-compress"></i> <span> Equipments & Insturments </span>
+                    <i className="fas fa-compress"></i>{" "}
+                    <span> Equipments & Insturments </span>
                   </Link>{" "}
                 </li>
               )}
@@ -350,7 +373,8 @@ class SidebarAdmin extends Component {
                   {" "}
                   <Link to="/department/publications">
                     {" "}
-                    <i className="fas fa-compress"></i> <span> Publications </span>
+                    <i className="fas fa-compress"></i>{" "}
+                    <span> Publications </span>
                   </Link>{" "}
                 </li>
               ) : (
@@ -358,7 +382,8 @@ class SidebarAdmin extends Component {
                   {" "}
                   <Link to="/department/publications">
                     {" "}
-                    <i className="fas fa-compress"></i> <span> Publication </span>
+                    <i className="fas fa-compress"></i>{" "}
+                    <span> Publications </span>
                   </Link>{" "}
                 </li>
               )}
