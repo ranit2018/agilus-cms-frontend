@@ -1,7 +1,10 @@
 import React, { Component } from "react";
 import { Row, Col, Button } from "react-bootstrap";
 import { Formik, Field, Form } from "formik";
-import { Editor } from "@tinymce/tinymce-react";
+// import { Editor } from "@tinymce/tinymce-react";
+import TinyMCE from 'react-tinymce';
+import { tinymce } from "react-tinymce";
+
 import API from "../../../../shared/admin-axios";
 import * as Yup from "yup";
 import swal from "sweetalert";
@@ -162,11 +165,11 @@ class AddPublication extends Component {
   render() {
     const initialValues = {
       id: "",
-  publication_heading: "",
-  publication_description: "",
-  publication_image: "",
-  date_posted: "",
-  status: "",
+      publication_heading: "",
+      publication_description: "",
+      publication_image: "",
+      date_posted: "",
+      status: "",
     };
     const validateStopFlag = Yup.object().shape({
       publication_image: Yup.mixed()
@@ -234,7 +237,7 @@ class AddPublication extends Component {
                             <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
                                 <label>
-                                Publication Heading
+                                  Publication Heading
                                   <span className="impField">*</span>
                                 </label>
                                 <Field
@@ -287,7 +290,7 @@ class AddPublication extends Component {
                               </div>
                             </Col>
                           </Row>
-                        
+
                           <Row>
                             <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
@@ -307,10 +310,12 @@ class AddPublication extends Component {
                                   name="my-file"
                                   style={{ display: "none" }}
                                 />
-                                <Editor
+                                <TinyMCE
                                   initialValue={values.publication_description}
                                   init={{
                                     height: 150,
+                                    // branding: false,
+                                    // selector: 'textarea',
                                     menubar: false,
                                     plugins: [
                                       "advlist autolink lists link image charmap print preview anchor",
@@ -319,8 +324,9 @@ class AddPublication extends Component {
                                     ],
                                     toolbar:
                                       "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
-                                    content_style:
-                                      "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                                    // content_style:
+                                    //   "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                                    content_css: '//www.tinymce.com/css/codepen.min.css',
                                     file_browser_callback_types: "image",
                                     file_picker_callback: function (
                                       callback,
@@ -396,9 +402,8 @@ class AddPublication extends Component {
                           </Row>
                         </div>
                         <button
-                          className={`btn btn-success btn-sm ${
-                            isValid ? "btn-custom-green" : "btn-disable"
-                          } m-r-10`}
+                          className={`btn btn-success btn-sm ${isValid ? "btn-custom-green" : "btn-disable"
+                            } m-r-10`}
                           type="submit"
                           disabled={
                             isValid ? (isSubmitting ? true : false) : true
@@ -409,8 +414,8 @@ class AddPublication extends Component {
                               ? "Updating..."
                               : "Update"
                             : isSubmitting
-                            ? "Submitting..."
-                            : "Submit"}
+                              ? "Submitting..."
+                              : "Submit"}
                         </button>
                       </Form>
                     );

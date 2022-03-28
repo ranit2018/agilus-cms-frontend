@@ -17,7 +17,7 @@ import API from "../../../../shared/admin-axios";
 import { Formik, Field, Form } from "formik"; // for add/edit only
 import * as Yup from "yup"; // for add/edit only
 import swal from "sweetalert";
-
+import Select from "react-select";
 import Layout from "../../layout/Layout";
 
 import {
@@ -94,6 +94,33 @@ const actionFormatter = (refObj) => (cell, row) => {
   );
 };
 
+const imageFormatter = (refObj) => (cell, row) => {
+  // console.log('row imageFormatter', row)
+  return (
+    <div className="actionStyle">
+      {row.images.map((val, index) => {
+        return (
+          <LinkWithTooltip
+            tooltip="Click to see picture"
+            href="#"
+            // clicked={(e) => refObj.imageModalShowHandler(val.equipment_image)}
+            id="tooltip-1"
+            key={index}
+          >
+            <img
+              src={val.equipment_image}
+              alt="Equipment"
+              height="30"
+              onClick={(e) => refObj.imageModalShowHandler(e, val.equipment_image)}
+            />
+          </LinkWithTooltip>
+        )
+      })}
+    </div>
+  );
+
+};
+
 const __htmlDecode = (refObj) => (cell) => {
   return htmlDecode(cell);
 };
@@ -111,17 +138,6 @@ const EquipmentStatus = (refObj) => (cell) => {
   }
 };
 
-const setEquipmentImage = (refObj) => (cell, row) => {
-  return (
-    <img
-      src={row.equipment_image}
-      alt="Equipment"
-      height="100"
-      onClick={(e) => refObj.imageModalShowHandler(row.equipment_image)}
-    ></img>
-  );
-};
-
 const setDate = (refOBj) => (cell) => {
   if (cell && cell != "") {
     var mydate = new Date(cell);
@@ -130,6 +146,63 @@ const setDate = (refOBj) => (cell) => {
     return "---";
   }
 };
+
+const setType = (refObj) => (cell) => {
+  //return cell === 1 ? "Active" : "Inactive";
+  if (cell === 1) {
+    return " Request A Callback";
+  } else if (cell === 2) {
+    return "Home Collection";
+  } else if (cell === 3) {
+    return " Covid19 Enquiry";
+  } else if (cell === 9) {
+    return " Contact Us";
+  } else if (cell === 10) {
+    return " Feedback";
+  } else if (cell === 8) {
+    return " Become A Vendor";
+  } else if (cell === 7) {
+    return " Become A Partner";
+  } else if (cell === 11) {
+    return " Prescription Upload";
+  }
+};
+
+const generateCheckbox = (refObj) => (cell, row) => {
+
+  let defaultChecked = false;
+
+  if (refObj.state.checkedRows.includes(row.id)) {
+    defaultChecked = true;
+  }
+
+  return <input
+    type="checkbox"
+    checked={defaultChecked}
+    onChange={(e) => {
+      let prev = refObj.state.checkedRows;
+      if (e.target.checked) {
+        prev.push(row.id);
+      } else {
+        let index = prev.indexOf(row.id);
+        prev.splice(index, 1);
+      }
+      refObj.setState({ checkedRows: prev });
+    }}
+    className={`genCheck`}
+  />
+}
+
+const options = [
+  { value: "1", label: "Request A Callback" },
+  { value: "2", label: "Home Collection" },
+  { value: "3", label: "Covid19 Enquiry" },
+  { value: "7", label: "Become A Partner" },
+  { value: "8", label: "Become A Vendor" },
+  { value: "9", label: "Contact Us" },
+  { value: "10", label: "Feedback" },
+  { value: "11", label: "Prescription Upload" }
+];
 
 const initialValues = {
   id: "",
@@ -145,6 +218,8 @@ class Equipment extends Component {
     super(props);
     this.state = {
       equipmentDetails: [],
+      selectedOption: [],
+      checkedRows: [],
       isLoading: false,
       showModal: false,
       equipment_id: 0,
@@ -153,6 +228,7 @@ class Equipment extends Component {
       equipment_image: "",
       date_posted: "",
       status: "",
+      type: "",
 
       alldata: [],
       equipmentSearch: [],
@@ -183,6 +259,10 @@ class Equipment extends Component {
       "equipment_description"
     ).value;
     let status = document.getElementById("status").value;
+    // let type = '';
+    //   if(this.state.selectedOption.length > 0){
+    //     type = this.state.selectedOption.map((val)=>{return val.value}).join(',');
+    // }
 
     API.get(
       `/api/department/equipment?page=${page}&equipment_name=${encodeURIComponent(
@@ -214,6 +294,10 @@ class Equipment extends Component {
       "equipment_description"
     ).value;
     let status = document.getElementById("status").value;
+    // let type = '';
+    //   if(this.state.selectedOption.length > 0){
+    //     type = this.state.selectedOption.map((val)=>{return val.value}).join(',');
+    // }
 
     if (
       equipment_name === "" &&
@@ -239,6 +323,7 @@ class Equipment extends Component {
           equipment_name: equipment_name,
           equipment_description: equipment_description,
           status: status,
+          // type = type,
 
           activePage: 1,
           remove_search: true,
@@ -394,8 +479,9 @@ class Equipment extends Component {
   };
 
   //image modal
-  imageModalShowHandler = (url) => {
-    console.log(url);
+  imageModalShowHandler = (e, url) => {
+    e.preventDefault();
+    console.log('url', url);
     this.setState({ thumbNailModal: true, equipment_image: url });
   };
   imageModalCloseHandler = () => {
@@ -410,7 +496,7 @@ class Equipment extends Component {
             <div className="row">
               <div className="col-lg-12 col-sm-12 col-xs-12">
                 <h1>
-                  Manage Equipments
+                  Manage Equipments & Instruments
                   <small />
                 </h1>
               </div>
@@ -427,8 +513,7 @@ class Equipment extends Component {
                       })
                     }
                   >
-                    <i className="fas fa-plus m-r-5" /> Add Equipment &
-                    Instrument
+                    <i className="fas fa-plus m-r-5" /> Add Equipment &  Instrument
                   </button>
                 </div>
                 <form className="form">
@@ -448,6 +533,24 @@ class Equipment extends Component {
                       placeholder="Filter by Description"
                     />
                   </div>
+                  {/* <div>
+                    <Select
+                      placeholder="Select Type"
+                      width={250}
+                      isMulti
+                      isClearable={true}
+                      isSearchable={true}
+                      value={this.state.selectedOption}
+                      onChange={(e) => {
+                        let sel = [];
+                        if (e != null) {
+                          sel = e
+                        }
+                        this.setState({ selectedOption: sel });
+                      }}
+                      options={options}
+                    />
+                  </div> */}
 
                   <div className="">
                     <select name="status" id="status" className="form-control">
@@ -491,15 +594,39 @@ class Equipment extends Component {
                   wrapperClasses="table-responsive"
                   data={this.state.equipmentDetails}
                 >
+                  {/* <TableHeaderColumn
+                    dataField="type"
+                    dataFormat={generateCheckbox(this)}
+                    width="5%"
+                  >
+
+                  </TableHeaderColumn> */}
                   <TableHeaderColumn
-                    isKey
-                    dataField="equipment_image"
+                    dataField="type"
+                    dataFormat={setType(this)}
+                  >
+                    Type
+                  </TableHeaderColumn>
+                  {/* <TableHeaderColumn
+                    
+                    dataField="images"
                     dataFormat={setEquipmentImage(this)}
+                    tdStyle={{ wordBreak: "break-word" }}
+                  >
+                    Image
+                  </TableHeaderColumn> */}
+                  <TableHeaderColumn
+
+                    dataField="id"
+                    dataAlign=""
+                    width="125"
+                    dataFormat={imageFormatter(this)}
                     tdStyle={{ wordBreak: "break-word" }}
                   >
                     Image
                   </TableHeaderColumn>
                   <TableHeaderColumn
+                    isKey
                     dataField="equipment_name"
                     dataFormat={setName(this)}
                     width="125"
@@ -507,7 +634,7 @@ class Equipment extends Component {
                   >
                     Equipment & Instrument Name
                   </TableHeaderColumn>
-                  
+
                   <TableHeaderColumn
                     dataField="equipment_description"
                     dataFormat={__htmlDecode(this)}

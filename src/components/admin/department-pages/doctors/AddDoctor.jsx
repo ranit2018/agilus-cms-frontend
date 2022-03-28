@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Row, Col, Button } from "react-bootstrap";
 import { Formik, Field, Form } from "formik";
-import { Editor } from "@tinymce/tinymce-react";
+// import { Editor } from "@tinymce/tinymce-react";
 import API from "../../../../shared/admin-axios";
 import * as Yup from "yup";
 import swal from "sweetalert";
@@ -18,7 +18,8 @@ import {
   FILE_VALIDATION_SIZE_ERROR_MASSAGE,
 } from "../../../../shared/helper";
 import Layout from "../../layout/Layout";
-
+import TinyMCE from 'react-tinymce';
+import { tinymce } from "react-tinymce";
 import TagsInput from "react-tagsinput";
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
 
@@ -333,10 +334,10 @@ class AddDoctor extends Component {
                                   name="my-file"
                                   style={{ display: "none" }}
                                 />
-                                <Editor
+                                <TinyMCE
                                   initialValue={values.education}
                                   init={{
-                                    height: 150,
+                                    height: 500,
                                     menubar: false,
                                     plugins: [
                                       "advlist autolink lists link image charmap print preview anchor",
@@ -345,8 +346,7 @@ class AddDoctor extends Component {
                                     ],
                                     toolbar:
                                       "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
-                                    content_style:
-                                      "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                                    content_css: '//www.tinymce.com/css/codepen.min.css',
                                     file_browser_callback_types: "image",
                                     file_picker_callback: function (
                                       callback,
@@ -407,10 +407,10 @@ class AddDoctor extends Component {
                                   name="my-file"
                                   style={{ display: "none" }}
                                 />
-                                <Editor
+                                <TinyMCE
                                   initialValue={values.expertise}
                                   init={{
-                                    height: 150,
+                                    height: 500,
                                     menubar: false,
                                     plugins: [
                                       "advlist autolink lists link image charmap print preview anchor",
@@ -419,8 +419,7 @@ class AddDoctor extends Component {
                                     ],
                                     toolbar:
                                       "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
-                                    content_style:
-                                      "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                                    content_css: '//www.tinymce.com/css/codepen.min.css',
                                     file_browser_callback_types: "image",
                                     file_picker_callback: function (
                                       callback,
@@ -496,9 +495,8 @@ class AddDoctor extends Component {
                           </Row>
                         </div>
                         <button
-                          className={`btn btn-success btn-sm ${
-                            isValid ? "btn-custom-green" : "btn-disable"
-                          } m-r-10`}
+                          className={`btn btn-success btn-sm ${isValid ? "btn-custom-green" : "btn-disable"
+                            } m-r-10`}
                           type="submit"
                           disabled={
                             isValid ? (isSubmitting ? true : false) : true
@@ -509,8 +507,8 @@ class AddDoctor extends Component {
                               ? "Updating..."
                               : "Update"
                             : isSubmitting
-                            ? "Submitting..."
-                            : "Submit"}
+                              ? "Submitting..."
+                              : "Submit"}
                         </button>
                       </Form>
                     );

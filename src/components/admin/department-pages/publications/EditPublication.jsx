@@ -2,7 +2,6 @@
 import React, { Component } from "react";
 import { Row, Col, Button } from "react-bootstrap";
 import { Formik, Field, Form } from "formik";
-import { Editor } from "@tinymce/tinymce-react";
 import API from "../../../../shared/admin-axios";
 import * as Yup from "yup";
 import swal from "sweetalert";
@@ -363,8 +362,8 @@ class EditPublication extends Component {
                                   name="my-file"
                                   style={{ display: "none" }}
                                 />
-                                <Editor
-                                  initialValue={values.publication_description}
+                                <TinyMCE
+                                  content={values.publication_description}
                                   init={{
                                     height: 150,
                                     menubar: false,
@@ -375,8 +374,9 @@ class EditPublication extends Component {
                                     ],
                                     toolbar:
                                       "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
-                                    content_style:
-                                      "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                                    // content_style:
+                                    //   "body { font-family:Helvetica,Arial,sans-serif; font-size:12px }",
+                                    content_css: '//www.tinymce.com/css/codepen.min.css',
                                     file_browser_callback_types: "image",
                                     file_picker_callback: function (
                                       callback,

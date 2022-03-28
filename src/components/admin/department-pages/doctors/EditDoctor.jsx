@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Row, Col, Button } from "react-bootstrap";
 import { Formik, Field, Form } from "formik";
-import { Editor } from "@tinymce/tinymce-react";
+// import { Editor } from "@tinymce/tinymce-react";
 import API from "../../../../shared/admin-axios";
 import * as Yup from "yup";
 import swal from "sweetalert";
@@ -51,7 +51,7 @@ class EditDoctor extends Component {
       doctor_id: this.props.match.params.id,
     };
   }
-  
+
 
 
   fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
@@ -90,7 +90,7 @@ class EditDoctor extends Component {
   };
 
   componentDidMount() {
-    console.log('this.props.location.state',this.props.location.state)
+    console.log('this.props.location.state', this.props.location.state)
     console.log('component')
     this.setState({
       validationMessage: generateResolutionText("doctor"),
@@ -211,7 +211,7 @@ class EditDoctor extends Component {
 
   render() {
     const { alldata } = this.props.location.state;
-    console.log('alldata',alldata)
+    console.log('alldata', alldata)
 
     const initialValues = {
       id: "",
@@ -401,8 +401,8 @@ class EditDoctor extends Component {
                                   name="my-file"
                                   style={{ display: "none" }}
                                 />
-                                <Editor
-                                  initialValue={values.education}
+                                <TinyMCE
+                                  content={values.education}
                                   init={{
                                     height: 150,
                                     menubar: false,
@@ -413,8 +413,7 @@ class EditDoctor extends Component {
                                     ],
                                     toolbar:
                                       "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
-                                    content_style:
-                                      "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                                    content_css: '//www.tinymce.com/css/codepen.min.css',
                                     file_browser_callback_types: "image",
                                     file_picker_callback: function (
                                       callback,
@@ -475,8 +474,8 @@ class EditDoctor extends Component {
                                   name="my-file"
                                   style={{ display: "none" }}
                                 />
-                                <Editor
-                                  initialValue={values.expertise}
+                                <TinyMCE
+                                  content={values.expertise}
                                   init={{
                                     height: 150,
                                     menubar: false,
@@ -487,8 +486,7 @@ class EditDoctor extends Component {
                                     ],
                                     toolbar:
                                       "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
-                                    content_style:
-                                      "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                                    content_css: '//www.tinymce.com/css/codepen.min.css',
                                     file_browser_callback_types: "image",
                                     file_picker_callback: function (
                                       callback,
@@ -564,9 +562,8 @@ class EditDoctor extends Component {
                           </Row>
                         </div>
                         <button
-                          className={`btn btn-success btn-sm ${
-                            isValid ? "btn-custom-green" : "btn-disable"
-                          } m-r-10`}
+                          className={`btn btn-success btn-sm ${isValid ? "btn-custom-green" : "btn-disable"
+                            } m-r-10`}
                           type="submit"
                           disabled={
                             isValid ? (isSubmitting ? true : false) : true
@@ -577,8 +574,8 @@ class EditDoctor extends Component {
                               ? "Updating..."
                               : "Update"
                             : isSubmitting
-                            ? "Submitting..."
-                            : "Submit"}
+                              ? "Submitting..."
+                              : "Submit"}
                         </button>
                       </Form>
                     );

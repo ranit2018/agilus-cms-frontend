@@ -167,12 +167,10 @@ class Publications extends Component {
 
   getPublicationsList = (page = 1) => {
     var publication_heading = document.getElementById("publication_heading").value;
-    var publication_description = document.getElementById("publication_description").value;
+    // var publication_description = document.getElementById("publication_description").value;
     let status = document.getElementById("status").value;
     API.get(`/api/department/publication?page=${page}&publication_heading=${encodeURIComponent(
       publication_heading
-    )}&publication_description=${encodeURIComponent(
-      publication_description
     )}&status=${encodeURIComponent(
       status
     )}`)
@@ -194,11 +192,11 @@ class Publications extends Component {
   publicationSearch = (e) => {
     e.preventDefault();
     var publication_heading = document.getElementById("publication_heading").value;
-    var publication_description = document.getElementById("publication_description").value;
+    // var publication_description = document.getElementById("publication_description").value;
     let status = document.getElementById("status").value;
     if (
       publication_heading === "" &&
-      publication_description === "" &&
+      // publication_description === "" &&
       status === ""
     ) {
       return false;
@@ -206,8 +204,6 @@ class Publications extends Component {
     API.get(
       `/api/department/publication?page=1&publication_heading=${encodeURIComponent(
         publication_heading
-      )}&publication_description=${encodeURIComponent(
-        publication_description
       )}&status=${encodeURIComponent(
         status
       )}`
@@ -218,7 +214,7 @@ class Publications extends Component {
           totalCount: Number(res.data.count),
           isLoading: false,
           publication_heading: publication_heading,
-          publication_description: publication_description,
+          // publication_description: publication_description,
           status: status,
           activePage: 1,
           remove_search: true,
@@ -234,7 +230,7 @@ class Publications extends Component {
 
   clearSearch = () => {
     document.getElementById("publication_heading").value = "";
-    document.getElementById("publication_description").value = "";
+    // document.getElementById("publication_description").value = "";
     document.getElementById("status").value = "";
     this.setState(
       {
@@ -321,20 +317,7 @@ class Publications extends Component {
   checkHandler = (event) => {
     event.preventDefault();
   };
-  //get data by id
-  // getIndividualPublications(id) {
-    // API.get(`/api/department/Publications/${id}`)
-    //   .then((res) => {
-    //     this.setState({
-    //       alldata: res.data.data[0],
-    //       publication_id: id,
-    //       showModal: true,
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     showErrorMessage(err, this.props);
-    //   });
-  // }
+
 
   //for edit/add part
   editPublication(e, id) {
@@ -431,12 +414,12 @@ class Publications extends Component {
                     />
                   </div>
                   <div className="">
-                    <input
+                    {/* <input
                       className="form-control"
                       name="publication_description"
                       id="publication_description"
                       placeholder="Filter by Description"
-                    />
+                    /> */}
                   </div>
 
                   <div className="">

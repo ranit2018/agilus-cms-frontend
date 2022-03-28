@@ -108,9 +108,9 @@ class Test extends Component {
 
   componentDidMount() {
     // this.getCityStateList();
-    // this.getProductList();
+    // this.getTestList();
     // this.setState({
-    //   validationMessage: generateResolutionText("product-details"),
+    //   validationMessage: generateResolutionText("test-details"),
     //   fileValidationMessage: FILE_VALIDATION_MASSAGE,
     // });
   }
@@ -129,10 +129,10 @@ class Test extends Component {
 
   handlePageChange = (pageNumber) => {
     this.setState({ activePage: pageNumber });
-    this.getProductList(pageNumber > 0 ? pageNumber : 1);
+    this.getTestList(pageNumber > 0 ? pageNumber : 1);
   };
 
-  getProductList = (page = 1) => {
+  getTestList = (page = 1) => {
     let { search_city_name } = this.state;
     API.get(
       `api/lead_landing/product?city=${encodeURIComponent(
@@ -203,7 +203,7 @@ class Test extends Component {
           text: "Record deleted successfully.",
           icon: "success",
         }).then(() => {
-          this.getProductList(this.state.activePage);
+          this.getTestList(this.state.activePage);
         });
       })
       .catch((err) => {
@@ -230,7 +230,7 @@ class Test extends Component {
       .then((res) => {
         this.setState({
           testDetails: res.data.data,
-          totalCount: res.data.count,
+          totalCount: Number(res.data.count),
           isLoading: false,
           activePage: 1,
           search_city_name: search_city_name,
@@ -254,7 +254,7 @@ class Test extends Component {
       },
       () => {
         // this.setState({ activePage: 1 });
-        this.getProductList();
+        this.getTestList();
       }
     );
   };
@@ -293,7 +293,7 @@ class Test extends Component {
           text: "Removed successfully.",
           icon: "success",
         }).then(() => {
-          this.getProductList();
+          this.getTestList();
         });
       })
       .catch((err) => {
@@ -344,7 +344,7 @@ class Test extends Component {
       } else {
         getHeightWidth(this.state.file).then((dimension) => {
           const { height, width } = dimension;
-          const offerDimension = getResolution("product-details");
+          const offerDimension = getResolution("test-details");
           if (
             height != offerDimension.height ||
             width != offerDimension.width
@@ -352,7 +352,7 @@ class Test extends Component {
             actions.setErrors({ file: FILE_VALIDATION_TYPE_ERROR_MASSAGE });
             actions.setSubmitting(false);
           } else {
-            formData.append("product_image", this.state.file);
+            formData.append("test_image", this.state.file);
             API({
               method: method,
               url: url,
@@ -366,7 +366,7 @@ class Test extends Component {
                   text: "Added Successfully",
                   icon: "success",
                 }).then(() => {
-                  this.getProductList();
+                  this.getTestList();
                 });
               })
               .catch((err) => {
@@ -394,7 +394,7 @@ class Test extends Component {
             text: "Added Successfully",
             icon: "success",
           }).then(() => {
-            this.getProductList();
+            this.getTestList();
           });
         })
         .catch((err) => {
@@ -540,13 +540,13 @@ class Test extends Component {
   };
 
   setTestImage = (refObj) => (cell, row) => {
-    if (row.product_image !== null) {
+    if (row.test_image !== null) {
       return (
         <img
-          src={row.product_image}
-          alt="Product Image"
+          src={row.test_image}
+          alt="Test Image"
           height="100"
-          onClick={(e) => refObj.imageModalShowHandler(row.product_image)}
+          onClick={(e) => refObj.imageModalShowHandler(row.test_image)}
         ></img>
       );
     } else {

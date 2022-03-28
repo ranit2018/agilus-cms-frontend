@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { Row, Col, Button } from "react-bootstrap";
 import { Formik, Field, Form } from "formik";
-import { Editor } from "@tinymce/tinymce-react";
+// import { Editor } from "@tinymce/tinymce-react";
+import TinyMCE from 'react-tinymce';
 import API from "../../../../shared/admin-axios";
 import * as Yup from "yup";
 import swal from "sweetalert";
@@ -19,8 +20,8 @@ import {
   FILE_VALIDATION_TYPE_ERROR_MASSAGE,
   FILE_VALIDATION_SIZE_ERROR_MASSAGE,
 } from "../../../../shared/helper";
-import TinyMCE from "react-tinymce";
-import { tinymce } from "react-tinymce";
+
+// import { tinymce } from "react-tinymce";
 import TagsInput from "react-tagsinput";
 import { values } from "methods";
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
@@ -363,7 +364,7 @@ class EditEquipment extends Component {
                                   name="my-file"
                                   style={{ display: "none" }}
                                 />
-                                <Editor
+                                <TinyMCE
                                   initialValue={values.equipment_description}
                                   init={{
                                     height: 150,
@@ -375,8 +376,7 @@ class EditEquipment extends Component {
                                     ],
                                     toolbar:
                                       "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
-                                    content_style:
-                                      "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                                      content_css: '//www.tinymce.com/css/codepen.min.css',
                                     file_browser_callback_types: "image",
                                     file_picker_callback: function (
                                       callback,
