@@ -1,15 +1,13 @@
+/* eslint-disable eqeqeq */
 import React, { Component } from "react";
-import { Row, Col, Button } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import { Formik, Field, Form } from "formik";
-// import { Editor } from "@tinymce/tinymce-react";
-import TinyMCE from 'react-tinymce';
-import { tinymce } from "react-tinymce";
+import { Editor } from "@tinymce/tinymce-react";
 
 import API from "../../../../shared/admin-axios";
 import * as Yup from "yup";
 import swal from "sweetalert";
 import { showErrorMessage } from "../../../../shared/handle_error";
-import Select from "react-select";
 import {
   htmlDecode,
   getHeightWidth,
@@ -21,24 +19,7 @@ import {
   FILE_VALIDATION_SIZE_ERROR_MASSAGE,
 } from "../../../../shared/helper";
 import Layout from "../../layout/Layout";
-
-import TagsInput from "react-tagsinput";
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
-
-// const stringFormat = (str) => {
-//   str = str.replace(/[-[\]{}@'!*+?.,/;\\^$|#\s]/g, " ");
-//   str = str.split(" ");
-//   const strArr = [];
-//   console.log(str);
-
-//   for (let i in str) {
-//     if (str[i] !== "") {
-//       strArr.push(str[i]);
-//     }
-//   }
-//   const formatedString = strArr.join("-");
-//   return formatedString.toLowerCase();
-// };
 
 class AddPublication extends Component {
   constructor(props) {
@@ -114,7 +95,9 @@ class AddPublication extends Component {
     let url = `/api/department/publication`;
     let method = "POST";
     if (this.state.publication_image.size > FILE_SIZE) {
-      actions.setErrors({ publication_image: FILE_VALIDATION_SIZE_ERROR_MASSAGE });
+      actions.setErrors({
+        publication_image: FILE_VALIDATION_SIZE_ERROR_MASSAGE,
+      });
       actions.setSubmitting(false);
     } else {
       getHeightWidth(this.state.publication_image).then((dimension) => {
@@ -248,7 +231,8 @@ class AddPublication extends Component {
                                   autoComplete="off"
                                   value={values.publication_heading}
                                 />
-                                {errors.publication_heading && touched.publication_heading ? (
+                                {errors.publication_heading &&
+                                touched.publication_heading ? (
                                   <span className="errorMsg">
                                     {errors.publication_heading}
                                   </span>
@@ -282,7 +266,8 @@ class AddPublication extends Component {
                                   }}
                                 />
 
-                                {errors.publication_image && touched.publication_image ? (
+                                {errors.publication_image &&
+                                touched.publication_image ? (
                                   <span className="errorMsg">
                                     {errors.publication_image}
                                   </span>
@@ -310,12 +295,11 @@ class AddPublication extends Component {
                                   name="my-file"
                                   style={{ display: "none" }}
                                 />
-                                <TinyMCE
-                                  initialValue={values.publication_description}
+                                <Editor
+                                  content={values.publication_description}
                                   init={{
-                                    height: 150,
-                                    // branding: false,
-                                    // selector: 'textarea',
+                                    height: 350,
+                                    selector: "textarea",
                                     menubar: false,
                                     plugins: [
                                       "advlist autolink lists link image charmap print preview anchor",
@@ -324,9 +308,8 @@ class AddPublication extends Component {
                                     ],
                                     toolbar:
                                       "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
-                                    // content_style:
-                                    //   "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-                                    content_css: '//www.tinymce.com/css/codepen.min.css',
+                                    content_style:
+                                      "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
                                     file_browser_callback_types: "image",
                                     file_picker_callback: function (
                                       callback,
@@ -356,11 +339,15 @@ class AddPublication extends Component {
                                     paste_data_images: true,
                                   }}
                                   onEditorChange={(value) =>
-                                    setFieldValue("publication_description", value)
+                                    setFieldValue(
+                                      "publication_description",
+                                      value
+                                    )
                                   }
                                 />
 
-                                {errors.publication_description && touched.publication_description ? (
+                                {errors.publication_description &&
+                                touched.publication_description ? (
                                   <span className="errorMsg">
                                     {errors.publication_description}
                                   </span>
@@ -402,8 +389,9 @@ class AddPublication extends Component {
                           </Row>
                         </div>
                         <button
-                          className={`btn btn-success btn-sm ${isValid ? "btn-custom-green" : "btn-disable"
-                            } m-r-10`}
+                          className={`btn btn-success btn-sm ${
+                            isValid ? "btn-custom-green" : "btn-disable"
+                          } m-r-10`}
                           type="submit"
                           disabled={
                             isValid ? (isSubmitting ? true : false) : true
@@ -414,8 +402,8 @@ class AddPublication extends Component {
                               ? "Updating..."
                               : "Update"
                             : isSubmitting
-                              ? "Submitting..."
-                              : "Submit"}
+                            ? "Submitting..."
+                            : "Submit"}
                         </button>
                       </Form>
                     );

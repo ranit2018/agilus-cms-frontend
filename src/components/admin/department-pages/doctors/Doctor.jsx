@@ -6,19 +6,9 @@ import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import { Row, Col, Tooltip, OverlayTrigger, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import API from "../../../../shared/admin-axios";
-import { Formik, Field, Form } from "formik"; // for add/edit only
-import * as Yup from "yup"; // for add/edit only
 import swal from "sweetalert";
 import Layout from "../../layout/Layout";
-import {
-  htmlDecode,
-  getHeightWidth,
-  getResolution,
-  FILE_VALIDATION_MASSAGE,
-  FILE_SIZE,
-  FILE_VALIDATION_SIZE_ERROR_MASSAGE,
-  FILE_VALIDATION_TYPE_ERROR_MASSAGE,
-} from "../../../../shared/helper";
+import { htmlDecode, FILE_VALIDATION_MASSAGE } from "../../../../shared/helper";
 import Switch from "react-switch";
 
 import Pagination from "react-js-pagination";
@@ -347,17 +337,14 @@ class Doctor extends Component {
   checkHandler = (event) => {
     event.preventDefault();
   };
- 
 
   //for edit/add part
 
   editDoctor(e, id) {
     e.preventDefault();
-   
+
     API.get(`/api/department/doctor/${id}`)
       .then((res) => {
-        console.log("res.data.data[0]", res.data.data[0]);
-      
         this.props.history.push({
           pathname: "/department/edit-doctor/" + id,
           state: {
@@ -398,41 +385,6 @@ class Doctor extends Component {
       this.setState({ showModal: true });
     }
   };
-
-  // fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
-  //   setFieldTouched("doctor_image");
-  //   setFieldValue("doctor_image", event.target.value);
-
-  //   const SUPPORTED_FORMATS = ["image/png", "image/jpeg", "image/jpg"];
-  //   if (!event.target.files[0]) {
-  //     //Supported
-  //     this.setState({
-  //       doctor_image: "",
-  //       isValidFile: true,
-  //     });
-  //     return;
-  //   }
-  //   if (
-  //     event.target.files[0] &&
-  //     SUPPORTED_FORMATS.includes(event.target.files[0].type)
-  //   ) {
-  //     //Supported
-  //     this.setState({
-  //       doctor_image: event.target.files[0],
-  //       isValidFile: true,
-  //     });
-  //   } else {
-  //     //Unsupported
-  //     setErrors({
-  //       doctor_image:
-  //         "Only files with the following extensions are allowed: png jpg jpeg",
-  //     }); //Not working- So Added validation in "yup"
-  //     this.setState({
-  //       doctor_image: "",
-  //       isValidFile: false,
-  //     });
-  //   }
-  // };
 
   //image modal
   imageModalShowHandler = (url) => {

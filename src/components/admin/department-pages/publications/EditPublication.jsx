@@ -8,6 +8,7 @@ import swal from "sweetalert";
 import { showErrorMessage } from "../../../../shared/handle_error";
 import Select from "react-select";
 import Layout from "../../layout/Layout";
+import { Editor } from "@tinymce/tinymce-react";
 
 import {
   htmlDecode,
@@ -19,7 +20,6 @@ import {
   FILE_VALIDATION_TYPE_ERROR_MASSAGE,
   FILE_VALIDATION_SIZE_ERROR_MASSAGE,
 } from "../../../../shared/helper";
-import TinyMCE from "react-tinymce";
 import { tinymce } from "react-tinymce";
 import TagsInput from "react-tagsinput";
 import { values } from "methods";
@@ -362,10 +362,11 @@ class EditPublication extends Component {
                                   name="my-file"
                                   style={{ display: "none" }}
                                 />
-                                <TinyMCE
-                                  content={values.publication_description}
+                                <Editor
+                                  initialValue={values.publication_description}
                                   init={{
-                                    height: 150,
+                                    selector: 'textarea',
+                                    height: 350,
                                     menubar: false,
                                     plugins: [
                                       "advlist autolink lists link image charmap print preview anchor",
@@ -374,9 +375,8 @@ class EditPublication extends Component {
                                     ],
                                     toolbar:
                                       "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
-                                    // content_style:
-                                    //   "body { font-family:Helvetica,Arial,sans-serif; font-size:12px }",
-                                    content_css: '//www.tinymce.com/css/codepen.min.css',
+                                    content_style:
+                                      "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
                                     file_browser_callback_types: "image",
                                     file_picker_callback: function (
                                       callback,

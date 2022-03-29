@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable eqeqeq */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/img-redundant-alt */
@@ -14,8 +15,6 @@ import {
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import API from "../../../../shared/admin-axios";
-import { Formik, Field, Form } from "formik"; // for add/edit only
-import * as Yup from "yup"; // for add/edit only
 import swal from "sweetalert";
 import Select from "react-select";
 import Layout from "../../layout/Layout";
@@ -32,7 +31,6 @@ import {
   FILE_VALIDATION_TYPE_ERROR_MASSAGE,
 } from "../../../../shared/helper";
 import Switch from "react-switch";
-
 
 import Pagination from "react-js-pagination";
 import { showErrorMessage } from "../../../../shared/handle_error";
@@ -95,7 +93,6 @@ const actionFormatter = (refObj) => (cell, row) => {
 };
 
 const imageFormatter = (refObj) => (cell, row) => {
-  // console.log('row imageFormatter', row)
   return (
     <div className="actionStyle">
       {row.images.map((val, index) => {
@@ -111,14 +108,15 @@ const imageFormatter = (refObj) => (cell, row) => {
               src={val.equipment_image}
               alt="Equipment"
               height="30"
-              onClick={(e) => refObj.imageModalShowHandler(e, val.equipment_image)}
+              onClick={(e) =>
+                refObj.imageModalShowHandler(e, val.equipment_image)
+              }
             />
           </LinkWithTooltip>
-        )
+        );
       })}
     </div>
   );
-
 };
 
 const __htmlDecode = (refObj) => (cell) => {
@@ -150,67 +148,10 @@ const setDate = (refOBj) => (cell) => {
 const setType = (refObj) => (cell) => {
   //return cell === 1 ? "Active" : "Inactive";
   if (cell === 1) {
-    return " Request A Callback";
+    return " Instrument";
   } else if (cell === 2) {
-    return "Home Collection";
-  } else if (cell === 3) {
-    return " Covid19 Enquiry";
-  } else if (cell === 9) {
-    return " Contact Us";
-  } else if (cell === 10) {
-    return " Feedback";
-  } else if (cell === 8) {
-    return " Become A Vendor";
-  } else if (cell === 7) {
-    return " Become A Partner";
-  } else if (cell === 11) {
-    return " Prescription Upload";
+    return "Equipment";
   }
-};
-
-const generateCheckbox = (refObj) => (cell, row) => {
-
-  let defaultChecked = false;
-
-  if (refObj.state.checkedRows.includes(row.id)) {
-    defaultChecked = true;
-  }
-
-  return <input
-    type="checkbox"
-    checked={defaultChecked}
-    onChange={(e) => {
-      let prev = refObj.state.checkedRows;
-      if (e.target.checked) {
-        prev.push(row.id);
-      } else {
-        let index = prev.indexOf(row.id);
-        prev.splice(index, 1);
-      }
-      refObj.setState({ checkedRows: prev });
-    }}
-    className={`genCheck`}
-  />
-}
-
-const options = [
-  { value: "1", label: "Request A Callback" },
-  { value: "2", label: "Home Collection" },
-  { value: "3", label: "Covid19 Enquiry" },
-  { value: "7", label: "Become A Partner" },
-  { value: "8", label: "Become A Vendor" },
-  { value: "9", label: "Contact Us" },
-  { value: "10", label: "Feedback" },
-  { value: "11", label: "Prescription Upload" }
-];
-
-const initialValues = {
-  id: "",
-  equipment_name: "",
-  equipment_description: "",
-  equipment_image: "",
-  date_posted: "",
-  status: "",
 };
 
 class Equipment extends Component {
@@ -236,6 +177,10 @@ class Equipment extends Component {
         { value: "1", label: "Active" },
         { value: "0", label: "Inactive" },
       ],
+      selectType: [
+        { value: "1", label: "Instrument" },
+        { value: "2", label: "Equipment" },
+      ],
       activePage: 1,
       totalCount: 0,
       itemPerPage: 10,
@@ -254,22 +199,19 @@ class Equipment extends Component {
   };
 
   getEquipmentList = (page = 1) => {
+    let type = document.getElementById("type").value;
     var equipment_name = document.getElementById("equipment_name").value;
     var equipment_description = document.getElementById(
       "equipment_description"
     ).value;
     let status = document.getElementById("status").value;
-    // let type = '';
-    //   if(this.state.selectedOption.length > 0){
-    //     type = this.state.selectedOption.map((val)=>{return val.value}).join(',');
-    // }
 
     API.get(
       `/api/department/equipment?page=${page}&equipment_name=${encodeURIComponent(
         equipment_name
       )}&equipment_description=${encodeURIComponent(
         equipment_description
-      )}&status=${encodeURIComponent(status)}`
+      )}&type=${encodeURIComponent(type)}&status=${encodeURIComponent(status)}`
     )
       .then((res) => {
         this.setState({
@@ -289,17 +231,15 @@ class Equipment extends Component {
 
   equipmentSearch = (e) => {
     e.preventDefault();
+    let type = document.getElementById("type").value;
     var equipment_name = document.getElementById("equipment_name").value;
     var equipment_description = document.getElementById(
       "equipment_description"
     ).value;
     let status = document.getElementById("status").value;
-    // let type = '';
-    //   if(this.state.selectedOption.length > 0){
-    //     type = this.state.selectedOption.map((val)=>{return val.value}).join(',');
-    // }
 
     if (
+      type === "" &&
       equipment_name === "" &&
       equipment_description === "" &&
       status === ""
@@ -312,7 +252,7 @@ class Equipment extends Component {
         equipment_name
       )}&equipment_description=${encodeURIComponent(
         equipment_description
-      )}&status=${encodeURIComponent(status)}`
+      )}&type=${encodeURIComponent(type)}&status=${encodeURIComponent(status)}`
     )
       .then((res) => {
         this.setState({
@@ -323,7 +263,7 @@ class Equipment extends Component {
           equipment_name: equipment_name,
           equipment_description: equipment_description,
           status: status,
-          // type = type,
+          type: type,
 
           activePage: 1,
           remove_search: true,
@@ -341,9 +281,11 @@ class Equipment extends Component {
     document.getElementById("equipment_name").value = "";
     document.getElementById("equipment_description").value = "";
     document.getElementById("status").value = "";
+    document.getElementById("type").value = "";
 
     this.setState(
       {
+        type: "",
         equipment_description: "",
         equipment_name: "",
         status: "",
@@ -382,7 +324,6 @@ class Equipment extends Component {
 
   //delete
   confirmDelete = (event, id) => {
-    console.log("id confirm", id);
     event.preventDefault();
     swal({
       closeOnClickOutside: false,
@@ -399,7 +340,6 @@ class Equipment extends Component {
   };
 
   deleteEquipment = (id) => {
-    console.log("id delete post", id);
     API.post(`/api/department/equipment/${id}`)
       .then((res) => {
         swal({
@@ -437,8 +377,6 @@ class Equipment extends Component {
 
     API.get(`/api/department/equipment/${id}`)
       .then((res) => {
-        console.log("res.data.data[0]", res.data.data[0]);
-
         this.props.history.push({
           pathname: "/department/edit-equipment/" + id,
           state: {
@@ -455,6 +393,7 @@ class Equipment extends Component {
     this.setState({
       showModal: false,
       // id: "",
+      type: "",
       alldata: "",
       equipment_name: "",
       equipment_description: "",
@@ -481,7 +420,7 @@ class Equipment extends Component {
   //image modal
   imageModalShowHandler = (e, url) => {
     e.preventDefault();
-    console.log('url', url);
+    console.log("url", url);
     this.setState({ thumbNailModal: true, equipment_image: url });
   };
   imageModalCloseHandler = () => {
@@ -513,7 +452,8 @@ class Equipment extends Component {
                       })
                     }
                   >
-                    <i className="fas fa-plus m-r-5" /> Add Equipment &  Instrument
+                    <i className="fas fa-plus m-r-5" /> Add Equipment &
+                    Instrument
                   </button>
                 </div>
                 <form className="form">
@@ -533,24 +473,19 @@ class Equipment extends Component {
                       placeholder="Filter by Description"
                     />
                   </div>
-                  {/* <div>
-                    <Select
-                      placeholder="Select Type"
-                      width={250}
-                      isMulti
-                      isClearable={true}
-                      isSearchable={true}
-                      value={this.state.selectedOption}
-                      onChange={(e) => {
-                        let sel = [];
-                        if (e != null) {
-                          sel = e
-                        }
-                        this.setState({ selectedOption: sel });
-                      }}
-                      options={options}
-                    />
-                  </div> */}
+
+                  <div className="">
+                    <select name="type" id="type" className="form-control">
+                      <option value="">Select Type</option>
+                      {this.state.selectType.map((val) => {
+                        return (
+                          <option key={val.value} value={val.value}>
+                            {val.label}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
 
                   <div className="">
                     <select name="status" id="status" className="form-control">
@@ -594,29 +529,13 @@ class Equipment extends Component {
                   wrapperClasses="table-responsive"
                   data={this.state.equipmentDetails}
                 >
-                  {/* <TableHeaderColumn
-                    dataField="type"
-                    dataFormat={generateCheckbox(this)}
-                    width="5%"
-                  >
-
-                  </TableHeaderColumn> */}
                   <TableHeaderColumn
                     dataField="type"
                     dataFormat={setType(this)}
                   >
                     Type
                   </TableHeaderColumn>
-                  {/* <TableHeaderColumn
-                    
-                    dataField="images"
-                    dataFormat={setEquipmentImage(this)}
-                    tdStyle={{ wordBreak: "break-word" }}
-                  >
-                    Image
-                  </TableHeaderColumn> */}
                   <TableHeaderColumn
-
                     dataField="id"
                     dataAlign=""
                     width="125"

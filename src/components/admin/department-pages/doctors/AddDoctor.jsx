@@ -1,13 +1,17 @@
+/* eslint-disable eqeqeq */
 import React, { Component } from "react";
+// eslint-disable-next-line no-unused-vars
 import { Row, Col, Button } from "react-bootstrap";
 import { Formik, Field, Form } from "formik";
-// import { Editor } from "@tinymce/tinymce-react";
+import { Editor } from "@tinymce/tinymce-react";
 import API from "../../../../shared/admin-axios";
 import * as Yup from "yup";
 import swal from "sweetalert";
 import { showErrorMessage } from "../../../../shared/handle_error";
+// eslint-disable-next-line no-unused-vars
 import Select from "react-select";
 import {
+  // eslint-disable-next-line no-unused-vars
   htmlDecode,
   getHeightWidth,
   generateResolutionText,
@@ -18,25 +22,11 @@ import {
   FILE_VALIDATION_SIZE_ERROR_MASSAGE,
 } from "../../../../shared/helper";
 import Layout from "../../layout/Layout";
-import TinyMCE from 'react-tinymce';
+// eslint-disable-next-line no-unused-vars
 import { tinymce } from "react-tinymce";
+// eslint-disable-next-line no-unused-vars
 import TagsInput from "react-tagsinput";
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
-
-// const stringFormat = (str) => {
-//   str = str.replace(/[-[\]{}@'!*+?.,/;\\^$|#\s]/g, " ");
-//   str = str.split(" ");
-//   const strArr = [];
-//   console.log(str);
-
-//   for (let i in str) {
-//     if (str[i] !== "") {
-//       strArr.push(str[i]);
-//     }
-//   }
-//   const formatedString = strArr.join("-");
-//   return formatedString.toLowerCase();
-// };
 
 class AddDoctor extends Component {
   constructor(props) {
@@ -94,16 +84,16 @@ class AddDoctor extends Component {
   }
 
   handleSubmitEvent = (values, actions) => {
-    let postdata = {
-      doctor_name: values.doctor_name,
-      education: values.education,
-      expertise: values.expertise,
-      designation: values.designation,
-      doctor_image: values.doctor_image,
-      date_posted: new Date().toLocaleString(),
-      status: String(values.status),
-    };
-    console.log("postdata", postdata);
+    // let postdata = {
+    //   doctor_name: values.doctor_name,
+    //   education: values.education,
+    //   expertise: values.expertise,
+    //   designation: values.designation,
+    //   doctor_image: values.doctor_image,
+    //   date_posted: new Date().toLocaleString(),
+    //   status: String(values.status),
+    // };
+    // console.log("postdata", postdata);
 
     let formData = new FormData();
 
@@ -188,10 +178,6 @@ class AddDoctor extends Component {
       expertise: Yup.string().required("Please enter expetise"),
       designation: Yup.string().required("Please enter designation"),
       status: Yup.number().required("Please select status"),
-      // status: Yup.string()
-      //   .trim()
-      //   .required("Please select status")
-      //   .matches(/^[0|1]$/, "Invalid status selected"),
     });
 
     return (
@@ -334,10 +320,12 @@ class AddDoctor extends Component {
                                   name="my-file"
                                   style={{ display: "none" }}
                                 />
-                                <TinyMCE
-                                  initialValue={values.education}
+                                <Editor
+                                  // initialValue={values.education}
+                                  content={values.education}
                                   init={{
                                     height: 500,
+                                    selector: "textarea",
                                     menubar: false,
                                     plugins: [
                                       "advlist autolink lists link image charmap print preview anchor",
@@ -346,7 +334,8 @@ class AddDoctor extends Component {
                                     ],
                                     toolbar:
                                       "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
-                                    content_css: '//www.tinymce.com/css/codepen.min.css',
+                                    content_style:
+                                      "body { font-family:Helvetica,Arial,sans-serif; font-size:10px, }",
                                     file_browser_callback_types: "image",
                                     file_picker_callback: function (
                                       callback,
@@ -361,10 +350,6 @@ class AddDoctor extends Component {
                                           var file = input.files[0];
                                           var reader = new FileReader();
                                           reader.onload = function (e) {
-                                            console.log(
-                                              "name",
-                                              e.target.result
-                                            );
                                             callback(e.target.result, {
                                               alt: file.name,
                                             });
@@ -407,7 +392,7 @@ class AddDoctor extends Component {
                                   name="my-file"
                                   style={{ display: "none" }}
                                 />
-                                <TinyMCE
+                                <Editor
                                   initialValue={values.expertise}
                                   init={{
                                     height: 500,
@@ -419,7 +404,8 @@ class AddDoctor extends Component {
                                     ],
                                     toolbar:
                                       "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
-                                    content_css: '//www.tinymce.com/css/codepen.min.css',
+                                    content_style:
+                                      "body { font-family:Helvetica,Arial,sans-serif; font-size:10px, }",
                                     file_browser_callback_types: "image",
                                     file_picker_callback: function (
                                       callback,
@@ -434,10 +420,6 @@ class AddDoctor extends Component {
                                           var file = input.files[0];
                                           var reader = new FileReader();
                                           reader.onload = function (e) {
-                                            console.log(
-                                              "name",
-                                              e.target.result
-                                            );
                                             callback(e.target.result, {
                                               alt: file.name,
                                             });
@@ -495,8 +477,9 @@ class AddDoctor extends Component {
                           </Row>
                         </div>
                         <button
-                          className={`btn btn-success btn-sm ${isValid ? "btn-custom-green" : "btn-disable"
-                            } m-r-10`}
+                          className={`btn btn-success btn-sm ${
+                            isValid ? "btn-custom-green" : "btn-disable"
+                          } m-r-10`}
                           type="submit"
                           disabled={
                             isValid ? (isSubmitting ? true : false) : true
@@ -507,8 +490,8 @@ class AddDoctor extends Component {
                               ? "Updating..."
                               : "Update"
                             : isSubmitting
-                              ? "Submitting..."
-                              : "Submit"}
+                            ? "Submitting..."
+                            : "Submit"}
                         </button>
                       </Form>
                     );

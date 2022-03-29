@@ -1,13 +1,13 @@
+/* eslint-disable eqeqeq */
 import React, { Component } from "react";
 import { Row, Col, Button } from "react-bootstrap";
 import { Formik, Field, Form } from "formik";
-// import { Editor } from "@tinymce/tinymce-react";
-import TinyMCE from 'react-tinymce';
+import { Editor } from "@tinymce/tinymce-react";
+import TinyMCE from "react-tinymce";
 import API from "../../../../shared/admin-axios";
 import * as Yup from "yup";
 import swal from "sweetalert";
 import { showErrorMessage } from "../../../../shared/handle_error";
-import Select from "react-select";
 import Layout from "../../layout/Layout";
 
 import {
@@ -20,26 +20,7 @@ import {
   FILE_VALIDATION_TYPE_ERROR_MASSAGE,
   FILE_VALIDATION_SIZE_ERROR_MASSAGE,
 } from "../../../../shared/helper";
-
-// import { tinymce } from "react-tinymce";
-import TagsInput from "react-tagsinput";
-import { values } from "methods";
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
-
-// const stringFormat = (str) => {
-//   str = str.replace(/[-[\]{}@'!*+?.,/;\\^$|#\s]/g, " ");
-//   str = str.split(" ");
-//   const strArr = [];
-//   console.log(str);
-
-//   for (let i in str) {
-//     if (str[i] !== "") {
-//       strArr.push(str[i]);
-//     }
-//   }
-//   const formatedString = strArr.join("-");
-//   return formatedString.toLowerCase();
-// };
 
 class EditEquipment extends Component {
   constructor(props) {
@@ -49,11 +30,13 @@ class EditEquipment extends Component {
         { value: "0", label: "Inactive" },
         { value: "1", label: "Active" },
       ],
+      selectType: [
+        { value: "1", label: "Instrument" },
+        { value: "2", label: "Equipment" },
+      ],
       equipment_id: this.props.match.params.id,
     };
   }
-  
-
 
   fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
     setFieldTouched("equipment_image");
@@ -91,8 +74,6 @@ class EditEquipment extends Component {
   };
 
   componentDidMount() {
-    console.log('this.props.location.state',this.props.location.state)
-    console.log('component')
     this.setState({
       validationMessage: generateResolutionText("equipment"),
       fileValidationMessage: FILE_VALIDATION_MASSAGE,
@@ -100,22 +81,22 @@ class EditEquipment extends Component {
   }
 
   handleSubmitEvent = (values, actions) => {
-    let postdata = {
-      // job_id: this.state.jobDetails.job_id ? this.state.jobDetails.job_id : '',
-      equipment_name: values.equipment_name,
-      equipment_description: values.equipment_description,
-      equipment_image: values.equipment_image,
-      date_posted: new Date().toLocaleString(),
-      status: String(values.status),
-    };
-    console.log("postdata edit", postdata);
+    // let postdata = {
+    //   type: String(values.type),
+    //   equipment_name: values.equipment_name,
+    //   equipment_description: values.equipment_description,
+    //   equipment_image: values.equipment_image,
+    //   date_posted: new Date().toLocaleString(),
+    //   status: String(values.status),
+    // };
+    // console.log("postdata edit", postdata);
 
     let formData = new FormData();
 
+    formData.append("type", String(values.type));
     formData.append("equipment_name", values.equipment_name);
     formData.append("equipment_description", values.equipment_description);
     formData.append("status", String(values.status));
-
 
     let url = `/api/department/equipment/${this.props.match.params.id}`;
     let method = "PUT";
@@ -207,10 +188,10 @@ class EditEquipment extends Component {
 
   render() {
     const { alldata } = this.props.location.state;
-    console.log('alldata',alldata)
 
     const initialValues = {
       id: "",
+      type: "",
       equipment_name: "",
       equipment_description: "",
       equipment_image: "",
@@ -219,6 +200,7 @@ class EditEquipment extends Component {
     };
 
     const newInitialValues = {
+      type: alldata.type,
       equipment_image: "",
       equipment_name: htmlDecode(alldata.equipment_name),
       equipment_description: htmlDecode(alldata.equipment_description),
@@ -226,6 +208,7 @@ class EditEquipment extends Component {
     };
 
     const validateStopFlag = Yup.object().shape({
+      type: Yup.number().required("Please select type"),
       equipment_image: Yup.string()
         .notRequired()
         .test(
@@ -244,7 +227,6 @@ class EditEquipment extends Component {
       ),
       equipment_description: Yup.string().required("Please enter description"),
       status: Yup.number().required("Please select status"),
-     
     });
 
     return (
@@ -292,7 +274,38 @@ class EditEquipment extends Component {
                             <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
                                 <label>
-                                Equipment Name
+                                  Type
+                                  <span className="impField">*</span>
+                                </label>
+                                <Field
+                                  name="type"
+                                  component="select"
+                                  className={`selectArowGray form-control`}
+                                  autoComplete="off"
+                                  value={values.type}
+                                >
+                                  <option key="-1" value="">
+                                    Select
+                                  </option>
+                                  {this.state.selectType.map((status, i) => (
+                                    <option key={i} value={status.value}>
+                                      {status.label}
+                                    </option>
+                                  ))}
+                                </Field>
+                                {errors.type && touched.type ? (
+                                  <span className="errorMsg">
+                                    {errors.type}
+                                  </span>
+                                ) : null}
+                              </div>
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col xs={12} sm={12} md={12}>
+                              <div className="form-group">
+                                <label>
+                                  Equipment Name
                                   <span className="impField">*</span>
                                 </label>
                                 <Field
@@ -303,7 +316,8 @@ class EditEquipment extends Component {
                                   autoComplete="off"
                                   value={values.equipment_name}
                                 />
-                                {errors.equipment_name && touched.equipment_name ? (
+                                {errors.equipment_name &&
+                                touched.equipment_name ? (
                                   <span className="errorMsg">
                                     {errors.equipment_name}
                                   </span>
@@ -337,7 +351,8 @@ class EditEquipment extends Component {
                                   }}
                                 />
 
-                                {errors.equipment_image && touched.equipment_image ? (
+                                {errors.equipment_image &&
+                                touched.equipment_image ? (
                                   <span className="errorMsg">
                                     {errors.equipment_image}
                                   </span>
@@ -364,10 +379,11 @@ class EditEquipment extends Component {
                                   name="my-file"
                                   style={{ display: "none" }}
                                 />
-                                <TinyMCE
+                                <Editor
                                   initialValue={values.equipment_description}
                                   init={{
-                                    height: 150,
+                                    selector: "textarea",
+                                    height: 350,
                                     menubar: false,
                                     plugins: [
                                       "advlist autolink lists link image charmap print preview anchor",
@@ -376,7 +392,8 @@ class EditEquipment extends Component {
                                     ],
                                     toolbar:
                                       "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
-                                      content_css: '//www.tinymce.com/css/codepen.min.css',
+                                    content_style:
+                                      "body { font-family:Helvetica,Arial,sans-serif; font-size:10px, }",
                                     file_browser_callback_types: "image",
                                     file_picker_callback: function (
                                       callback,
@@ -391,10 +408,6 @@ class EditEquipment extends Component {
                                           var file = input.files[0];
                                           var reader = new FileReader();
                                           reader.onload = function (e) {
-                                            console.log(
-                                              "name",
-                                              e.target.result
-                                            );
                                             callback(e.target.result, {
                                               alt: file.name,
                                             });
@@ -406,11 +419,15 @@ class EditEquipment extends Component {
                                     paste_data_images: true,
                                   }}
                                   onEditorChange={(value) =>
-                                    setFieldValue("equipment_description", value)
+                                    setFieldValue(
+                                      "equipment_description",
+                                      value
+                                    )
                                   }
                                 />
 
-                                {errors.equipment_description && touched.equipment_description ? (
+                                {errors.equipment_description &&
+                                touched.equipment_description ? (
                                   <span className="errorMsg">
                                     {errors.equipment_description}
                                   </span>

@@ -266,10 +266,10 @@ const resolution_arr = [
   },
   {
     tag: `equipment`,
-    max_width: `860`,
-    max_height: `693`,
-    min_width:`256`,
-    min_height:`256`
+    width: `860`,
+    height: `693`,
+    // min_width:`256`,
+    // min_height:`256`
   },
   {
     tag: `publications`,

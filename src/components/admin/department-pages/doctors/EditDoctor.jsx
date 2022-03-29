@@ -1,12 +1,13 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable eqeqeq */
 import React, { Component } from "react";
 import { Row, Col, Button } from "react-bootstrap";
 import { Formik, Field, Form } from "formik";
-// import { Editor } from "@tinymce/tinymce-react";
+import { Editor } from "@tinymce/tinymce-react";
 import API from "../../../../shared/admin-axios";
 import * as Yup from "yup";
 import swal from "sweetalert";
 import { showErrorMessage } from "../../../../shared/handle_error";
-import Select from "react-select";
 import Layout from "../../layout/Layout";
 
 import {
@@ -19,26 +20,7 @@ import {
   FILE_VALIDATION_TYPE_ERROR_MASSAGE,
   FILE_VALIDATION_SIZE_ERROR_MASSAGE,
 } from "../../../../shared/helper";
-import TinyMCE from "react-tinymce";
-import { tinymce } from "react-tinymce";
-import TagsInput from "react-tagsinput";
-import { values } from "methods";
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
-
-// const stringFormat = (str) => {
-//   str = str.replace(/[-[\]{}@'!*+?.,/;\\^$|#\s]/g, " ");
-//   str = str.split(" ");
-//   const strArr = [];
-//   console.log(str);
-
-//   for (let i in str) {
-//     if (str[i] !== "") {
-//       strArr.push(str[i]);
-//     }
-//   }
-//   const formatedString = strArr.join("-");
-//   return formatedString.toLowerCase();
-// };
 
 class EditDoctor extends Component {
   constructor(props) {
@@ -51,8 +33,6 @@ class EditDoctor extends Component {
       doctor_id: this.props.match.params.id,
     };
   }
-
-
 
   fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
     setFieldTouched("doctor_image");
@@ -90,8 +70,6 @@ class EditDoctor extends Component {
   };
 
   componentDidMount() {
-    console.log('this.props.location.state', this.props.location.state)
-    console.log('component')
     this.setState({
       validationMessage: generateResolutionText("doctor"),
       fileValidationMessage: FILE_VALIDATION_MASSAGE,
@@ -99,26 +77,23 @@ class EditDoctor extends Component {
   }
 
   handleSubmitEvent = (values, actions) => {
-    let postdata = {
-      // job_id: this.state.jobDetails.job_id ? this.state.jobDetails.job_id : '',
-      doctor_name: values.doctor_name,
-      education: values.education,
-      expertise: values.expertise,
-      designation: values.designation,
-      doctor_image: values.doctor_image,
-      date_posted: new Date().toLocaleString(),
-      status: String(values.status),
-    };
-    console.log("postdata edit", postdata);
+    // let postdata = {
+    //   doctor_name: values.doctor_name,
+    //   education: values.education,
+    //   expertise: values.expertise,
+    //   designation: values.designation,
+    //   doctor_image: values.doctor_image,
+    //   date_posted: new Date().toLocaleString(),
+    //   status: String(values.status),
+    // };
+    // console.log("postdata edit", postdata);
 
     let formData = new FormData();
 
-    // formData.append('job_id',this.state.jobDetails.job_id)
     formData.append("doctor_name", values.doctor_name);
     formData.append("education", values.education);
     formData.append("expertise", values.expertise);
     formData.append("designation", values.designation);
-    // formData.append('date_posted', new Date().toLocaleString());
     formData.append("status", String(values.status));
 
     let url = `/api/department/doctor/${this.props.match.params.id}`;
@@ -211,7 +186,6 @@ class EditDoctor extends Component {
 
   render() {
     const { alldata } = this.props.location.state;
-    console.log('alldata', alldata)
 
     const initialValues = {
       id: "",
@@ -229,9 +203,6 @@ class EditDoctor extends Component {
       doctor_name: htmlDecode(alldata.doctor_name),
       education: htmlDecode(alldata.education),
       expertise: htmlDecode(alldata.expertise),
-      // category_id: this.props.location.state.selectedCategoryList.map((i) => {
-      //   return i.value;
-      // }),
       designation: htmlDecode(alldata.designation),
       status: alldata.status,
     };
@@ -401,10 +372,11 @@ class EditDoctor extends Component {
                                   name="my-file"
                                   style={{ display: "none" }}
                                 />
-                                <TinyMCE
-                                  content={values.education}
+                                <Editor
+                                  initialValue={values.education}
                                   init={{
-                                    height: 150,
+                                    selector: "textarea",
+                                    height: 350,
                                     menubar: false,
                                     plugins: [
                                       "advlist autolink lists link image charmap print preview anchor",
@@ -413,7 +385,8 @@ class EditDoctor extends Component {
                                     ],
                                     toolbar:
                                       "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
-                                    content_css: '//www.tinymce.com/css/codepen.min.css',
+                                    content_style:
+                                      "body { font-family:Helvetica,Arial,sans-serif; font-size:10px, }",
                                     file_browser_callback_types: "image",
                                     file_picker_callback: function (
                                       callback,
@@ -428,10 +401,6 @@ class EditDoctor extends Component {
                                           var file = input.files[0];
                                           var reader = new FileReader();
                                           reader.onload = function (e) {
-                                            console.log(
-                                              "name",
-                                              e.target.result
-                                            );
                                             callback(e.target.result, {
                                               alt: file.name,
                                             });
@@ -474,10 +443,11 @@ class EditDoctor extends Component {
                                   name="my-file"
                                   style={{ display: "none" }}
                                 />
-                                <TinyMCE
-                                  content={values.expertise}
+                                <Editor
+                                  initialValue={values.expertise}
                                   init={{
-                                    height: 150,
+                                    selector: "textarea",
+                                    height: 350,
                                     menubar: false,
                                     plugins: [
                                       "advlist autolink lists link image charmap print preview anchor",
@@ -486,7 +456,8 @@ class EditDoctor extends Component {
                                     ],
                                     toolbar:
                                       "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
-                                    content_css: '//www.tinymce.com/css/codepen.min.css',
+                                    content_style:
+                                      "body { font-family:Helvetica,Arial,sans-serif; font-size:10px, }",
                                     file_browser_callback_types: "image",
                                     file_picker_callback: function (
                                       callback,
@@ -501,10 +472,6 @@ class EditDoctor extends Component {
                                           var file = input.files[0];
                                           var reader = new FileReader();
                                           reader.onload = function (e) {
-                                            console.log(
-                                              "name",
-                                              e.target.result
-                                            );
                                             callback(e.target.result, {
                                               alt: file.name,
                                             });
@@ -562,8 +529,9 @@ class EditDoctor extends Component {
                           </Row>
                         </div>
                         <button
-                          className={`btn btn-success btn-sm ${isValid ? "btn-custom-green" : "btn-disable"
-                            } m-r-10`}
+                          className={`btn btn-success btn-sm ${
+                            isValid ? "btn-custom-green" : "btn-disable"
+                          } m-r-10`}
                           type="submit"
                           disabled={
                             isValid ? (isSubmitting ? true : false) : true
@@ -574,8 +542,8 @@ class EditDoctor extends Component {
                               ? "Updating..."
                               : "Update"
                             : isSubmitting
-                              ? "Submitting..."
-                              : "Submit"}
+                            ? "Submitting..."
+                            : "Submit"}
                         </button>
                       </Form>
                     );
