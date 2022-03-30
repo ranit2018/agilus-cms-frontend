@@ -578,7 +578,7 @@ class ProductDetails extends Component {
 
   getSuggestionValue = (suggestion) => suggestion.label;
 
-  renderSuggestion = (suggestion) => <span>{suggestion.label}</span>;
+  renderSuggestion = (suggestion) => <span>{suggestion.label} </span>;
 
   onSuggestionSelected = (event, { suggestion, method }, setFieldTouched) => {
     if (method === "click" || method === "enter") {
@@ -594,7 +594,6 @@ class ProductDetails extends Component {
         .then((res) => {
           if (res.data && res.data.data && res.data.data.length > 0) {
             const searchDetails = res.data.data[0];
-
             if (
               this.state.packageType === "2" &&
               searchDetails.PROFILE_FLAG == "T"

@@ -70,6 +70,8 @@ import AddAccordian from "../components/admin/product-details/AddAccordion";
 import EditAccordion from "../components/admin/product-details/EditAccordion";
 
 import Departments from "../components/admin/department-pages/department/Departments";
+import AddDepartment from "../components/admin/department-pages/department/AddDepartment";
+import EditDepartment from "../components/admin/department-pages/department/EditDepartment";
 
 import Doctor from "../components/admin/department-pages/doctors/Doctor";
 import AddDoctor from "../components/admin/department-pages/doctors/AddDoctor";
@@ -82,8 +84,6 @@ import EditEquipment from "../components/admin/department-pages/equipments/EditE
 import Publications from "../components/admin/department-pages/publications/Publications";
 import AddPublication from "../components/admin/department-pages/publications/AddPublication";
 import EditPublication from "../components/admin/department-pages/publications/EditPublication";
-
-import Test from "../components/admin/department-pages/test-page/Test";
 
 import "../assets/css/all.css";
 import "../assets/css/admin-style.css";
@@ -236,6 +236,10 @@ class Admin extends Component {
         <PrivateRoute path="/investors/memberstype" component={MembersType} />
 
         <PrivateRoute path="/department/departments" component={Departments} />
+        <PrivateRoute path="/departments/add-department" component={AddDepartment} />
+        <PrivateRoute path="/departments/edit-department/:id" component={EditDepartment} />
+
+
         <PrivateRoute path="/department/doctor" component={Doctor} />
         <PrivateRoute path="/department/add-doctor" component={AddDoctor} />
         <PrivateRoute
@@ -265,8 +269,6 @@ class Admin extends Component {
           path="/department/edit-publication/:id"
           component={EditPublication}
         />
-
-        <PrivateRoute path="/department/test" component={Test} />
 
         <Route from="*" component={AdminPageNotFound} />
       </Switch>

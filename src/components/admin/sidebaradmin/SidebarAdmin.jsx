@@ -102,7 +102,6 @@ class SidebarAdmin extends Component {
       path === "/department/departments" ||
       path === "/department/doctor" ||
       path === "/department/equipment" ||
-      path === "/department/test" ||
       path === "/department/publications"
     ) {
       this.setState({ shown: "6" });
@@ -344,25 +343,6 @@ class SidebarAdmin extends Component {
                     {" "}
                     <i className="fas fa-compress"></i>{" "}
                     <span> Equipments & Insturments </span>
-                  </Link>{" "}
-                </li>
-              )}
-            </ul>
-            <ul className="treeview-menu">
-              {this.props.path_name === "/department/test" ? (
-                <li className="active">
-                  {" "}
-                  <Link to="/department/test">
-                    {" "}
-                    <i className="fas fa-compress"></i> <span> Test </span>
-                  </Link>{" "}
-                </li>
-              ) : (
-                <li>
-                  {" "}
-                  <Link to="/department/test">
-                    {" "}
-                    <i className="fas fa-compress"></i> <span> Test </span>
                   </Link>{" "}
                 </li>
               )}

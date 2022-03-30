@@ -56,7 +56,7 @@ function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
 const actionFormatter = (refObj) => (cell, row) => {
   return (
     <div className="actionStyle">
-       <LinkWithTooltip
+      <LinkWithTooltip
         tooltip="Click to edit"
         href="#"
         clicked={(e) => refObj.editPublication(e, cell)}
@@ -136,6 +136,7 @@ class Publications extends Component {
       isLoading: false,
       showModal: false,
       publication_id: 0,
+      publication_code: "",
       publication_heading: "",
       publication_description: "",
       publication_image: "",
@@ -167,10 +168,12 @@ class Publications extends Component {
 
   getPublicationsList = (page = 1) => {
     var publication_heading = document.getElementById("publication_heading").value;
-    // var publication_description = document.getElementById("publication_description").value;
+    var short_name = document.getElementById("short_name").value;
     let status = document.getElementById("status").value;
     API.get(`/api/department/publication?page=${page}&publication_heading=${encodeURIComponent(
       publication_heading
+    )}&short_name=${encodeURIComponent(
+      short_name
     )}&status=${encodeURIComponent(
       status
     )}`)
@@ -192,11 +195,11 @@ class Publications extends Component {
   publicationSearch = (e) => {
     e.preventDefault();
     var publication_heading = document.getElementById("publication_heading").value;
-    // var publication_description = document.getElementById("publication_description").value;
+    var short_name = document.getElementById("short_name").value;
     let status = document.getElementById("status").value;
     if (
       publication_heading === "" &&
-      // publication_description === "" &&
+      short_name === "" &&
       status === ""
     ) {
       return false;
@@ -204,6 +207,8 @@ class Publications extends Component {
     API.get(
       `/api/department/publication?page=1&publication_heading=${encodeURIComponent(
         publication_heading
+      )}&short_name=${encodeURIComponent(
+        short_name
       )}&status=${encodeURIComponent(
         status
       )}`
@@ -214,7 +219,7 @@ class Publications extends Component {
           totalCount: Number(res.data.count),
           isLoading: false,
           publication_heading: publication_heading,
-          // publication_description: publication_description,
+          short_name: short_name,
           status: status,
           activePage: 1,
           remove_search: true,
@@ -230,11 +235,11 @@ class Publications extends Component {
 
   clearSearch = () => {
     document.getElementById("publication_heading").value = "";
-    // document.getElementById("publication_description").value = "";
+    document.getElementById("short_name").value = "";
     document.getElementById("status").value = "";
     this.setState(
       {
-        publication_description: "",
+        short_name: "",
         publication_heading: "",
         status: "",
         remove_search: false,
@@ -322,11 +327,11 @@ class Publications extends Component {
   //for edit/add part
   editPublication(e, id) {
     e.preventDefault();
-   
+
     API.get(`/api/department/publication/${id}`)
       .then((res) => {
         console.log("res.data.data[0]", res.data.data[0]);
-      
+
         this.props.history.push({
           pathname: "/department/edit-publication/" + id,
           state: {
@@ -376,7 +381,7 @@ class Publications extends Component {
   };
 
   render() {
-  
+
     return (
       <Layout {...this.props}>
         <div className="content-wrapper">
@@ -391,7 +396,7 @@ class Publications extends Component {
 
               <div className="col-lg-12 col-sm-12 col-xs-12  topSearchSection">
                 <div className="">
-                <button
+                  <button
                     type="button"
                     className="btn btn-info btn-sm"
                     onClick={(e) =>
@@ -413,13 +418,14 @@ class Publications extends Component {
                       placeholder="Filter by Publication Heading"
                     />
                   </div>
+
                   <div className="">
-                    {/* <input
+                    <input
                       className="form-control"
-                      name="publication_description"
-                      id="publication_description"
-                      placeholder="Filter by Description"
-                    /> */}
+                      name="short_name"
+                      id="short_name"
+                      placeholder="Filter by Short Name"
+                    />
                   </div>
 
                   <div className="">
@@ -471,6 +477,20 @@ class Publications extends Component {
                     tdStyle={{ wordBreak: "break-word" }}
                   >
                     Image
+                  </TableHeaderColumn>
+                  <TableHeaderColumn
+                    dataField="publication_code"
+                    dataFormat={__htmlDecode(this)}
+                    tdStyle={{ wordBreak: "break-word" }}
+                  >
+                    Code
+                  </TableHeaderColumn>
+                  <TableHeaderColumn
+                    dataField="short_name"
+                    dataFormat={__htmlDecode(this)}
+                    tdStyle={{ wordBreak: "break-word" }}
+                  >
+                    Short Name
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="publication_heading"

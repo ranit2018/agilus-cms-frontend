@@ -2,8 +2,8 @@
 import React, { Component } from "react";
 import { Row, Col } from "react-bootstrap";
 import { Formik, Field, Form } from "formik";
-import { Editor } from "@tinymce/tinymce-react";
-
+// import { Editor } from "@tinymce/tinymce-react";
+import TinyMCE from 'react-tinymce';
 import API from "../../../../shared/admin-axios";
 import * as Yup from "yup";
 import swal from "sweetalert";
@@ -77,19 +77,21 @@ class AddPublication extends Component {
   }
 
   handleSubmitEvent = (values, actions) => {
-    let postdata = {
-      publication_heading: values.publication_heading,
-      publication_description: values.publication_description,
-      publication_image: values.publication_image,
-      date_posted: new Date().toLocaleString(),
-      status: String(values.status),
-    };
-    console.log("postdata", postdata);
+    // let postdata = {
+    //   publication_heading: values.publication_heading,
+    //   publication_description: values.publication_description,
+    //   short_name: values.short_name,
+    //   publication_image: values.publication_image,
+    //   date_posted: new Date().toLocaleString(),
+    //   status: String(values.status),
+    // };
+    // console.log("postdata", postdata);
 
     let formData = new FormData();
 
     formData.append("publication_heading", values.publication_heading);
     formData.append("publication_description", values.publication_description);
+    formData.append("short_name", `PUB-${values.short_name}`);
     formData.append("status", String(values.status));
 
     let url = `/api/department/publication`;
@@ -150,6 +152,7 @@ class AddPublication extends Component {
       id: "",
       publication_heading: "",
       publication_description: "",
+      short_name: "",
       publication_image: "",
       date_posted: "",
       status: "",
@@ -162,6 +165,9 @@ class AddPublication extends Component {
           "Only files with the following extensions are allowed: png jpg jpeg",
           () => this.state.isValidFile
         ),
+      short_name: Yup.string().required(
+        "Please enter short name"
+      ),
       publication_heading: Yup.string().required(
         "Please enter publication heading"
       ),
@@ -232,9 +238,33 @@ class AddPublication extends Component {
                                   value={values.publication_heading}
                                 />
                                 {errors.publication_heading &&
-                                touched.publication_heading ? (
+                                  touched.publication_heading ? (
                                   <span className="errorMsg">
                                     {errors.publication_heading}
+                                  </span>
+                                ) : null}
+                              </div>
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col xs={12} sm={12} md={12}>
+                              <div className="form-group">
+                                <label>
+                                  Short Name
+                                  <span className="impField">*</span>
+                                </label>
+                                <Field
+                                  name="short_name"
+                                  type="text"
+                                  className={`form-control`}
+                                  placeholder="Enter Short Name"
+                                  autoComplete="off"
+                                  value={values.short_name}
+                                />
+                                {errors.short_name &&
+                                  touched.short_name ? (
+                                  <span className="errorMsg">
+                                    {errors.short_name}
                                   </span>
                                 ) : null}
                               </div>
@@ -267,7 +297,7 @@ class AddPublication extends Component {
                                 />
 
                                 {errors.publication_image &&
-                                touched.publication_image ? (
+                                  touched.publication_image ? (
                                   <span className="errorMsg">
                                     {errors.publication_image}
                                   </span>
@@ -275,7 +305,6 @@ class AddPublication extends Component {
                               </div>
                             </Col>
                           </Row>
-
                           <Row>
                             <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
@@ -283,53 +312,39 @@ class AddPublication extends Component {
                                   Description
                                   <span className="impField">*</span>
                                 </label>
-                                <input
-                                  id="my-file"
-                                  type="file"
-                                  name="my-file"
-                                  style={{ display: "none" }}
-                                />
-                                <input
-                                  id="my-file"
-                                  type="file"
-                                  name="my-file"
-                                  style={{ display: "none" }}
-                                />
-                                <Editor
-                                  content={values.publication_description}
-                                  init={{
-                                    height: 350,
-                                    selector: "textarea",
+
+                                <input id="my-file" type="file" name="my-file" style={{ display: "none" }} />
+                                <TinyMCE
+                                  name="publication_description"
+                                  config={{
                                     menubar: false,
+                                    branding: false,
+                                    selector: 'textarea',
+                                    height: 350,
                                     plugins: [
-                                      "advlist autolink lists link image charmap print preview anchor",
-                                      "searchreplace visualblocks code fullscreen",
-                                      "insertdatetime media table paste code help wordcount",
+                                      'advlist autolink lists link image charmap print preview anchor',
+                                      'searchreplace wordcount visualblocks code fullscreen',
+                                      'insertdatetime media table contextmenu paste code'
                                     ],
+                                    // plugins:
+                                    //     "link table hr visualblocks code placeholder lists autoresize textcolor",
+                                    font_formats:
+                                      "Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats",
                                     toolbar:
-                                      "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
-                                    content_style:
-                                      "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-                                    file_browser_callback_types: "image",
-                                    file_picker_callback: function (
-                                      callback,
-                                      value,
-                                      meta
-                                    ) {
-                                      if (meta.filetype == "image") {
-                                        var input =
-                                          document.getElementById("my-file");
+                                      "bold italic strikethrough superscript subscript | forecolor backcolor | removeformat underline | link unlink | alignleft aligncenter alignright alignjustify | numlist bullist | blockquote table  hr | visualblocks code | fontselect | link image",
+                                    content_css: '//www.tinymce.com/css/codepen.min.css',
+                                    file_browser_callback_types: 'image',
+                                    file_picker_callback: function (callback, value, meta) {
+                                      if (meta.filetype == 'image') {
+                                        var input = document.getElementById('my-file');
                                         input.click();
                                         input.onchange = function () {
                                           var file = input.files[0];
                                           var reader = new FileReader();
                                           reader.onload = function (e) {
-                                            console.log(
-                                              "name",
-                                              e.target.result
-                                            );
+                                            console.log('name', e.target.result);
                                             callback(e.target.result, {
-                                              alt: file.name,
+                                              alt: file.name
                                             });
                                           };
                                           reader.readAsDataURL(file);
@@ -337,17 +352,16 @@ class AddPublication extends Component {
                                       }
                                     },
                                     paste_data_images: true,
+
                                   }}
-                                  onEditorChange={(value) =>
-                                    setFieldValue(
-                                      "publication_description",
-                                      value
-                                    )
-                                  }
+
+                                  onChange={(e) => {
+                                    setFieldValue("publication_description", e.target.getContent())
+                                  }}
+
                                 />
 
-                                {errors.publication_description &&
-                                touched.publication_description ? (
+                                {errors.publication_description && touched.publication_description ? (
                                   <span className="errorMsg">
                                     {errors.publication_description}
                                   </span>
@@ -389,9 +403,8 @@ class AddPublication extends Component {
                           </Row>
                         </div>
                         <button
-                          className={`btn btn-success btn-sm ${
-                            isValid ? "btn-custom-green" : "btn-disable"
-                          } m-r-10`}
+                          className={`btn btn-success btn-sm ${isValid ? "btn-custom-green" : "btn-disable"
+                            } m-r-10`}
                           type="submit"
                           disabled={
                             isValid ? (isSubmitting ? true : false) : true
@@ -402,8 +415,8 @@ class AddPublication extends Component {
                               ? "Updating..."
                               : "Update"
                             : isSubmitting
-                            ? "Submitting..."
-                            : "Submit"}
+                              ? "Submitting..."
+                              : "Submit"}
                         </button>
                       </Form>
                     );

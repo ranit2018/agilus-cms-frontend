@@ -59,57 +59,57 @@ class AddOffer extends Component {
 
     handleSubmitEvent = (values, actions) => {
         console.log(values);
-        let method = '';
-        let url = '/api/offers';
-        const formData = new FormData();
-        formData.append('title', values.title);
-        formData.append('description', values.description);
-        formData.append('end_date', setDateValue(values.end_date));
-        formData.append('status', values.status)
-        if (this.state.file)
-            method = 'POST';
-        url = `/api/offers/`;
-        if (this.state.file.size > FILE_SIZE) {
-            actions.setErrors({ file: "The file exceeds maximum size." });
-            actions.setSubmitting(false);
-        } else {
-            getHeightWidth(this.state.file).then(dimension => {
-                const { height, width } = dimension;
-                const offerDimension = getResolution("offer-images");
-                if (height != offerDimension.height || width != offerDimension.width) {
-                    actions.setErrors({ file: "The file exceeds maximum height and width validation." });
-                    actions.setSubmitting(false);
-                } else {
-                    formData.append("file", this.state.file);
-                    API({
-                        method: method,
-                        url: url,
-                        data: formData
-                    }).then((res) => {
-                        this.setState({ showModal: false });
-                        swal({
-                            closeOnClickOutside: false,
-                            title: "Success",
-                            text: "Record added successfully.",
-                            icon: "success",
-                        }).then(() => {
-                            this.props.history.push('/offers');
-                        })
-                    }).catch((err) => {
-                        this.setState({ showModalLoader: false });
-                        if (err.data.status === 3) {
-                            this.setState({
-                                showModal: false,
-                            });
-                            showErrorMessage(err, this.props);
-                        } else {
-                            actions.setErrors(err.data.errors);
-                            actions.setSubmitting(false);
-                        }
-                    });
-                }
-            })
-        }
+        // let method = '';
+        // let url = '/api/offers';
+        // const formData = new FormData();
+        // formData.append('title', values.title);
+        // formData.append('description', values.description);
+        // formData.append('end_date', setDateValue(values.end_date));
+        // formData.append('status', values.status)
+        // if (this.state.file)
+        //     method = 'POST';
+        // url = `/api/offers/`;
+        // if (this.state.file.size > FILE_SIZE) {
+        //     actions.setErrors({ file: "The file exceeds maximum size." });
+        //     actions.setSubmitting(false);
+        // } else {
+        //     getHeightWidth(this.state.file).then(dimension => {
+        //         const { height, width } = dimension;
+        //         const offerDimension = getResolution("offer-images");
+        //         if (height != offerDimension.height || width != offerDimension.width) {
+        //             actions.setErrors({ file: "The file exceeds maximum height and width validation." });
+        //             actions.setSubmitting(false);
+        //         } else {
+        //             formData.append("file", this.state.file);
+        //             API({
+        //                 method: method,
+        //                 url: url,
+        //                 data: formData
+        //             }).then((res) => {
+        //                 this.setState({ showModal: false });
+        //                 swal({
+        //                     closeOnClickOutside: false,
+        //                     title: "Success",
+        //                     text: "Record added successfully.",
+        //                     icon: "success",
+        //                 }).then(() => {
+        //                     this.props.history.push('/offers');
+        //                 })
+        //             }).catch((err) => {
+        //                 this.setState({ showModalLoader: false });
+        //                 if (err.data.status === 3) {
+        //                     this.setState({
+        //                         showModal: false,
+        //                     });
+        //                     showErrorMessage(err, this.props);
+        //                 } else {
+        //                     actions.setErrors(err.data.errors);
+        //                     actions.setSubmitting(false);
+        //                 }
+        //             });
+        //         }
+        //     })
+        // }
 
     }
 

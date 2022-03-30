@@ -276,6 +276,12 @@ const resolution_arr = [
     width: `626`,
     height: `626`,
   },
+  {
+    tag: `department`,
+    width: `256`,
+    height: `256`,
+  },
+  
 
 ]
 
