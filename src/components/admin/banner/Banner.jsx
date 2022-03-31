@@ -17,21 +17,30 @@ import swal from "sweetalert";
 import Select from "react-select";
 
 import Layout from "../layout/Layout";
-import { htmlDecode, getHeightWidth, getHeightWidthFromURL, generateResolutionText, getResolution, FILE_VALIDATION_MASSAGE, FILE_SIZE, FILE_VALIDATION_SIZE_ERROR_MASSAGE, FILE_VALIDATION_TYPE_ERROR_MASSAGE } from "../../../shared/helper";
+import {
+  htmlDecode,
+  getHeightWidth,
+  getHeightWidthFromURL,
+  generateResolutionText,
+  getResolution,
+  FILE_VALIDATION_MASSAGE,
+  FILE_SIZE,
+  FILE_VALIDATION_SIZE_ERROR_MASSAGE,
+  FILE_VALIDATION_TYPE_ERROR_MASSAGE,
+} from "../../../shared/helper";
 import whitelogo from "../../../assets/images/drreddylogo_white.png";
 import Switch from "react-switch";
 
-import SRL from '../../../assets/images/SRL.png'
+import SRL from "../../../assets/images/SRL.png";
 
-import exclamationImage from '../../../assets/images/exclamation-icon-black.svg';
+import exclamationImage from "../../../assets/images/exclamation-icon-black.svg";
 import Pagination from "react-js-pagination";
 import { showErrorMessage } from "../../../shared/handle_error";
 import dateFormat from "dateformat";
 import { values } from "methods";
+import { Scheduler } from "../scheduler/Scheduler";
 
 /*For Tooltip*/
-
-
 
 function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
   return (
@@ -54,12 +63,11 @@ const actionFormatter = (refObj) => (cell, row) => {
   return (
     <div className="actionStyle">
       <LinkWithTooltip
-        tooltip={'Click to Edit'}
+        tooltip={"Click to Edit"}
         clicked={(e) => refObj.modalShowHandler(e, cell)}
         href="#"
         id="tooltip-1"
       >
-
         <i className="far fa-edit" />
       </LinkWithTooltip>
       <LinkWithTooltip
@@ -101,8 +109,8 @@ const __htmlDecode = (refObj) => (cell) => {
 };
 
 const setName = (refObj) => (cell) => {
-  return cell.replace('.png', " ")
-}
+  return cell.replace(".png", " ");
+};
 
 const bannerStatus = (refObj) => (cell) => {
   //return cell === 1 ? "Active" : "Inactive";
@@ -114,14 +122,18 @@ const bannerStatus = (refObj) => (cell) => {
 };
 
 const setBannerImage = (refObj) => (cell, row) => {
-
   return (
     // <LinkWithTooltip
     //   tooltip={"View Image"}
     //   id="tooltip-1"
     //   clicked={(e) => refObj.imageModalShowHandler(row.banner_image)}
     // >
-    <img src={row.banner_image} alt="Banner Image" height="100" onClick={(e) => refObj.imageModalShowHandler(row.banner_image)}></img>
+    <img
+      src={row.banner_image}
+      alt="Banner Image"
+      height="100"
+      onClick={(e) => refObj.imageModalShowHandler(row.banner_image)}
+    ></img>
     // </LinkWithTooltip>
   );
 };
@@ -135,7 +147,14 @@ const setDate = (refOBj) => (cell) => {
   }
 };
 
-
+const schedulerValues = {
+  start_date: "",
+  end_date: "",
+  start_time: "",
+  end_time: "",
+  all_day_check: false,
+  repeat: "no_repeat",
+};
 
 const initialValues = {
   file: "",
@@ -143,7 +162,16 @@ const initialValues = {
   banner_text: "",
   button_text: "",
   button_url: "",
-  status: ""
+  status: "",
+  isSchedule: false,
+  schedulerData: {
+    start_date: "",
+    end_date: "",
+    start_time: "",
+    end_time: "",
+    all_day_check: false,
+    repeat: "no_repeat",
+  },
 };
 
 class Banner extends Component {
@@ -153,22 +181,22 @@ class Banner extends Component {
       banner: [],
       isLoading: false,
       showModal: false,
-      page_name: '',
-      banner_status: '',
-      banner_name: '',
+      page_name: "",
+      banner_status: "",
+      banner_name: "",
       banner_id: 0,
       bannerDetails: [],
       page_name_arr: [],
       status_banners: [
-        { value: '1', label: 'Active' },
-        { value: '0', label: 'Inactive' }
+        { value: "1", label: "Active" },
+        { value: "0", label: "Inactive" },
       ],
       screens: [],
       activePage: 1,
       totalCount: 0,
       itemPerPage: 10,
       thumbNailModal: false,
-      message: '',
+      message: "",
     };
   }
 
@@ -189,48 +217,53 @@ class Banner extends Component {
     let banner_status = this.state.banner_status;
 
     API.get(
-      `/api/banner?page=${page}&page_name=${encodeURIComponent(page_name)}&status=${encodeURIComponent(banner_status)}&banner_name=${encodeURIComponent(banner_name)}`
-    ).then((res) => {
-      this.setState({
-        banner: res.data.data,
-        banner_count: res.data.count,
-        isLoading: false,
-        // page_name: page_name,
-        // banner_name: banner_name,
-        // banner_status: banner_status
-      });
-    })
+      `/api/banner?page=${page}&page_name=${encodeURIComponent(
+        page_name
+      )}&status=${encodeURIComponent(
+        banner_status
+      )}&banner_name=${encodeURIComponent(banner_name)}`
+    )
+      .then((res) => {
+        this.setState({
+          banner: res.data.data,
+          banner_count: res.data.count,
+          isLoading: false,
+          // page_name: page_name,
+          // banner_name: banner_name,
+          // banner_status: banner_status
+        });
+      })
       .catch((err) => {
         this.setState({
           isLoading: false,
         });
         showErrorMessage(err, this.props);
       });
-  }
+  };
 
   getPageArr = () => {
     API.get(`/api/feed/pages`)
       .then((res) => {
         this.setState({
-          page_name_arr: res.data.data
+          page_name_arr: res.data.data,
         });
       })
       .catch((err) => {
         showErrorMessage(err, this.props);
       });
-  }
+  };
 
   fetchScreen = () => {
     API.get(`/api/banner/screen_name `)
       .then((res) => {
         this.setState({
-          screens: res.data.data
+          screens: res.data.data,
         });
       })
       .catch((err) => {
         showErrorMessage(err, this.props);
       });
-  }
+  };
 
   bannerSearch = (e) => {
     e.preventDefault();
@@ -243,7 +276,13 @@ class Banner extends Component {
       return false;
     }
 
-    API.get(`/api/banner?page=1&page_name=${encodeURIComponent(page_name)}&status=${encodeURIComponent(banner_status)}&banner_name=${encodeURIComponent(banner_name)}`)
+    API.get(
+      `/api/banner?page=1&page_name=${encodeURIComponent(
+        page_name
+      )}&status=${encodeURIComponent(
+        banner_status
+      )}&banner_name=${encodeURIComponent(banner_name)}`
+    )
       .then((res) => {
         this.setState({
           banner: res.data.data,
@@ -253,12 +292,12 @@ class Banner extends Component {
           banner_name: banner_name,
           banner_status: banner_status,
           activePage: 1,
-          remove_search: true
+          remove_search: true,
         });
       })
       .catch((err) => {
         this.setState({
-          isLoading: false
+          isLoading: false,
         });
         showErrorMessage(err, this.props);
       });
@@ -269,22 +308,21 @@ class Banner extends Component {
       .then((res) => {
         if (res.data.data[0].page_name == 1) {
           this.setState({
-            message: generateResolutionText("home-banner-images")
+            message: generateResolutionText("home-banner-images"),
           });
-        }
-        else if (res.data.data[0].page_name == 10) {
+        } else if (res.data.data[0].page_name == 10) {
           this.setState({
-            message: generateResolutionText("landening-banner-images")
+            message: generateResolutionText("landening-banner-images"),
           });
         } else {
           this.setState({
-            message: generateResolutionText("others-banner-images")
-          })
+            message: generateResolutionText("others-banner-images"),
+          });
         }
         this.setState({
           bannerDetails: res.data.data[0],
           banner_id: id,
-          showModal: true
+          showModal: true,
         });
       })
       .catch((err) => {
@@ -293,11 +331,18 @@ class Banner extends Component {
   }
 
   modalCloseHandler = () => {
-    this.setState({ showModal: false, bannerDetails: "", banner_id: 0, banner_file: "", message: "", fileValidationMessage: "" });
+    this.setState({
+      showModal: false,
+      bannerDetails: "",
+      banner_id: 0,
+      banner_file: "",
+      message: "",
+      fileValidationMessage: "",
+    });
   };
 
   modalShowHandler = (event, id) => {
-    this.setState({ fileValidationMessage: FILE_VALIDATION_MASSAGE })
+    this.setState({ fileValidationMessage: FILE_VALIDATION_MASSAGE });
     if (id) {
       event.preventDefault();
       this.getIndividualBanner(id);
@@ -318,10 +363,11 @@ class Banner extends Component {
       if (willEdit) {
         this.getIndividualBanner(id);
       }
-    })
-  }
+    });
+  };
 
   handleSubmitEvent = async (values, actions) => {
+    console.log(values);
     var formData = new FormData();
     formData.append("page_name", values.page_name);
     formData.append("status", values.status);
@@ -341,23 +387,42 @@ class Banner extends Component {
         const page = values.page_name;
         let err_count = 0;
         let bannerDimension;
-        if (page == 1) { bannerDimension = getResolution("home-banner-images") }
-        else if (page == 10) { bannerDimension = getResolution("landening-banner-images") }
-        else { bannerDimension = getResolution("others-banner-images") }
+        if (page == 1) {
+          bannerDimension = getResolution("home-banner-images");
+        } else if (page == 10) {
+          bannerDimension = getResolution("landening-banner-images");
+        } else {
+          bannerDimension = getResolution("others-banner-images");
+        }
         console.log(bannerDimension);
-        if (Number(values.page_name) == 10 && (height != bannerDimension.height || width != bannerDimension.width)) {
-          actions.setErrors({ banner_file: FILE_VALIDATION_TYPE_ERROR_MASSAGE });
+        if (
+          Number(values.page_name) == 10 &&
+          (height != bannerDimension.height || width != bannerDimension.width)
+        ) {
+          actions.setErrors({
+            banner_file: FILE_VALIDATION_TYPE_ERROR_MASSAGE,
+          });
           actions.setSubmitting(false);
           err_count++;
         }
 
-        if (Number(values.page_name) == 1 && (height != bannerDimension.height || width != bannerDimension.width)) {
-          actions.setErrors({ banner_file: FILE_VALIDATION_TYPE_ERROR_MASSAGE });
+        if (
+          Number(values.page_name) == 1 &&
+          (height != bannerDimension.height || width != bannerDimension.width)
+        ) {
+          actions.setErrors({
+            banner_file: FILE_VALIDATION_TYPE_ERROR_MASSAGE,
+          });
           actions.setSubmitting(false);
           err_count++;
         }
-        if ((Number(values.page_name) != 1 || Number(values.page_name) != 10) && (height != bannerDimension.height || width != bannerDimension.width)) {
-          actions.setErrors({ banner_file: FILE_VALIDATION_TYPE_ERROR_MASSAGE });
+        if (
+          (Number(values.page_name) != 1 || Number(values.page_name) != 10) &&
+          (height != bannerDimension.height || width != bannerDimension.width)
+        ) {
+          actions.setErrors({
+            banner_file: FILE_VALIDATION_TYPE_ERROR_MASSAGE,
+          });
           actions.setSubmitting(false);
           err_count++;
         }
@@ -366,122 +431,139 @@ class Banner extends Component {
           formData.append("banner_file", this.state.banner_file);
           if (this.state.banner_id > 0) {
             API.put(`/api/banner/${this.state.banner_id}`, formData)
-              .then(res => {
+              .then((res) => {
                 this.modalCloseHandler();
                 swal({
                   closeOnClickOutside: false,
                   title: "Success",
                   text: "Banner Updated Successfully",
-                  icon: "success"
+                  icon: "success",
                 }).then(() => {
                   this.getBannerList(this.state.activePage);
                 });
               })
-              .catch(err => {
+              .catch((err) => {
                 this.setState({ closeModal: true, showModalLoader: false });
                 if (err.data.status === 3) {
                   showErrorMessage(err, this.props);
                 } else {
-                  actions.setErrors(err.data.errors)
+                  actions.setErrors(err.data.errors);
                 }
               });
           } else {
             API.post(`/api/banner`, formData)
-              .then(res => {
+              .then((res) => {
                 this.modalCloseHandler();
                 swal({
                   closeOnClickOutside: false,
                   title: "Success",
                   text: "Banner Added Successfully",
-                  icon: "success"
+                  icon: "success",
                 }).then(() => {
                   this.getBannerList(this.state.activePage);
                 });
               })
-              .catch(err => {
+              .catch((err) => {
                 this.setState({ closeModal: true, showModalLoader: false });
                 if (err.data.status === 3) {
                   showErrorMessage(err, this.props);
                 } else {
-                  actions.setErrors(err.data.errors)
+                  actions.setErrors(err.data.errors);
                 }
               });
           }
         }
       }
     } else {
-      getHeightWidthFromURL(values.banner_url).then(dimension => {
-        const { height, width } = dimension;
-        console.log(height, width, values.page_name);
-        const page = this.state.page;
-        let err_count = 0;
-        if (Number(values.page_name) == 10 && (height != 620 || width != 1920)) {
-          actions.setErrors({ banner_file: FILE_VALIDATION_TYPE_ERROR_MASSAGE });
-          actions.setSubmitting(false);
-          err_count++;
-        }
-
-        if (Number(values.page_name) == 1 && (height != 698 || width != 1920)) {
-          actions.setErrors({ banner_file: FILE_VALIDATION_TYPE_ERROR_MASSAGE });
-          actions.setSubmitting(false);
-          err_count++;
-        }
-
-        if ((Number(values.page_name) != 1 && Number(values.page_name) != 10) && (height != 350 || width != 1920)) {
-          actions.setErrors({ banner_file: FILE_VALIDATION_TYPE_ERROR_MASSAGE });
-          actions.setSubmitting(false);
-          err_count++;
-        }
-
-        if (err_count === 0) {
-          if (this.state.banner_id > 0) {
-            API.put(`/api/banner/${this.state.banner_id}`, formData)
-              .then(res => {
-                this.modalCloseHandler();
-                swal({
-                  closeOnClickOutside: false,
-                  title: "Success",
-                  text: "Banner Updated Successfully",
-                  icon: "success"
-                }).then(() => {
-                  this.getBannerList(this.state.activePage);
-                });
-              })
-              .catch(err => {
-                this.setState({ closeModal: true, showModalLoader: false });
-                if (err.data.status === 3) {
-                  showErrorMessage(err, this.props);
-                } else {
-                  actions.setErrors(err.data.errors)
-                }
-              });
-          } else {
-            API.post(`/api/banner`, formData)
-              .then(res => {
-                this.modalCloseHandler();
-                swal({
-                  closeOnClickOutside: false,
-                  title: "Success",
-                  text: "Banner Added Successfully",
-                  icon: "success"
-                }).then(() => {
-                  this.getBannerList(this.state.activePage);
-                });
-              })
-              .catch(err => {
-                this.setState({ closeModal: true, showModalLoader: false });
-                if (err.data.status === 3) {
-                  showErrorMessage(err, this.props);
-                } else {
-                  actions.setErrors(err.data.errors)
-                }
-              });
+      getHeightWidthFromURL(values.banner_url)
+        .then((dimension) => {
+          const { height, width } = dimension;
+          console.log(height, width, values.page_name);
+          const page = this.state.page;
+          let err_count = 0;
+          if (
+            Number(values.page_name) == 10 &&
+            (height != 620 || width != 1920)
+          ) {
+            actions.setErrors({
+              banner_file: FILE_VALIDATION_TYPE_ERROR_MASSAGE,
+            });
+            actions.setSubmitting(false);
+            err_count++;
           }
-        }
 
-      }).catch(err => console.log(err))
+          if (
+            Number(values.page_name) == 1 &&
+            (height != 698 || width != 1920)
+          ) {
+            actions.setErrors({
+              banner_file: FILE_VALIDATION_TYPE_ERROR_MASSAGE,
+            });
+            actions.setSubmitting(false);
+            err_count++;
+          }
+
+          if (
+            Number(values.page_name) != 1 &&
+            Number(values.page_name) != 10 &&
+            (height != 350 || width != 1920)
+          ) {
+            actions.setErrors({
+              banner_file: FILE_VALIDATION_TYPE_ERROR_MASSAGE,
+            });
+            actions.setSubmitting(false);
+            err_count++;
+          }
+
+          if (err_count === 0) {
+            if (this.state.banner_id > 0) {
+              API.put(`/api/banner/${this.state.banner_id}`, formData)
+                .then((res) => {
+                  this.modalCloseHandler();
+                  swal({
+                    closeOnClickOutside: false,
+                    title: "Success",
+                    text: "Banner Updated Successfully",
+                    icon: "success",
+                  }).then(() => {
+                    this.getBannerList(this.state.activePage);
+                  });
+                })
+                .catch((err) => {
+                  this.setState({ closeModal: true, showModalLoader: false });
+                  if (err.data.status === 3) {
+                    showErrorMessage(err, this.props);
+                  } else {
+                    actions.setErrors(err.data.errors);
+                  }
+                });
+            } else {
+              API.post(`/api/banner`, formData)
+                .then((res) => {
+                  this.modalCloseHandler();
+                  swal({
+                    closeOnClickOutside: false,
+                    title: "Success",
+                    text: "Banner Added Successfully",
+                    icon: "success",
+                  }).then(() => {
+                    this.getBannerList(this.state.activePage);
+                  });
+                })
+                .catch((err) => {
+                  this.setState({ closeModal: true, showModalLoader: false });
+                  if (err.data.status === 3) {
+                    showErrorMessage(err, this.props);
+                  } else {
+                    actions.setErrors(err.data.errors);
+                  }
+                });
+            }
+          }
+        })
+        .catch((err) => console.log(err));
     }
-  }
+  };
 
   confirmDelete = (event, id) => {
     event.preventDefault();
@@ -520,7 +602,9 @@ class Banner extends Component {
   };
 
   chageStatus = (cell, status) => {
-    API.put(`/api/banner/change_status/${cell}`, { status: status == 1 ? String(0) : String(1) })
+    API.put(`/api/banner/change_status/${cell}`, {
+      status: status == 1 ? String(0) : String(1),
+    })
       .then((res) => {
         swal({
           closeOnClickOutside: false,
@@ -537,7 +621,7 @@ class Banner extends Component {
           showErrorMessage(err, this.props);
         }
       });
-  }
+  };
 
   onChangeAdminType = (event) => {
     if (event.target.value === "0") {
@@ -556,10 +640,7 @@ class Banner extends Component {
     );
   };
 
-
-
   clearSearch = () => {
-
     document.getElementById("page_name").value = "";
     document.getElementById("banner_status").value = "";
     document.getElementById("banner_name").value = "";
@@ -574,7 +655,6 @@ class Banner extends Component {
       () => {
         this.setState({ activePage: 1 });
         this.getBannerList();
-
       }
     );
   };
@@ -586,10 +666,10 @@ class Banner extends Component {
   imageModalShowHandler = (url) => {
     console.log(url);
     this.setState({ thumbNailModal: true, banner_url: url });
-  }
+  };
   imageModalCloseHandler = () => {
     this.setState({ thumbNailModal: false, banner_url: "" });
-  }
+  };
 
   fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
     //console.log(event.target.files);
@@ -606,72 +686,104 @@ class Banner extends Component {
       });
       return;
     }
-    if (event.target.files[0] && SUPPORTED_FORMATS.includes(event.target.files[0].type)) {
+    if (
+      event.target.files[0] &&
+      SUPPORTED_FORMATS.includes(event.target.files[0].type)
+    ) {
       this.setState({
         banner_file: event.target.files[0],
         isValidFile: true,
       });
-
-
     } else {
-      setErrors({ banner_file: "Only files with the following extensions are allowed: png jpg jpeg" }); //Not working- So Added validation in "yup"
+      setErrors({
+        banner_file:
+          "Only files with the following extensions are allowed: png jpg jpeg",
+      }); //Not working- So Added validation in "yup"
       this.setState({
         banner_file: "",
         isValidFile: false,
-        isValidHeightWidth: true
+        isValidHeightWidth: true,
       });
     }
   };
 
   render() {
-
     const { bannerDetails } = this.state;
     const newInitialValues = Object.assign(initialValues, {
       banner_file: "",
       banner_url: bannerDetails.banner_image ? bannerDetails.banner_image : "",
-      page_name: bannerDetails.page_name || bannerDetails.page_name === 0 ? bannerDetails.page_name.toString() : "",
+      page_name:
+        bannerDetails.page_name || bannerDetails.page_name === 0
+          ? bannerDetails.page_name.toString()
+          : "",
       banner_text: bannerDetails.banner_text ? bannerDetails.banner_text : "",
-      banner_subtext: bannerDetails.banner_subtext ? bannerDetails.banner_subtext : "",
+      banner_subtext: bannerDetails.banner_subtext
+        ? bannerDetails.banner_subtext
+        : "",
       button_text: bannerDetails.button_text ? bannerDetails.button_text : "",
       button_url: bannerDetails.button_url ? bannerDetails.button_url : "",
-      screen_name: bannerDetails.screen_code || bannerDetails.screen_code === 0 ? bannerDetails.screen_code.toString() : "",
-      status: bannerDetails.status || bannerDetails.status === 0 ? bannerDetails.status.toString() : ""
+      screen_name:
+        bannerDetails.screen_code || bannerDetails.screen_code === 0
+          ? bannerDetails.screen_code.toString()
+          : "",
+      status:
+        bannerDetails.status || bannerDetails.status === 0
+          ? bannerDetails.status.toString()
+          : "",
     });
 
     let validateStopFlag = {};
 
     if (this.state.banner_id > 0) {
-
       validateStopFlag = Yup.object().shape({
         page_name: Yup.number().required("Please select page name"),
         status: Yup.number().required("Please select status"),
-        banner_file: Yup.string().notRequired().test(
-          "bannerimage",
-          "Only files with the following extensions are allowed: png jpg jpeg",
-          (banner_file) => {
-            if (banner_file) {
-              return this.state.isValidFile
-            } else {
-              return true
+        banner_file: Yup.string()
+          .notRequired()
+          .test(
+            "bannerimage",
+            "Only files with the following extensions are allowed: png jpg jpeg",
+            (banner_file) => {
+              if (banner_file) {
+                return this.state.isValidFile;
+              } else {
+                return true;
+              }
             }
-          }
-        ),
+          ),
         banner_text: Yup.string().optional(),
         banner_subtext: Yup.string().optional(),
         button_text: Yup.string().optional(),
         button_url: Yup.string().optional(),
-        screen_name: Yup.string().optional()
+        screen_name: Yup.string().optional(),
+        isSchedule: Yup.boolean().required(),
+        schedulerData: Yup.object().shape({
+          start_date: Yup.string().required(),
+          end_date: Yup.string().required(),
+          start_time: Yup.string().when(
+            "all_day_check",
+            (all_day_check, schema) => {
+              return all_day_check ? schema : schema.required();
+            }
+          ),
+          end_time: Yup.string().when("start_time", (start_time, schema) => {
+            return start_time ? schema.required() : schema;
+          }),
+          all_day_check: Yup.boolean().required(),
+          repeat: Yup.string().required(),
+        }),
       });
-
     } else {
       validateStopFlag = Yup.object().shape({
         page_name: Yup.number().required("Please select page name"),
         status: Yup.number().required("Please select status"),
-        banner_file: Yup.mixed().required("Please select the image").test(
-          "bannerimage",
-          "Only files with the following extensions are allowed: png jpg jpeg",
-          () => this.state.isValidFile
-        ),
+        banner_file: Yup.mixed()
+          .required("Please select the image")
+          .test(
+            "bannerimage",
+            "Only files with the following extensions are allowed: png jpg jpeg",
+            () => this.state.isValidFile
+          ),
         // banner_file: Yup.mixed().required("Please select the image").test(
         //   "bannerimage",
         //   "The file exceeds maximum height and width validation.",
@@ -681,11 +793,25 @@ class Banner extends Component {
         banner_subtext: Yup.string().optional(),
         button_text: Yup.string().optional(),
         button_url: Yup.string().optional(),
-        screen_name: Yup.string().optional()
+        screen_name: Yup.string().optional(),
+        isSchedule: Yup.boolean().required(),
+        schedulerData: Yup.object().shape({
+          start_date: Yup.string().required(),
+          end_date: Yup.string().required(),
+          start_time: Yup.string().when(
+            "all_day_check",
+            (all_day_check, schema) => {
+              return all_day_check ? schema : schema.required();
+            }
+          ),
+          end_time: Yup.string().when("start_time", (start_time, schema) => {
+            return start_time ? schema.required() : schema;
+          }),
+          all_day_check: Yup.boolean().required(),
+          repeat: Yup.string().required(),
+        }),
       });
     }
-
-
 
     return (
       <Layout {...this.props}>
@@ -700,7 +826,6 @@ class Banner extends Component {
               </div>
 
               <div className="col-lg-12 col-sm-12 col-xs-12  topSearchSection">
-
                 <div className="">
                   <button
                     type="button"
@@ -729,7 +854,9 @@ class Banner extends Component {
                       <option value="">Select Banner Status</option>
                       {this.state.status_banners.map((val) => {
                         return (
-                          <option key={val.value} value={val.value}>{val.label}</option>
+                          <option key={val.value} value={val.value}>
+                            {val.label}
+                          </option>
                         );
                       })}
                     </select>
@@ -744,7 +871,9 @@ class Banner extends Component {
                       <option value="">Select Page Name</option>
                       {this.state.page_name_arr.map((val) => {
                         return (
-                          <option key={val.value} value={val.value}>{val.label}</option>
+                          <option key={val.value} value={val.value}>
+                            {val.label}
+                          </option>
                         );
                       })}
                     </select>
@@ -775,8 +904,10 @@ class Banner extends Component {
           <section className="content">
             <div className="box">
               <div className="box-body">
-
-                <BootstrapTable wrapperClasses="table-responsive" data={this.state.banner}>
+                <BootstrapTable
+                  wrapperClasses="table-responsive"
+                  data={this.state.banner}
+                >
                   <TableHeaderColumn
                     isKey
                     dataField="banner_name"
@@ -899,7 +1030,8 @@ class Banner extends Component {
                       setFieldValue,
                       setFieldTouched,
                       handleChange,
-                      setErrors
+                      setErrors,
+                      setValues,
                     }) => {
                       return (
                         <Form>
@@ -914,7 +1046,8 @@ class Banner extends Component {
                           )}
                           <Modal.Header closeButton>
                             <Modal.Title>
-                              {this.state.banner_id == 0 ? "Add" : "Edit"} Banner
+                              {this.state.banner_id == 0 ? "Add" : "Edit"}{" "}
+                              Banner
                             </Modal.Title>
                           </Modal.Header>
                           <Modal.Body>
@@ -932,20 +1065,29 @@ class Banner extends Component {
                                       className={`selectArowGray form-control`}
                                       autoComplete="off"
                                       onChange={(e) => {
-                                        setFieldValue("page_name", e.target.value)
+                                        setFieldValue(
+                                          "page_name",
+                                          e.target.value
+                                        );
                                         if (e.target.value == 1) {
                                           this.setState({
-                                            message: generateResolutionText("home-banner-images")
+                                            message:
+                                              generateResolutionText(
+                                                "home-banner-images"
+                                              ),
                                           });
-                                        }
-                                        else if (e.target.value == 10) {
+                                        } else if (e.target.value == 10) {
                                           this.setState({
-                                            message: generateResolutionText("landening-banner-images")
+                                            message: generateResolutionText(
+                                              "landening-banner-images"
+                                            ),
                                           });
                                         } else {
                                           this.setState({
-                                            message: generateResolutionText("others-banner-images")
-                                          })
+                                            message: generateResolutionText(
+                                              "others-banner-images"
+                                            ),
+                                          });
                                         }
                                       }}
                                       value={values.page_name}
@@ -953,7 +1095,9 @@ class Banner extends Component {
                                       <option value="">Select</option>
                                       {this.state.page_name_arr.map((val) => {
                                         return (
-                                          <option value={val.value}>{val.label}</option>
+                                          <option value={val.value}>
+                                            {val.label}
+                                          </option>
                                         );
                                       })}
                                     </Field>
@@ -968,9 +1112,7 @@ class Banner extends Component {
                               <Row>
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
-                                    <label>
-                                      Screen Name
-                                    </label>
+                                    <label>Screen Name</label>
                                     <Field
                                       name="screen_name"
                                       component="select"
@@ -981,15 +1123,14 @@ class Banner extends Component {
                                       <option key="-1" value="">
                                         Select
                                       </option>
-                                      {this.state.screens.map(
-                                        (val, i) => (
-                                          <option key={i} value={val.value}>
-                                            {val.label}
-                                          </option>
-                                        )
-                                      )}
+                                      {this.state.screens.map((val, i) => (
+                                        <option key={i} value={val.value}>
+                                          {val.label}
+                                        </option>
+                                      ))}
                                     </Field>
-                                    {errors.screen_name && touched.screen_name ? (
+                                    {errors.screen_name &&
+                                    touched.screen_name ? (
                                       <span className="errorMsg">
                                         {errors.screen_name}
                                       </span>
@@ -1000,9 +1141,7 @@ class Banner extends Component {
                               <Row>
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
-                                    <label>
-                                      Banner Text
-                                    </label>
+                                    <label>Banner Text</label>
                                     <Field
                                       name="banner_text"
                                       type="text"
@@ -1017,9 +1156,7 @@ class Banner extends Component {
                               <Row>
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
-                                    <label>
-                                      Banner Subtext
-                                    </label>
+                                    <label>Banner Subtext</label>
                                     <Field
                                       name="banner_subtext"
                                       type="text"
@@ -1034,9 +1171,7 @@ class Banner extends Component {
                               <Row>
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
-                                    <label>
-                                      Button Text
-                                    </label>
+                                    <label>Button Text</label>
                                     <Field
                                       name="button_text"
                                       type="text"
@@ -1051,9 +1186,7 @@ class Banner extends Component {
                               <Row>
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
-                                    <label>
-                                      Button Url
-                                    </label>
+                                    <label>Button Url</label>
                                     <Field
                                       name="button_url"
                                       type="text"
@@ -1070,19 +1203,16 @@ class Banner extends Component {
                                   <div className="form-group">
                                     <label>
                                       Upload Image
-                                      {
-                                        this.state.banner_id == 0 ?
-                                          <span className="impField">*</span>
-                                          : null
-                                      }
-                                      <br /> <i>{this.state.fileValidationMessage}</i>
-                                      {
-                                        this.state.message != '' ?
-                                          <>
-                                            <br /> <i>{this.state.message}</i>
-                                          </>
-                                          : null
-                                      }
+                                      {this.state.banner_id == 0 ? (
+                                        <span className="impField">*</span>
+                                      ) : null}
+                                      <br />{" "}
+                                      <i>{this.state.fileValidationMessage}</i>
+                                      {this.state.message != "" ? (
+                                        <>
+                                          <br /> <i>{this.state.message}</i>
+                                        </>
+                                      ) : null}
                                     </label>
                                     <Field
                                       name="banner_file"
@@ -1090,7 +1220,7 @@ class Banner extends Component {
                                       className={`form-control`}
                                       placeholder="Banner File"
                                       autoComplete="off"
-                                      id=''
+                                      id=""
                                       onChange={(e) => {
                                         this.fileChangedHandler(
                                           e,
@@ -1100,8 +1230,11 @@ class Banner extends Component {
                                         );
                                       }}
                                     />
-                                    {errors.banner_file && touched.banner_file ? (
-                                      <span className="errorMsg">{errors.banner_file}</span>
+                                    {errors.banner_file &&
+                                    touched.banner_file ? (
+                                      <span className="errorMsg">
+                                        {errors.banner_file}
+                                      </span>
                                     ) : null}
                                   </div>
                                 </Col>
@@ -1139,22 +1272,53 @@ class Banner extends Component {
                                   </div>
                                 </Col>
                               </Row>
+                              <Row>
+                                <Col xs={12} sm={12} md={12}>
+                                  <Scheduler
+                                    value={values.schedulerData}
+                                    scheduler={values.isSchedule}
+                                    error={errors.schedulerData}
+                                    onSchedulerDataChange={({
+                                      isSchedule,
+                                      ...data
+                                    }) => {
+                                      console.log(isSchedule);
+                                      if (isSchedule) {
+                                        setValues({
+                                          ...values,
+                                          isSchedule,
+                                          schedulerData: data,
+                                        });
+                                      } else {
+                                        setValues({
+                                          ...values,
+                                          isSchedule,
+                                          schedulerData: schedulerValues,
+                                        });
+                                      }
+                                    }}
+                                  />
+                                </Col>
+                              </Row>
                             </div>
                           </Modal.Body>
                           <Modal.Footer>
                             <button
-                              className={`btn btn-success btn-sm ${isValid ? "btn-custom-green" : "btn-disable"
-                                } m-r-10`}
+                              className={`btn btn-success btn-sm ${
+                                isValid ? "btn-custom-green" : "btn-disable"
+                              } m-r-10`}
                               type="submit"
-                              disabled={isValid ? (isSubmitting ? true : false) : true}
+                              disabled={
+                                isValid ? (isSubmitting ? true : false) : true
+                              }
                             >
                               {this.state.banner_id > 0
                                 ? isSubmitting
                                   ? "Updating..."
                                   : "Update"
                                 : isSubmitting
-                                  ? "Submitting..."
-                                  : "Submit"}
+                                ? "Submitting..."
+                                : "Submit"}
                             </button>
                             <button
                               onClick={(e) => this.modalCloseHandler()}
@@ -1172,13 +1336,16 @@ class Banner extends Component {
                 <Modal
                   show={this.state.thumbNailModal}
                   onHide={() => this.imageModalCloseHandler()}
-                  backdrop='static'
+                  backdrop="static"
                 >
                   <Modal.Header closeButton>Banner Image</Modal.Header>
                   <Modal.Body>
                     <center>
                       <div className="imgUi">
-                        <img src={this.state.banner_url} alt="Banner Image"></img>
+                        <img
+                          src={this.state.banner_url}
+                          alt="Banner Image"
+                        ></img>
                       </div>
                     </center>
                   </Modal.Body>
@@ -1187,7 +1354,7 @@ class Banner extends Component {
             </div>
           </section>
         </div>
-      </Layout >
+      </Layout>
     );
   }
 }
