@@ -93,76 +93,77 @@ class AddBlog extends Component {
 
   handleSubmitEvent = (values, actions) => {
     console.log(values);
-    // let method = "POST";
-    // let url = "/api/blog";
-    // const formData = new FormData();
-    // formData.append("title", values.title);
-    // if (values.category_id.length > 1) {
-    //   for (let i in values.category_id) {
-    //     formData.append("category_id", values.category_id[i]);
-    //   }
-    // } else {
-    //   console.log("else");
-    //   formData.append("category_id[]", values.category_id);
-    // }
-    // formData.append("keywords", values.keywords.toString());
-    // formData.append("content", values.content);
-    // formData.append("permalink", values.permalink);
-    // formData.append("blog_subtext", values.blog_subtext);
-    // formData.append("meta_title", values.meta_title);
-    // formData.append("meta_description", values.meta_description);
-    // formData.append("author_name", values.author_name);
-    // formData.append("author_bio", values.author_bio);
-    // formData.append("status", values.status);
-    // if (this.state.featured_image) {
-    //   if (this.state.featured_image.size > FILE_SIZE) {
-    //     actions.setErrors({
-    //       featured_image: FILE_VALIDATION_SIZE_ERROR_MASSAGE,
-    //     });
-    //     actions.setSubmitting(false);
-    //   } else {
-    //     getHeightWidth(this.state.featured_image).then((dimension) => {
-    //       const { height, width } = dimension;
-    //       const blogDimension = getResolution("blog");
-    //       if (height != blogDimension.height || width != blogDimension.width) {
-    //         actions.setErrors({
-    //           featured_image: FILE_VALIDATION_TYPE_ERROR_MASSAGE,
-    //         });
-    //         actions.setSubmitting(false);
-    //       } else {
-    //         formData.append("featured_image", this.state.featured_image);
-    //         API({
-    //           method: method,
-    //           url: url,
-    //           data: formData,
-    //         })
-    //           .then((res) => {
-    //             this.setState({ showModal: false });
-    //             swal({
-    //               closeOnClickOutside: false,
-    //               title: "Success",
-    //               text: "Record added successfully.",
-    //               icon: "success",
-    //             }).then(() => {
-    //               this.props.history.push("/blogs");
-    //             });
-    //           })
-    //           .catch((err) => {
-    //             this.setState({ showModalLoader: false });
-    //             if (err.data.status === 3) {
-    //               this.setState({
-    //                 showModal: false,
-    //               });
-    //               showErrorMessage(err, this.props);
-    //             } else {
-    //               actions.setErrors(err.data.errors);
-    //               actions.setSubmitting(false);
-    //             }
-    //           });
-    //       }
-    //     });
-    //   }
-    // }
+    let method = "POST";
+    let url = "/api/blog";
+    const formData = new FormData();
+    formData.append("title", values.title);
+    
+    if (values.category_id.length > 1) {
+      for (let i in values.category_id) {
+        formData.append("category_id", values.category_id[i]);
+      }
+    } else {
+      console.log("else");
+      formData.append("category_id[]", values.category_id);
+    }
+    formData.append("keywords", values.keywords.toString());
+    formData.append("content", values.content);
+    formData.append("permalink", values.permalink);
+    formData.append("blog_subtext", values.blog_subtext);
+    formData.append("meta_title", values.meta_title);
+    formData.append("meta_description", values.meta_description);
+    formData.append("author_name", values.author_name);
+    formData.append("author_bio", values.author_bio);
+    formData.append("status", values.status);
+    if (this.state.featured_image) {
+      if (this.state.featured_image.size > FILE_SIZE) {
+        actions.setErrors({
+          featured_image: FILE_VALIDATION_SIZE_ERROR_MASSAGE,
+        });
+        actions.setSubmitting(false);
+      } else {
+        getHeightWidth(this.state.featured_image).then((dimension) => {
+          const { height, width } = dimension;
+          const blogDimension = getResolution("blog");
+          if (height != blogDimension.height || width != blogDimension.width) {
+            actions.setErrors({
+              featured_image: FILE_VALIDATION_TYPE_ERROR_MASSAGE,
+            });
+            actions.setSubmitting(false);
+          } else {
+            formData.append("featured_image", this.state.featured_image);
+            API({
+              method: method,
+              url: url,
+              data: formData,
+            })
+              .then((res) => {
+                this.setState({ showModal: false });
+                swal({
+                  closeOnClickOutside: false,
+                  title: "Success",
+                  text: "Record added successfully.",
+                  icon: "success",
+                }).then(() => {
+                  this.props.history.push("/blogs");
+                });
+              })
+              .catch((err) => {
+                this.setState({ showModalLoader: false });
+                if (err.data.status === 3) {
+                  this.setState({
+                    showModal: false,
+                  });
+                  showErrorMessage(err, this.props);
+                } else {
+                  actions.setErrors(err.data.errors);
+                  actions.setSubmitting(false);
+                }
+              });
+          }
+        });
+      }
+    }
   };
 
   render() {

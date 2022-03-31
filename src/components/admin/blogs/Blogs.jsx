@@ -449,10 +449,10 @@ class Blog extends Component {
                     Blog Subtext
                   </TableHeaderColumn>
                   {/* <TableHeaderColumn
-                                        dataField="keywords"
-                                        dataFormat={__htmlDecode(this)}
-                                    >
-                                        Keywords
+                      dataField="keywords"
+                        dataFormat={__htmlDecode(this)}
+                    >
+                      Keywords
                     </TableHeaderColumn> */}
                   <TableHeaderColumn
                     dataField="date_added"

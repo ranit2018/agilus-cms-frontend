@@ -1,3 +1,5 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
@@ -85,6 +87,30 @@ const actionFormatter = (refObj) => (cell, row) => {
       >
         <i className="far fa-trash-alt" />
       </LinkWithTooltip>
+      <LinkWithTooltip
+        tooltip="Viwe Doctors"
+        href="#"
+        clicked={(e) => refObj.confirmDelete(e, cell, row.id)}
+        id="tooltip-1"
+      >
+        <i className="fa fa-user-md" />
+      </LinkWithTooltip>
+      <LinkWithTooltip
+        tooltip="View Equipments & Instruments"
+        href="#"
+        clicked={(e) => refObj.confirmDelete(e, cell, row.id)}
+        id="tooltip-1"
+      >
+        <i className="fa fa-medkit" />
+      </LinkWithTooltip>
+      <LinkWithTooltip
+        tooltip="View Publications"
+        href="#"
+        clicked={(e) => refObj.confirmDelete(e, cell, row.id)}
+        id="tooltip-1"
+      >
+        <i className="fa fa-sticky-note" />
+      </LinkWithTooltip>
     </div>
   );
 };
@@ -92,14 +118,14 @@ const setDepartmentImage = (refObj) => (cell, row) => {
   return (
     <div
       style={{
-        width: "100px",
-        height: "100px",
+        width: "80px",
+        height: "80px",
         overflow: "hidden",
       }}
     >
       <img
         src={cell}
-        alt="Jobs"
+        alt="department"
         width="100%"
         onClick={(e) => refObj.imageModalShowHandler(row.department_image)}
       ></img>
@@ -153,9 +179,6 @@ class Departments extends Component {
       publications: "",
       date_posted: "",
       status: "",
-      doctors_arr: [],
-      equipments_arr: [],
-      publications_arr: [],
       search_department_name: "",
       search_doctors: "",
       search_equipments: "",
@@ -165,20 +188,16 @@ class Departments extends Component {
   }
   componentDidMount() {
     this.getDepartmentsList();
-    this.getDoctorArr();
-    this.getEquipmentArr();
-    this.getPublicationArr();
-    // this.getTestArr();
-    // this.setState({
-    //   validationMessage: generateResolutionText('departments'),
-    //   fileValidationMessage: FILE_VALIDATION_MASSAGE,
-    // });
+    this.setState({
+      validationMessage: generateResolutionText('departments'),
+      fileValidationMessage: FILE_VALIDATION_MASSAGE,
+    });
   }
 
   getDepartmentsList = (page = 1) => {
-    // const search_department_name = document.getElementById(
-    //   "search_department_name"
-    // ).value;
+    const search_department_name = document.getElementById(
+      "search_department_name"
+    ).value;
     // const search_doctors =
     //   document.getElementById("search_doctors").value;
     // const search_publications = document.getElementById(
@@ -187,72 +206,18 @@ class Departments extends Component {
     // const search_equipments = document.getElementById(
     //   "search_equipments"
     // ).value;
-    // const search_status = document.getElementById("search_status").value;
-    // API.get(
-    //   `/api/job_portal/job?page=${page}&department_name=${encodeURIComponent(
-    //     search_department_name
-    //   )}&doctors=${encodeURIComponent(
-    //     search_doctors
-    //   )}&publications=${encodeURIComponent(
-    //     search_publications
-    //   )}&equipments=${encodeURIComponent(
-    //     search_equipments
-    //   )}&status=${encodeURIComponent(search_status)}`
-    // )
-    //   .then((res) => {
-    //     this.setState({
-    //       departmentList: res.data.data,
-    //       totalCount: Number(res.data.count),
-    //       isLoading: false,
-    //       showModalLoader: true,
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     this.setState({
-    //       isLoading: false,
-    //     });
-    //     showErrorMessage(err, this.props);
-    //   });
-  };
-
-  getDoctorArr = (page = 1) => {
-    API.get(`/api/department/doctor-search-list`)
+    const search_status = document.getElementById("search_status").value;
+    API.get(
+      `/api/department?page=${page}&department_name=${encodeURIComponent(
+        search_department_name
+      )}&status=${encodeURIComponent(search_status)}`
+    )
       .then((res) => {
         this.setState({
-          doctors_arr: res.data.data,
+          departmentList: res.data.data,
+          totalCount: Number(res.data.count),
           isLoading: false,
-        });
-      })
-      .catch((err) => {
-        this.setState({
-          isLoading: false,
-        });
-        showErrorMessage(err, this.props);
-      });
-  };
-
-  getEquipmentArr = (page = 1) => {
-    API.get(`/api/feed/get_category_by_medium/1`)
-      .then((res) => {
-        this.setState({
-          equipments_arr: res.data.data,
-          isLoading: false,
-        });
-      })
-      .catch((err) => {
-        this.setState({
-          isLoading: false,
-        });
-        showErrorMessage(err, this.props);
-      });
-  };
-
-  getPublicationArr = (page = 1) => {
-    API.get(`/api/department/publication-search-list?short_name=pub`)
-      .then((res) => {
-        this.setState({
-          publications_arr: res.data.data,
-          isLoading: false,
+          showModalLoader: true,
         });
       })
       .catch((err) => {
@@ -282,9 +247,9 @@ class Departments extends Component {
   departmentSearch = (e) => {
     e.preventDefault();
 
-    // const search_department_name = document.getElementById(
-    //   "search_department_name"
-    // ).value;
+    const search_department_name = document.getElementById(
+      "search_department_name"
+    ).value;
     // const search_doctors =
     //   document.getElementById("search_doctors").value;
     // const search_publications = document.getElementById(
@@ -293,62 +258,57 @@ class Departments extends Component {
     // const search_equipments = document.getElementById(
     //   "search_equipments"
     // ).value;
-    // const search_status = document.getElementById("search_status").value;
-    // if (
-    //   search_department_name === "" &&
-    //   search_doctors === "" &&
-    //   search_publications === "" &&
-    //   search_equipments === "" &&
-    //   search_status === ""
-    // ) {
-    //   return false;
-    // }
+    const search_status = document.getElementById("search_status").value;
+    if (
+      search_department_name === "" &&
+      // search_doctors === "" &&
+      // search_publications === "" &&
+      // search_equipments === "" &&
+      search_status === ""
+    ) {
+      return false;
+    }
 
-    // API.get(
-    //   `/api/job_portal/job?page=1&department_name=${encodeURIComponent(
-    //     search_department_name
-    //   )}&doctors=${encodeURIComponent(
-    //     search_doctors
-    //   )}&publications=${encodeURIComponent(
-    //     search_publications
-    //   )}&equipments=${encodeURIComponent(
-    //     search_equipments
-    //   )}&status=${encodeURIComponent(search_status)}`
-    // )
-    //   .then((res) => {
-    //     this.setState({
-    //       jobs: res.data.data,
-    //       totalCount: Number(res.data.count),
-    //       isLoading: false,
-    //       search_department_name: search_department_name,
-    //       search_doctors: search_doctors,
-    //       search_publications: search_publications,
-    //       search_equipments: search_equipments,
-    //       activePage: 1,
-    //       remove_search: true,
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     this.setState({
-    //       isLoading: false,
-    //     });
-    //     showErrorMessage(err, this.props);
-    //   });
+    API.get(
+      `/api/department?page=1&department_name=${encodeURIComponent(
+        search_department_name
+      )}&status=${encodeURIComponent(search_status)}`
+    )
+      .then((res) => {
+        console.log('res.data.data',res.data.data)
+        this.setState({
+          departmentList: res.data.data,
+          totalCount: Number(res.data.count),
+          isLoading: false,
+          search_department_name: search_department_name,
+          // search_doctors: search_doctors,
+          // search_publications: search_publications,
+          // search_equipments: search_equipments,
+          activePage: 1,
+          remove_search: true,
+        });
+      })
+      .catch((err) => {
+        this.setState({
+          isLoading: false,
+        });
+        showErrorMessage(err, this.props);
+      });
   };
 
   clearSearch = () => {
     document.getElementById("search_department_name").value = "";
-    document.getElementById("search_doctors").value = "";
-    document.getElementById("search_publications").value = "";
-    document.getElementById("search_equipments").value = "";
+    // document.getElementById("search_doctors").value = "";
+    // document.getElementById("search_publications").value = "";
+    // document.getElementById("search_equipments").value = "";
     document.getElementById("search_status").value = "";
 
     this.setState(
       {
         search_department_name: "",
-        search_doctors: "",
-        search_equipments: "",
-        search_publications: "",
+        // search_doctors: "",
+        // search_equipments: "",
+        // search_publications: "",
         search_status: "",
 
         remove_search: false,
@@ -435,22 +395,21 @@ class Departments extends Component {
   //for edit/add part
 
   editDepartment(e, id) {
-    // e.preventDefault();
+    e.preventDefault();
 
-    // API.get(`/api/department/doctor/${id}`)
-    //   .then((res) => {
-    //     this.props.history.push({
-    //       pathname: "/departments/edit-department/" + id,
-    //       state: {
-    //         alldata: res.data.data[0],
-    //       },
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     showErrorMessage(err, this.props);
-    //   });
+    API.get(`/api/department/doctor/${id}`)
+      .then((res) => {
+        this.props.history.push({
+          pathname: "/departments/edit-department/" + id,
+          state: {
+            alldata: res.data.data[0],
+          },
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
   }
-
 
   //for edit/add part
   modalShowHandler = (event, id) => {
@@ -463,93 +422,7 @@ class Departments extends Component {
   };
 
 
-  // handleSubmitEventUpdate = async (values, actions) => {
-  //   // let formData = new FormData();
-  //   // formData.append("department_name", values.department_name);
-  //   // formData.append("doctors", values.doctors);
-  //   // formData.append("equipments", values.equipments);
-  //   // formData.append("publications", values.publications);
-  //   // formData.append("test_name", values.test_name);
-  //   // formData.append("status", String(values.status));
-  //   // let url = `/api/job_portal/job/${this.state.department_id}`;
-  //   // let method = "PUT";
-  //   // if (this.state.department_image) {
-  //   //   if (this.state.department_image.size > FILE_SIZE) {
-  //   //     actions.setErrors({
-  //   //       department_image: FILE_VALIDATION_SIZE_ERROR_MASSAGE,
-  //   //     });
-  //   //     actions.setSubmitting(false);
-  //   //   } else {
-  //   //     getHeightWidth(this.state.department_image).then((dimension) => {
-  //   //       const { height, width } = dimension;
-  //   //       const offerDimension = getResolution("jobs");
-  //   //       if (
-  //   //         height != offerDimension.height ||
-  //   //         width != offerDimension.width
-  //   //       ) {
-  //   //         //    actions.setErrors({ file: "The file is not of desired height and width" });
-  //   //         actions.setErrors({
-  //   //           department_image: FILE_VALIDATION_TYPE_ERROR_MASSAGE,
-  //   //         });
-  //   //         actions.setSubmitting(false);
-  //   //       } else {
-  //   //         formData.append("department_image", this.state.department_image);
-  //   //         API({
-  //   //           method: method,
-  //   //           url: url,
-  //   //           data: formData,
-  //   //         })
-  //   //           .then((res) => {
-  //   //             this.setState({ showModal: false });
-  //   //             swal({
-  //   //               closeOnClickOutside: false,
-  //   //               title: "Success",
-  //   //               text: "Updated Successfully",
-  //   //               icon: "success",
-  //   //             }).then(() => {
-  //   //               this.getDepartmentsList();
-  //   //             });
-  //   //           })
-  //   //           .catch((err) => {
-  //   //             this.setState({ closeModal: true, showModalLoader: false });
-  //   //             if (err.data.status === 3) {
-  //   //               showErrorMessage(err, this.props);
-  //   //             } else {
-  //   //               actions.setErrors(err.data.errors);
-  //   //               actions.setSubmitting(false);
-  //   //             }
-  //   //           });
-  //   //       }
-  //   //     });
-  //   //   }
-  //   // } else {
-  //   //   API({
-  //   //     method: method,
-  //   //     url: url,
-  //   //     data: formData,
-  //   //   })
-  //   //     .then((res) => {
-  //   //       this.setState({ showModal: false });
-  //   //       swal({
-  //   //         closeOnClickOutside: false,
-  //   //         title: "Success",
-  //   //         text: "Updated Successfully",
-  //   //         icon: "success",
-  //   //       }).then(() => {
-  //   //         this.getDepartmentsList();
-  //   //       });
-  //   //     })
-  //   //     .catch((err) => {
-  //   //       this.setState({ closeModal: true, showModalLoader: false });
-  //   //       if (err.data.status === 3) {
-  //   //         showErrorMessage(err, this.props);
-  //   //       } else {
-  //   //         actions.setErrors(err.data.errors);
-  //   //         actions.setSubmitting(false);
-  //   //       }
-  //   //     });
-  //   // }
-  // };
+ 
 
   fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
     setFieldTouched("department_image");
@@ -587,51 +460,20 @@ class Departments extends Component {
   };
 
   render() {
-    const { departmentDetails } = this.state;
-
-    const newInitialValues = Object.assign(initialValues, {
-      id: departmentDetails.id ? departmentDetails.id : "",
-      department_image: "",
-      department_name: departmentDetails.department_name
-        ? departmentDetails.department_name
-        : "",
-      doctors:
-        departmentDetails.doctor_id || departmentDetails.doctor_id === 0
-          ? departmentDetails.doctor_id.toString()
-          : "",
-      equipments:
-        departmentDetails.equipment_id || departmentDetails.equipment_id === 0
-          ? departmentDetails.equipment_id.toString()
-          : "",
-      equipment_heading:
-        departmentDetails.publication_id ||
-          departmentDetails.publication_id === 0
-          ? departmentDetails.publication_id.toString()
-          : "",
-      date_posted: departmentDetails.date_posted
-        ? departmentDetails.date_posted
-        : "",
-      status:
-        departmentDetails.status || departmentDetails.status === 0
-          ? departmentDetails.status.toString()
-          : "",
-    });
-
-
     return (
       <Layout {...this.props}>
         <div className="content-wrapper">
           <section className="content-header">
             <div className="row">
-              <div className="col-lg-12 col-sm-12 col-xs-12  m-b-15">
+              <div className="col-lg-12 col-sm-12 col-xs-12 ">
                 <h1>
                   Manage Department
                   <small />
                 </h1>
               </div>
 
-              <div className="col-lg-12 col-sm-12 col-xs-12">
-                <form className="leadForm">
+              <div className="col-lg-12 col-sm-12 col-xs-12  topSearchSection">
+               
                   <div className="">
                     <button
                       type="button"
@@ -651,22 +493,22 @@ class Departments extends Component {
                       <i className="fas fa-plus m-r-5" /> Add Department
                     </button>
                   </div>
+                  <form className="leadForm">
                   <div className="">
                     <input
                       className="form-control"
                       name="department_name"
                       id="search_department_name"
-                      placeholder="Filter by Department Title"
+                      placeholder="Filter by Department Name"
                     />
                   </div>
-                  <div className="">
+                  {/* <div className="">
                     <input
                       className="form-control"
                       name="search_doctors"
                       id="search_doctors"
                       placeholder="Filter by Doctor"
                     />
-
                   </div>
                   <div className="">
                     <input
@@ -674,9 +516,7 @@ class Departments extends Component {
                       name="search_equipments"
                       id="search_equipments"
                       placeholder="Filter by Equipment & Instrument"
-
                     />
-
                   </div>
                   <div className="">
                     <input
@@ -685,9 +525,8 @@ class Departments extends Component {
                       id="search_publications"
                       placeholder="Filter by Publication"
 
-                    />
-
-                  </div>
+                    /> 
+                  </div>*/}
                   <div className="">
                     <select
                       className="form-control"
@@ -752,40 +591,28 @@ class Departments extends Component {
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="total_lab_technical"
-                    dataFormat={__htmlDecode(this)}
+                    // dataFormat={__htmlDecode(this)}
                   >
                     Total Technical Lab
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="total_lab_executive"
-                    dataFormat={__htmlDecode(this)}
+                    // dataFormat={__htmlDecode(this)}
                   >
                     Total Executive Labs
                   </TableHeaderColumn>
                   <TableHeaderColumn
-                    dataField="doctors"
-                    dataFormat={__htmlDecode(this)}
+                    dataField="total_consultant_scientists"
+                    // dataFormat={__htmlDecode(this)}
                   >
-                    Doctors
+                    Total Consultant Scientists
                   </TableHeaderColumn>
                   <TableHeaderColumn
-                    dataField="equipments"
-                    dataFormat={__htmlDecode(this)}
-                  >
-                    Equipments & Instruments
-                  </TableHeaderColumn>
-                  <TableHeaderColumn
-                    dataField="publications"
-                    dataFormat={__htmlDecode(this)}
-                  >
-                    Publications
-                  </TableHeaderColumn>
-                  {/* <TableHeaderColumn
                     dataField="date_posted"
                     dataFormat={setDate(this)}
                   >
-                    Post Date
-                  </TableHeaderColumn> */}
+                    Added Date
+                  </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="status"
                     dataFormat={custStatus(this)}
@@ -832,7 +659,7 @@ class Departments extends Component {
                     <center>
                       <div className="imgUi">
                         <img
-                          src={this.state.department_image}
+                          src={this.state.url}
                           alt="department"
                         ></img>
                       </div>

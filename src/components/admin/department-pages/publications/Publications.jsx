@@ -344,34 +344,6 @@ class Publications extends Component {
       });
   }
 
-  // modalCloseHandler = () => {
-  //   this.setState({
-  //     showModal: false,
-  //     // id: "",
-  //     alldata: "",
-  //     publication_heading: "",
-  //     publication_description: "",
-  //     publication_image: "",
-  //     date_posted: "",
-  //     status: "",
-  //     publicationDetails: "",
-  //     publication_id: 0,
-  //     message: "",
-  //     fileValidationMessage: "",
-  //   });
-  // };
-
-  // modalShowHandler = (event, id) => {
-  //   this.setState({ fileValidationMessage: FILE_VALIDATION_MASSAGE });
-  //   if (id) {
-  //     event.preventDefault();
-  //     this.getIndividualPublications(id);
-  //   } else {
-  //     this.setState({ showModal: true });
-  //   }
-  // };
-
-
   //image modal
   imageModalShowHandler = (url) => {
     this.setState({ thumbNailModal: true, publication_image: url });
