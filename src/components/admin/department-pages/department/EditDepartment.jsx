@@ -292,7 +292,7 @@ class EditDepartment extends Component {
   };
 
   render() {
-    const { alldata } = this.props.location.state.alldata;
+    const { alldata } = this.props.location.state;
     const initialValues = {
       id: "",
       department_name: "",
@@ -311,10 +311,8 @@ class EditDepartment extends Component {
     const newInitialValues = Object.assign(initialValues, {
       id: alldata.id ? alldata.id : "",
       department_image: "",
-      department_name: alldata.department_name ? alldata.department_name : "",
-      department_description: alldata.department_description
-        ? alldata.department_description
-        : "",
+      department_name: htmlDecode(alldata.department_name),
+      department_description:  htmlDecode(alldata.department_description),
       total_lab_technical: alldata.total_lab_technical
         ? alldata.total_lab_technical
         : "",
@@ -368,22 +366,22 @@ class EditDepartment extends Component {
       total_consultant_scientists: Yup.number().required(
         "Please enter total consltant scientists"
       ),
-      doctor_id: Yup.array()
-        .ensure()
-        .min(1, "Please add at least one doctor name")
-        .of(Yup.string().ensure().required("doctor name cannot be empty")),
-      equipment_id: Yup.array()
-        .ensure()
-        .min(1, "Please add at least one equipment & instrument")
-        .of(
-          Yup.string()
-            .ensure()
-            .required("equipment & instrument cannot be empty")
-        ),
-      publication_id: Yup.array()
-        .ensure()
-        .min(1, "Please add at least one publication")
-        .of(Yup.string().ensure().required("publication cannot be empty")),
+      doctor_id: Yup.array().optional(),
+        // .ensure()
+        // .min(1, "Please add at least one doctor name")
+        // .of(Yup.string().ensure().required("doctor name cannot be empty")),
+      equipment_id: Yup.array().optional(),
+        // .ensure()
+        // .min(1, "Please add at least one equipment & instrument")
+        // .of(
+        //   Yup.string()
+        //     .ensure()
+        //     .required("equipment & instrument cannot be empty")
+        // ),
+      publication_id: Yup.array().optional(),
+        // .ensure()
+        // .min(1, "Please add at least one publication")
+        // .of(Yup.string().ensure().required("publication cannot be empty")),
       status: Yup.number().required("Please select status"),
     });
 
@@ -611,7 +609,6 @@ class EditDepartment extends Component {
                               <div className="form-group">
                                 <label>
                                   Doctor
-                                  <span className="impField">*</span>
                                 </label>
                                 <Select
                                   isMulti
@@ -619,6 +616,7 @@ class EditDepartment extends Component {
                                   options={this.state.doctors_arr}
                                   getOptionValue={(x) => x.id}
                                   getOptionLabel={(x) => x.doctor_name}
+                                  noOptionsMessage={() => 'No Results Found'}
                                   className="basic-multi-select"
                                   classNamePrefix="select"
                                   onInputChange={(value) => {
@@ -655,7 +653,6 @@ class EditDepartment extends Component {
                               <div className="form-group">
                                 <label>
                                   Equipment & Instrument
-                                  <span className="impField">*</span>
                                 </label>
                                 <Select
                                   isMulti
@@ -665,6 +662,7 @@ class EditDepartment extends Component {
                                   classNamePrefix="select"
                                   getOptionValue={(x) => x.id}
                                   getOptionLabel={(x) => x.equipment_name}
+                                  noOptionsMessage={() => 'No Results Found'}
                                   onInputChange={(value) => {
                                     console.log("value", value);
                                     this.getEquipmentArr(value);
@@ -700,7 +698,6 @@ class EditDepartment extends Component {
                               <div className="form-group">
                                 <label>
                                   Publication
-                                  <span className="impField">*</span>
                                 </label>
                                 <Select
                                   isMulti
@@ -708,6 +705,7 @@ class EditDepartment extends Component {
                                   options={this.state.publications_arr}
                                   getOptionValue={(x) => x.id}
                                   getOptionLabel={(x) => x.short_name}
+                                  noOptionsMessage={() => 'No Results Found'}
                                   className="basic-multi-select"
                                   classNamePrefix="select"
                                   onInputChange={(value) => {
@@ -748,7 +746,6 @@ class EditDepartment extends Component {
                               <div className="form-group">
                                 <label>
                                   Upload Image
-                                  <span className="impField">*</span>
                                   <br />{" "}
                                   <i> {this.state.fileValidationMessage}</i>
                                   <br /> <i>{this.state.validationMessage}</i>

@@ -127,7 +127,7 @@ const setName = (refObj) => (cell) => {
   return cell.replace(".png", " ");
 };
 
-const EquipmentStatus = (refObj) => (cell) => {
+const equipmentStatus = (refObj) => (cell) => {
   //return cell === 1 ? "Active" : "Inactive";
   if (cell === 1) {
     return "Active";
@@ -571,7 +571,7 @@ class Equipment extends Component {
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="status"
-                    dataFormat={EquipmentStatus(this)}
+                    dataFormat={equipmentStatus(this)}
                     tdStyle={{ wordBreak: "break-word" }}
                   >
                     Status

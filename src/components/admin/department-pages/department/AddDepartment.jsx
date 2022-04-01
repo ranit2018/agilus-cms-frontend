@@ -176,33 +176,40 @@ class AddDepartment extends Component {
       values.total_consultant_scientists
     );
 
-    if (values.doctor_id.length > 1) {
-      for (let i in values.doctor_id) {
-        formData.append("doctors", JSON.stringify(values.doctor_id[i]));
-      }
-    } else {
-      console.log("else");
-      formData.append("doctors[]", JSON.stringify(values.doctor_id));
-    }
-    if (values.equipment_id.length > 1) {
-      for (let i in values.equipment_id) {
-        formData.append("equipments", JSON.stringify(values.equipment_id[i]));
-      }
-    } else {
-      console.log("else");
-      formData.append("equipments[]", JSON.stringify(values.equipment_id));
-    }
-    if (values.publication_id.length > 1) {
-      for (let i in values.publication_id) {
-        formData.append(
-          "publications",
-          JSON.stringify(values.publication_id[i])
-        );
-      }
-    } else {
-      console.log("else");
-      formData.append("publications[]", JSON.stringify(values.publication_id));
-    }
+    // if (values.doctor_id.length > 1) {
+    //   for (let i in values.doctor_id) {
+    //     formData.append("doctors", JSON.stringify(values.doctor_id[i]));
+    //   }
+    // } else {
+    //   console.log("else");
+    //   formData.append("doctors[]", JSON.stringify(values.doctor_id));
+    // }
+
+    // for (let i in values.doctor_id) {
+    formData.append("doctors[]", JSON.stringify(values.doctor_id));
+    formData.append("equipments[]", JSON.stringify(values.equipment_id));
+    formData.append("publications[]", JSON.stringify(values.publication_id));
+
+    // }
+    // if (values.equipment_id.length > 1) {
+    //   for (let i in values.equipment_id) {
+    //     formData.append("equipments", JSON.stringify(values.equipment_id[i]));
+    //   }
+    // } else {
+    //   console.log("else");
+    //   formData.append("equipments[]", JSON.stringify(values.equipment_id));
+    // }
+    // if (values.publication_id.length > 1) {
+    //   for (let i in values.publication_id) {
+    //     formData.append(
+    //       "publications",
+    //       JSON.stringify(values.publication_id[i])
+    //     );
+    //   }
+    // } else {
+    //   console.log("else");
+    //   formData.append("publications[]", JSON.stringify(values.publication_id));
+    // }
     // formData.append("publications", values.publications);
     formData.append("status", String(values.status));
 
@@ -242,6 +249,7 @@ class AddDepartment extends Component {
               });
             })
             .catch((err) => {
+              actions.setSubmitting(false);
               console.log("error", err);
               this.setState({
                 department_image: "",
@@ -250,7 +258,6 @@ class AddDepartment extends Component {
                 showErrorMessage(err, this.props);
               } else {
                 actions.setErrors(err.data.errors);
-                actions.setSubmitting(false);
               }
             });
         }
@@ -294,22 +301,22 @@ class AddDepartment extends Component {
       total_consultant_scientists: Yup.number().required(
         "Please enter total consltant scientists"
       ),
-      doctor_id: Yup.array()
-        .ensure()
-        .min(1, "Please add at least one doctor name")
-        .of(Yup.string().ensure().required("doctor name cannot be empty")),
-      equipment_id: Yup.array()
-        .ensure()
-        .min(1, "Please add at least one equipment & instrument")
-        .of(
-          Yup.string()
-            .ensure()
-            .required("equipment & instrument cannot be empty")
-        ),
-      publication_id: Yup.array()
-        .ensure()
-        .min(1, "Please add at least one publication")
-        .of(Yup.string().ensure().required("publication cannot be empty")),
+      doctor_id: Yup.array().optional(),
+      // .ensure()
+      // .min(1, "Please add at least one doctor name")
+      // .of(Yup.string().ensure().required("doctor name cannot be empty")),
+      equipment_id: Yup.array().optional(),
+      // .ensure()
+      // .min(1, "Please add at least one equipment & instrument")
+      // .of(
+      //   Yup.string()
+      //     .ensure()
+      //     .required("equipment & instrument cannot be empty")
+      // ),
+      publication_id: Yup.array().optional(),
+      // .ensure()
+      // .min(1, "Please add at least one publication")
+      // .of(Yup.string().ensure().required("publication cannot be empty")),
       status: Yup.number().required("Please select status"),
     });
 
@@ -373,7 +380,7 @@ class AddDepartment extends Component {
                                   value={values.department_name}
                                 />
                                 {errors.department_name &&
-                                touched.department_name ? (
+                                  touched.department_name ? (
                                   <span className="errorMsg">
                                     {errors.department_name}
                                   </span>
@@ -450,7 +457,7 @@ class AddDepartment extends Component {
                                   }}
                                 />
                                 {errors.department_description &&
-                                touched.department_description ? (
+                                  touched.department_description ? (
                                   <span className="errorMsg">
                                     {errors.department_description}
                                   </span>
@@ -475,7 +482,7 @@ class AddDepartment extends Component {
                                   value={values.total_lab_technical}
                                 />
                                 {errors.total_lab_technical &&
-                                touched.total_lab_technical ? (
+                                  touched.total_lab_technical ? (
                                   <span className="errorMsg">
                                     {errors.total_lab_technical}
                                   </span>
@@ -500,7 +507,7 @@ class AddDepartment extends Component {
                                   value={values.total_lab_executive}
                                 />
                                 {errors.total_lab_executive &&
-                                touched.total_lab_executive ? (
+                                  touched.total_lab_executive ? (
                                   <span className="errorMsg">
                                     {errors.total_lab_executive}
                                   </span>
@@ -512,7 +519,7 @@ class AddDepartment extends Component {
                             <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
                                 <label>
-                                  Number of total_consultant_scientists
+                                  Number of Total Consultant Scientists
                                   <span className="impField">*</span>
                                 </label>
                                 <Field
@@ -520,12 +527,12 @@ class AddDepartment extends Component {
                                   id="total_consultant_scientists"
                                   type="number"
                                   className={`form-control`}
-                                  placeholder="Enter Total consultant scientists"
+                                  placeholder="Enter Total Consultant Scientists"
                                   autoComplete="off"
                                   value={values.total_consultant_scientists}
                                 />
                                 {errors.total_consultant_scientists &&
-                                touched.total_consultant_scientists ? (
+                                  touched.total_consultant_scientists ? (
                                   <span className="errorMsg">
                                     {errors.total_consultant_scientists}
                                   </span>
@@ -537,19 +544,17 @@ class AddDepartment extends Component {
                             <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
                                 <label>
-                                  Doctor
-                                  <span className="impField">*</span>
+                                  Doctors
                                 </label>
                                 <Select
                                   isMulti
                                   name="doctor_id"
-                                  // id="doctor_id"
                                   options={this.state.doctors_arr}
                                   getOptionValue={(x) => x.id}
                                   getOptionLabel={(x) => x.doctor_name}
+                                  noOptionsMessage={() => 'No Results Found'}
                                   className="basic-multi-select"
                                   classNamePrefix="select"
-                                  //   value={values.doctor_id}
                                   onInputChange={(value) => {
                                     console.log("value", value);
                                     this.getDoctorArr(value);
@@ -571,8 +576,7 @@ class AddDepartment extends Component {
                                       );
                                     }
                                   }}
-                                  placeholder="Choose Doctor Name"
-                                  //   onBlur={() => setFieldTouched("medium_id")}
+                                  placeholder="Choose Doctors"
                                 />
                                 {errors.doctor_id && touched.doctor_id ? (
                                   <span className="errorMsg">
@@ -586,20 +590,17 @@ class AddDepartment extends Component {
                             <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
                                 <label>
-                                  Equipment & Instrument
-                                  <span className="impField">*</span>
+                                  Equipments & Instruments
                                 </label>
                                 <Select
                                   isMulti
                                   name="equipment_id"
-                                  // id="equipment_id"
                                   options={this.state.equipments_arr}
                                   className="basic-multi-select"
                                   classNamePrefix="select"
                                   getOptionValue={(x) => x.id}
                                   getOptionLabel={(x) => x.equipment_name}
-                                  //   value={values.equipment_id}
-
+                                  noOptionsMessage={() => 'No Results Found'}
                                   onInputChange={(value) => {
                                     console.log("value", value);
                                     this.getEquipmentArr(value);
@@ -622,8 +623,7 @@ class AddDepartment extends Component {
                                       );
                                     }
                                   }}
-                                  placeholder="Choose Equipment & Instrument"
-                                  //   onBlur={() => setFieldTouched("medium_id")}
+                                  placeholder="Choose Equipments & Instruments"
                                 />
                                 {errors.equipment_id && touched.equipment_id ? (
                                   <span className="errorMsg">
@@ -637,20 +637,17 @@ class AddDepartment extends Component {
                             <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
                                 <label>
-                                  Publication
-                                  <span className="impField">*</span>
+                                  Publications
                                 </label>
                                 <Select
                                   isMulti
                                   name="publication_id"
-                                  // id="publication_id"
                                   options={this.state.publications_arr}
                                   getOptionValue={(x) => x.id}
                                   getOptionLabel={(x) => x.short_name}
                                   className="basic-multi-select"
                                   classNamePrefix="select"
-                                  //   value={values.publication_id}
-
+                                  noOptionsMessage={() => 'No Results Found'}
                                   onInputChange={(value) => {
                                     console.log("value", value);
                                     this.getPublicationArr(value);
@@ -674,10 +671,9 @@ class AddDepartment extends Component {
                                     }
                                   }}
                                   placeholder="Choose Publications"
-                                  //   onBlur={() => setFieldTouched("medium_id")}
                                 />
                                 {errors.publication_id &&
-                                touched.publication_id ? (
+                                  touched.publication_id ? (
                                   <span className="errorMsg">
                                     {errors.publication_id}
                                   </span>
@@ -712,7 +708,7 @@ class AddDepartment extends Component {
                                 />
 
                                 {errors.department_image &&
-                                touched.department_image ? (
+                                  touched.department_image ? (
                                   <span className="errorMsg">
                                     {errors.department_image}
                                   </span>
@@ -753,9 +749,8 @@ class AddDepartment extends Component {
                           </Row>
                         </div>
                         <button
-                          className={`btn btn-success btn-sm ${
-                            isValid ? "btn-custom-green" : "btn-disable"
-                          } m-r-10`}
+                          className={`btn btn-success btn-sm ${isValid ? "btn-custom-green" : "btn-disable"
+                            } m-r-10`}
                           type="submit"
                           disabled={
                             isValid ? (isSubmitting ? true : false) : true
@@ -766,8 +761,8 @@ class AddDepartment extends Component {
                               ? "Updating..."
                               : "Update"
                             : isSubmitting
-                            ? "Submitting..."
-                            : "Submit"}
+                              ? "Submitting..."
+                              : "Submit"}
                         </button>
                       </Form>
                     );

@@ -72,6 +72,8 @@ import EditAccordion from "../components/admin/product-details/EditAccordion";
 import Departments from "../components/admin/department-pages/department/Departments";
 import AddDepartment from "../components/admin/department-pages/department/AddDepartment";
 import EditDepartment from "../components/admin/department-pages/department/EditDepartment";
+import DepartmentDoctors from "../components/admin/department-pages/department/DepartmentDoctors";
+// import DepartmentEquipments from "../components/admin/department-pages/department/DepartmentEquipments";
 
 import Doctor from "../components/admin/department-pages/doctors/Doctor";
 import AddDoctor from "../components/admin/department-pages/doctors/AddDoctor";
@@ -238,6 +240,8 @@ class Admin extends Component {
         <PrivateRoute path="/department/departments" component={Departments} />
         <PrivateRoute path="/departments/add-department" component={AddDepartment} />
         <PrivateRoute path="/departments/edit-department/:id" component={EditDepartment} />
+        <PrivateRoute path="/departments/department-doctors/:id" component={DepartmentDoctors} />
+        {/* <PrivateRoute path="/departments/department-equipments/:id" component={DepartmentEquipments} /> */}
 
 
         <PrivateRoute path="/department/doctor" component={Doctor} />

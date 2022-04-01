@@ -325,7 +325,6 @@ class EditDoctor extends Component {
                               <div className="form-group">
                                 <label>
                                   Upload Image
-                                  <span className="impField">*</span>
                                   <br />{" "}
                                   <i> {this.state.fileValidationMessage}</i>
                                   <br /> <i>{this.state.validationMessage}</i>
