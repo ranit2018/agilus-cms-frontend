@@ -317,7 +317,8 @@ class Banner extends Component {
           bannerDetails: res.data.data[0],
           banner_id: id,
           selectedCity: res.data.data[0].cities,
-          showModal: true
+          showModal: true,
+          cityType:String(res.data.data[0].city_type)
         });
       })
       .catch((err) => {
@@ -369,6 +370,7 @@ class Banner extends Component {
         cities_array.push({
           city_name: city.city_name,
           city_id: city.value,
+          label: city.label,
         });
       });
     }

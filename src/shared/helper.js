@@ -283,3 +283,11 @@ export const FILE_VALIDATION_MASSAGE_SVG = `(Image type should be .png,.jpeg,.jp
 export const FILE_VALIDATION_TYPE_ERROR_MASSAGE = `The file does not match height and width validations.`
 export const FILE_VALIDATION_SIZE_ERROR_MASSAGE = `The file exceeds maximum size.`
 export const DEFAULT_CITY = 'Mumbai';
+
+// export const getSelectCityTypeBanner = (selectCityType,value) => {
+//     let selectedValue = selectCityType.find(type => type.value === value);
+//     if ( selectedValue ){
+//       return selectedValue;
+//     }
+//     return selectCityType[0];
+// }
