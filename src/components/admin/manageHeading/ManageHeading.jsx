@@ -1,7 +1,14 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import { Link } from "react-router-dom";
-import { Row, Col, Button, Modal, Tooltip, OverlayTrigger } from "react-bootstrap";
+import {
+  Row,
+  Col,
+  Button,
+  Modal,
+  Tooltip,
+  OverlayTrigger,
+} from "react-bootstrap";
 import { Formik, Field, Form } from "formik";
 import API from "../../../shared/admin-axios";
 import * as Yup from "yup";
@@ -13,54 +20,72 @@ import { htmlDecode } from "../../../shared/helper";
 import Select from "react-select";
 import Switch from "react-switch";
 import Layout from "../layout/Layout";
+import { Scheduler } from "../scheduler/Scheduler";
+
+const schedulerValues = {
+  start_date: "",
+  end_date: "",
+  start_time: "",
+  end_time: "",
+  all_day_check: false,
+  repeat: "no_repeat",
+};
 
 const initialValues = {
-    title_name:"",
-    status:"",
+  title_name: "",
+  status: "",
+  isSchedule: false,
+  schedulerData: {
+    start_date: "",
+    end_date: "",
+    start_time: "",
+    end_time: "",
+    all_day_check: false,
+    repeat: "no_repeat",
+  },
 };
 
 const __htmlDecode = (refObj) => (cell) => {
-    return htmlDecode(cell);
+  return htmlDecode(cell);
 };
 
 const custStatus = (refObj) => (cell) => {
-    //return cell === 1 ? "Active" : "Inactive";
-    if (cell === 1) {
-        return "Active";
-    } else if (cell === 0) {
-        return "Inactive";
-    }
+  //return cell === 1 ? "Active" : "Inactive";
+  if (cell === 1) {
+    return "Active";
+  } else if (cell === 0) {
+    return "Inactive";
+  }
 };
 
-
 function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
-    return (
-        <OverlayTrigger
-            overlay={<Tooltip id={id}>{tooltip}</Tooltip>}
-            placement="left"
-            delayShow={300}
-            delayHide={150}
-            trigger={["hover"]}
-        >
-            <Link to={href} onClick={clicked}>
-                {children}
-            </Link>
-        </OverlayTrigger>
-    );
+  return (
+    <OverlayTrigger
+      overlay={<Tooltip id={id}>{tooltip}</Tooltip>}
+      placement="left"
+      delayShow={300}
+      delayHide={150}
+      trigger={["hover"]}
+    >
+      <Link to={href} onClick={clicked}>
+        {children}
+      </Link>
+    </OverlayTrigger>
+  );
 }
 
 const actionFormatter = (refObj) => (cell, row) => {
-    return (
-        <div className="actionStyle">
-            <LinkWithTooltip
-                tooltip="Click to edit"
-                href="#"
-                clicked={(e) => refObj.modalShowHandler(e, cell)}
-                id="tooltip-1"
-            >
-                <i className="far fa-edit" />
-            </LinkWithTooltip>
-            {/* <LinkWithTooltip
+  return (
+    <div className="actionStyle">
+      <LinkWithTooltip
+        tooltip="Click to edit"
+        href="#"
+        clicked={(e) => refObj.modalShowHandler(e, cell)}
+        id="tooltip-1"
+      >
+        <i className="far fa-edit" />
+      </LinkWithTooltip>
+      {/* <LinkWithTooltip
                 tooltip="Click to Delete"
                 href="#"
                 clicked={(e) => refObj.confirmDelete(e, cell)}
@@ -68,265 +93,291 @@ const actionFormatter = (refObj) => (cell, row) => {
             >
                 <i className="far fa-trash-alt" />
             </LinkWithTooltip> */}
-
-        </div>
-    );
+    </div>
+  );
 };
 
 class ManageHeading extends Component {
+  constructor(props) {
+    super(props);
 
-    constructor(props) {
-        super(props)
+    this.state = {
+      headingsList: [],
+      headingDetails: {},
+      heading_name: "",
+      heading_id: 0,
 
-        this.state = {
-            headingsList: [],
-            headingDetails: {},
-            heading_name: "",
-            heading_id: 0,
+      categories: [],
+      categoryDetails: {},
+      mediumList: [],
+      isLoading: false,
+      showModal: false,
+      totalCount: 0,
+      itemPerPage: 10,
+      activePage: 1,
+      selectStatus: [
+        { value: "0", label: "Inactive" },
+        { value: "1", label: "Active" },
+      ],
 
-            categories: [],
-            categoryDetails: {},
-            mediumList: [],
-            isLoading: false,
-            showModal: false,
-            totalCount: 0,
-            itemPerPage: 10,
-            activePage: 1,
-            selectStatus: [
-                { value: "0", label: "Inactive" },
-                { value: "1", label: "Active" }
-            ],
-            
-            medium_name: "",
-            status: "",
-        }
-    }
+      medium_name: "",
+      status: "",
+    };
+  }
 
+  componentDidMount = () => {
+    // this.getCategoryList();
+    // this.getMediumList();
+    this.getHeadingsList();
+  };
 
-    componentDidMount = () => {
-        // this.getCategoryList();
-        // this.getMediumList();
-        this.getHeadingsList();
-    }
-
-    getHeadingsList = (page = 1) => {
-      API.get(`/api/home/get_heading_text?page=${page}`)
-      .then(res => {
+  getHeadingsList = (page = 1) => {
+    API.get(`/api/home/get_heading_text?page=${page}`)
+      .then((res) => {
         this.setState({
           headingsList: res.data.data,
-          totalCount:res.data.count,
+          totalCount: res.data.count,
           isLoading: false,
-        })
+        });
       })
       .catch((err) => {
         this.setState({
-            isLoading: false,
+          isLoading: false,
         });
         showErrorMessage(err, this.props);
-    });
-    }
+      });
+  };
 
-    handleSubmitEvent = (values, actions) => {
-        let method = '';
-        let url = '';
-        if (this.state.heading_id > 0) {
-            method = 'PUT';
-            url = `/api/home/heading_text/${this.state.heading_id}`;
-        } else {
-            method = 'POST';
-            url = `/api/category/`
-        }
-        console.log(values);
-        API({
-            method: method,
-            url: url,
-            data: values
-        }).then((res) => {
-            // this.setState({ showModal: false });
-            this.modalCloseHandler();
-            swal({
-                closeOnClickOutside: false,
-                title: "Success",
-                text: method === 'PUT' ? "Record updated successfully." : "Record added successfully.",
-                icon: "success",
-            }).then(() => {
-                // this.getCategoryList(this.state.activePage);
-                this.getHeadingsList(this.state.activePage);
-            })
-        }).catch((err) => {
-            this.setState({ showModalLoader: false });
-            if (err.data.status === 3) {
-                this.setState({
-                    showModal: false,
-                });
-                showErrorMessage(err, this.props);
-            } else {
-                actions.setErrors(err.data.errors);
-                actions.setSubmitting(false);
-            }
-        });
+  handleSubmitEvent = (values, actions) => {
+    console.log(values, " 🔥 🔥");
+    let method = "";
+    let url = "";
+    if (this.state.heading_id > 0) {
+      method = "PUT";
+      url = `/api/home/heading_text/${this.state.heading_id}`;
+    } else {
+      method = "POST";
+      url = `/api/category/`;
     }
-
-    confirmDelete = (event, id) => {
-        event.preventDefault();
+    console.log(values);
+    API({
+      method: method,
+      url: url,
+      data: values,
+    })
+      .then((res) => {
+        // this.setState({ showModal: false });
+        this.modalCloseHandler();
         swal({
-            closeOnClickOutside: false,
-            title: "Are you sure?",
-            text: "Once deleted, you will not be able to recover this!",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        }).then((willDelete) => {
-            if (willDelete) {
-                this.deleteHeading(id);
-            }
+          closeOnClickOutside: false,
+          title: "Success",
+          text:
+            method === "PUT"
+              ? "Record updated successfully."
+              : "Record added successfully.",
+          icon: "success",
+        }).then(() => {
+          // this.getCategoryList(this.state.activePage);
+          this.getHeadingsList(this.state.activePage);
         });
-    };
-
-    deleteHeading = (id) => {
-        API.post(`/api/home/heading_text/${id}`)
-            .then((res) => {
-                swal({
-                    closeOnClickOutside: false,
-                    title: "Success",
-                    text: "Record deleted successfully.",
-                    icon: "success",
-                }).then(() => {
-                    // this.getCategoryList(this.state.activePage);
-                    this.getHeadingsList(this.state.activePage);
-                });
-            })
-            .catch((err) => {
-                if (err.data.status === 3) {
-                    this.setState({ closeModal: true });
-                    showErrorMessage(err, this.props);
-                }else if(err.data.status === 2) {
-                    this.setState({closeModal: true });
-                    showErrorMessage(err, this.props);
-                }
-            });
-    };
-
-    getHeadingDetails(id) {
-        API.get(`/api/home/get_heading_text/${id}`)
-            .then(res => {
-                this.setState({
-                    headingDetails: res.data.data[0],
-                    heading_id: id,
-                    showModal: true
-                })
-               
-            })
-            .catch((err) => {
-                showErrorMessage(err, this.props);
-            });
-    }
-
-    // headingSearch = (e) => {
-    //     e.preventDefault();
-
-    //     const heading_name = document.getElementById("heading_name").value;
-    //     // const medium_name = document.getElementById("medium_name").value;
-    //     // const medium_name = 1;
-    //     // const status = document.getElementById("status").value;
-
-    //     // if (heading_name === "" && medium_name === "" && status === "") {
-    //     //     return false;
-    //     // }
-    //     if (heading_name === ""){
-    //         return false;
-    //     }
-
-    //     API.get(`/api/home/get_heading_text?page=1&title_name=${heading_name}`)
-    //         .then((res) => {
-    //             this.setState({
-    //                 headingsList: res.data.data,
-    //                 totalCount: res.data.count,
-    //                 isLoading: false,
-    //                 heading_name: heading_name,
-    //                 // medium_name: medium_name,
-    //                 // status: status,
-    //                 activePage: 1,
-    //                 remove_search: true
-    //             });
-    //         })
-    //         .catch((err) => {
-    //             this.setState({
-    //                 isLoading: false
-    //             });
-    //             showErrorMessage(err, this.props);
-    //         });
-    // };
-    
-
-    // clearSearch = () => {
-
-    //     document.getElementById("heading_name").value = "";
-    //     // document.getElementById("medium_name").value = "";
-    //     // document.getElementById("status").value = "";
-
-    //     this.setState(
-    //         {
-    //             heading_name: "",
-    //             // medium_name: "",
-    //             // status: "",
-    //             remove_search: false,
-    //         },
-    //         () => {
-    //             this.setState({ activePage: 1 });
-    //             this.getHeadingsList();
-
-    //         }
-    //     );
-    // };
-
-    handlePageChange = (pageNumber) => {
-        this.setState({ activePage: pageNumber });
-        this.getHeadingsList(pageNumber > 0 ? pageNumber : 1);
-    };
-
-    modalCloseHandler = () => {
-        this.setState({ headingDetails: {}, heading_id: 0, selectedMediumList: [], showModal: false })
-    };
-
-    modalShowHandler = (event, id) => {
-        if (id) {
-            event.preventDefault();
-            this.getHeadingDetails(id);
+      })
+      .catch((err) => {
+        this.setState({ showModalLoader: false });
+        if (err.data.status === 3) {
+          this.setState({
+            showModal: false,
+          });
+          showErrorMessage(err, this.props);
         } else {
-            this.setState({ showModal: true, heading_id: 0, headingDetails: {} });
+          actions.setErrors(err.data.errors);
+          actions.setSubmitting(false);
         }
-    };
+      });
+  };
 
-    render() {
-        const { headingDetails } = this.state;
-        const newInitialValues = Object.assign(initialValues, {
-            title_name: headingDetails.title_name ? htmlDecode(headingDetails.title_name) : '',
-            status: headingDetails.status || + headingDetails.status === 0
-                ? headingDetails.status.toString() : ''
+  confirmDelete = (event, id) => {
+    event.preventDefault();
+    swal({
+      closeOnClickOutside: false,
+      title: "Are you sure?",
+      text: "Once deleted, you will not be able to recover this!",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then((willDelete) => {
+      if (willDelete) {
+        this.deleteHeading(id);
+      }
+    });
+  };
+
+  deleteHeading = (id) => {
+    API.post(`/api/home/heading_text/${id}`)
+      .then((res) => {
+        swal({
+          closeOnClickOutside: false,
+          title: "Success",
+          text: "Record deleted successfully.",
+          icon: "success",
+        }).then(() => {
+          // this.getCategoryList(this.state.activePage);
+          this.getHeadingsList(this.state.activePage);
         });
+      })
+      .catch((err) => {
+        if (err.data.status === 3) {
+          this.setState({ closeModal: true });
+          showErrorMessage(err, this.props);
+        } else if (err.data.status === 2) {
+          this.setState({ closeModal: true });
+          showErrorMessage(err, this.props);
+        }
+      });
+  };
 
-        const validateStopFlag = Yup.object().shape({
-            title_name: Yup.string().required("Please enter the Title"),
-             status: Yup.string().trim()
-                .required("Please select status")
-                .matches(/^[0|1]$/, "Invalid status selected")
+  getHeadingDetails(id) {
+    API.get(`/api/home/get_heading_text/${id}`)
+      .then((res) => {
+        this.setState({
+          headingDetails: res.data.data[0],
+          heading_id: id,
+          showModal: true,
         });
-        return (
-            <Layout {...this.props}>
-                <div className="content-wrapper">
-                     <section className="content-header">
-                      <div className="row">
-                            <div className="col-lg-12 col-sm-12 col-xs-12">
-                                <h1>
-                                    Manage Headings
-                        <small />
-                                </h1>
-                            </div>
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  }
 
-                            <div className="col-lg-12 col-sm-12 col-xs-12  topSearchSection">
+  // headingSearch = (e) => {
+  //     e.preventDefault();
 
-                                {/* <div className="">
+  //     const heading_name = document.getElementById("heading_name").value;
+  //     // const medium_name = document.getElementById("medium_name").value;
+  //     // const medium_name = 1;
+  //     // const status = document.getElementById("status").value;
+
+  //     // if (heading_name === "" && medium_name === "" && status === "") {
+  //     //     return false;
+  //     // }
+  //     if (heading_name === ""){
+  //         return false;
+  //     }
+
+  //     API.get(`/api/home/get_heading_text?page=1&title_name=${heading_name}`)
+  //         .then((res) => {
+  //             this.setState({
+  //                 headingsList: res.data.data,
+  //                 totalCount: res.data.count,
+  //                 isLoading: false,
+  //                 heading_name: heading_name,
+  //                 // medium_name: medium_name,
+  //                 // status: status,
+  //                 activePage: 1,
+  //                 remove_search: true
+  //             });
+  //         })
+  //         .catch((err) => {
+  //             this.setState({
+  //                 isLoading: false
+  //             });
+  //             showErrorMessage(err, this.props);
+  //         });
+  // };
+
+  // clearSearch = () => {
+
+  //     document.getElementById("heading_name").value = "";
+  //     // document.getElementById("medium_name").value = "";
+  //     // document.getElementById("status").value = "";
+
+  //     this.setState(
+  //         {
+  //             heading_name: "",
+  //             // medium_name: "",
+  //             // status: "",
+  //             remove_search: false,
+  //         },
+  //         () => {
+  //             this.setState({ activePage: 1 });
+  //             this.getHeadingsList();
+
+  //         }
+  //     );
+  // };
+
+  handlePageChange = (pageNumber) => {
+    this.setState({ activePage: pageNumber });
+    this.getHeadingsList(pageNumber > 0 ? pageNumber : 1);
+  };
+
+  modalCloseHandler = () => {
+    this.setState({
+      headingDetails: {},
+      heading_id: 0,
+      selectedMediumList: [],
+      showModal: false,
+    });
+  };
+
+  modalShowHandler = (event, id) => {
+    if (id) {
+      event.preventDefault();
+      this.getHeadingDetails(id);
+    } else {
+      this.setState({ showModal: true, heading_id: 0, headingDetails: {} });
+    }
+  };
+
+  render() {
+    const { headingDetails } = this.state;
+    const newInitialValues = Object.assign(initialValues, {
+      title_name: headingDetails.title_name
+        ? htmlDecode(headingDetails.title_name)
+        : "",
+      status:
+        headingDetails.status || +headingDetails.status === 0
+          ? headingDetails.status.toString()
+          : "",
+    });
+
+    const validateStopFlag = Yup.object().shape({
+      title_name: Yup.string().required("Please enter the Title"),
+      status: Yup.string()
+        .trim()
+        .required("Please select status")
+        .matches(/^[0|1]$/, "Invalid status selected"),
+      isSchedule: Yup.boolean().required(),
+      schedulerData: Yup.object().shape({
+        start_date: Yup.string().required(),
+        end_date: Yup.string().required(),
+        start_time: Yup.string().when(
+          "all_day_check",
+          (all_day_check, schema) => {
+            return all_day_check ? schema : schema.required();
+          }
+        ),
+        end_time: Yup.string().when("start_time", (start_time, schema) => {
+          return start_time ? schema.required() : schema;
+        }),
+        all_day_check: Yup.boolean().required(),
+        repeat: Yup.string().required(),
+      }),
+    });
+    return (
+      <Layout {...this.props}>
+        <div className="content-wrapper">
+          <section className="content-header">
+            <div className="row">
+              <div className="col-lg-12 col-sm-12 col-xs-12">
+                <h1>
+                  Manage Headings
+                  <small />
+                </h1>
+              </div>
+
+              <div className="col-lg-12 col-sm-12 col-xs-12  topSearchSection">
+                {/* <div className="">
                                     <button
                                         type="button"
                                         className="btn btn-info btn-sm"
@@ -335,8 +386,8 @@ class ManageHeading extends Component {
                                         <i className="fas fa-plus m-r-5" /> Add Category
                         </button>
                                 </div> */}
-                                <form className="form">
-                                    {/* <div className="">
+                <form className="form">
+                  {/* <div className="">
                                         <input
                                             className="form-control"
                                             name="heading_name"
@@ -345,7 +396,7 @@ class ManageHeading extends Component {
                                         />
                                     </div> */}
 
-                                    {/* <div className="">
+                  {/* <div className="">
                                         <select
                                             name="medium_name"
                                             id="medium_name"
@@ -360,7 +411,7 @@ class ManageHeading extends Component {
                                         </select>
                                     </div> */}
 
-                                        {/* <div className="">
+                  {/* <div className="">
                                         <select
                                             name="status"
                                             id="status"
@@ -374,8 +425,8 @@ class ManageHeading extends Component {
                                             })}
                                         </select>
                                         </div>*/}
-                                        
-                                    {/* <div className="">
+
+                  {/* <div className="">
                                         <input
                                             type="submit"
                                             value="Search"
@@ -393,125 +444,150 @@ class ManageHeading extends Component {
                                         ) : null}
                                     </div>
                                     <div className="clearfix"></div> */}
-                                </form>
-                            </div>
-                        </div>
-                    </section> 
-                    <section className="content">
-                        <div className="box">
-                            <div className="box-body">
-
-                                <BootstrapTable data={this.state.headingsList}>
-                                <TableHeaderColumn
-                                        dataField="title_name"
-                                        dataFormat={__htmlDecode(this)}
-                                    >
-                                        Heading Title
-                        </TableHeaderColumn>
-                                    <TableHeaderColumn
-                                        isKey
-                                        dataField="sl_no"
-                                    >
-                                      Serial Number
-                                        
-                        </TableHeaderColumn>
-                                    {/* <TableHeaderColumn
+                </form>
+              </div>
+            </div>
+          </section>
+          <section className="content">
+            <div className="box">
+              <div className="box-body">
+                <BootstrapTable data={this.state.headingsList}>
+                  <TableHeaderColumn
+                    dataField="title_name"
+                    dataFormat={__htmlDecode(this)}
+                  >
+                    Heading Title
+                  </TableHeaderColumn>
+                  <TableHeaderColumn isKey dataField="sl_no">
+                    Serial Number
+                  </TableHeaderColumn>
+                  {/* <TableHeaderColumn
                                         dataField="status"
                                         dataFormat={custStatus(this)}
                                     >
                                         Status
                         </TableHeaderColumn> */}
-                                    <TableHeaderColumn
-                                        dataField="id"
-                                        dataFormat={actionFormatter(this)}
-                                    >
-                                        Action
-                        </TableHeaderColumn>
-                                </BootstrapTable>
+                  <TableHeaderColumn
+                    dataField="id"
+                    dataFormat={actionFormatter(this)}
+                  >
+                    Action
+                  </TableHeaderColumn>
+                </BootstrapTable>
 
+                {this.state.totalCount > 10 ? (
+                  <Row>
+                    <Col md={12}>
+                      <div className="paginationOuter text-right">
+                        <Pagination
+                          activePage={this.state.activePage}
+                          itemsCountPerPage={10}
+                          totalItemsCount={this.state.totalCount}
+                          itemClass="nav-item"
+                          linkClass="nav-link"
+                          activeClass="active"
+                          onChange={this.handlePageChange}
+                        />
+                      </div>
+                    </Col>
+                  </Row>
+                ) : null}
 
-                                {this.state.totalCount > 10 ? (
-                                    <Row>
-                                        <Col md={12}>
-                                            <div className="paginationOuter text-right">
-                                                <Pagination
-                                                    activePage={this.state.activePage}
-                                                    itemsCountPerPage={10}
-                                                    totalItemsCount={this.state.totalCount}
-                                                    itemClass="nav-item"
-                                                    linkClass="nav-link"
-                                                    activeClass="active"
-                                                    onChange={this.handlePageChange}
-                                                />
-                                            </div>
-                                        </Col>
-                                    </Row>
-                                ) : null}
-
-                                {/* ======= Add Banner Modal ======== */}
-                                <Modal
-                                    show={this.state.showModal}
-                                    onHide={() => this.modalCloseHandler()}
-                                    backdrop="static"
-                                >
-                                    <Formik
-                                        initialValues={newInitialValues}
-                                        validationSchema={validateStopFlag}
-                                        onSubmit={this.handleSubmitEvent}
-                                    >
-                                        {({
-                                            values,
-                                            errors,
-                                            touched,
-                                            isValid,
-                                            isSubmitting,
-                                            setFieldValue,
-                                            setFieldTouched,
-                                            handleChange,
-                                            setErrors
-                                        }) => {
-                                            return (
-                                                <Form>
-                                                    {this.state.showModalLoader === true ? (
-                                                        <div className="loading_reddy_outer">
-                                                            <div className="loading_reddy">
-                                                                <img src={whitelogo} alt="loader" />
-                                                            </div>
-                                                        </div>
-                                                    ) : (
-                                                        ""
-                                                    )}
-                                                    <Modal.Header closeButton>
-                                                        <Modal.Title>
-                                                            {this.state.heading_id > 0 ? 'Edit Heading' : 'Add Heading'}
-                                                        </Modal.Title>
-                                                    </Modal.Header>
-                                                    <Modal.Body>
-                                                        <div className="contBox">
-                                                            <Row>
-                                                                <Col xs={12} sm={12} md={12}>
-                                                                    <div className="form-group">
-                                                                        <label>
-                                                                            Title
-                                                                        <span className="impField">*</span>
-                                                                        </label>
-                                                                        <Field
-                                                                            name="title_name"
-                                                                            type="text"
-                                                                            className={`form-control`}
-                                                                            placeholder="Enter name"
-                                                                            autoComplete="off"
-                                                                            value={values.title_name}
-                                                                        />
-                                                                        {errors.title_name && touched.title_name ? (
-                                                                            <span className="errorMsg">
-                                                                                {errors.title_name}
-                                                                            </span>
-                                                                        ) : null}
-                                                                    </div>
-                                                                </Col>
-                                                            </Row>
-                                                            {/* <Row>
+                {/* ======= Add Banner Modal ======== */}
+                <Modal
+                  show={this.state.showModal}
+                  onHide={() => this.modalCloseHandler()}
+                  backdrop="static"
+                >
+                  <Formik
+                    initialValues={newInitialValues}
+                    validationSchema={validateStopFlag}
+                    onSubmit={this.handleSubmitEvent}
+                  >
+                    {({
+                      values,
+                      errors,
+                      touched,
+                      isValid,
+                      isSubmitting,
+                      setFieldValue,
+                      setFieldTouched,
+                      handleChange,
+                      setErrors,
+                      setValues,
+                    }) => {
+                      return (
+                        <Form>
+                          {this.state.showModalLoader === true ? (
+                            <div className="loading_reddy_outer">
+                              <div className="loading_reddy">
+                                <img src={whitelogo} alt="loader" />
+                              </div>
+                            </div>
+                          ) : (
+                            ""
+                          )}
+                          <Modal.Header closeButton>
+                            <Modal.Title>
+                              {this.state.heading_id > 0
+                                ? "Edit Heading"
+                                : "Add Heading"}
+                            </Modal.Title>
+                          </Modal.Header>
+                          <Modal.Body>
+                            <div className="contBox">
+                              <Row>
+                                <Col xs={12} sm={12} md={12}>
+                                  <div className="form-group">
+                                    <label>
+                                      Title
+                                      <span className="impField">*</span>
+                                    </label>
+                                    <Field
+                                      name="title_name"
+                                      type="text"
+                                      className={`form-control`}
+                                      placeholder="Enter name"
+                                      autoComplete="off"
+                                      value={values.title_name}
+                                    />
+                                    {errors.title_name && touched.title_name ? (
+                                      <span className="errorMsg">
+                                        {errors.title_name}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                </Col>
+                              </Row>
+                              <Row>
+                                <Col xs={12} sm={12} md={12}>
+                                  <Scheduler
+                                    value={values.schedulerData}
+                                    scheduler={values.isSchedule}
+                                    error={errors.schedulerData}
+                                    onSchedulerDataChange={({
+                                      isSchedule,
+                                      ...data
+                                    }) => {
+                                      console.log(isSchedule);
+                                      if (isSchedule) {
+                                        setValues({
+                                          ...values,
+                                          isSchedule,
+                                          schedulerData: data,
+                                        });
+                                      } else {
+                                        setValues({
+                                          ...values,
+                                          isSchedule,
+                                          schedulerData: schedulerValues,
+                                        });
+                                      }
+                                    }}
+                                  />
+                                </Col>
+                              </Row>
+                              {/* <Row>
                                                                 <Col xs={12} sm={12} md={12}>
                                                                     <div className="form-group">
                                                                         <label>
@@ -544,44 +620,46 @@ class ManageHeading extends Component {
                                                                     </div>
                                                                 </Col>
                                                             </Row> */}
-
-                                                        </div>
-                                                    </Modal.Body>
-                                                    <Modal.Footer>
-                                                        <button
-                                                            className={`btn btn-success btn-sm ${isValid ? "btn-custom-green" : "btn-disable"
-                                                                } m-r-10`}
-                                                            type="submit"
-                                                            disabled={isValid ? (isSubmitting ? true : false) : true}
-                                                            >
-                                                            {this.state.heading_id > 0
-                                                                ? isSubmitting
-                                                                    ? "Updating..."
-                                                                    : "Update"
-                                                                : isSubmitting
-                                                                    ? "Submitting..."
-                                                                    : "Submit"}
-                                                        </button>
-                                                        <button
-                                                            onClick={(e) => this.modalCloseHandler()}
-                                                            className={`btn btn-danger btn-sm`}
-                                                            type="button"
-                                                        >
-                                                            Close
-                                    </button>
-                                                    </Modal.Footer>
-                                                </Form>
-                                            );
-                                        }}
-                                    </Formik>
-                                </Modal>
                             </div>
-                        </div>
-                    </section >
-                </div >
-            </Layout >
-        )
-    }
+                          </Modal.Body>
+                          <Modal.Footer>
+                            <button
+                              className={`btn btn-success btn-sm ${
+                                isValid ? "btn-custom-green" : "btn-disable"
+                              } m-r-10`}
+                              type="submit"
+                              disabled={
+                                isValid ? (isSubmitting ? true : false) : true
+                              }
+                            >
+                              {this.state.heading_id > 0
+                                ? isSubmitting
+                                  ? "Updating..."
+                                  : "Update"
+                                : isSubmitting
+                                ? "Submitting..."
+                                : "Submit"}
+                            </button>
+                            <button
+                              onClick={(e) => this.modalCloseHandler()}
+                              className={`btn btn-danger btn-sm`}
+                              type="button"
+                            >
+                              Close
+                            </button>
+                          </Modal.Footer>
+                        </Form>
+                      );
+                    }}
+                  </Formik>
+                </Modal>
+              </div>
+            </div>
+          </section>
+        </div>
+      </Layout>
+    );
+  }
 }
 
-export default ManageHeading
+export default ManageHeading;
