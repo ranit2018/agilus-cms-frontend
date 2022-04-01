@@ -4,10 +4,10 @@ import { Link } from "react-router-dom";
 import {
   Row,
   Col,
-  Button,
   Modal,
   Tooltip,
   OverlayTrigger,
+  Collapse,
 } from "react-bootstrap";
 import { Formik, Field, Form } from "formik";
 import API from "../../../shared/admin-axios";
@@ -34,6 +34,7 @@ const schedulerValues = {
 const initialValues = {
   title_name: "",
   status: "",
+  updated_name: "",
   isSchedule: false,
   schedulerData: {
     start_date: "",
@@ -348,6 +349,9 @@ class ManageHeading extends Component {
         .required("Please select status")
         .matches(/^[0|1]$/, "Invalid status selected"),
       isSchedule: Yup.boolean().required(),
+      updated_name: Yup.string().when("isSchedule", (isSchedule, schema) => {
+        return isSchedule ? schema.required("Please enter the Title") : schema;
+      }),
       schedulerData: Yup.object().shape({
         start_date: Yup.string().required(),
         end_date: Yup.string().required(),
@@ -559,6 +563,32 @@ class ManageHeading extends Component {
                                   </div>
                                 </Col>
                               </Row>
+                              <Collapse in={values.isSchedule}>
+                                <Row>
+                                  <Col xs={12} sm={12} md={12}>
+                                    <div className="form-group">
+                                      <label>
+                                        New title
+                                        <span className="impField">*</span>
+                                      </label>
+                                      <Field
+                                        name="updated_name"
+                                        type="text"
+                                        className={`form-control`}
+                                        placeholder="Enter new name"
+                                        autoComplete="off"
+                                        value={values.updated_name}
+                                      />
+                                      {errors.updated_name &&
+                                      touched.updated_name ? (
+                                        <span className="errorMsg">
+                                          {errors.updated_name}
+                                        </span>
+                                      ) : null}
+                                    </div>
+                                  </Col>
+                                </Row>
+                              </Collapse>
                               <Row>
                                 <Col xs={12} sm={12} md={12}>
                                   <Scheduler
