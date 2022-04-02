@@ -563,32 +563,6 @@ class ManageHeading extends Component {
                                   </div>
                                 </Col>
                               </Row>
-                              <Collapse in={values.isSchedule}>
-                                <Row>
-                                  <Col xs={12} sm={12} md={12}>
-                                    <div className="form-group">
-                                      <label>
-                                        New title
-                                        <span className="impField">*</span>
-                                      </label>
-                                      <Field
-                                        name="updated_name"
-                                        type="text"
-                                        className={`form-control`}
-                                        placeholder="Enter new name"
-                                        autoComplete="off"
-                                        value={values.updated_name}
-                                      />
-                                      {errors.updated_name &&
-                                      touched.updated_name ? (
-                                        <span className="errorMsg">
-                                          {errors.updated_name}
-                                        </span>
-                                      ) : null}
-                                    </div>
-                                  </Col>
-                                </Row>
-                              </Collapse>
                               <Row>
                                 <Col xs={12} sm={12} md={12}>
                                   <Scheduler
@@ -617,6 +591,32 @@ class ManageHeading extends Component {
                                   />
                                 </Col>
                               </Row>
+                              <Collapse in={values.isSchedule}>
+                                <Row>
+                                  <Col xs={12} sm={12} md={12}>
+                                    <div className="form-group">
+                                      <label>
+                                        New title
+                                        <span className="impField">*</span>
+                                      </label>
+                                      <Field
+                                        name="updated_name"
+                                        type="text"
+                                        className={`form-control`}
+                                        placeholder="Enter new name"
+                                        autoComplete="off"
+                                        value={values.updated_name}
+                                      />
+                                      {errors.updated_name &&
+                                      touched.updated_name ? (
+                                        <span className="errorMsg">
+                                          {errors.updated_name}
+                                        </span>
+                                      ) : null}
+                                    </div>
+                                  </Col>
+                                </Row>
+                              </Collapse>
                               {/* <Row>
                                                                 <Col xs={12} sm={12} md={12}>
                                                                     <div className="form-group">
