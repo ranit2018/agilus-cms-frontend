@@ -27,22 +27,22 @@ const schedulerValues = {
   end_date: "",
   start_time: "",
   end_time: "",
-  all_day_check: false,
-  repeat: "no_repeat",
+  all_day_check: 0,
+  repeat: 0,
 };
 
 const initialValues = {
   title_name: "",
   status: "",
   updated_name: "",
-  isSchedule: false,
+  isSchedule: 0,
   schedulerData: {
     start_date: "",
     end_date: "",
     start_time: "",
     end_time: "",
-    all_day_check: false,
-    repeat: "no_repeat",
+    all_day_check: 0,
+    repeat: 0,
   },
 };
 
@@ -150,7 +150,13 @@ class ManageHeading extends Component {
   };
 
   handleSubmitEvent = (values, actions) => {
-    console.log(values, " 🔥 🔥");
+    const updatedValue = {
+      ...values,
+      schedulerData: {
+        ...values.schedulerData,
+        repeat: +values.schedulerData.repeat,
+      },
+    };
     let method = "";
     let url = "";
     if (this.state.heading_id > 0) {
@@ -160,11 +166,11 @@ class ManageHeading extends Component {
       method = "POST";
       url = `/api/category/`;
     }
-    console.log(values);
+    console.log(updatedValue);
     API({
       method: method,
       url: url,
-      data: values,
+      data: updatedValue,
     })
       .then((res) => {
         // this.setState({ showModal: false });
@@ -340,6 +346,16 @@ class ManageHeading extends Component {
         headingDetails.status || +headingDetails.status === 0
           ? headingDetails.status.toString()
           : "",
+      updated_name: headingDetails.updated_title ?? "",
+      isSchedule: headingDetails.is_schedule ?? 0,
+      schedulerData: {
+        start_date: headingDetails.start_date ?? "",
+        end_date: headingDetails.end_date ?? "",
+        start_time: headingDetails.start_time ?? "",
+        end_time: headingDetails.end_time ?? "",
+        all_day_check: headingDetails.all_day_check ?? 0,
+        repeat: headingDetails.repeat ?? 0,
+      },
     });
 
     const validateStopFlag = Yup.object().shape({
@@ -348,7 +364,7 @@ class ManageHeading extends Component {
         .trim()
         .required("Please select status")
         .matches(/^[0|1]$/, "Invalid status selected"),
-      isSchedule: Yup.boolean().required(),
+      isSchedule: Yup.number().integer().min(0).max(1),
       updated_name: Yup.string().when("isSchedule", (isSchedule, schema) => {
         return isSchedule ? schema.required("Please enter the Title") : schema;
       }),
@@ -364,8 +380,8 @@ class ManageHeading extends Component {
         end_time: Yup.string().when("start_time", (start_time, schema) => {
           return start_time ? schema.required() : schema;
         }),
-        all_day_check: Yup.boolean().required(),
-        repeat: Yup.string().required(),
+        all_day_check: Yup.number().integer().min(0).max(1),
+        repeat: Yup.number().integer().min(0).max(4),
       }),
     });
     return (

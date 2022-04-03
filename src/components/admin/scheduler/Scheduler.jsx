@@ -31,8 +31,8 @@ function Scheduler({
   }, [schedulerData.all_day_check]);
 
   // # handlers
-  function handleSchedulerCheck() {
-    setSchedulerChecked((prevData) => !prevData);
+  function handleSchedulerCheck(ev) {
+    setSchedulerChecked(ev.target.checked ? 1 : 0);
   }
 
   function handleFieldChange(ev) {
@@ -127,10 +127,10 @@ function Scheduler({
               checked={schedulerData.all_day_check}
               type="checkbox"
               value="off"
-              onChange={() => {
+              onChange={(ev) => {
                 setSchedulerData((prevData) => ({
                   ...prevData,
-                  all_day_check: !prevData.all_day_check,
+                  all_day_check: ev.target.checked ? 1 : 0,
                 }));
               }}
             />
@@ -144,11 +144,11 @@ function Scheduler({
               value={schedulerData.repeat}
               onChange={handleFieldChange}
             >
-              <option value="no_repeat">Does not repeat</option>
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
-              <option value="monthly">Monthly</option>
-              <option value="annually">Annually</option>
+              <option value={0}>Does not repeat</option>
+              <option value={1}>Daily</option>
+              <option value={2}>Weekly</option>
+              <option value={3}>Monthly</option>
+              <option value={4}>Annually</option>
             </select>
           </Col>
           {error && (
