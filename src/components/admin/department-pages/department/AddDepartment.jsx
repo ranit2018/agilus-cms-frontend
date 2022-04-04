@@ -360,8 +360,8 @@ class AddDepartment extends Component {
                   }) => {
                     return (
                       <Form>
-                        {console.log({ errors })}
-                        {console.log({ values })}
+                        {/* {console.log({ errors })}
+                        {console.log({ values })} */}
                         <div className="contBox">
                           <Row>
                             <Col xs={12} sm={12} md={12}>

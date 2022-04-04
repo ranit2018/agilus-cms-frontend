@@ -8,12 +8,14 @@ import { Row, Col, Tooltip, OverlayTrigger, Modal } from "react-bootstrap";
 import Layout from "../../layout/Layout";
 import Pagination from "react-js-pagination";
 import dateFormat from "dateformat";
-import { Link } from "react-router-dom";
 import API from "../../../../shared/admin-axios";
+import { Link } from "react-router-dom";
+
 import swal from "sweetalert";
 import Switch from "react-switch";
-import { showErrorMessage } from "../../../../shared/handle_error";
 import { htmlDecode, FILE_VALIDATION_MASSAGE } from "../../../../shared/helper";
+import { showErrorMessage } from "../../../../shared/handle_error";
+
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
 
 /*For Tooltip*/
@@ -36,6 +38,7 @@ function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
   /*For Tooltip*/
   
   const actionFormatter = (refObj) => (cell, row) => {
+      console.log('row',row)
     return (
       <div className="actionStyle">
         <LinkWithTooltip
@@ -47,7 +50,7 @@ function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
           <Switch
             checked={row.status == 1 ? true : false}
             uncheckedIcon={false}
-            onChange={(e) => refObj.chageStatus( row.equipment_id, row.status)}
+            onChange={(e) => refObj.chageStatus( row.publication_id, row.status)}
             height={20}
             width={45}
           />
@@ -55,7 +58,7 @@ function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
         <LinkWithTooltip
           tooltip="Click to Delete"
           href="#"
-          clicked={(e) => refObj.confirmDelete(e, row.equipment_id)}
+          clicked={(e) => refObj.confirmDelete(e, row.publication_id)}
           id="tooltip-1"
         >
           <i className="far fa-trash-alt" />
@@ -72,7 +75,7 @@ const setName = (refObj) => (cell) => {
     return cell.replace(".png", " ");
 };
 
-const equipmentStatus = (refObj) => (cell) => {
+const PublicationsStatus = (refObj) => (cell) => {
     //return cell === 1 ? "Active" : "Inactive";
     if (cell === 1) {
         return "Active";
@@ -81,13 +84,15 @@ const equipmentStatus = (refObj) => (cell) => {
     }
 };
 
-const setType = (refObj) => (cell) => {
-    //return cell === 1 ? "Active" : "Inactive";
-    if (cell === 1) {
-        return " Instrument";
-    } else if (cell === 2) {
-        return "Equipment";
-    }
+const setPublicationsImage = (refObj) => (cell, row) => {
+    return (
+        <img
+            src={row.publication_image}
+            alt="Publication"
+            height="100"
+            onClick={(e) => refObj.imageModalShowHandler(e, row.publication_image)}
+        ></img>
+    );
 };
 
 const setDate = (refOBj) => (cell) => {
@@ -99,36 +104,7 @@ const setDate = (refOBj) => (cell) => {
     }
 };
 
-
-const imageFormatter = (refObj) => (cell, row) => {
-    return (
-        <div className="actionStyle">
-            {row.images.map((val, index) => {
-                return (
-                    <LinkWithTooltip
-                        tooltip="Click to see picture"
-                        href="#"
-                        // clicked={(e) => refObj.imageModalShowHandler(val.equipment_image)}
-                        id="tooltip-1"
-                        key={index}
-                    >
-                        <img
-                            src={val.equipment_image}
-                            alt="Equipment"
-                            height="30"
-                            onClick={(e) =>
-                                refObj.imageModalShowHandler(e, val.equipment_image)
-                            }
-                        />
-                    </LinkWithTooltip>
-                );
-            })}
-        </div>
-    );
-};
-
-
-class DepartmentEquipments extends Component {
+class DepartmentPublications extends Component {
     constructor(props) {
         super(props);
 
@@ -137,43 +113,34 @@ class DepartmentEquipments extends Component {
                 { value: "1", label: "Active" },
                 { value: "0", label: "Inactive" },
             ],
-            selectType: [
-                { value: "1", label: "Instrument" },
-                { value: "2", label: "Equipment" },
-            ],
             department_id: this.props.match.params.id,
-            equipmentList: [],
-            equipment_image: "",
-            activePage: 1,
+            publicationList: [],
 
         };
     }
 
     componentDidMount() {
-        this.getequipmentList(this.state.activePage);
+        this.getPublicationsList(this.state.activePage);
     }
 
     handlePageChange = (pageNumber) => {
         this.setState({ activePage: pageNumber });
-        this.getequipmentList(pageNumber > 0 ? pageNumber : 1);
+        this.getDoctorList(pageNumber > 0 ? pageNumber : 1);
     };
 
-    getequipmentList = (page = 1) => {
-        let type = document.getElementById("type").value;
-        var equipment_name = document.getElementById("equipment_name").value;
+    getPublicationsList = (page = 1) => {
+        // var publication_heading = document.getElementById("publication_heading").value;
+        var short_name = document.getElementById("short_name").value;
         let status = document.getElementById("status").value;
-    
-
-        API.get(
-            `/api/department/department-all-type/${this.state.department_id}/2?page=${page}&equipment_name=${encodeURIComponent(
-                equipment_name
-              )}&type=${encodeURIComponent(type)}&status=${encodeURIComponent(status)}`
-        )
+        API.get(`/api/department/department-all-type/${this.state.department_id}/3?page=${page}&short_name=${encodeURIComponent(
+            short_name
+        )}&status=${encodeURIComponent(
+            status
+        )}`)
             .then((res) => {
                 this.setState({
-                    equipmentList: res.data.data,
+                    publicationList: res.data.data,
                     totalCount: Number(res.data.count),
-
                     isLoading: false,
                 });
             })
@@ -186,135 +153,125 @@ class DepartmentEquipments extends Component {
     };
 
     //search
-    equipmentSearch = (e) => {
+    publicationSearch = (e) => {
         e.preventDefault();
-        let type = document.getElementById("type").value;
-        var equipment_name = document.getElementById("equipment_name").value;
+        var short_name = document.getElementById("short_name").value;
         let status = document.getElementById("status").value;
-    
         if (
-          type === "" &&
-          equipment_name === "" &&
-          status === ""
+            short_name === "" &&
+            status === ""
         ) {
-          return false;
+            return false;
         }
-    
         API.get(
-          `/api/department/department-all-type/${this.state.department_id}/2?page=1&equipment_name=${encodeURIComponent(
-            equipment_name
-          )}&type=${encodeURIComponent(type)}&status=${encodeURIComponent(status)}`
+            `/api/department/department-all-type/${this.state.department_id}/3?page=1&short_name=${encodeURIComponent(
+                short_name
+            )}&status=${encodeURIComponent(
+                status
+            )}`
         )
-          .then((res) => {
-            this.setState({
-                equipmentList: res.data.data,
-              totalCount: Number(res.data.count),
-              isLoading: false,
-    
-              equipment_name: equipment_name,
-              status: status,
-              type: type,
-    
-              activePage: 1,
-              remove_search: true,
+            .then((res) => {
+                this.setState({
+                    publicationList: res.data.data,
+                    totalCount: Number(res.data.count),
+                    isLoading: false,
+                    short_name: short_name,
+                    status: status,
+                    activePage: 1,
+                    remove_search: true,
+                });
+            })
+            .catch((err) => {
+                this.setState({
+                    isLoading: false,
+                });
+                showErrorMessage(err, this.props);
             });
-          })
-          .catch((err) => {
-            this.setState({
-              isLoading: false,
-            });
-            showErrorMessage(err, this.props);
-          });
-      };
-    
-      clearSearch = () => {
-        document.getElementById("equipment_name").value = "";
+    };
+
+    clearSearch = () => {
+        document.getElementById("short_name").value = "";
         document.getElementById("status").value = "";
-        document.getElementById("type").value = "";
-    
         this.setState(
-          {
-            type: "",
-            equipment_name: "",
-            status: "",
-    
-            remove_search: false,
-          },
-          () => {
-            this.setState({ activePage: 1 });
-            this.getequipmentList();
-          }
+            {
+                short_name: "",
+                status: "",
+                remove_search: false,
+            },
+            () => {
+                this.setState({ activePage: 1 });
+                this.getPublicationsList();
+            }
         );
-      };
+    };
 
     //change status
-  chageStatus = (id, status) => {
-    API.put(`/api/department/department-all-type/change_status/${this.state.department_id}/2/${id}`, {
-      status: status == 1 ? String(0) : String(1),
-    })
-      .then((res) => {
+    chageStatus = (id, status) => {
+        API.put(`/api/department/department-all-type/change_status/${this.state.department_id}/3/${id}`, {
+            status: status == 1 ? String(0) : String(1),
+        })
+            .then((res) => {
+                swal({
+                    closeOnClickOutside: false,
+                    title: "Success",
+                    text: "Status updated successfully.",
+                    icon: "success",
+                }).then(() => {
+                    this.getPublicationsList(this.state.activePage);
+                });
+            })
+            .catch((err) => {
+                if (err.data.status === 3) {
+                    this.setState({ closeModal: true });
+                    showErrorMessage(err, this.props);
+                }
+            });
+    };
+
+    //delete
+    confirmDelete = (event, id) => {
+        event.preventDefault();
         swal({
-          closeOnClickOutside: false,
-          title: "Success",
-          text: "Status updated successfully.",
-          icon: "success",
-        }).then(() => {
-          this.getequipmentList(this.state.activePage);
+            closeOnClickOutside: false,
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                this.deletePublications(id);
+            }
         });
-      })
-      .catch((err) => {
-        if (err.data.status === 3) {
-          this.setState({ closeModal: true });
-          showErrorMessage(err, this.props);
-        }
-      });
-  };
+    };
 
-  //delete
-  confirmDelete = (event, id) => {
-    event.preventDefault();
-    swal({
-      closeOnClickOutside: false,
-      title: "Are you sure?",
-      text: "Once deleted, you will not be able to recover this!",
-      icon: "warning",
-      buttons: true,
-      dangerMode: true,
-    }).then((willDelete) => {
-      if (willDelete) {
-        this.deleteEquipment(id);
-      }
-    });
-  };
-
-  deleteEquipment = (id) => {
-    API.post(`/api/department/department-all-type/${this.state.department_id}/2/${id}`)
-      .then((res) => {
-        swal({
-          closeOnClickOutside: false,
-          title: "Success",
-          text: "Record deleted successfully.",
-          icon: "success",
-        }).then(() => {
-          this.getequipmentList(this.state.activePage);
-        });
-      })
-      .catch((err) => {
-        if (err.data.status === 3) {
-          this.setState({ closeModal: true });
-          showErrorMessage(err, this.props);
-        }
-      });
-  };
-
+    deletePublications = (id) => {
+        API.post(`/api/department/department-all-type/${this.state.department_id}/3/${id}`)
+            .then((res) => {
+                swal({
+                    closeOnClickOutside: false,
+                    title: "Success",
+                    text: "Record deleted successfully.",
+                    icon: "success",
+                }).then(() => {
+                    this.getPublicationsList(this.state.activePage);
+                });
+            })
+            .catch((err) => {
+                if (err.data.status === 3) {
+                    this.setState({ closeModal: true });
+                    showErrorMessage(err, this.props);
+                }
+            });
+    };
 
     //image modal
     imageModalShowHandler = (e, url) => {
         e.preventDefault();
-        this.setState({ thumbNailModal: true, equipment_image: url });
+        this.setState({ thumbNailModal: true, publication_image: url });
     };
     imageModalCloseHandler = () => {
-        this.setState({ thumbNailModal: false, equipment_image: "" });
+        this.setState({ thumbNailModal: false, publication_image: "" });
     };
     render() {
         return (
@@ -324,7 +281,7 @@ class DepartmentEquipments extends Component {
                         <div className="row">
                             <div className="col-lg-12 col-sm-12 col-xs-12">
                                 <h1>
-                                    Departments Equipments & Instruments
+                                    Department Publication
                                     <small />
                                 </h1>
                                 <input
@@ -337,30 +294,18 @@ class DepartmentEquipments extends Component {
                                     }}
                                     style={{ right: "9px", position: "absolute", top: "13px" }}
                                 />
-
                             </div>
                             <div className="col-lg-12 col-sm-12 col-xs-12  topSearchSection">
+
                                 <form className="form">
+
                                     <div className="">
                                         <input
                                             className="form-control"
-                                            name="equipment_name"
-                                            id="equipment_name"
-                                            placeholder="Filter by Equipment Name"
+                                            name="short_name"
+                                            id="short_name"
+                                            placeholder="Filter by Short Name"
                                         />
-                                    </div>
-
-                                    <div className="">
-                                        <select name="type" id="type" className="form-control">
-                                            <option value="">Select Type</option>
-                                            {this.state.selectType.map((val) => {
-                                                return (
-                                                    <option key={val.value} value={val.value}>
-                                                        {val.label}
-                                                    </option>
-                                                );
-                                            })}
-                                        </select>
                                     </div>
 
                                     <div className="">
@@ -381,7 +326,7 @@ class DepartmentEquipments extends Component {
                                             type="submit"
                                             value="Search"
                                             className="btn btn-warning btn-sm"
-                                            onClick={(e) => this.equipmentSearch(e)}
+                                            onClick={(e) => this.publicationSearch(e)}
                                         />
                                         {this.state.remove_search ? (
                                             <a
@@ -404,51 +349,47 @@ class DepartmentEquipments extends Component {
                             <div className="box-body">
                                 <BootstrapTable
                                     wrapperClasses="table-responsive"
-                                    data={this.state.equipmentList}
+                                    data={this.state.publicationList}
                                 >
                                     <TableHeaderColumn
-                                        dataField="type"
-                                        dataFormat={setType(this)}
-                                    >
-                                        Type
-                                    </TableHeaderColumn>
-                                    <TableHeaderColumn
-                                        dataField="id"
-                                        dataAlign=""
-                                        width="125"
-                                        dataFormat={imageFormatter(this)}
+                                        isKey
+                                        dataField="publication_image"
+                                        dataFormat={setPublicationsImage(this)}
                                         tdStyle={{ wordBreak: "break-word" }}
                                     >
                                         Image
                                     </TableHeaderColumn>
                                     <TableHeaderColumn
-                                        isKey
-                                        dataField="equipment_name"
-                                        dataFormat={setName(this)}
-                                        width="125"
-                                        tdStyle={{ wordBreak: "break-word" }}
-                                    >
-                                        Equipment & Instrument Name
-                                    </TableHeaderColumn>
-
-                                    <TableHeaderColumn
-                                        dataField="equipment_description"
+                                        dataField="publication_code"
                                         dataFormat={__htmlDecode(this)}
                                         tdStyle={{ wordBreak: "break-word" }}
                                     >
-                                        Description
+                                        Code
                                     </TableHeaderColumn>
-
+                                    <TableHeaderColumn
+                                        dataField="short_name"
+                                        dataFormat={__htmlDecode(this)}
+                                        tdStyle={{ wordBreak: "break-word" }}
+                                    >
+                                        Short Name
+                                    </TableHeaderColumn>
+                                    <TableHeaderColumn
+                                        dataField="publication_heading"
+                                        dataFormat={setName(this)}
+                                        tdStyle={{ wordBreak: "break-word" }}
+                                    >
+                                        Publication Heading
+                                    </TableHeaderColumn>
                                     <TableHeaderColumn
                                         dataField="date_posted"
                                         dataFormat={setDate(this)}
                                         tdStyle={{ wordBreak: "break-word" }}
                                     >
-                                        Post Date
+                                        Date Added
                                     </TableHeaderColumn>
                                     <TableHeaderColumn
                                         dataField="status"
-                                        dataFormat={equipmentStatus(this)}
+                                        dataFormat={PublicationsStatus(this)}
                                         tdStyle={{ wordBreak: "break-word" }}
                                     >
                                         Status
@@ -463,7 +404,6 @@ class DepartmentEquipments extends Component {
                                         Action
                                     </TableHeaderColumn>
                                 </BootstrapTable>
-
                                 {this.state.totalCount > 10 ? (
                                     <Row>
                                         <Col md={12}>
@@ -471,7 +411,7 @@ class DepartmentEquipments extends Component {
                                                 <Pagination
                                                     activePage={this.state.activePage}
                                                     itemsCountPerPage={10}
-                                                    totalItemsCount={Number(this.state.totalCount)}
+                                                    totalItemsCount={this.state.totalCount}
                                                     itemClass="nav-item"
                                                     linkClass="nav-link"
                                                     activeClass="active"
@@ -488,15 +428,13 @@ class DepartmentEquipments extends Component {
                                     onHide={() => this.imageModalCloseHandler()}
                                     backdrop="static"
                                 >
-                                    <Modal.Header closeButton>
-                                        Equipment & Instrument Image
-                                    </Modal.Header>
+                                    <Modal.Header closeButton>Publication Image</Modal.Header>
                                     <Modal.Body>
                                         <center>
                                             <div className="imgUi">
                                                 <img
-                                                    src={this.state.equipment_image}
-                                                    alt="Equipment Image"
+                                                    src={this.state.publication_image}
+                                                    alt="Publication Image"
                                                 ></img>
                                             </div>
                                         </center>
@@ -510,4 +448,4 @@ class DepartmentEquipments extends Component {
         );
     }
 }
-export default DepartmentEquipments;
+export default DepartmentPublications;

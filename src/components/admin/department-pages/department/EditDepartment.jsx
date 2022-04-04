@@ -167,39 +167,10 @@ class EditDepartment extends Component {
     formData.append("department_description", values.department_description);
     formData.append("total_lab_technical", values.total_lab_technical);
     formData.append("total_lab_executive", values.total_lab_executive);
-    formData.append(
-      "total_consultant_scientists",
-      values.total_consultant_scientists
-    );
-
-    if (values.doctor_id.length > 1) {
-      for (let i in values.doctor_id) {
-        formData.append("doctors", JSON.stringify(values.doctor_id[i]));
-      }
-    } else {
-      console.log("else");
-      formData.append("doctors[]", JSON.stringify(values.doctor_id));
-    }
-    if (values.equipment_id.length > 1) {
-      for (let i in values.equipment_id) {
-        formData.append("equipments", JSON.stringify(values.equipment_id[i]));
-      }
-    } else {
-      console.log("else");
-      formData.append("equipments[]", JSON.stringify(values.equipment_id));
-    }
-    if (values.publication_id.length > 1) {
-      for (let i in values.publication_id) {
-        formData.append(
-          "publications",
-          JSON.stringify(values.publication_id[i])
-        );
-      }
-    } else {
-      console.log("else");
-      formData.append("publications[]", JSON.stringify(values.publication_id));
-    }
-    // formData.append("publications", values.publications);
+    formData.append("total_consultant_scientists", values.total_consultant_scientists);
+    formData.append("doctors[]", JSON.stringify(values.doctor_id));
+    formData.append("equipments[]", JSON.stringify(values.equipment_id));
+    formData.append("publications[]", JSON.stringify(values.publication_id));
     formData.append("status", String(values.status));
 
     let url = `/api/department/doctor/${this.props.match.params.id}`;
@@ -367,21 +338,8 @@ class EditDepartment extends Component {
         "Please enter total consltant scientists"
       ),
       doctor_id: Yup.array().optional(),
-        // .ensure()
-        // .min(1, "Please add at least one doctor name")
-        // .of(Yup.string().ensure().required("doctor name cannot be empty")),
       equipment_id: Yup.array().optional(),
-        // .ensure()
-        // .min(1, "Please add at least one equipment & instrument")
-        // .of(
-        //   Yup.string()
-        //     .ensure()
-        //     .required("equipment & instrument cannot be empty")
-        // ),
       publication_id: Yup.array().optional(),
-        // .ensure()
-        // .min(1, "Please add at least one publication")
-        // .of(Yup.string().ensure().required("publication cannot be empty")),
       status: Yup.number().required("Please select status"),
     });
 

@@ -55,6 +55,7 @@ function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
 }
 
 const actionFormatter = (refObj) => (cell, row) => {
+  console.log('row',row)
   return (
     <div className="actionStyle">
       <LinkWithTooltip
@@ -88,10 +89,9 @@ const actionFormatter = (refObj) => (cell, row) => {
         <i className="far fa-trash-alt" />
       </LinkWithTooltip>
       <LinkWithTooltip
-        tooltip="Viwe Doctors"
+        tooltip="View Doctors"
         href="#"
         clicked={(e) => refObj.departmentDoctors(e, row)}
-
         id="tooltip-1"
       >
         <i className="fa fa-user-md" />
@@ -99,7 +99,7 @@ const actionFormatter = (refObj) => (cell, row) => {
       <LinkWithTooltip
         tooltip="View Equipments & Instruments"
         href="#"
-        clicked={(e) => refObj.departmentEquipment(e, row)}
+        clicked={(e) => refObj.departmentEquipments(e, row)}
         id="tooltip-1"
       >
         <i className="fa fa-medkit" />
@@ -151,6 +151,7 @@ const setDate = (refOBj) => (cell) => {
   }
 };
 
+
 const initialValues = {
   id: "",
   department_image: "",
@@ -193,10 +194,12 @@ class Departments extends Component {
       search_equipments: "",
       search_publications: "",
       search_status: "",
+      types:[],
     };
   }
   componentDidMount() {
     this.getDepartmentsList();
+    this.getTypes();
     this.setState({
       validationMessage: generateResolutionText('departments'),
       fileValidationMessage: FILE_VALIDATION_MASSAGE,
@@ -228,6 +231,20 @@ class Departments extends Component {
         showErrorMessage(err, this.props);
       });
   };
+
+  getTypes() {
+///api/department/type?page=1&department_type=Publication
+    API.get(`/api/department/type?page=1`)
+      .then((res) => {
+        console.log('res',res.data.data)
+        this.setState({
+          types: res.data.data,
+        }); 
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  }
 
   getdepartmentDetailsbyId = (id) => {
     API.get(`/api/department/${id}`)
@@ -347,6 +364,8 @@ class Departments extends Component {
   };
 
   chageStatus = (cell, status) => {
+  console.log('status',status)
+
     API.put(`/api/department/change_status/${cell}`, {
       status: status == 1 ? String(0) : String(1),
     })
@@ -383,7 +402,6 @@ class Departments extends Component {
 
 
   //for edit/add part
-
   editDepartment(e, id) {
     e.preventDefault();
 
@@ -402,57 +420,41 @@ class Departments extends Component {
   }
 
   //for department doctors
-  departmentDoctors(e, id) {
-    // e.preventDefault();
+  departmentDoctors(e, row) {
+    console.log('this.state.types',this.state.types)
 
-    // API.get(`/api/department/doctor/${id}`)
+    const doctype = this.state.types.doctor;
+    
+    e.preventDefault();
+        this.props.history.push(`/departments/department-doctors/${row.id}/${doctype}`);
+    // API.get(`/api/department/type?page=1`)
     //   .then((res) => {
-    //     this.props.history.push({
-    //       pathname: "/departments/edit-department/" + id,
-    //       state: {
-    //         alldata: res.data.data[0],
-    //       },
-    //     });
+    //     console.log('res',res.data.data)
+        
     //   })
     //   .catch((err) => {
     //     showErrorMessage(err, this.props);
     //   });
   }
 
-  //for department doctors
-  departmentDoctors(e, id) {
-    // e.preventDefault();
+  //for department equipment
+  departmentEquipments(e, row) {
+    e.preventDefault();
+    const equipmenttype = this.state.types.equipment_and_instrument;
+    console.log('equipmenttype',equipmenttype)
 
-    // API.get(`/api/department/doctor/${id}`)
-    //   .then((res) => {
-    //     this.props.history.push({
-    //       pathname: "/departments/edit-department/" + id,
-    //       state: {
-    //         alldata: res.data.data[0],
-    //       },
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     showErrorMessage(err, this.props);
-    //   });
+    this.props.history.push(`/departments/department-equipments/${row.id}/${equipmenttype}`);
   }
 
-  //for department doctors
-  departmentDoctors(e, id) {
-    // e.preventDefault();
+  //for department publication
+  departmentPublications(e, row) {
+    e.preventDefault();
+    console.log('this.state.types',this.state.types)
+    const publicationtype = this.state.types.publication;
+    console.log('publicationtype',publicationtype)
 
-    // API.get(`/api/department/doctor/${id}`)
-    //   .then((res) => {
-    //     this.props.history.push({
-    //       pathname: "/departments/edit-department/" + id,
-    //       state: {
-    //         alldata: res.data.data[0],
-    //       },
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     showErrorMessage(err, this.props);
-    //   });
+    this.props.history.push(`/departments/department-publications/${row.id}/${publicationtype}`);
+
   }
 
   //for department test
