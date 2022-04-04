@@ -36,6 +36,8 @@ import SRL from "../../../assets/images/SRL.png";
 import exclamationImage from "../../../assets/images/exclamation-icon-black.svg";
 import Pagination from "react-js-pagination";
 import { showErrorMessage } from "../../../shared/handle_error";
+import SRL_API from "../../../shared/srl-axios";
+
 import dateFormat from "dateformat";
 import { values } from "methods";
 import { Scheduler } from "../scheduler/Scheduler";
@@ -172,6 +174,8 @@ const initialValues = {
     all_day_check: false,
     repeat: "no_repeat",
   },
+  cityType: "1",
+  cities: "",
 };
 
 class Banner extends Component {
@@ -187,11 +191,25 @@ class Banner extends Component {
       banner_id: 0,
       bannerDetails: [],
       page_name_arr: [],
+      city_state_list: [],
       status_banners: [
         { value: "1", label: "Active" },
         { value: "0", label: "Inactive" },
       ],
+      selectCityType: [
+        { value: "1", label: "Select All Cities" },
+        { value: "2", label: "Select Particular City" },
+      ],
+      selectedCity: {
+        city_name: "MUMBAI",
+        label: "Mumbai (Maharashtra)",
+        state_id: 15,
+        value: 304,
+      },
       screens: [],
+      cityType: "1",
+      value: "",
+      selectedValue: "",
       activePage: 1,
       totalCount: 0,
       itemPerPage: 10,
@@ -201,10 +219,24 @@ class Banner extends Component {
   }
 
   componentDidMount() {
+    this.getCityStateList();
     this.getBannerList();
     this.getPageArr();
     this.fetchScreen();
   }
+
+  getCityStateList = () => {
+    SRL_API.get(`/feed/get-city-state-list`)
+      .then((res) => {
+        console.log("cities", res.data.data);
+        this.setState({
+          city_state_list: res.data.data,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  };
 
   handlePageChange = (pageNumber) => {
     this.setState({ activePage: pageNumber });
@@ -323,6 +355,8 @@ class Banner extends Component {
           bannerDetails: res.data.data[0],
           banner_id: id,
           showModal: true,
+          selectedCity: res.data.data[0].cities,
+          cityType: String(res.data.data[0].city_type),
         });
       })
       .catch((err) => {
@@ -338,6 +372,7 @@ class Banner extends Component {
       banner_file: "",
       message: "",
       fileValidationMessage: "",
+      selectedCity: [],
     });
   };
 
@@ -376,6 +411,19 @@ class Banner extends Component {
     formData.append("banner_subtext", values.banner_subtext);
     formData.append("button_url", values.button_url);
     formData.append("screen_name", values.screen_name);
+    const cities_array = [];
+    if (values.cityType === "2") {
+      values.cities.forEach((city) => {
+        cities_array.push({
+          city_name: city.city_name,
+          city_id: city.value,
+          label: city.label,
+        });
+      });
+    }
+    console.log("citeiesAppend", cities_array);
+    console.log("citeiesAppend", JSON.stringify(cities_array));
+    formData.append("cities", JSON.stringify(cities_array));
     if (this.state.banner_file) {
       if (this.state.banner_file.size > FILE_SIZE) {
         actions.setErrors({ banner_file: FILE_VALIDATION_SIZE_ERROR_MASSAGE });
@@ -708,7 +756,7 @@ class Banner extends Component {
   };
 
   render() {
-    const { bannerDetails } = this.state;
+    const { bannerDetails, city_state_list } = this.state;
     const newInitialValues = Object.assign(initialValues, {
       banner_file: "",
       banner_url: bannerDetails.banner_image ? bannerDetails.banner_image : "",
@@ -717,6 +765,8 @@ class Banner extends Component {
           ? bannerDetails.page_name.toString()
           : "",
       banner_text: bannerDetails.banner_text ? bannerDetails.banner_text : "",
+      city_type: bannerDetails.city_type ? bannerDetails.city_type : "",
+      cities: bannerDetails.cities ? bannerDetails.cities : "",
       banner_subtext: bannerDetails.banner_subtext
         ? bannerDetails.banner_subtext
         : "",
@@ -1247,6 +1297,105 @@ class Banner extends Component {
                                     ) : null}
                                   </div>
                                 </Col>
+                              </Row>
+                              <Row>
+                                <Col xs={12} sm={12} md={12}>
+                                  <div className="form-group">
+                                    <label>
+                                      City Type
+                                      <span className="impField">*</span>
+                                    </label>
+
+                                    <Field
+                                      name="cityType"
+                                      component="select"
+                                      className={`selectArowGray form-control`}
+                                      autoComplete="off"
+                                      // value={values.cityType}
+                                      value={this.state.cityType}
+                                      onChange={(evt) => {
+                                        if (evt) {
+                                          const { value } = evt.target;
+                                          this.setState({
+                                            cityType: value,
+                                            value: "",
+                                            selectedValue: "",
+                                          });
+                                          setFieldValue("cityType", value);
+                                        } else {
+                                          this.setState({
+                                            cityType: "1",
+                                            value: "",
+                                            selectedValue: "",
+                                          });
+                                          setFieldValue("cityType", "1");
+                                        }
+                                      }}
+                                    >
+                                      {/*  <option key="-1" value="">
+																				Select Type
+																			</option> */}
+                                      {this.state.selectCityType.map(
+                                        (cityType, i) => (
+                                          <option
+                                            key={i}
+                                            value={cityType.value}
+                                          >
+                                            {cityType.label}
+                                          </option>
+                                        )
+                                      )}
+                                    </Field>
+                                    {errors.cityType && touched.cityType ? (
+                                      <span className="errorMsg">
+                                        {errors.cityType}
+                                      </span>
+                                    ) : null}
+
+                                    {errors.city ? (
+                                      <p
+                                        className="errorMsg"
+                                        style={{ wordBreak: "break-word" }}
+                                      >
+                                        {errors.city}
+                                      </p>
+                                    ) : null}
+                                  </div>
+                                </Col>
+                                {this.state.cityType == "2" ? (
+                                  <Col xs={12} sm={12} md={12}>
+                                    <div className="form-group">
+                                      <label>
+                                        City
+                                        <span className="impField">*</span>
+                                      </label>
+                                      <Select
+                                        name="cities"
+                                        maxMenuHeight={200}
+                                        isMulti={true}
+                                        isClearable={false}
+                                        isSearchable={true}
+                                        placeholder="Select City"
+                                        options={city_state_list}
+                                        // value={values.cities}
+                                        value={this.state.selectedCity}
+                                        onChange={(evt) => {
+                                          this.setState({
+                                            selectedCity: evt,
+                                            value: "",
+                                            selectedValue: "",
+                                          });
+                                          setFieldValue("cities", evt);
+                                        }}
+                                      />
+                                      {errors.cities && touched.cities ? (
+                                        <p className="errorMsg">
+                                          {errors.cities}
+                                        </p>
+                                      ) : null}
+                                    </div>
+                                  </Col>
+                                ) : null}
                               </Row>
                               <Row>
                                 <Col xs={12} sm={12} md={12}>

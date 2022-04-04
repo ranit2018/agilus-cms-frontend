@@ -3,6 +3,7 @@ import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import { Link } from "react-router-dom";
 import { Row, Col, Tooltip, OverlayTrigger } from "react-bootstrap";
 import API from "../../../shared/admin-axios";
+import SRL_API from "../../../shared/srl-axios";
 import swal from "sweetalert";
 import { showErrorMessage } from "../../../shared/handle_error";
 import Pagination from "react-js-pagination";
@@ -237,11 +238,44 @@ class Accordion extends Component {
       });
   };
 
-  openProductDetailsPage = (e, row) => {
+  getProductDataByCode = (search_name) => {
+    return new Promise((resolve, reject) => {
+      let payload = {
+        search_name: search_name.toUpperCase(),
+      };
+      SRL_API.post(`/feed/code-search`, payload)
+      .then((res) => {
+        if (res.data && res.data.data && res.data.data.length > 0) {
+          const searchDetails = res.data.data[0];
+          resolve(searchDetails);
+        }else{
+          resolve(null)
+        } 
+      })
+      .catch((error) => {
+        console.log(error);
+        resolve(null);
+      });
+    })
+  }
+
+  openProductDetailsPage = async(e, row) => {
     e.preventDefault();
-    const productType = row.product_type === 'T' ? 'test' : 'package'; 
-    const productCity = row.product_city ? row.product_city : DEFAULT_CITY;
-    window.open(`${process.env.REACT_APP_SRL}/${productType}/${stringToSlug(productCity)}/${row.product_id}/${stringToSlug(row.product_name)}`,'_blank')
+    let product_type = '';
+    if(row.product_type === 'T') product_type = 'test';
+    else if(row.product_type === 'P') product_type = 'package';
+    let product_city = row.product_city;
+    if(!product_city || !product_type){
+      const product_data = await this.getProductDataByCode(row.product_code);
+      if(product_data){
+        product_city = product_data.CITY_NM;
+        product_type = product_data.PROFILE_FLAG === 'T' ? 'test' : 'package';
+      }else{
+        product_type = 'test'; 
+        product_city = DEFAULT_CITY;
+      }
+    }
+    window.open(`${process.env.REACT_APP_SRL}/${product_type}/${stringToSlug(product_city)}/${row.product_id}/${stringToSlug(row.product_name)}`,'_blank')
   }
 
   componentDidMount() {

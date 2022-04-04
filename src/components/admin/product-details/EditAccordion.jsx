@@ -10,7 +10,7 @@ import swal from "sweetalert";
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { showErrorMessage } from "../../../shared/handle_error";
 import whitelogo from "../../../assets/images/drreddylogo_white.png";
-import { htmlDecode } from "../../../shared/helper";
+import { htmlDecode, DEFAULT_CITY } from "../../../shared/helper";
 import Layout from "../layout/Layout";
 import SRL_API from "../../../shared/srl-axios";
 import ReactHtmlParser from "react-html-parser";
@@ -531,7 +531,26 @@ class AddAccordion extends Component {
     });
   };
 
-  handleSubmitEvent = (values, actions) => {
+  getProductDataByCode = (search_name) => {
+    return new Promise((resolve, reject) => {
+      let payload = {
+        search_name: search_name.toUpperCase(),
+      };
+      SRL_API.post(`/feed/code-search`, payload)
+      .then((res) => {
+        if (res.data && res.data.data && res.data.data.length > 0) {
+          const searchDetails = res.data.data[0];
+          resolve(searchDetails);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        resolve(null);
+      });
+    })
+  }
+
+  handleSubmitEvent = async (values, actions) => {
     const { selectedValue, NewAccordionDetails } = this.state;
 
     let swiData = this.state.selProducts;
@@ -586,13 +605,25 @@ class AddAccordion extends Component {
             swiData[i].type === "1"
               ? swiData[i].newContent
               : swiData[i].newDescription,
-          type: swiData[i].type,
+          type: swiData[i].type, 
         });
+      }
+
+      let product_city = NewAccordionDetails.product_city;
+      let product_type = NewAccordionDetails.product_type;
+      if(!product_city || !product_type){
+        const product_data = await this.getProductDataByCode(NewAccordionDetails.product_code);
+        if(product_data){
+          product_city = product_data.CITY_NM;
+          product_type = product_data.PROFILE_FLAG;
+        }
       }
 
       let post_data_product = {
         product_name: NewAccordionDetails.product_name,
         product_code: NewAccordionDetails.product_code,
+        product_type: product_type,
+        product_city: product_city, 
         product_id: NewAccordionDetails.product_id,
       };
 
