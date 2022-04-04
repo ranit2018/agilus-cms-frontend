@@ -730,6 +730,15 @@ class Banner extends Component {
         bannerDetails.status || bannerDetails.status === 0
           ? bannerDetails.status.toString()
           : "",
+      isSchedule: bannerDetails.is_schedule ?? 0,
+      schedulerData: {
+        start_date: bannerDetails.start_date ?? "",
+        end_date: bannerDetails.end_date ?? "",
+        start_time: bannerDetails.start_time ?? "",
+        end_time: bannerDetails.end_time ?? "",
+        all_day_check: bannerDetails.all_day_check ?? 0,
+        repeat: bannerDetails.repeat ?? 0,
+      },
     });
 
     let validateStopFlag = {};
@@ -794,7 +803,7 @@ class Banner extends Component {
         button_text: Yup.string().optional(),
         button_url: Yup.string().optional(),
         screen_name: Yup.string().optional(),
-        isSchedule: Yup.boolean().required(),
+        isSchedule: Yup.number().integer().min(0).max(1),
         schedulerData: Yup.object().shape({
           start_date: Yup.string().required(),
           end_date: Yup.string().required(),
@@ -807,8 +816,8 @@ class Banner extends Component {
           end_time: Yup.string().when("start_time", (start_time, schema) => {
             return start_time ? schema.required() : schema;
           }),
-          all_day_check: Yup.boolean().required(),
-          repeat: Yup.string().required(),
+          all_day_check: Yup.number().integer().min(0).max(1),
+          repeat: Yup.number().integer().min(0).max(4),
         }),
       });
     }
