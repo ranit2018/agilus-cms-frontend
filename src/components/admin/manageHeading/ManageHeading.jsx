@@ -98,6 +98,10 @@ const actionFormatter = (refObj) => (cell, row) => {
   );
 };
 
+const handleScheduleData = (refObj) => (cell, row) => {
+  return <p>{row.is_schedule ? "true" : "false"}</p>;
+};
+
 class ManageHeading extends Component {
   constructor(props) {
     super(props);
@@ -384,6 +388,7 @@ class ManageHeading extends Component {
         repeat: Yup.number().integer().min(0).max(4),
       }),
     });
+
     return (
       <Layout {...this.props}>
         <div className="content-wrapper">
@@ -492,6 +497,12 @@ class ManageHeading extends Component {
                     dataFormat={actionFormatter(this)}
                   >
                     Action
+                  </TableHeaderColumn>
+                  <TableHeaderColumn
+                    dataField="is_schedule"
+                    dataFormat={handleScheduleData(this)}
+                  >
+                    Scheduled
                   </TableHeaderColumn>
                 </BootstrapTable>
 

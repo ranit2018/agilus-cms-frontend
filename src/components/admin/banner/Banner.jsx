@@ -106,6 +106,10 @@ const actionFormatter = (refObj) => (cell, row) => {
   );
 };
 
+const handleScheduleData = (refObj) => (cell, row) => {
+  return <p>{row.is_schedule ? "true" : "false"}</p>;
+};
+
 const __htmlDecode = (refObj) => (cell) => {
   return htmlDecode(cell);
 };
@@ -1048,6 +1052,13 @@ class Banner extends Component {
                     tdStyle={{ wordBreak: "break-word" }}
                   >
                     Action
+                  </TableHeaderColumn>
+                  <TableHeaderColumn
+                    dataField="is_schedule"
+                    dataFormat={handleScheduleData(this)}
+                    tdStyle={{ wordBreak: "break-word" }}
+                  >
+                    Scheduled
                   </TableHeaderColumn>
                 </BootstrapTable>
 
