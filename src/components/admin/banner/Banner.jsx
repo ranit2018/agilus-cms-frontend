@@ -158,8 +158,8 @@ const schedulerValues = {
   end_date: "",
   start_time: "",
   end_time: "",
-  all_day_check: false,
-  repeat: "no_repeat",
+  all_day_check: 0,
+  repeat: 0,
 };
 
 const initialValues = {
@@ -169,14 +169,14 @@ const initialValues = {
   button_text: "",
   button_url: "",
   status: "",
-  isSchedule: false,
+  isSchedule: 0,
   schedulerData: {
     start_date: "",
     end_date: "",
     start_time: "",
     end_time: "",
-    all_day_check: false,
-    repeat: "no_repeat",
+    all_day_check: 0,
+    repeat: 0,
   },
   cityType: "1",
   cities: "",
@@ -219,6 +219,7 @@ class Banner extends Component {
       itemPerPage: 10,
       thumbNailModal: false,
       message: "",
+      isHeaderSchedule: 0,
     };
   }
 
@@ -264,6 +265,7 @@ class Banner extends Component {
           banner: res.data.data,
           banner_count: res.data.count,
           isLoading: false,
+          isSchedule: res.data.data[0].is_schedule,
           // page_name: page_name,
           // banner_name: banner_name,
           // banner_status: banner_status
@@ -824,21 +826,30 @@ class Banner extends Component {
         button_url: Yup.string().optional(),
         screen_name: Yup.string().optional(),
         isSchedule: Yup.boolean().required(),
-        /* schedulerData: Yup.object().shape({
-          start_date: Yup.string().required(),
-          end_date: Yup.string().required(),
-          start_time: Yup.string().when(
-            "all_day_check",
-            (all_day_check, schema) => {
-              return all_day_check ? schema : schema.required();
-            }
-          ),
+        schedulerData: Yup.object({
+          start_date: Yup.string().when("isSchedule", (isSchedule, schema) => {
+            return this.state.isHeaderSchedule
+              ? schema.required()
+              : schema.optional();
+          }),
+          end_date: Yup.string().when("isSchedule", (isSchedule, schema) => {
+            return this.state.isHeaderSchedule
+              ? schema.required()
+              : schema.optional();
+          }),
+          start_time: Yup.string().when(["all_day_check", "repeat"], {
+            is: (all_day_check, repeat) => !all_day_check && repeat,
+            then: Yup.string().required(),
+            otherwise: Yup.string().optional(),
+          }),
           end_time: Yup.string().when("start_time", (start_time, schema) => {
             return start_time ? schema.required() : schema;
           }),
-          all_day_check: Yup.boolean().required(),
-          repeat: Yup.string().required(),
-        }), */
+          all_day_check: Yup.number().integer().min(0).max(1),
+          repeat: Yup.number().integer().min(0).max(4),
+        }).when("isSchedule", (isSchedule, schema) => {
+          return isSchedule ? schema.required() : schema;
+        }),
       });
     } else {
       validateStopFlag = Yup.object().shape({
@@ -862,21 +873,30 @@ class Banner extends Component {
         button_url: Yup.string().optional(),
         screen_name: Yup.string().optional(),
         isSchedule: Yup.number().integer().min(0).max(1),
-        /* schedulerData: Yup.object().shape({
-          start_date: Yup.string().required(),
-          end_date: Yup.string().required(),
-          start_time: Yup.string().when(
-            "all_day_check",
-            (all_day_check, schema) => {
-              return all_day_check ? schema : schema.required();
-            }
-          ),
+        schedulerData: Yup.object({
+          start_date: Yup.string().when("isSchedule", (isSchedule, schema) => {
+            return this.state.isHeaderSchedule
+              ? schema.required()
+              : schema.optional();
+          }),
+          end_date: Yup.string().when("isSchedule", (isSchedule, schema) => {
+            return this.state.isHeaderSchedule
+              ? schema.required()
+              : schema.optional();
+          }),
+          start_time: Yup.string().when(["all_day_check", "repeat"], {
+            is: (all_day_check, repeat) => !all_day_check && repeat,
+            then: Yup.string().required(),
+            otherwise: Yup.string().optional(),
+          }),
           end_time: Yup.string().when("start_time", (start_time, schema) => {
             return start_time ? schema.required() : schema;
           }),
           all_day_check: Yup.number().integer().min(0).max(1),
           repeat: Yup.number().integer().min(0).max(4),
-        }), */
+        }).when("isSchedule", (isSchedule, schema) => {
+          return isSchedule ? schema.required() : schema;
+        }),
       });
     }
 
@@ -1107,7 +1127,7 @@ class Banner extends Component {
                       setErrors,
                       setValues,
                     }) => {
-                      console.log(errors);
+                      console.log(values, errors);
                       return (
                         <Form>
                           {this.state.showModalLoader === true ? (
@@ -1456,7 +1476,10 @@ class Banner extends Component {
                                       isSchedule,
                                       ...data
                                     }) => {
-                                      console.log(isSchedule);
+                                      console.log(data);
+                                      this.setState({
+                                        isHeaderSchedule: isSchedule,
+                                      });
                                       if (isSchedule) {
                                         setValues({
                                           ...values,

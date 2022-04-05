@@ -376,28 +376,28 @@ class ManageHeading extends Component {
           ? schema.required("Please enter the Title")
           : schema.default("");
       }),
-      schedulerData: Yup.object(
-        /* )
-        .shape( */ {
-          start_date: Yup.string().when("isSchedule", (isSchedule, schema) => {
-            return isSchedule ? schema.required() : schema.optional();
-          }),
-          end_date: Yup.string().when("isSchedule", (isSchedule, schema) => {
-            console.log(this.state.isHeaderSchedule, " 🔥");
-            return isSchedule ? schema.required() : schema.optional();
-          }),
-          start_time: Yup.string().when(["all_day_check", "repeat"], {
-            is: (all_day_check, repeat) => !all_day_check && repeat,
-            then: Yup.string().required(),
-            otherwise: Yup.string().optional(),
-          }),
-          end_time: Yup.string().when("start_time", (start_time, schema) => {
-            return start_time ? schema.required() : schema;
-          }),
-          all_day_check: Yup.number().integer().min(0).max(1),
-          repeat: Yup.number().integer().min(0).max(4),
-        }
-      ).when("isSchedule", (isSchedule, schema) => {
+      schedulerData: Yup.object({
+        start_date: Yup.string().when("isSchedule", (isSchedule, schema) => {
+          return this.state.isHeaderSchedule
+            ? schema.required()
+            : schema.optional();
+        }),
+        end_date: Yup.string().when("isSchedule", (isSchedule, schema) => {
+          return this.state.isHeaderSchedule
+            ? schema.required()
+            : schema.optional();
+        }),
+        start_time: Yup.string().when(["all_day_check", "repeat"], {
+          is: (all_day_check, repeat) => !all_day_check && repeat,
+          then: Yup.string().required(),
+          otherwise: Yup.string().optional(),
+        }),
+        end_time: Yup.string().when("start_time", (start_time, schema) => {
+          return start_time ? schema.required() : schema;
+        }),
+        all_day_check: Yup.number().integer().min(0).max(1),
+        repeat: Yup.number().integer().min(0).max(4),
+      }).when("isSchedule", (isSchedule, schema) => {
         return isSchedule ? schema.required() : schema;
       }),
     });
