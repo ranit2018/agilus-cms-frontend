@@ -55,7 +55,6 @@ function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
 }
 
 const actionFormatter = (refObj) => (cell, row) => {
-  console.log('row',row)
   return (
     <div className="actionStyle">
       <LinkWithTooltip
@@ -151,7 +150,6 @@ const setDate = (refOBj) => (cell) => {
   }
 };
 
-
 const initialValues = {
   id: "",
   department_image: "",
@@ -194,14 +192,14 @@ class Departments extends Component {
       search_equipments: "",
       search_publications: "",
       search_status: "",
-      types:[],
+      types: [],
     };
   }
   componentDidMount() {
     this.getDepartmentsList();
     this.getTypes();
     this.setState({
-      validationMessage: generateResolutionText('departments'),
+      validationMessage: generateResolutionText("departments"),
       fileValidationMessage: FILE_VALIDATION_MASSAGE,
     });
   }
@@ -233,13 +231,12 @@ class Departments extends Component {
   };
 
   getTypes() {
-///api/department/type?page=1&department_type=Publication
+    ///api/department/type?page=1&department_type=Publication
     API.get(`/api/department/type?page=1`)
       .then((res) => {
-        console.log('res',res.data.data)
         this.setState({
           types: res.data.data,
-        }); 
+        });
       })
       .catch((err) => {
         showErrorMessage(err, this.props);
@@ -270,10 +267,7 @@ class Departments extends Component {
     ).value;
 
     const search_status = document.getElementById("search_status").value;
-    if (
-      search_department_name === "" &&
-      search_status === ""
-    ) {
+    if (search_department_name === "" && search_status === "") {
       return false;
     }
 
@@ -364,8 +358,6 @@ class Departments extends Component {
   };
 
   chageStatus = (cell, status) => {
-  console.log('status',status)
-
     API.put(`/api/department/change_status/${cell}`, {
       status: status == 1 ? String(0) : String(1),
     })
@@ -400,7 +392,6 @@ class Departments extends Component {
     this.getDepartmentsList(pageNumber > 0 ? pageNumber : 1);
   };
 
-
   //for edit/add part
   editDepartment(e, id) {
     e.preventDefault();
@@ -421,46 +412,36 @@ class Departments extends Component {
 
   //for department doctors
   departmentDoctors(e, row) {
-    console.log('this.state.types',this.state.types)
-
-    const doctype = this.state.types.doctor;
-    
     e.preventDefault();
-        this.props.history.push(`/departments/department-doctors/${row.id}/${doctype}`);
-    // API.get(`/api/department/type?page=1`)
-    //   .then((res) => {
-    //     console.log('res',res.data.data)
-        
-    //   })
-    //   .catch((err) => {
-    //     showErrorMessage(err, this.props);
-    //   });
+    const doctype = this.state.types.doctor;
+    this.props.history.push(
+      `/departments/department-doctors/${row.id}/${doctype}`
+    );
   }
 
   //for department equipment
   departmentEquipments(e, row) {
     e.preventDefault();
     const equipmenttype = this.state.types.equipment_and_instrument;
-    console.log('equipmenttype',equipmenttype)
 
-    this.props.history.push(`/departments/department-equipments/${row.id}/${equipmenttype}`);
+    this.props.history.push(
+      `/departments/department-equipments/${row.id}/${equipmenttype}`
+    );
   }
 
   //for department publication
   departmentPublications(e, row) {
     e.preventDefault();
-    console.log('this.state.types',this.state.types)
     const publicationtype = this.state.types.publication;
-    console.log('publicationtype',publicationtype)
 
-    this.props.history.push(`/departments/department-publications/${row.id}/${publicationtype}`);
-
+    this.props.history.push(
+      `/departments/department-publications/${row.id}/${publicationtype}`
+    );
   }
 
   //for department test
   departmentTests(e, id) {
     // e.preventDefault();
-
     // API.get(`/api/department/doctor/${id}`)
     //   .then((res) => {
     //     this.props.history.push({
@@ -524,7 +505,6 @@ class Departments extends Component {
               </div>
 
               <div className="col-lg-12 col-sm-12 col-xs-12  topSearchSection">
-
                 <div className="">
                   <button
                     type="button"
@@ -617,19 +597,19 @@ class Departments extends Component {
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="total_lab_technical"
-                  // dataFormat={__htmlDecode(this)}
+                    // dataFormat={__htmlDecode(this)}
                   >
                     Total Technical Lab
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="total_lab_executive"
-                  // dataFormat={__htmlDecode(this)}
+                    // dataFormat={__htmlDecode(this)}
                   >
                     Total Executive Labs
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="total_consultant_scientists"
-                  // dataFormat={__htmlDecode(this)}
+                    // dataFormat={__htmlDecode(this)}
                   >
                     Total Consultant Scientists
                   </TableHeaderColumn>
@@ -684,10 +664,7 @@ class Departments extends Component {
                   <Modal.Body>
                     <center>
                       <div className="imgUi">
-                        <img
-                          src={this.state.url}
-                          alt="department"
-                        ></img>
+                        <img src={this.state.url} alt="department"></img>
                       </div>
                     </center>
                   </Modal.Body>

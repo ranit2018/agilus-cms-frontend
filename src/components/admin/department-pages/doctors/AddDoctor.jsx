@@ -7,7 +7,7 @@ import API from "../../../../shared/admin-axios";
 import * as Yup from "yup";
 import swal from "sweetalert";
 import { showErrorMessage } from "../../../../shared/handle_error";
-import TinyMCE from 'react-tinymce';
+import TinyMCE from "react-tinymce";
 
 import {
   htmlDecode,
@@ -89,7 +89,6 @@ class AddDoctor extends Component {
     //   date_posted: new Date().toLocaleString(),
     //   status: String(values.status),
     // };
-    // console.log("postdata", postdata);
 
     let formData = new FormData();
 
@@ -305,18 +304,23 @@ class AddDoctor extends Component {
                                   <span className="impField">*</span>
                                 </label>
 
-                                <input id="my-file" type="file" name="my-file" style={{ display: "none" }} />
+                                <input
+                                  id="my-file"
+                                  type="file"
+                                  name="my-file"
+                                  style={{ display: "none" }}
+                                />
                                 <TinyMCE
                                   name="education"
                                   config={{
                                     menubar: false,
                                     branding: false,
-                                    selector: 'textarea',
+                                    selector: "textarea",
                                     height: 350,
                                     plugins: [
-                                      'advlist autolink lists link image charmap print preview anchor',
-                                      'searchreplace wordcount visualblocks code fullscreen',
-                                      'insertdatetime media table contextmenu paste code'
+                                      "advlist autolink lists link image charmap print preview anchor",
+                                      "searchreplace wordcount visualblocks code fullscreen",
+                                      "insertdatetime media table contextmenu paste code",
                                     ],
                                     // plugins:
                                     //     "link table hr visualblocks code placeholder lists autoresize textcolor",
@@ -324,19 +328,24 @@ class AddDoctor extends Component {
                                       "Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats",
                                     toolbar:
                                       "bold italic strikethrough superscript subscript | forecolor backcolor | removeformat underline | link unlink | alignleft aligncenter alignright alignjustify | numlist bullist | blockquote table  hr | visualblocks code | fontselect | link image",
-                                    content_css: '//www.tinymce.com/css/codepen.min.css',
-                                    file_browser_callback_types: 'image',
-                                    file_picker_callback: function (callback, value, meta) {
-                                      if (meta.filetype == 'image') {
-                                        var input = document.getElementById('my-file');
+                                    content_css:
+                                      "//www.tinymce.com/css/codepen.min.css",
+                                    file_browser_callback_types: "image",
+                                    file_picker_callback: function (
+                                      callback,
+                                      value,
+                                      meta
+                                    ) {
+                                      if (meta.filetype == "image") {
+                                        var input =
+                                          document.getElementById("my-file");
                                         input.click();
                                         input.onchange = function () {
                                           var file = input.files[0];
                                           var reader = new FileReader();
                                           reader.onload = function (e) {
-                                            console.log('name', e.target.result);
                                             callback(e.target.result, {
-                                              alt: file.name
+                                              alt: file.name,
                                             });
                                           };
                                           reader.readAsDataURL(file);
@@ -344,13 +353,13 @@ class AddDoctor extends Component {
                                       }
                                     },
                                     paste_data_images: true,
-
                                   }}
-
                                   onChange={(e) => {
-                                    setFieldValue("education", e.target.getContent())
+                                    setFieldValue(
+                                      "education",
+                                      e.target.getContent()
+                                    );
                                   }}
-
                                 />
 
                                 {errors.education && touched.education ? (
@@ -369,18 +378,23 @@ class AddDoctor extends Component {
                                   <span className="impField">*</span>
                                 </label>
 
-                                <input id="my-file" type="file" name="my-file" style={{ display: "none" }} />
+                                <input
+                                  id="my-file"
+                                  type="file"
+                                  name="my-file"
+                                  style={{ display: "none" }}
+                                />
                                 <TinyMCE
                                   name="expertise"
                                   config={{
                                     menubar: false,
                                     branding: false,
-                                    selector: 'textarea',
+                                    selector: "textarea",
                                     height: 350,
                                     plugins: [
-                                      'advlist autolink lists link image charmap print preview anchor',
-                                      'searchreplace wordcount visualblocks code fullscreen',
-                                      'insertdatetime media table contextmenu paste code'
+                                      "advlist autolink lists link image charmap print preview anchor",
+                                      "searchreplace wordcount visualblocks code fullscreen",
+                                      "insertdatetime media table contextmenu paste code",
                                     ],
                                     // plugins:
                                     //     "link table hr visualblocks code placeholder lists autoresize textcolor",
@@ -388,19 +402,24 @@ class AddDoctor extends Component {
                                       "Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats",
                                     toolbar:
                                       "bold italic strikethrough superscript subscript | forecolor backcolor | removeformat underline | link unlink | alignleft aligncenter alignright alignjustify | numlist bullist | blockquote table  hr | visualblocks code | fontselect | link image",
-                                    content_css: '//www.tinymce.com/css/codepen.min.css',
-                                    file_browser_callback_types: 'image',
-                                    file_picker_callback: function (callback, value, meta) {
-                                      if (meta.filetype == 'image') {
-                                        var input = document.getElementById('my-file');
+                                    content_css:
+                                      "//www.tinymce.com/css/codepen.min.css",
+                                    file_browser_callback_types: "image",
+                                    file_picker_callback: function (
+                                      callback,
+                                      value,
+                                      meta
+                                    ) {
+                                      if (meta.filetype == "image") {
+                                        var input =
+                                          document.getElementById("my-file");
                                         input.click();
                                         input.onchange = function () {
                                           var file = input.files[0];
                                           var reader = new FileReader();
                                           reader.onload = function (e) {
-                                            console.log('name', e.target.result);
                                             callback(e.target.result, {
-                                              alt: file.name
+                                              alt: file.name,
                                             });
                                           };
                                           reader.readAsDataURL(file);
@@ -408,13 +427,13 @@ class AddDoctor extends Component {
                                       }
                                     },
                                     paste_data_images: true,
-
                                   }}
-
                                   onChange={(e) => {
-                                    setFieldValue("expertise", e.target.getContent())
+                                    setFieldValue(
+                                      "expertise",
+                                      e.target.getContent()
+                                    );
                                   }}
-
                                 />
 
                                 {errors.expertise && touched.expertise ? (
@@ -459,8 +478,9 @@ class AddDoctor extends Component {
                           </Row>
                         </div>
                         <button
-                          className={`btn btn-success btn-sm ${isValid ? "btn-custom-green" : "btn-disable"
-                            } m-r-10`}
+                          className={`btn btn-success btn-sm ${
+                            isValid ? "btn-custom-green" : "btn-disable"
+                          } m-r-10`}
                           type="submit"
                           disabled={
                             isValid ? (isSubmitting ? true : false) : true
@@ -471,8 +491,8 @@ class AddDoctor extends Component {
                               ? "Updating..."
                               : "Update"
                             : isSubmitting
-                              ? "Submitting..."
-                              : "Submit"}
+                            ? "Submitting..."
+                            : "Submit"}
                         </button>
                       </Form>
                     );

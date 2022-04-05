@@ -420,7 +420,6 @@ class Equipment extends Component {
   //image modal
   imageModalShowHandler = (e, url) => {
     e.preventDefault();
-    console.log("url", url);
     this.setState({ thumbNailModal: true, equipment_image: url });
   };
   imageModalCloseHandler = () => {

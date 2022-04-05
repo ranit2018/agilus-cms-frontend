@@ -95,7 +95,6 @@ class EditDepartment extends Component {
     if (value.length == 3) {
       API.get(`/api/department/doctor-search-list?doctor_name=${value}`)
         .then((res) => {
-          console.log("res.data.data", res.data.data);
           this.setState({
             doctors_arr: res.data.data,
             isLoading: false,
@@ -147,19 +146,19 @@ class EditDepartment extends Component {
   };
 
   handleSubmitEvent = (values, actions) => {
-    let postdata = {
-      department_name: values.department_name,
-      department_description: values.department_description,
-      total_lab_technical: values.total_lab_technical,
-      total_lab_executive: values.total_lab_executive,
-      doctor_id: values.doctor_id,
-      equipment_id: values.equipment_id,
-      publication_id: values.publication_id,
-      department_image: values.department_image,
-      date_posted: new Date().toLocaleString(),
-      status: String(values.status),
-    };
-    console.log("postdata", postdata);
+    // let postdata = {
+    //   department_name: values.department_name,
+    //   department_description: values.department_description,
+    //   total_lab_technical: values.total_lab_technical,
+    //   total_lab_executive: values.total_lab_executive,
+    //   doctor_id: values.doctor_id,
+    //   equipment_id: values.equipment_id,
+    //   publication_id: values.publication_id,
+    //   department_image: values.department_image,
+    //   date_posted: new Date().toLocaleString(),
+    //   status: String(values.status),
+    // };
+    // console.log("postdata", postdata);
 
     let formData = new FormData();
 
@@ -167,7 +166,10 @@ class EditDepartment extends Component {
     formData.append("department_description", values.department_description);
     formData.append("total_lab_technical", values.total_lab_technical);
     formData.append("total_lab_executive", values.total_lab_executive);
-    formData.append("total_consultant_scientists", values.total_consultant_scientists);
+    formData.append(
+      "total_consultant_scientists",
+      values.total_consultant_scientists
+    );
     formData.append("doctors[]", JSON.stringify(values.doctor_id));
     formData.append("equipments[]", JSON.stringify(values.equipment_id));
     formData.append("publications[]", JSON.stringify(values.publication_id));
@@ -283,7 +285,7 @@ class EditDepartment extends Component {
       id: alldata.id ? alldata.id : "",
       department_image: "",
       department_name: htmlDecode(alldata.department_name),
-      department_description:  htmlDecode(alldata.department_description),
+      department_description: htmlDecode(alldata.department_description),
       total_lab_technical: alldata.total_lab_technical
         ? alldata.total_lab_technical
         : "",
@@ -457,10 +459,6 @@ class EditDepartment extends Component {
                                           var file = input.files[0];
                                           var reader = new FileReader();
                                           reader.onload = function (e) {
-                                            console.log(
-                                              "name",
-                                              e.target.result
-                                            );
                                             callback(e.target.result, {
                                               alt: file.name,
                                             });
@@ -565,20 +563,17 @@ class EditDepartment extends Component {
                           <Row>
                             <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
-                                <label>
-                                  Doctor
-                                </label>
+                                <label>Doctor</label>
                                 <Select
                                   isMulti
                                   name="doctor_id"
                                   options={this.state.doctors_arr}
                                   getOptionValue={(x) => x.id}
                                   getOptionLabel={(x) => x.doctor_name}
-                                  noOptionsMessage={() => 'No Results Found'}
+                                  noOptionsMessage={() => "No Results Found"}
                                   className="basic-multi-select"
                                   classNamePrefix="select"
                                   onInputChange={(value) => {
-                                    console.log("value", value);
                                     this.getDoctorArr(value);
                                   }}
                                   onChange={(evt) => {
@@ -609,9 +604,7 @@ class EditDepartment extends Component {
                           <Row>
                             <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
-                                <label>
-                                  Equipment & Instrument
-                                </label>
+                                <label>Equipment & Instrument</label>
                                 <Select
                                   isMulti
                                   name="equipment_id"
@@ -620,13 +613,11 @@ class EditDepartment extends Component {
                                   classNamePrefix="select"
                                   getOptionValue={(x) => x.id}
                                   getOptionLabel={(x) => x.equipment_name}
-                                  noOptionsMessage={() => 'No Results Found'}
+                                  noOptionsMessage={() => "No Results Found"}
                                   onInputChange={(value) => {
-                                    console.log("value", value);
                                     this.getEquipmentArr(value);
                                   }}
                                   onChange={(evt) => {
-                                    console.log("evt", evt);
                                     if (evt === null) {
                                       setFieldValue("equipment_id", []);
                                     } else {
@@ -654,25 +645,20 @@ class EditDepartment extends Component {
                           <Row>
                             <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
-                                <label>
-                                  Publication
-                                </label>
+                                <label>Publication</label>
                                 <Select
                                   isMulti
                                   name="publication_id"
                                   options={this.state.publications_arr}
                                   getOptionValue={(x) => x.id}
                                   getOptionLabel={(x) => x.short_name}
-                                  noOptionsMessage={() => 'No Results Found'}
+                                  noOptionsMessage={() => "No Results Found"}
                                   className="basic-multi-select"
                                   classNamePrefix="select"
                                   onInputChange={(value) => {
-                                    console.log("value", value);
                                     this.getPublicationArr(value);
                                   }}
                                   onChange={(evt) => {
-                                    console.log("evt", evt);
-
                                     if (evt === null) {
                                       setFieldValue("publication_id", []);
                                     } else {

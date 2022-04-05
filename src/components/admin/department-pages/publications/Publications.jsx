@@ -3,13 +3,7 @@
 /* eslint-disable jsx-a11y/img-redundant-alt */
 import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
-import {
-  Row,
-  Col,
-  Tooltip,
-  OverlayTrigger,
-  Modal,
-} from "react-bootstrap";
+import { Row, Col, Tooltip, OverlayTrigger, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import API from "../../../../shared/admin-axios";
 import swal from "sweetalert";
@@ -28,7 +22,6 @@ import {
   FILE_VALIDATION_TYPE_ERROR_MASSAGE,
 } from "../../../../shared/helper";
 import Switch from "react-switch";
-
 
 import Pagination from "react-js-pagination";
 import { showErrorMessage } from "../../../../shared/handle_error";
@@ -127,7 +120,6 @@ const setDate = (refOBj) => (cell) => {
   }
 };
 
-
 class Publications extends Component {
   constructor(props) {
     super(props);
@@ -167,16 +159,18 @@ class Publications extends Component {
   };
 
   getPublicationsList = (page = 1) => {
-    var publication_heading = document.getElementById("publication_heading").value;
+    var publication_heading = document.getElementById(
+      "publication_heading"
+    ).value;
     var short_name = document.getElementById("short_name").value;
     let status = document.getElementById("status").value;
-    API.get(`/api/department/publication?page=${page}&publication_heading=${encodeURIComponent(
-      publication_heading
-    )}&short_name=${encodeURIComponent(
-      short_name
-    )}&status=${encodeURIComponent(
-      status
-    )}`)
+    API.get(
+      `/api/department/publication?page=${page}&publication_heading=${encodeURIComponent(
+        publication_heading
+      )}&short_name=${encodeURIComponent(
+        short_name
+      )}&status=${encodeURIComponent(status)}`
+    )
       .then((res) => {
         this.setState({
           publicationDetails: res.data.data,
@@ -194,14 +188,12 @@ class Publications extends Component {
 
   publicationSearch = (e) => {
     e.preventDefault();
-    var publication_heading = document.getElementById("publication_heading").value;
+    var publication_heading = document.getElementById(
+      "publication_heading"
+    ).value;
     var short_name = document.getElementById("short_name").value;
     let status = document.getElementById("status").value;
-    if (
-      publication_heading === "" &&
-      short_name === "" &&
-      status === ""
-    ) {
+    if (publication_heading === "" && short_name === "" && status === "") {
       return false;
     }
     API.get(
@@ -209,9 +201,7 @@ class Publications extends Component {
         publication_heading
       )}&short_name=${encodeURIComponent(
         short_name
-      )}&status=${encodeURIComponent(
-        status
-      )}`
+      )}&status=${encodeURIComponent(status)}`
     )
       .then((res) => {
         this.setState({
@@ -323,15 +313,12 @@ class Publications extends Component {
     event.preventDefault();
   };
 
-
   //for edit/add part
   editPublication(e, id) {
     e.preventDefault();
 
     API.get(`/api/department/publication/${id}`)
       .then((res) => {
-        console.log("res.data.data[0]", res.data.data[0]);
-
         this.props.history.push({
           pathname: "/department/edit-publication/" + id,
           state: {
@@ -353,7 +340,6 @@ class Publications extends Component {
   };
 
   render() {
-
     return (
       <Layout {...this.props}>
         <div className="content-wrapper">

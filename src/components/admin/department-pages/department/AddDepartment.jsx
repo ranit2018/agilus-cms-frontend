@@ -92,12 +92,9 @@ class AddDepartment extends Component {
   }
 
   getDoctorArr = (value) => {
-    // console.log('prop',value)
     if (value.length == 3) {
-      console.log("yes");
       API.get(`/api/department/doctor-search-list?doctor_name=${value}`)
         .then((res) => {
-          console.log("res.data.data", res.data.data);
           this.setState({
             doctors_arr: res.data.data,
             isLoading: false,
@@ -114,7 +111,6 @@ class AddDepartment extends Component {
 
   getEquipmentArr = (value) => {
     if (value.length == 3) {
-      console.log("yes");
       API.get(`/api/department/equipment-search-list`)
         .then((res) => {
           this.setState({
@@ -133,7 +129,6 @@ class AddDepartment extends Component {
 
   getPublicationArr = (value) => {
     if (value.length == 3) {
-      console.log("yes");
       API.get(`/api/department/publication-search-list`)
         .then((res) => {
           this.setState({
@@ -151,19 +146,18 @@ class AddDepartment extends Component {
   };
 
   handleSubmitEvent = (values, actions) => {
-    let postdata = {
-      department_name: values.department_name,
-      department_description: values.department_description,
-      total_lab_technical: values.total_lab_technical,
-      total_lab_executive: values.total_lab_executive,
-      doctor_id: values.doctor_id,
-      equipment_id: values.equipment_id,
-      publication_id: values.publication_id,
-      department_image: values.department_image,
-      date_posted: new Date().toLocaleString(),
-      status: String(values.status),
-    };
-    console.log("postdata", postdata);
+    // let postdata = {
+    //   department_name: values.department_name,
+    //   department_description: values.department_description,
+    //   total_lab_technical: values.total_lab_technical,
+    //   total_lab_executive: values.total_lab_executive,
+    //   doctor_id: values.doctor_id,
+    //   equipment_id: values.equipment_id,
+    //   publication_id: values.publication_id,
+    //   department_image: values.department_image,
+    //   date_posted: new Date().toLocaleString(),
+    //   status: String(values.status),
+    // };
 
     let formData = new FormData();
 
@@ -176,41 +170,9 @@ class AddDepartment extends Component {
       values.total_consultant_scientists
     );
 
-    // if (values.doctor_id.length > 1) {
-    //   for (let i in values.doctor_id) {
-    //     formData.append("doctors", JSON.stringify(values.doctor_id[i]));
-    //   }
-    // } else {
-    //   console.log("else");
-    //   formData.append("doctors[]", JSON.stringify(values.doctor_id));
-    // }
-
-    // for (let i in values.doctor_id) {
     formData.append("doctors[]", JSON.stringify(values.doctor_id));
     formData.append("equipments[]", JSON.stringify(values.equipment_id));
     formData.append("publications[]", JSON.stringify(values.publication_id));
-
-    // }
-    // if (values.equipment_id.length > 1) {
-    //   for (let i in values.equipment_id) {
-    //     formData.append("equipments", JSON.stringify(values.equipment_id[i]));
-    //   }
-    // } else {
-    //   console.log("else");
-    //   formData.append("equipments[]", JSON.stringify(values.equipment_id));
-    // }
-    // if (values.publication_id.length > 1) {
-    //   for (let i in values.publication_id) {
-    //     formData.append(
-    //       "publications",
-    //       JSON.stringify(values.publication_id[i])
-    //     );
-    //   }
-    // } else {
-    //   console.log("else");
-    //   formData.append("publications[]", JSON.stringify(values.publication_id));
-    // }
-    // formData.append("publications", values.publications);
     formData.append("status", String(values.status));
 
     let url = `/api/department`;
@@ -380,7 +342,7 @@ class AddDepartment extends Component {
                                   value={values.department_name}
                                 />
                                 {errors.department_name &&
-                                  touched.department_name ? (
+                                touched.department_name ? (
                                   <span className="errorMsg">
                                     {errors.department_name}
                                   </span>
@@ -435,10 +397,6 @@ class AddDepartment extends Component {
                                           var file = input.files[0];
                                           var reader = new FileReader();
                                           reader.onload = function (e) {
-                                            console.log(
-                                              "name",
-                                              e.target.result
-                                            );
                                             callback(e.target.result, {
                                               alt: file.name,
                                             });
@@ -457,7 +415,7 @@ class AddDepartment extends Component {
                                   }}
                                 />
                                 {errors.department_description &&
-                                  touched.department_description ? (
+                                touched.department_description ? (
                                   <span className="errorMsg">
                                     {errors.department_description}
                                   </span>
@@ -482,7 +440,7 @@ class AddDepartment extends Component {
                                   value={values.total_lab_technical}
                                 />
                                 {errors.total_lab_technical &&
-                                  touched.total_lab_technical ? (
+                                touched.total_lab_technical ? (
                                   <span className="errorMsg">
                                     {errors.total_lab_technical}
                                   </span>
@@ -507,7 +465,7 @@ class AddDepartment extends Component {
                                   value={values.total_lab_executive}
                                 />
                                 {errors.total_lab_executive &&
-                                  touched.total_lab_executive ? (
+                                touched.total_lab_executive ? (
                                   <span className="errorMsg">
                                     {errors.total_lab_executive}
                                   </span>
@@ -532,7 +490,7 @@ class AddDepartment extends Component {
                                   value={values.total_consultant_scientists}
                                 />
                                 {errors.total_consultant_scientists &&
-                                  touched.total_consultant_scientists ? (
+                                touched.total_consultant_scientists ? (
                                   <span className="errorMsg">
                                     {errors.total_consultant_scientists}
                                   </span>
@@ -543,20 +501,17 @@ class AddDepartment extends Component {
                           <Row>
                             <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
-                                <label>
-                                  Doctors
-                                </label>
+                                <label>Doctors</label>
                                 <Select
                                   isMulti
                                   name="doctor_id"
                                   options={this.state.doctors_arr}
                                   getOptionValue={(x) => x.id}
                                   getOptionLabel={(x) => x.doctor_name}
-                                  noOptionsMessage={() => 'No Results Found'}
+                                  noOptionsMessage={() => "No Results Found"}
                                   className="basic-multi-select"
                                   classNamePrefix="select"
                                   onInputChange={(value) => {
-                                    console.log("value", value);
                                     this.getDoctorArr(value);
                                   }}
                                   onChange={(evt) => {
@@ -589,9 +544,7 @@ class AddDepartment extends Component {
                           <Row>
                             <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
-                                <label>
-                                  Equipments & Instruments
-                                </label>
+                                <label>Equipments & Instruments</label>
                                 <Select
                                   isMulti
                                   name="equipment_id"
@@ -600,13 +553,11 @@ class AddDepartment extends Component {
                                   classNamePrefix="select"
                                   getOptionValue={(x) => x.id}
                                   getOptionLabel={(x) => x.equipment_name}
-                                  noOptionsMessage={() => 'No Results Found'}
+                                  noOptionsMessage={() => "No Results Found"}
                                   onInputChange={(value) => {
-                                    console.log("value", value);
                                     this.getEquipmentArr(value);
                                   }}
                                   onChange={(evt) => {
-                                    console.log("evt", evt);
                                     if (evt === null) {
                                       setFieldValue("equipment_id", []);
                                     } else {
@@ -636,9 +587,7 @@ class AddDepartment extends Component {
                           <Row>
                             <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
-                                <label>
-                                  Publications
-                                </label>
+                                <label>Publications</label>
                                 <Select
                                   isMulti
                                   name="publication_id"
@@ -647,14 +596,11 @@ class AddDepartment extends Component {
                                   getOptionLabel={(x) => x.short_name}
                                   className="basic-multi-select"
                                   classNamePrefix="select"
-                                  noOptionsMessage={() => 'No Results Found'}
+                                  noOptionsMessage={() => "No Results Found"}
                                   onInputChange={(value) => {
-                                    console.log("value", value);
                                     this.getPublicationArr(value);
                                   }}
                                   onChange={(evt) => {
-                                    console.log("evt", evt);
-
                                     if (evt === null) {
                                       setFieldValue("publication_id", []);
                                     } else {
@@ -673,7 +619,7 @@ class AddDepartment extends Component {
                                   placeholder="Choose Publications"
                                 />
                                 {errors.publication_id &&
-                                  touched.publication_id ? (
+                                touched.publication_id ? (
                                   <span className="errorMsg">
                                     {errors.publication_id}
                                   </span>
@@ -708,7 +654,7 @@ class AddDepartment extends Component {
                                 />
 
                                 {errors.department_image &&
-                                  touched.department_image ? (
+                                touched.department_image ? (
                                   <span className="errorMsg">
                                     {errors.department_image}
                                   </span>
@@ -749,8 +695,9 @@ class AddDepartment extends Component {
                           </Row>
                         </div>
                         <button
-                          className={`btn btn-success btn-sm ${isValid ? "btn-custom-green" : "btn-disable"
-                            } m-r-10`}
+                          className={`btn btn-success btn-sm ${
+                            isValid ? "btn-custom-green" : "btn-disable"
+                          } m-r-10`}
                           type="submit"
                           disabled={
                             isValid ? (isSubmitting ? true : false) : true
@@ -761,8 +708,8 @@ class AddDepartment extends Component {
                               ? "Updating..."
                               : "Update"
                             : isSubmitting
-                              ? "Submitting..."
-                              : "Submit"}
+                            ? "Submitting..."
+                            : "Submit"}
                         </button>
                       </Form>
                     );

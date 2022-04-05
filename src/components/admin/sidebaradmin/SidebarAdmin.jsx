@@ -100,9 +100,13 @@ class SidebarAdmin extends Component {
 
     if (
       path === "/department/departments" ||
+      path === "/departments/add-department" ||
       path === "/department/doctor" ||
+      path === "/department/add-doctor" ||
       path === "/department/equipment" ||
-      path === "/department/publications"
+      path === "/department/add-equipment" ||
+      path === "/department/publications" ||
+      path === "/department/add-publication" 
     ) {
       this.setState({ shown: "6" });
     }

@@ -87,7 +87,6 @@ class EditEquipment extends Component {
     //   date_posted: new Date().toLocaleString(),
     //   status: String(values.status),
     // };
-    // console.log("postdata edit", postdata);
 
     let formData = new FormData();
 
@@ -315,7 +314,7 @@ class EditEquipment extends Component {
                                   value={values.equipment_name}
                                 />
                                 {errors.equipment_name &&
-                                  touched.equipment_name ? (
+                                touched.equipment_name ? (
                                   <span className="errorMsg">
                                     {errors.equipment_name}
                                   </span>
@@ -349,7 +348,7 @@ class EditEquipment extends Component {
                                 />
 
                                 {errors.equipment_image &&
-                                  touched.equipment_image ? (
+                                touched.equipment_image ? (
                                   <span className="errorMsg">
                                     {errors.equipment_image}
                                   </span>
@@ -365,19 +364,24 @@ class EditEquipment extends Component {
                                   <span className="impField">*</span>
                                 </label>
 
-                                <input id="my-file" type="file" name="my-file" style={{ display: "none" }} />
+                                <input
+                                  id="my-file"
+                                  type="file"
+                                  name="my-file"
+                                  style={{ display: "none" }}
+                                />
                                 <TinyMCE
                                   name="equipment_description"
                                   content={values.equipment_description}
                                   config={{
                                     menubar: false,
                                     branding: false,
-                                    selector: 'textarea',
+                                    selector: "textarea",
                                     height: 350,
                                     plugins: [
-                                      'advlist autolink lists link image charmap print preview anchor',
-                                      'searchreplace wordcount visualblocks code fullscreen',
-                                      'insertdatetime media table contextmenu paste code'
+                                      "advlist autolink lists link image charmap print preview anchor",
+                                      "searchreplace wordcount visualblocks code fullscreen",
+                                      "insertdatetime media table contextmenu paste code",
                                     ],
                                     // plugins:
                                     //     "link table hr visualblocks code placeholder lists autoresize textcolor",
@@ -385,19 +389,24 @@ class EditEquipment extends Component {
                                       "Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats",
                                     toolbar:
                                       "bold italic strikethrough superscript subscript | forecolor backcolor | removeformat underline | link unlink | alignleft aligncenter alignright alignjustify | numlist bullist | blockquote table  hr | visualblocks code | fontselect | link image",
-                                    content_css: '//www.tinymce.com/css/codepen.min.css',
-                                    file_browser_callback_types: 'image',
-                                    file_picker_callback: function (callback, value, meta) {
-                                      if (meta.filetype == 'image') {
-                                        var input = document.getElementById('my-file');
+                                    content_css:
+                                      "//www.tinymce.com/css/codepen.min.css",
+                                    file_browser_callback_types: "image",
+                                    file_picker_callback: function (
+                                      callback,
+                                      value,
+                                      meta
+                                    ) {
+                                      if (meta.filetype == "image") {
+                                        var input =
+                                          document.getElementById("my-file");
                                         input.click();
                                         input.onchange = function () {
                                           var file = input.files[0];
                                           var reader = new FileReader();
                                           reader.onload = function (e) {
-                                            console.log('name', e.target.result);
                                             callback(e.target.result, {
-                                              alt: file.name
+                                              alt: file.name,
                                             });
                                           };
                                           reader.readAsDataURL(file);
@@ -405,16 +414,17 @@ class EditEquipment extends Component {
                                       }
                                     },
                                     paste_data_images: true,
-
                                   }}
-
                                   onChange={(e) => {
-                                    setFieldValue("equipment_description", e.target.getContent())
+                                    setFieldValue(
+                                      "equipment_description",
+                                      e.target.getContent()
+                                    );
                                   }}
-
                                 />
 
-                                {errors.equipment_description && touched.equipment_description ? (
+                                {errors.equipment_description &&
+                                touched.equipment_description ? (
                                   <span className="errorMsg">
                                     {errors.equipment_description}
                                   </span>
@@ -456,8 +466,9 @@ class EditEquipment extends Component {
                           </Row>
                         </div>
                         <button
-                          className={`btn btn-success btn-sm ${isValid ? "btn-custom-green" : "btn-disable"
-                            } m-r-10`}
+                          className={`btn btn-success btn-sm ${
+                            isValid ? "btn-custom-green" : "btn-disable"
+                          } m-r-10`}
                           type="submit"
                           disabled={
                             isValid ? (isSubmitting ? true : false) : true
@@ -468,8 +479,8 @@ class EditEquipment extends Component {
                               ? "Updating..."
                               : "Update"
                             : isSubmitting
-                              ? "Submitting..."
-                              : "Submit"}
+                            ? "Submitting..."
+                            : "Submit"}
                         </button>
                       </Form>
                     );
