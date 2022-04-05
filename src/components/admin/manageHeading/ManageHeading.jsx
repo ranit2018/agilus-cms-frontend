@@ -127,6 +127,7 @@ class ManageHeading extends Component {
 
       medium_name: "",
       status: "",
+      isHeaderSchedule: 0,
     };
   }
 
@@ -253,6 +254,7 @@ class ManageHeading extends Component {
           headingDetails: res.data.data[0],
           heading_id: id,
           showModal: true,
+          isHeaderSchedule: res.data.data[0].is_schedule ?? 0,
         });
       })
       .catch((err) => {
@@ -370,22 +372,33 @@ class ManageHeading extends Component {
         .matches(/^[0|1]$/, "Invalid status selected"),
       isSchedule: Yup.number().integer().min(0).max(1),
       updated_name: Yup.string().when("isSchedule", (isSchedule, schema) => {
-        return isSchedule ? schema.required("Please enter the Title") : schema;
+        return isSchedule === 1
+          ? schema.required("Please enter the Title")
+          : schema.default("");
       }),
-      schedulerData: Yup.object().shape({
-        start_date: Yup.string().required(),
-        end_date: Yup.string().required(),
-        start_time: Yup.string().when(
-          "all_day_check",
-          (all_day_check, schema) => {
-            return all_day_check ? schema : schema.required();
-          }
-        ),
-        end_time: Yup.string().when("start_time", (start_time, schema) => {
-          return start_time ? schema.required() : schema;
-        }),
-        all_day_check: Yup.number().integer().min(0).max(1),
-        repeat: Yup.number().integer().min(0).max(4),
+      schedulerData: Yup.object(
+        /* )
+        .shape( */ {
+          start_date: Yup.string().when("isSchedule", (isSchedule, schema) => {
+            return isSchedule ? schema.required() : schema.optional();
+          }),
+          end_date: Yup.string().when("isSchedule", (isSchedule, schema) => {
+            console.log(this.state.isHeaderSchedule, " 🔥");
+            return isSchedule ? schema.required() : schema.optional();
+          }),
+          start_time: Yup.string().when(["all_day_check", "repeat"], {
+            is: (all_day_check, repeat) => !all_day_check && repeat,
+            then: Yup.string().required(),
+            otherwise: Yup.string().optional(),
+          }),
+          end_time: Yup.string().when("start_time", (start_time, schema) => {
+            return start_time ? schema.required() : schema;
+          }),
+          all_day_check: Yup.number().integer().min(0).max(1),
+          repeat: Yup.number().integer().min(0).max(4),
+        }
+      ).when("isSchedule", (isSchedule, schema) => {
+        return isSchedule ? schema.required() : schema;
       }),
     });
 
@@ -547,6 +560,7 @@ class ManageHeading extends Component {
                       setErrors,
                       setValues,
                     }) => {
+                      console.log(errors);
                       return (
                         <Form>
                           {this.state.showModalLoader === true ? (
@@ -600,7 +614,9 @@ class ManageHeading extends Component {
                                       isSchedule,
                                       ...data
                                     }) => {
-                                      console.log(isSchedule);
+                                      this.setState({
+                                        isHeaderSchedule: isSchedule,
+                                      });
                                       if (isSchedule) {
                                         setValues({
                                           ...values,

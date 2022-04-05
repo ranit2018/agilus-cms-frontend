@@ -415,6 +415,10 @@ class Banner extends Component {
     formData.append("banner_subtext", values.banner_subtext);
     formData.append("button_url", values.button_url);
     formData.append("screen_name", values.screen_name);
+    formData.append("isSchedule", values.isSchedule);
+    if (values.isSchedule) {
+      formData.append("schedulerData", JSON.stringify(values.schedulerData));
+    }
     const cities_array = [];
     if (values.cityType === "2") {
       values.cities.forEach((city) => {
@@ -820,7 +824,7 @@ class Banner extends Component {
         button_url: Yup.string().optional(),
         screen_name: Yup.string().optional(),
         isSchedule: Yup.boolean().required(),
-        schedulerData: Yup.object().shape({
+        /* schedulerData: Yup.object().shape({
           start_date: Yup.string().required(),
           end_date: Yup.string().required(),
           start_time: Yup.string().when(
@@ -834,7 +838,7 @@ class Banner extends Component {
           }),
           all_day_check: Yup.boolean().required(),
           repeat: Yup.string().required(),
-        }),
+        }), */
       });
     } else {
       validateStopFlag = Yup.object().shape({
@@ -858,7 +862,7 @@ class Banner extends Component {
         button_url: Yup.string().optional(),
         screen_name: Yup.string().optional(),
         isSchedule: Yup.number().integer().min(0).max(1),
-        schedulerData: Yup.object().shape({
+        /* schedulerData: Yup.object().shape({
           start_date: Yup.string().required(),
           end_date: Yup.string().required(),
           start_time: Yup.string().when(
@@ -872,7 +876,7 @@ class Banner extends Component {
           }),
           all_day_check: Yup.number().integer().min(0).max(1),
           repeat: Yup.number().integer().min(0).max(4),
-        }),
+        }), */
       });
     }
 
@@ -1103,6 +1107,7 @@ class Banner extends Component {
                       setErrors,
                       setValues,
                     }) => {
+                      console.log(errors);
                       return (
                         <Form>
                           {this.state.showModalLoader === true ? (
