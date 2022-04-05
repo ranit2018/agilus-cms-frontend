@@ -204,12 +204,12 @@ class Banner extends Component {
         { value: "1", label: "Select All Cities" },
         { value: "2", label: "Select Particular City" },
       ],
-      selectedCity: {
+      selectedCity: [{
         city_name: "MUMBAI",
         label: "Mumbai (Maharashtra)",
         state_id: 15,
         value: 304,
-      },
+      }],
       screens: [],
       cityType: "1",
       value: "",
@@ -361,7 +361,7 @@ class Banner extends Component {
           bannerDetails: res.data.data[0],
           banner_id: id,
           showModal: true,
-          selectedCity: res.data.data[0].cities,
+          selectedCity: res.data.data[0].city_type == 2 ? res.data.data[0].cities : [],
           cityType: String(res.data.data[0].city_type),
         });
       })
@@ -422,7 +422,7 @@ class Banner extends Component {
       formData.append("schedulerData", JSON.stringify(values.schedulerData));
     }
     const cities_array = [];
-    if (values.cityType === "2") {
+    if (this.state.cityType == "2" && Array.isArray(values.cities) && values.cities.length!==0) {
       values.cities.forEach((city) => {
         cities_array.push({
           city_name: city.city_name,
@@ -433,6 +433,7 @@ class Banner extends Component {
     }
     console.log("citeiesAppend", cities_array);
     console.log("citeiesAppend", JSON.stringify(cities_array));
+    console.log("city type : ",this.state.cityType)
     formData.append("cities", JSON.stringify(cities_array));
     if (this.state.banner_file) {
       if (this.state.banner_file.size > FILE_SIZE) {
@@ -776,7 +777,7 @@ class Banner extends Component {
           : "",
       banner_text: bannerDetails.banner_text ? bannerDetails.banner_text : "",
       city_type: bannerDetails.city_type ? bannerDetails.city_type : "",
-      cities: bannerDetails.cities ? bannerDetails.cities : "",
+      cities: bannerDetails.city_type == 2 && bannerDetails.cities ? bannerDetails.cities : "",
       banner_subtext: bannerDetails.banner_subtext
         ? bannerDetails.banner_subtext
         : "",
@@ -1350,6 +1351,7 @@ class Banner extends Component {
                                       // value={values.cityType}
                                       value={this.state.cityType}
                                       onChange={(evt) => {
+                                        console.log( " event value :",evt)
                                         if (evt) {
                                           const { value } = evt.target;
                                           this.setState({
@@ -1413,6 +1415,7 @@ class Banner extends Component {
                                         isSearchable={true}
                                         placeholder="Select City"
                                         options={city_state_list}
+                                        onBlur={()=>setFieldTouched("cities")}
                                         // value={values.cities}
                                         value={this.state.selectedCity}
                                         onChange={(evt) => {
