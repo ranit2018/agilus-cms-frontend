@@ -1,3 +1,6 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable jsx-a11y/img-redundant-alt */
+/* eslint-disable eqeqeq */
 import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import { Row, Col, Tooltip, OverlayTrigger, Modal } from "react-bootstrap";
@@ -429,7 +432,6 @@ class ProductDetails extends Component {
   };
 
   handleSubmitEvent = (values, actions) => {
-
     const { city_state_list, selectedValue, selectedCity } = this.state;
     let method = "";
     let post_data = [];
@@ -563,7 +565,7 @@ class ProductDetails extends Component {
     }
   };
 
-  onSuggestionsClearRequested = () => { };
+  onSuggestionsClearRequested = () => {};
 
   onChangeAutoSuggest = (event, { newValue }) => {
     this.setState({ value: newValue });
@@ -1169,8 +1171,9 @@ class ProductDetails extends Component {
                           </Modal.Body>
                           <Modal.Footer>
                             <button
-                              className={`btn btn-success btn-sm ${isValid ? "btn-custom-green" : "btn-disable"
-                                } m-r-10`}
+                              className={`btn btn-success btn-sm ${
+                                isValid ? "btn-custom-green" : "btn-disable"
+                              } m-r-10`}
                               type="submit"
                               disabled={
                                 isValid ? (isSubmitting ? true : false) : true

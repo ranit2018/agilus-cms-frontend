@@ -74,6 +74,8 @@ import AddDepartment from "../components/admin/department-pages/department/AddDe
 import EditDepartment from "../components/admin/department-pages/department/EditDepartment";
 import DepartmentDoctors from "../components/admin/department-pages/department/DepartmentDoctors";
 import DepartmentEquipments from "../components/admin/department-pages/department/DepartmentEquipments";
+import DepartmentPublications from "../components/admin/department-pages/department/DepartmentPublications";
+import DepartmentTest from "../components/admin/department-pages/department/DepartmentTest";
 
 import Doctor from "../components/admin/department-pages/doctors/Doctor";
 import AddDoctor from "../components/admin/department-pages/doctors/AddDoctor";
@@ -91,7 +93,7 @@ import "../assets/css/all.css";
 import "../assets/css/admin-style.css";
 import "../assets/css/admin-skin-blue.css";
 import "react-bootstrap-table/dist/react-bootstrap-table.min.css";
-import DepartmentPublications from "../components/admin/department-pages/department/DepartmentPublications";
+
 
 // Private Route for inner component
 const PrivateRoute = ({ component: RefComponent, ...rest }) => (
@@ -244,6 +246,7 @@ class Admin extends Component {
         <PrivateRoute path="/departments/department-doctors/:id/:type" component={DepartmentDoctors} />
         <PrivateRoute path="/departments/department-equipments/:id/:type" component={DepartmentEquipments} />
         <PrivateRoute path="/departments/department-publications/:id/:type" component={DepartmentPublications} />
+        <PrivateRoute path="/departments/department-test/:id" component={DepartmentTest} />
 
 
         <PrivateRoute path="/department/doctor" component={Doctor} />
@@ -263,10 +266,7 @@ class Admin extends Component {
           component={EditEquipment}
         />
 
-        <PrivateRoute
-          path="/department/publications"
-          component={Publications}
-        />
+        <PrivateRoute path="/department/publications" component={Publications} />
         <PrivateRoute
           path="/department/add-publication"
           component={AddPublication}
@@ -275,6 +275,7 @@ class Admin extends Component {
           path="/department/edit-publication/:id"
           component={EditPublication}
         />
+
 
         <Route from="*" component={AdminPageNotFound} />
       </Switch>

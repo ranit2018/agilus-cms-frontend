@@ -22,7 +22,6 @@ import {
 } from "../../../../shared/helper";
 import Layout from "../../layout/Layout";
 import Select from "react-select";
-import TagsInput from "react-tagsinput";
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
 
 class EditDepartment extends Component {
@@ -38,14 +37,33 @@ class EditDepartment extends Component {
         { value: "1", label: "Instrument" },
         { value: "2", label: "Equipment" },
       ],
+      selectProductType: [
+        { value: "1", label: "Tests" },
+        { value: "2", label: "Popular  Packages" },
+      ],
+      selectCityType: [
+        { value: "1", label: "Select All Cities" },
+        { value: "2", label: "Select Particular City" },
+      ],
       department_id: this.props.match.params.id,
-      suggestions: [],
-      value: "",
-      selectedValue: "",
       doctors_arr: [],
       equipments_arr: [],
       publications_arr: [],
       isValidFile: false,
+
+      cityType: "1",
+      packageType: "1",
+      product: "",
+      suggestions: [],
+      city_state_list: [],
+      selectedCity: {
+        city_name: "MUMBAI",
+        label: "Mumbai (Maharashtra)",
+        state_id: 15,
+        value: 304,
+      },
+      value: "",
+      selectedValue: "",
     };
   }
 
@@ -279,6 +297,12 @@ class EditDepartment extends Component {
       publication_id: "",
       date_posted: "",
       status: "",
+
+      packageType: "",
+      cityType: "",
+      cities: "",
+      product: "",
+      test_image: "",
     };
 
     const newInitialValues = Object.assign(initialValues, {
