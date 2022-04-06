@@ -1,4 +1,6 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable jsx-a11y/img-redundant-alt */
+/* eslint-disable eqeqeq */
 import React, { Component } from "react";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import { Row, Col, Tooltip, OverlayTrigger, Modal } from "react-bootstrap";
@@ -7,6 +9,8 @@ import { Formik, Field, Form } from "formik"; // for add/edit only
 import * as Yup from "yup"; // for add/edit only
 import swal from "sweetalert";
 import Select from "react-select";
+import Switch from "react-switch";
+
 
 import {
   htmlDecode,
@@ -21,10 +25,18 @@ import {
 import API from "../../../../shared/admin-axios";
 import SRL_API from "../../../../shared/srl-axios";
 import Layout from "../../layout/Layout";
-
 import Pagination from "react-js-pagination";
 import { showErrorMessage } from "../../../../shared/handle_error";
 import Autosuggest from "react-autosuggest";
+
+const custStatus = (refObj) => (cell) => {
+  //return cell === 1 ? "Active" : "Inactive";
+  if (cell === 1) {
+    return "Active";
+  } else if (cell === 0) {
+    return "Inactive";
+  }
+};
 
 /*For Tooltip*/
 function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
@@ -48,6 +60,28 @@ const actionFormatter = (refObj) => (cell, row) => {
   return (
     <div className="actionStyle">
       <LinkWithTooltip
+        tooltip={"Click to Edit"}
+        clicked={(e) => refObj.modalShowHandler(e, cell)}
+        href="#"
+        id="tooltip-1"
+      >
+        <i className="far fa-edit" />
+      </LinkWithTooltip>
+      <LinkWithTooltip
+        tooltip={"Click to change status"}
+        // clicked={(e) => refObj.chageStatus(e, cell, row.status)}
+        href="#"
+        id="tooltip-1"
+      >
+        <Switch
+          checked={row.status == 1 ? true : false}
+          uncheckedIcon={false}
+          onChange={() => refObj.chageStatus(row.id, row.status)}
+          height={20}
+          width={45}
+        />
+      </LinkWithTooltip>
+      <LinkWithTooltip
         tooltip="Click to Delete"
         href="#"
         clicked={(e) => refObj.confirmDelete(e, cell)}
@@ -60,11 +94,18 @@ const actionFormatter = (refObj) => (cell, row) => {
 };
 
 const initialValues = {
- 
+  // cities: {
+  //   city_name: "MUMBAI",
+  //   label: "Mumbai (Maharashtra)",
+  //   state_id: 15,
+  //   value: 304,
+  // },
   cities: "",
-  test: "",
-  testType: 1,
+  product: "",
+  packageType: 1,
   cityType: "1",
+  status: "",
+
 };
 
 class Test extends Component {
@@ -72,47 +113,60 @@ class Test extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      testDetails: [],
+      product_data: [],
+      product_list: [],
       city_state_list: [],
       isLoading: false,
       showModal: false,
       activePage: 1,
       totalCount: 0,
+      product_id: 0,
       itemPerPage: 10,
       search_city_name: "",
+      selectStatus: [
+        { value: "0", label: "Inactive" },
+        { value: "1", label: "Active" },
+      ],
       selectCityType: [
         { value: "1", label: "Select All Cities" },
         { value: "2", label: "Select Particular City" },
       ],
-      selecttestType: [
-        { value: "1", label: "Our Top Selling Tests/Packages" },
-        { value: "2", label: "Popular Preventive Health Check-Up Packages" },
+      selectPackageType: [
+        { value: "1", label: "Tests" },
+        { value: "2", label: "Packages" },
       ],
       cityType: "1",
-      testType: "1",
+      packageType: "1",
       product: "",
       suggestions: [],
       value: "",
       selectedValue: "",
-
-      file: "",
       selectedCity: {
         city_name: "MUMBAI",
         label: "Mumbai (Maharashtra)",
         state_id: 15,
         value: 304,
       },
+
       validProduct: true,
+      // defaultCity:{
+      //     city_name: "MUMBAI",
+      //     label: "Mumbai (Maharashtra)",
+      //     state_id: 15,
+      //     value: 304,
+      //   }
     };
+
   }
 
   componentDidMount() {
-    // this.getCityStateList();
-    // this.getTestList();
-    // this.setState({
-    //   validationMessage: generateResolutionText("test-details"),
-    //   fileValidationMessage: FILE_VALIDATION_MASSAGE,
-    // });
+    this.getCityStateList();
+    this.getProductCodeList();
+    this.getProductList();
+    this.setState({
+      validationMessage: generateResolutionText("test-details"),
+      fileValidationMessage: FILE_VALIDATION_MASSAGE,
+    });
   }
 
   getCityStateList = () => {
@@ -129,22 +183,21 @@ class Test extends Component {
 
   handlePageChange = (pageNumber) => {
     this.setState({ activePage: pageNumber });
-    this.getTestList(pageNumber > 0 ? pageNumber : 1);
+    this.getProductList(pageNumber > 0 ? pageNumber : 1);
   };
 
-  getTestList = (page = 1) => {
+  getProductCodeList = (page = 1) => {
     let { search_city_name } = this.state;
     API.get(
       `api/lead_landing/product?city=${encodeURIComponent(
         search_city_name
       )}&page=${page}`
     )
-
       .then((res) => {
         this.setState({
-          activePage: page,
-          testDetails: res.data.data,
-          totalCount: res.data.count,
+          // activePage: page,
+          product_data: res.data.data,
+          // totalCount: res.data.count,
           isLoading: false,
         });
       })
@@ -155,6 +208,56 @@ class Test extends Component {
         showErrorMessage(err, this.props);
       });
   };
+
+  getProductList = (page = 1) => {
+    // let { search_city_name } = this.state;
+    // API.get(
+    //   `api/lead_landing/product?city=${encodeURIComponent(
+    //     search_city_name
+    //   )}&page=${page}`
+    // )
+    //   .then((res) => {
+    //     this.setState({
+    //       activePage: page,
+    //       product_list: res.data.data,
+    //       totalCount: res.data.count,
+    //       product_id: res.data.data.product_id,
+    //       isLoading: false,
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     this.setState({
+    //       isLoading: false,
+    //     });
+    //     showErrorMessage(err, this.props);
+    //   });
+  };
+
+  getProductdetailsbyId(id) {
+
+    // API.get(`/api/category/${id}`)
+    //   .then((res) => {
+
+    //     this.setState({
+    //       product_list: res.data.data,
+    //       product_id: id,
+    //       showModal: true,
+
+    //     });
+
+    //   })
+    //   .catch((err) => {
+    //     showErrorMessage(err, this.props);
+    //   });
+  }
+
+
+
+
+  //for edit
+  //   modalCloseHandler = () => {
+  //     this.setState({ categoryDetails: {}, category_id: 0, selectedMediumList: [], showModal: false })
+  // };
 
   modalCloseHandler = () => {
     this.setState({
@@ -169,13 +272,18 @@ class Test extends Component {
         value: 304,
       },
       cityType: "1",
-      testType: 1,
+      packageType: 1,
     });
   };
 
-  modalShowHandler = (event) => {
-    event.preventDefault();
-    this.setState({ showModal: true });
+  modalShowHandler = (event, id) => {
+    if (id) {
+      event.preventDefault();
+      this.getProductdetailsbyId(id);
+    } else {
+      event.preventDefault();
+      this.setState({ showModal: true });
+    }
   };
 
   confirmDelete = (event, id) => {
@@ -195,23 +303,23 @@ class Test extends Component {
   };
 
   deleteProduct = (id) => {
-    API.delete(`/api/lead_landing/product/${id}`)
-      .then((res) => {
-        swal({
-          closeOnClickOutside: false,
-          title: "Success",
-          text: "Record deleted successfully.",
-          icon: "success",
-        }).then(() => {
-          this.getTestList(this.state.activePage);
-        });
-      })
-      .catch((err) => {
-        if (err.data.status === 3) {
-          this.setState({ closeModal: true });
-          showErrorMessage(err, this.props);
-        }
-      });
+    // API.delete(`/api/lead_landing/product/${id}`)
+    //   .then((res) => {
+    //     swal({
+    //       closeOnClickOutside: false,
+    //       title: "Success",
+    //       text: "Record deleted successfully.",
+    //       icon: "success",
+    //     }).then(() => {
+    //       this.getProductList(this.state.activePage);
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     if (err.data.status === 3) {
+    //       this.setState({ closeModal: true });
+    //       showErrorMessage(err, this.props);
+    //     }
+    //   });
   };
 
   ProductSearch = (e) => {
@@ -222,6 +330,7 @@ class Test extends Component {
     if (search_city_name === "") {
       return false;
     }
+    ///api/department/test
     API.get(
       `api/lead_landing/product?city=${encodeURIComponent(
         search_city_name
@@ -229,8 +338,8 @@ class Test extends Component {
     )
       .then((res) => {
         this.setState({
-          testDetails: res.data.data,
-          totalCount: Number(res.data.count),
+          product_data: res.data.data,
+          totalCount: res.data.count,
           isLoading: false,
           activePage: 1,
           search_city_name: search_city_name,
@@ -254,12 +363,12 @@ class Test extends Component {
       },
       () => {
         // this.setState({ activePage: 1 });
-        this.getTestList();
+        this.getProductList();
       }
     );
   };
 
-  testTypeList = (refObj) => (cell) => {
+  productType = (refObj) => (cell) => {
     //return cell === 1 ? "Active" : "Inactive";
     if (cell === 1) {
       return "Our Top Selling Tests/Packages";
@@ -268,40 +377,26 @@ class Test extends Component {
     }
   };
 
-  confirmDeleteAllProducts = (event) => {
-    event.preventDefault();
-    swal({
-      closeOnClickOutside: false,
-      title: "Are you sure?",
-      text: "This will remove all the Products!",
-      icon: "warning",
-      buttons: true,
-      dangerMode: true,
-    }).then((willDelete) => {
-      if (willDelete) {
-        this.deleteAllProducts();
-      }
-    });
-  };
-
-  deleteAllProducts = () => {
-    API.post(`api/lead_landing/product/delete_all`)
-      .then((res) => {
-        swal({
-          closeOnClickOutside: false,
-          title: "Success",
-          text: "Removed successfully.",
-          icon: "success",
-        }).then(() => {
-          this.getTestList();
-        });
-      })
-      .catch((err) => {
-        if (err.data.status === 3) {
-          this.setState({ closeModal: true });
-          showErrorMessage(err, this.props);
-        }
-      });
+  chageStatus = (cell, status) => {
+    // API.put(`/api/department/change_status/${cell}`, {
+    //   status: status == 1 ? String(0) : String(1),
+    // })
+    //   .then((res) => {
+    //     swal({
+    //       closeOnClickOutside: false,
+    //       title: "Success",
+    //       text: "Record updated successfully.",
+    //       icon: "success",
+    //     }).then(() => {
+    //       this.getDepartmentsList(this.state.activePage);
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     if (err.data.status === 3) {
+    //       this.setState({ closeModal: true });
+    //       showErrorMessage(err, this.props);
+    //     }
+    //   });
   };
 
   handleSubmitEvent = (values, actions) => {
@@ -319,23 +414,27 @@ class Test extends Component {
         post_data.push({
           city_name: city.city_name,
           city_id: city.value,
+          label: city.label,
         });
       });
     } else {
       post_data.push({
         city_name: selectedCity.city_name,
         city_id: selectedCity.value,
+        label: selectedCity.label,
+
       });
     }
 
     let formData = new FormData();
 
     method = "POST";
-    let url = `api/lead_landing/product`;
+    let url = `/api/department/test`;
 
-    formData.append("type", values.testType);
+    formData.append("type", values.packageType);
     formData.append("cities", JSON.stringify(post_data));
     formData.append("product", JSON.stringify(post_data_product));
+    formData.append("status", String(values.status));
 
     if (this.state.file !== "") {
       if (this.state.file.size > FILE_SIZE) {
@@ -352,7 +451,7 @@ class Test extends Component {
             actions.setErrors({ file: FILE_VALIDATION_TYPE_ERROR_MASSAGE });
             actions.setSubmitting(false);
           } else {
-            formData.append("test_image", this.state.file);
+            formData.append("product_image", this.state.file);
             API({
               method: method,
               url: url,
@@ -366,7 +465,7 @@ class Test extends Component {
                   text: "Added Successfully",
                   icon: "success",
                 }).then(() => {
-                  this.getTestList();
+                  this.getProductList();
                 });
               })
               .catch((err) => {
@@ -394,7 +493,7 @@ class Test extends Component {
             text: "Added Successfully",
             icon: "success",
           }).then(() => {
-            this.getTestList();
+            this.getProductList();
           });
         })
         .catch((err) => {
@@ -409,6 +508,118 @@ class Test extends Component {
         });
     }
   };
+
+  handleSubmitEventUpdate= (values, actions) => {
+    const { city_state_list, selectedValue, selectedCity } = this.state;
+    let method = "";
+    let post_data = [];
+    let post_data_product = {
+      product_name: selectedValue.NAME,
+      product_code: selectedValue.PRDCT_CODE,
+      product_id: selectedValue.ID,
+    };
+
+    if (values.cityType === "1") {
+      city_state_list.forEach((city) => {
+        post_data.push({
+          city_name: city.city_name,
+          city_id: city.value,
+          label: city.label,
+        });
+      });
+    } else {
+      post_data.push({
+        city_name: selectedCity.city_name,
+        city_id: selectedCity.value,
+        label: selectedCity.label,
+
+      });
+    }
+
+    let formData = new FormData();
+
+    method = "POST";
+    let url = `/api/department/test`;
+
+    formData.append("type", values.packageType);
+    formData.append("cities", JSON.stringify(post_data));
+    formData.append("product", JSON.stringify(post_data_product));
+    formData.append("status", String(values.status));
+
+    if (this.state.file !== "") {
+      if (this.state.file.size > FILE_SIZE) {
+        actions.setErrors({ file: FILE_VALIDATION_SIZE_ERROR_MASSAGE });
+        actions.setSubmitting(false);
+      } else {
+        getHeightWidth(this.state.file).then((dimension) => {
+          const { height, width } = dimension;
+          const offerDimension = getResolution("test-details");
+          if (
+            height != offerDimension.height ||
+            width != offerDimension.width
+          ) {
+            actions.setErrors({ file: FILE_VALIDATION_TYPE_ERROR_MASSAGE });
+            actions.setSubmitting(false);
+          } else {
+            formData.append("product_image", this.state.file);
+            API({
+              method: method,
+              url: url,
+              data: formData,
+            })
+              .then((res) => {
+                this.modalCloseHandler();
+                swal({
+                  closeOnClickOutside: false,
+                  title: "Success",
+                  text: "Added Successfully",
+                  icon: "success",
+                }).then(() => {
+                  this.getProductList();
+                });
+              })
+              .catch((err) => {
+                if (err.data.status === 3) {
+                  showErrorMessage(err, this.props);
+                } else {
+                  actions.setErrors(err.data.errors);
+                  actions.setSubmitting(false);
+                }
+              });
+          }
+        });
+      }
+    } else {
+      API({
+        method: method,
+        url: url,
+        data: formData,
+      })
+        .then((res) => {
+          this.modalCloseHandler();
+          swal({
+            closeOnClickOutside: false,
+            title: "Success",
+            text: "Added Successfully",
+            icon: "success",
+          }).then(() => {
+            this.getProductList();
+          });
+        })
+        .catch((err) => {
+          actions.setSubmitting(false);
+          if (err.data.status === 3) {
+            showErrorMessage(err, this.props);
+          } else {
+            if (err.data && err.data.errors) {
+              actions.setErrors(err.data.errors);
+            }
+          }
+        });
+    }
+  };
+
+
 
   // FOR AUTOSUGGEST CODE
   onSuggestionsFetchRequested = ({ value }) => {
@@ -438,7 +649,7 @@ class Test extends Component {
     }
   };
 
-  onSuggestionsClearRequested = () => {};
+  onSuggestionsClearRequested = () => { };
 
   onChangeAutoSuggest = (event, { newValue }) => {
     this.setState({ value: newValue });
@@ -453,7 +664,7 @@ class Test extends Component {
 
   getSuggestionValue = (suggestion) => suggestion.label;
 
-  renderSuggestion = (suggestion) => <span>{suggestion.label}</span>;
+  renderSuggestion = (suggestion) => <span>{suggestion.label} </span>;
 
   onSuggestionSelected = (event, { suggestion, method }, setFieldTouched) => {
     if (method === "click" || method === "enter") {
@@ -469,9 +680,8 @@ class Test extends Component {
         .then((res) => {
           if (res.data && res.data.data && res.data.data.length > 0) {
             const searchDetails = res.data.data[0];
-
             if (
-              this.state.testType === "2" &&
+              this.state.packageType === "2" &&
               searchDetails.PROFILE_FLAG == "T"
             ) {
               this.setState({ validProduct: false });
@@ -496,6 +706,7 @@ class Test extends Component {
     this.setState({ selectedValue: "", value: "" });
   };
 
+  //image
   fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
     setFieldTouched("file");
     setFieldValue("file", event.target.value);
@@ -532,21 +743,21 @@ class Test extends Component {
 
   imageModalShowHandler = (url) => {
     //  console.log(url);
-    this.setState({ thumbNailModal: true, test_url: url });
+    this.setState({ thumbNailModal: true, banner_url: url });
   };
 
   imageModalCloseHandler = () => {
-    this.setState({ thumbNailModal: false, test_url: "" });
+    this.setState({ thumbNailModal: false, banner_url: "" });
   };
 
-  setTestImage = (refObj) => (cell, row) => {
-    if (row.test_image !== null) {
+  setProductImage = (refObj) => (cell, row) => {
+    if (row.product_image !== null) {
       return (
         <img
-          src={row.test_image}
-          alt="Test Image"
+          src={row.product_image}
+          alt="Product Image"
           height="100"
-          onClick={(e) => refObj.imageModalShowHandler(row.test_image)}
+          onClick={(e) => refObj.imageModalShowHandler(row.product_image)}
         ></img>
       );
     } else {
@@ -560,7 +771,7 @@ class Test extends Component {
 
   render() {
     const {
-      testDetails,
+      product_data,
       city_state_list,
       totalCount,
       activePage,
@@ -573,9 +784,9 @@ class Test extends Component {
         .trim()
         .required("Please select City Type")
         .matches(/^[1|2]$/, "Invalid city type selected"),
-      testType: Yup.string()
+      packageType: Yup.string()
         .trim()
-        .required("Please select Test Type")
+        .required("Please select Product Type")
         .matches(/^[1|2]$/, "Invalid Product type selected"),
       // cities: Yup.array()
       //   .of(Yup.object())
@@ -583,8 +794,8 @@ class Test extends Component {
       //     is: "2",
       //     then: Yup.array().of(Yup.object()).required("Please select city"),
       //   }),
-      test: Yup.object()
-        .test("product", "Please select test", () => {
+      product: Yup.object()
+        .test("product", "Please select product", () => {
           return selectedValue && Object.keys(selectedValue).length > 0;
         })
         .test(
@@ -598,7 +809,7 @@ class Test extends Component {
           cityType === "2" && Object.keys(selectedCity).length === 0,
         then: Yup.object().required("Please select city"),
       }),
-      file: Yup.string().when("testType", {
+      file: Yup.string().when("packageType", {
         is: "1",
         then: Yup.string()
           .required("Please select the image")
@@ -608,6 +819,44 @@ class Test extends Component {
             () => this.state.isValidFile
           ),
       }),
+      status: Yup.number().required("Please select status"),
+    });
+
+    let validateStopFlagUpdate = Yup.object().shape({
+      cityType: Yup.string()
+        .trim()
+        .required("Please select City Type")
+        .matches(/^[1|2]$/, "Invalid city type selected"),
+      packageType: Yup.string()
+        .trim()
+        .required("Please select Product Type")
+        .matches(/^[1|2]$/, "Invalid Product type selected"),
+      product: Yup.object()
+        .test("product", "Please select product", () => {
+          return selectedValue && Object.keys(selectedValue).length > 0;
+        })
+        .test(
+          "pro",
+          "Only packages are allowed for selected product type",
+          () => this.state.validProduct
+        ),
+
+      cities: Yup.object().when("cityType", {
+        is: (cityType) =>
+          cityType === "2" && Object.keys(selectedCity).length === 0,
+        then: Yup.object().required("Please select city"),
+      }),
+      // file: Yup.string().when("packageType", {
+      //   is: "1",
+      //   then: Yup.string()
+      //     .required("Please select the image")
+      //     .test(
+      //       "image",
+      //       "Only files with the following extensions are allowed: png jpg jpeg",
+      //       () => this.state.isValidFile
+      //     ),
+      // }),
+      status: Yup.number().required("Please select status"),
     });
 
     return (
@@ -617,7 +866,7 @@ class Test extends Component {
             <div className="row">
               <div className="col-lg-12 col-sm-12 col-xs-12">
                 <h1>
-                  Manage Test
+                  Manage Products
                   <small />
                 </h1>
               </div>
@@ -629,28 +878,8 @@ class Test extends Component {
                       className="btn btn-info btn-sm"
                       onClick={(e) => this.modalShowHandler(e, "")}
                     >
-                      <i className="fas fa-plus m-r-5" /> Add Test
+                      <i className="fas fa-plus m-r-5" /> Add Product
                     </button>
-                  </div>
-                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-                  <div className="col-lg-3 col-sm-3 col-xs-3">
-                    {totalCount > 0 ? (
-                      <button
-                        type="button"
-                        className="btn btn-info btn-sm"
-                        onClick={(e) => this.confirmDeleteAllProducts(e)}
-                      >
-                        <i className="fas fa-minus m-r-5" /> Remove All Test
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        className="btn btn-info btn-sm"
-                        disabled
-                      >
-                        <i className="fas fa-minus m-r-5" /> Remove All Test
-                      </button>
-                    )}
                   </div>
                 </div>
 
@@ -662,6 +891,23 @@ class Test extends Component {
                       placeholder="Filter by City"
                     />
                   </div>
+                  <div className="">
+                    <select
+                      className="form-control"
+                      name="status"
+                      id="search_status"
+                    >
+                      <option value="">Select Status</option>
+                      {this.state.selectStatus.map((val) => {
+                        return (
+                          <option key={val.value} value={val.value}>
+                            {val.label}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+
                   <div className="">
                     <input
                       type="submit"
@@ -687,31 +933,33 @@ class Test extends Component {
           <section className="content">
             <div className="box">
               <div className="box-body">
-                <BootstrapTable data={testDetails}>
-                  <TableHeaderColumn isKey dataField="test_code">
-                    Test Code
+                <BootstrapTable data={this.state.product_list}>
+                  <TableHeaderColumn isKey dataField="product_code">
+                    Product Code
                   </TableHeaderColumn>
                   <TableHeaderColumn
-                    dataField="test"
+                    dataField="product_name"
                     tdStyle={{ wordBreak: "break-word" }}
                   >
-                    Test
-                  </TableHeaderColumn>
-
-                  <TableHeaderColumn dataField="city_name">
-                    City
+                    Product Name
                   </TableHeaderColumn>
                   <TableHeaderColumn
-                    dataField="test_type"
-                    dataFormat={this.testTypeList(this)}
+                    dataField="type"
+                    dataFormat={this.productType(this)}
                   >
-                    Test Type
+                    Package Type
                   </TableHeaderColumn>
                   <TableHeaderColumn
-                    dataField="test_image"
-                    dataFormat={this.setTestImage(this)}
+                    dataField="product_image"
+                    dataFormat={this.setProductImage(this)}
                   >
                     Image
+                  </TableHeaderColumn>
+                  <TableHeaderColumn
+                    dataField="status"
+                    dataFormat={custStatus(this)}
+                  >
+                    Status
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="id"
@@ -739,7 +987,7 @@ class Test extends Component {
                   </Row>
                 ) : null}
 
-                {/* ======= Modal ======== */}
+                {/* ======= Add Modal ======== */}
                 <Modal
                   show={this.state.showModal}
                   onHide={() => this.modalCloseHandler()}
@@ -747,8 +995,18 @@ class Test extends Component {
                 >
                   <Formik
                     initialValues={initialValues}
-                    validationSchema={validateStopFlag}
-                    onSubmit={this.handleSubmitEvent}
+                    validationSchema={
+                      this.state.product_id > 0
+                        ? validateStopFlagUpdate
+                        : validateStopFlag
+                    }
+                    onSubmit={
+                      this.state.product_id > 0
+                        ? this.handleSubmitEventUpdate
+                        : this.handleSubmitEventAdd
+                    }
+                    // validationSchema={validateStopFlag}
+                    // onSubmit={this.handleSubmitEvent}
                   >
                     {({
                       values,
@@ -763,7 +1021,9 @@ class Test extends Component {
                       return (
                         <Form>
                           <Modal.Header closeButton>
-                            <Modal.Title>Add Test</Modal.Title>
+                            <Modal.Title>
+                              {this.state.product_id > 0 ? 'Edit Product' : 'Add Product'}
+                            </Modal.Title>
                           </Modal.Header>
                           <Modal.Body>
                             <div className="contBox">
@@ -771,39 +1031,45 @@ class Test extends Component {
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
-                                      Test Type
+                                      Product Type
                                       <span className="impField">*</span>
                                     </label>
 
                                     <Field
-                                      name="testType"
+                                      name="packageType"
                                       component="select"
                                       className={`selectArowGray form-control`}
                                       autoComplete="off"
-                                      //value={values.testType}
-                                      value={this.state.testType}
+                                      //value={values.packageType}
+                                      value={this.state.packageType}
                                       onChange={(evt) => {
                                         if (evt) {
                                           const { value } = evt.target;
                                           this.setState({
-                                            testType: value,
+                                            packageType: value,
                                             value: "",
                                             selectedValue: "",
                                             validProduct: true,
                                           });
-                                          setFieldValue("test_type", value);
+                                          setFieldValue("packageType", value);
                                         } else {
                                           this.setState({
-                                            testType: "1",
+                                            packageType: "1",
                                             value: "",
                                             selectedValue: "",
                                             validProduct: true,
                                           });
-                                          setFieldValue("test_type", "1");
+                                          setFieldValue("packageType", "1");
                                         }
                                       }}
                                     >
-                                      {this.state.selecttestType.map(
+                                      {/* <option key="-1" value="1">
+																				Our Top Selling Tests/Packages
+																				</option>
+																				<option key="0" value="2">
+																				Popular Preventive Health Check-Up Packages
+																				</option> */}
+                                      {this.state.selectPackageType.map(
                                         (element, i) => (
                                           <option key={i} value={element.value}>
                                             {element.label}
@@ -811,7 +1077,12 @@ class Test extends Component {
                                         )
                                       )}
                                     </Field>
-                                  
+                                    {/*     {errors.packageType &&
+																		touched.packageType ? (
+																		<span className="errorMsg">
+																			{errors.packageType}
+																		</span>
+																		) : null} */}
                                   </div>
                                 </Col>
                                 <Col xs={12} sm={12} md={12}>
@@ -847,6 +1118,9 @@ class Test extends Component {
                                         }
                                       }}
                                     >
+                                      {/*  <option key="-1" value="">
+																				Select Type
+																			</option> */}
                                       {this.state.selectCityType.map(
                                         (cityType, i) => (
                                           <option
@@ -910,7 +1184,7 @@ class Test extends Component {
                                 ) : null}
                                 <Col xs={12} sm={12} md={12}>
                                   <label>
-                                    Search Test
+                                    Search Product
                                     <span className="impField">*</span>
                                   </label>
                                   <div className="form-group">
@@ -945,7 +1219,7 @@ class Test extends Component {
                                             backgroundImage: "none",
                                             border: "1px solid #d2d6de",
                                           },
-                                          placeholder: "Enter Test Code",
+                                          placeholder: "Enter Product Code",
                                           // value: this.state.value,
                                           value: this.Truncate(
                                             this.state.value,
@@ -988,7 +1262,7 @@ class Test extends Component {
                                     ) : null}
                                   </div>
                                 </Col>
-                                {values.testType == "1" ? (
+                                {values.packageType == "1" ? (
                                   <Col xs={12} sm={12} md={12}>
                                     <div className="form-group">
                                       <label>
@@ -1027,19 +1301,55 @@ class Test extends Component {
 
                                 <br></br>
                               </Row>
+                              <Row>
+                                <Col xs={12} sm={12} md={12}>
+                                  <div className="form-group">
+                                    <label>
+                                      Status
+                                      <span className="impField">*</span>
+                                    </label>
+                                    <Field
+                                      name="status"
+                                      component="select"
+                                      className={`selectArowGray form-control`}
+                                      autoComplete="off"
+                                      value={values.status}
+                                    >
+                                      <option key="-1" value="">
+                                        Select
+                                      </option>
+                                      {this.state.selectStatus.map(
+                                        (status, i) => (
+                                          <option key={i} value={status.value}>
+                                            {status.label}
+                                          </option>
+                                        )
+                                      )}
+                                    </Field>
+                                    {errors.status && touched.status ? (
+                                      <span className="errorMsg">
+                                        {errors.status}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                </Col>
+                              </Row>
                             </div>
                           </Modal.Body>
                           <Modal.Footer>
                             <button
-                              className={`btn btn-success btn-sm ${
-                                isValid ? "btn-custom-green" : "btn-disable"
-                              } m-r-10`}
+                              className={`btn btn-success btn-sm ${isValid ? "btn-custom-green" : "btn-disable"
+                                } m-r-10`}
                               type="submit"
-                              disabled={
-                                isValid ? (isSubmitting ? true : false) : true
-                              }
+                              disabled={isValid ? (isSubmitting ? true : false) : true}
                             >
-                              {isSubmitting ? "Submitting..." : "Submit"}
+                              {this.state.product_id > 0
+                                ? isSubmitting
+                                  ? "Updating..."
+                                  : "Update"
+                                : isSubmitting
+                                  ? "Submitting..."
+                                  : "Submit"}
                             </button>
                             <button
                               onClick={(e) => this.modalCloseHandler()}
@@ -1049,6 +1359,7 @@ class Test extends Component {
                               Close
                             </button>
                           </Modal.Footer>
+                          
                         </Form>
                       );
                     }}
@@ -1060,13 +1371,13 @@ class Test extends Component {
                   onHide={() => this.imageModalCloseHandler()}
                   backdrop="static"
                 >
-                  <Modal.Header closeButton>Test Image</Modal.Header>
+                  <Modal.Header closeButton>Product Image</Modal.Header>
                   <Modal.Body>
                     <center>
                       <div className="imgUi">
                         <img
-                          src={this.state.test_url}
-                          alt="Test Image"
+                          src={this.state.banner_url}
+                          alt="Product Image"
                         ></img>
                       </div>
                     </center>

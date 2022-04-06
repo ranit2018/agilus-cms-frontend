@@ -281,6 +281,11 @@ const resolution_arr = [
     width: `256`,
     height: `256`,
   },
+  {
+    tag: `test-details`,
+    width: `256`,
+    height: `256`,
+  },
   
 
 ]

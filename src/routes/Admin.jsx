@@ -89,6 +89,8 @@ import Publications from "../components/admin/department-pages/publications/Publ
 import AddPublication from "../components/admin/department-pages/publications/AddPublication";
 import EditPublication from "../components/admin/department-pages/publications/EditPublication";
 
+import Test from "../components/admin/department-pages/test-page/Test";
+
 import "../assets/css/all.css";
 import "../assets/css/admin-style.css";
 import "../assets/css/admin-skin-blue.css";
@@ -251,30 +253,17 @@ class Admin extends Component {
 
         <PrivateRoute path="/department/doctor" component={Doctor} />
         <PrivateRoute path="/department/add-doctor" component={AddDoctor} />
-        <PrivateRoute
-          path="/department/edit-doctor/:id"
-          component={EditDoctor}
-        />
+        <PrivateRoute path="/department/edit-doctor/:id" component={EditDoctor} />
 
         <PrivateRoute path="/department/equipment" component={Equipment} />
-        <PrivateRoute
-          path="/department/add-equipment"
-          component={AddEquipment}
-        />
-        <PrivateRoute
-          path="/department/edit-equipment/:id"
-          component={EditEquipment}
-        />
+        <PrivateRoute path="/department/add-equipment" component={AddEquipment} />
+        <PrivateRoute path="/department/edit-equipment/:id" component={EditEquipment} />
 
         <PrivateRoute path="/department/publications" component={Publications} />
-        <PrivateRoute
-          path="/department/add-publication"
-          component={AddPublication}
-        />
-        <PrivateRoute
-          path="/department/edit-publication/:id"
-          component={EditPublication}
-        />
+        <PrivateRoute path="/department/add-publication" component={AddPublication} />
+        <PrivateRoute path="/department/edit-publication/:id" component={EditPublication} />
+
+        <PrivateRoute path="/department/test" component={Test} />
 
 
         <Route from="*" component={AdminPageNotFound} />

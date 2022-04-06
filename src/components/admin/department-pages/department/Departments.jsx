@@ -193,6 +193,7 @@ class Departments extends Component {
       search_publications: "",
       search_status: "",
       types: [],
+      
     };
   }
   componentDidMount() {

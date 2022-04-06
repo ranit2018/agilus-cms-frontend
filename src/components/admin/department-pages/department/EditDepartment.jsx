@@ -37,31 +37,15 @@ class EditDepartment extends Component {
         { value: "1", label: "Instrument" },
         { value: "2", label: "Equipment" },
       ],
-      selectProductType: [
-        { value: "1", label: "Tests" },
-        { value: "2", label: "Popular  Packages" },
-      ],
-      selectCityType: [
-        { value: "1", label: "Select All Cities" },
-        { value: "2", label: "Select Particular City" },
-      ],
+      
       department_id: this.props.match.params.id,
       doctors_arr: [],
       equipments_arr: [],
       publications_arr: [],
+      product_arr: [],
       isValidFile: false,
 
-      cityType: "1",
-      packageType: "1",
-      product: "",
-      suggestions: [],
-      city_state_list: [],
-      selectedCity: {
-        city_name: "MUMBAI",
-        label: "Mumbai (Maharashtra)",
-        state_id: 15,
-        value: 304,
-      },
+      
       value: "",
       selectedValue: "",
     };
@@ -163,6 +147,28 @@ class EditDepartment extends Component {
     }
   };
 
+  getProductArr = (value) => {
+    if (value.length == 3) {
+      // let { search_city_name } = this.state;
+    API.get( `api/lead_landing/product`)
+      .then((res) => {
+        console.log('res',res.data.data)
+        this.setState({
+          product_arr: res.data.data,
+          totalCount: res.data.count,
+          isLoading: false,
+        });
+      })
+      .catch((err) => {
+        this.setState({
+          isLoading: false,
+        });
+        showErrorMessage(err, this.props);
+      });
+     
+    }
+  }
+
   handleSubmitEvent = (values, actions) => {
     // let postdata = {
     //   department_name: values.department_name,
@@ -172,6 +178,7 @@ class EditDepartment extends Component {
     //   doctor_id: values.doctor_id,
     //   equipment_id: values.equipment_id,
     //   publication_id: values.publication_id,
+    //   product_id: values.product_id,
     //   department_image: values.department_image,
     //   date_posted: new Date().toLocaleString(),
     //   status: String(values.status),
@@ -191,6 +198,8 @@ class EditDepartment extends Component {
     formData.append("doctors[]", JSON.stringify(values.doctor_id));
     formData.append("equipments[]", JSON.stringify(values.equipment_id));
     formData.append("publications[]", JSON.stringify(values.publication_id));
+    formData.append("product[]", JSON.stringify(values.product_id));
+    
     formData.append("status", String(values.status));
 
     let url = `/api/department/doctor/${this.props.match.params.id}`;
@@ -295,14 +304,9 @@ class EditDepartment extends Component {
       doctor_id: "",
       equipment_id: "",
       publication_id: "",
+      product_id: "",
       date_posted: "",
       status: "",
-
-      packageType: "",
-      cityType: "",
-      cities: "",
-      product: "",
-      test_image: "",
     };
 
     const newInitialValues = Object.assign(initialValues, {
@@ -331,6 +335,9 @@ class EditDepartment extends Component {
         alldata.publication_id || alldata.publication_id === 0
           ? alldata.publication_id.toString()
           : "",
+      product_id: alldata.product_id || alldata.product_id === 0
+      ? alldata.product_id.toString()
+      : "",
       date_posted: alldata.date_posted ? alldata.date_posted : "",
       status:
         alldata.status || alldata.status === 0 ? alldata.status.toString() : "",
@@ -366,6 +373,7 @@ class EditDepartment extends Component {
       doctor_id: Yup.array().optional(),
       equipment_id: Yup.array().optional(),
       publication_id: Yup.array().optional(),
+      product_id: Yup.array().optional(),
       status: Yup.number().required("Please select status"),
     });
 
@@ -709,6 +717,52 @@ class EditDepartment extends Component {
                               </div>
                             </Col>
                           </Row>
+                           {/*====== Test Form ======= */}
+                           <Row>
+                            <Col xs={12} sm={12} md={12}>
+                              <div className="form-group">
+                                <label>Search Test Product</label>
+                                <Select
+                                  isMulti
+                                  name="product_id"
+                                  options={this.state.product_arr}
+                                  className="basic-multi-select"
+                                  classNamePrefix="select"
+                                  getOptionValue={(x) => x.id}
+                                  getOptionLabel={(x) => x.product_name}
+                                  noOptionsMessage={() => "No Results Found"}
+                                  onInputChange={(value) => {
+                                    this.getProductArr(value);
+                                  }}
+                                  onChange={(evt) => {
+                                    if (evt === null) {
+                                      setFieldValue("product_id", []);
+                                    } else {
+                                      // setFieldValue( "product_id", evt)
+
+                                      setFieldValue(
+                                        "product_id",
+                                        [].slice.call(evt).map((val) => {
+                                          return {
+                                            product_id: val.id,
+                                            product_name: val.product_name,
+                                          };
+                                        })
+                                      );
+                                    }
+                                  }}
+                                  placeholder="Choose Product Code"
+                                />
+                                {errors.product_id && touched.product_id ? (
+                                  <span className="errorMsg">
+                                    {errors.product_id}
+                                  </span>
+                                ) : null}
+                              </div>
+                            </Col>
+                          </Row>
+                         
+                          {/* ===== end test form ===== */}
                           <Row>
                             <Col xs={12} sm={12} md={12}>
                               <div className="form-group">

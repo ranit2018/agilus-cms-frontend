@@ -518,11 +518,6 @@ class Testimonials extends Component {
   };
 
 
-
-
-
-
-
   fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
     //console.log(event.target.files);
     setFieldTouched("image");

@@ -38,14 +38,6 @@ class AddDepartment extends Component {
         { value: "1", label: "Instrument" },
         { value: "2", label: "Equipment" },
       ],
-      selectProductType: [
-        { value: "1", label: "Tests" },
-        { value: "2", label: "Popular  Packages" },
-      ],
-      selectCityType: [
-        { value: "1", label: "Select All Cities" },
-        { value: "2", label: "Select Particular City" },
-      ],
       department_id: 0,
       suggestions: [],
       
@@ -53,57 +45,17 @@ class AddDepartment extends Component {
       equipments_arr: [],
       publications_arr: [],
       isValidFile: false,
-
-      cityType: "1",
-      packageType: "1",
+      product_arr: [],
+      
       product: "",
       suggestions: [],
-      city_state_list: [],
-      selectedCity: {
-        city_name: "MUMBAI",
-        label: "Mumbai (Maharashtra)",
-        state_id: 15,
-        value: 304,
-      },
+      
       value: "",
       selectedValue: "",
+      validProduct: true,
+
     };
   }
-
-  fileChangedTestHandler= (event, setFieldTouched, setFieldValue, setErrors) => {
-    setFieldTouched("test_image");
-    setFieldValue("test_image", event.target.value);
-
-    const SUPPORTED_FORMATS = ["image/png", "image/jpeg", "image/jpg"];
-    if (!event.target.files[0]) {
-      //Supported
-      this.setState({
-        test_image: "",
-        isValidFile: true,
-      });
-      return;
-    }
-    if (
-      event.target.files[0] &&
-      SUPPORTED_FORMATS.includes(event.target.files[0].type)
-    ) {
-      //Supported
-      this.setState({
-        test_image: event.target.files[0],
-        isValidFile: true,
-      });
-    } else {
-      //Unsupported
-      setErrors({
-        test_image:
-          "Only files with the following extensions are allowed: png jpg jpeg",
-      }); //Not working- So Added validation in "yup"
-      this.setState({
-        test_image: "",
-        isValidFile: false,
-      });
-    }
-  };
 
   fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
     setFieldTouched("department_image");
@@ -201,6 +153,28 @@ class AddDepartment extends Component {
     }
   };
 
+  getProductArr = (value) => {
+    if (value.length == 3) {
+      // let { search_city_name } = this.state;
+    API.get( `api/lead_landing/product`)
+      .then((res) => {
+        console.log('res',res.data.data)
+        this.setState({
+          product_arr: res.data.data,
+          totalCount: res.data.count,
+          isLoading: false,
+        });
+      })
+      .catch((err) => {
+        this.setState({
+          isLoading: false,
+        });
+        showErrorMessage(err, this.props);
+      });
+     
+    }
+  }
+
   handleSubmitEvent = (values, actions) => {
     // let postdata = {
     //   department_name: values.department_name,
@@ -210,6 +184,7 @@ class AddDepartment extends Component {
     //   doctor_id: values.doctor_id,
     //   equipment_id: values.equipment_id,
     //   publication_id: values.publication_id,
+    //   product_id: values. product_id,
     //   department_image: values.department_image,
     //   date_posted: new Date().toLocaleString(),
     //   status: String(values.status),
@@ -229,6 +204,8 @@ class AddDepartment extends Component {
     formData.append("doctors[]", JSON.stringify(values.doctor_id));
     formData.append("equipments[]", JSON.stringify(values.equipment_id));
     formData.append("publications[]", JSON.stringify(values.publication_id));
+    formData.append("product[]", JSON.stringify(values.product));
+
     formData.append("status", String(values.status));
 
     let url = `/api/department`;
@@ -331,6 +308,7 @@ class AddDepartment extends Component {
         payload.city_id = this.state.selectedCity.value;
       }
 
+      /*
       API.post(`/feed/code-search`, payload)
         .then((res) => {
           if (res.data && res.data.data && res.data.data.length > 0) {
@@ -354,6 +332,7 @@ class AddDepartment extends Component {
             setFieldTouched("product");
           });
         });
+     */
     }
   };
 
@@ -377,14 +356,9 @@ class AddDepartment extends Component {
       doctor_id: "",
       equipment_id: "",
       publication_id: "",
+      product_id: "",
       date_posted: "",
       status: "",
-
-      packageType: "",
-      cityType: "",
-      cities: "",
-      product: "",
-      test_image: "",
     };
     const validateStopFlag = Yup.object().shape({
       department_image: Yup.mixed()
@@ -423,6 +397,7 @@ class AddDepartment extends Component {
       // .ensure()
       // .min(1, "Please add at least one publication")
       // .of(Yup.string().ensure().required("publication cannot be empty")),
+      product_id: Yup.array().optional(),
       status: Yup.number().required("Please select status"),
     });
 
@@ -775,234 +750,47 @@ class AddDepartment extends Component {
                           <Row>
                             <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
-                                <label>Product Type</label>
-
-                                <Field
-                                  name="packageType"
-                                  component="select"
-                                  className={`selectArowGray form-control`}
-                                  autoComplete="off"
-                                  //value={values.packageType}
-                                  value={this.state.packageType}
+                                <label>Search Product</label>
+                                <Select
+                                  isMulti
+                                  name="product_id"
+                                  options={this.state.product_arr}
+                                  className="basic-multi-select"
+                                  classNamePrefix="select"
+                                  getOptionValue={(x) => x.id}
+                                  getOptionLabel={(x) => x.product_name}
+                                  noOptionsMessage={() => "No Results Found"}
+                                  onInputChange={(value) => {
+                                    this.getProductArr(value);
+                                  }}
                                   onChange={(evt) => {
-                                    if (evt) {
-                                      const { value } = evt.target;
-                                      this.setState({
-                                        packageType: value,
-                                        value: "",
-                                        selectedValue: "",
-                                        validProduct: true,
-                                      });
-                                      setFieldValue("packageType", value);
+                                    if (evt === null) {
+                                      setFieldValue("product_id", []);
                                     } else {
-                                      this.setState({
-                                        packageType: "1",
-                                        value: "",
-                                        selectedValue: "",
-                                        validProduct: true,
-                                      });
-                                      setFieldValue("packageType", "1");
+                                      // setFieldValue( "product_id", evt)
+
+                                      setFieldValue(
+                                        "product_id",
+                                        [].slice.call(evt).map((val) => {
+                                          return {
+                                            product_id: val.id,
+                                            product_name: val.product_name,
+                                          };
+                                        })
+                                      );
                                     }
                                   }}
-                                >
-                                  {this.state.selectProductType.map(
-                                    (element, i) => (
-                                      <option key={i} value={element.value}>
-                                        {element.label}
-                                      </option>
-                                    )
-                                  )}
-                                </Field>
+                                  placeholder="Choose Product Code"
+                                />
+                                {errors.product_id && touched.product_id ? (
+                                  <span className="errorMsg">
+                                    {errors.product_id}
+                                  </span>
+                                ) : null}
                               </div>
                             </Col>
-                            <Col xs={12} sm={12} md={12}>
-                              <div className="form-group">
-                                <label>City Type</label>
-
-                                <Field
-                                  name="cityType"
-                                  component="select"
-                                  className={`selectArowGray form-control`}
-                                  autoComplete="off"
-                                  // value={values.cityType}
-                                  value={this.state.cityType}
-                                  onChange={(evt) => {
-                                    if (evt) {
-                                      const { value } = evt.target;
-                                      this.setState({
-                                        cityType: value,
-                                        value: "",
-                                        selectedValue: "",
-                                      });
-                                      setFieldValue("cityType", value);
-                                    } else {
-                                      this.setState({
-                                        cityType: "1",
-                                        value: "",
-                                        selectedValue: "",
-                                      });
-                                      setFieldValue("cityType", "1");
-                                    }
-                                  }}
-                                >
-                                  {this.state.selectCityType.map(
-                                    (cityType, i) => (
-                                      <option key={i} value={cityType.value}>
-                                        {cityType.label}
-                                      </option>
-                                    )
-                                  )}
-                                </Field>
-                                {/* {errors.cityType && touched.cityType ? (
-                                      <span className="errorMsg">
-                                        {errors.cityType}
-                                      </span>
-                                    ) : null} */}
-
-                                {/* {errors.city ? (
-                                      <p
-                                        className="errorMsg"
-                                        style={{ wordBreak: "break-word" }}
-                                      >
-                                        {errors.city}
-                                      </p>
-                                    ) : null} */}
-                              </div>
-                            </Col>
-                            {this.state.cityType == "2" ? (
-                              <Col xs={12} sm={12} md={12}>
-                                <div className="form-group">
-                                  <label>
-                                    City
-                                    <span className="impField">*</span>
-                                  </label>
-
-                                  <Select
-                                    name="cities"
-                                    maxMenuHeight={200}
-                                    isMulti={false}
-                                    isClearable={false}
-                                    isSearchable={true}
-                                    placeholder="Select City"
-                                    options={this.state.city_state_list}
-                                    // value={values.cities}
-                                    value={this.state.selectedCity}
-                                    onChange={(evt) => {
-                                      this.setState({
-                                        selectedCity: evt,
-                                        value: "",
-                                        selectedValue: "",
-                                      });
-                                      setFieldValue("cities", evt);
-                                    }}
-                                  />
-                                  {errors.cities && touched.cities ? (
-                                    <p className="errorMsg">{errors.cities}</p>
-                                  ) : null}
-                                </div>
-                              </Col>
-                            ) : null}
-                            <Col xs={12} sm={12} md={12}>
-                              <label>Search Test Product</label>
-                              <div className="form-group">
-                                <div className="position-relative">
-                                  <Autosuggest
-                                    suggestions={this.state.suggestions}
-                                    onSuggestionsFetchRequested={(req) => {
-                                      this.onSuggestionsFetchRequested(req);
-                                      setFieldTouched("product");
-                                    }}
-                                    onSuggestionsClearRequested={() => {
-                                      this.onSuggestionsClearRequested();
-                                      this.setState({ selectedValue: "" });
-                                    }}
-                                    getSuggestionValue={this.getSuggestionValue}
-                                    renderSuggestion={this.renderSuggestion}
-                                    focusInputOnSuggestionClick={false}
-                                    inputProps={{
-                                      style: {
-                                        width: "100%",
-                                        textTransform: "uppercase",
-                                        display: "block",
-                                        width: "100%",
-                                        height: "34px",
-                                        padding: "6px 12px",
-                                        fontSize: "14px",
-                                        lineHeight: "1.42857143",
-                                        color: "#555555",
-                                        backgroundColor: "#fff",
-                                        backgroundImage: "none",
-                                        border: "1px solid #d2d6de",
-                                      },
-                                      placeholder: "Enter Product Code",
-                                      // value: this.state.value,
-                                      value: this.Truncate(
-                                        this.state.value,
-                                        70
-                                      ),
-                                      onChange: this.onChangeAutoSuggest,
-                                      onKeyDown: this.handleSearch,
-                                      onBlur: () => setFieldTouched("product"),
-                                      disabled: this.state.selectedValue != "",
-                                    }}
-                                    onSuggestionSelected={(event, req) => {
-                                      this.onSuggestionSelected(
-                                        event,
-                                        req,
-                                        setFieldTouched
-                                      );
-                                    }}
-                                  />
-                                  {this.state.selectedValue !== "" ? (
-                                    <button
-                                      onClick={() =>
-                                        this.handleAutoSuggestClick()
-                                      }
-                                      className="crossBtn btn btn-danger pull-right"
-                                    >
-                                      X
-                                    </button>
-                                  ) : null}
-                                </div>
-                              </div>
-                            </Col>
-                            {values.packageType == "1" ? (
-                              <Col xs={12} sm={12} md={12}>
-                                <div className="form-group">
-                                  <label>
-                                    Upload Test Image
-                                    <span className="impField">*</span>
-                                    <br />
-                                    <i>{this.state.fileValidationMessage}</i>
-                                    <br />
-                                    <i>{this.state.validationMessage}</i>
-                                  </label>
-                                  <Field
-                                    name="test_image"
-                                    type="file"
-                                    className={`form-control`}
-                                    placeholder="Test Image"
-                                    autoComplete="off"
-                                    onChange={(e) => {
-                                      this.fileChangedHandler(
-                                        e,
-                                        setFieldTouched,
-                                        setFieldValue,
-                                        setErrors
-                                      );
-                                    }}
-                                  />
-                                  {errors.test_image && touched.test_image ? (
-                                    <span className="errorMsg">
-                                      {errors.test_image}
-                                    </span>
-                                  ) : null}
-                                </div>
-                              </Col>
-                            ) : null}
-
-                            <br></br>
                           </Row>
+                         
                           {/* ===== end test form ===== */}
 
                           <Row>
