@@ -225,7 +225,11 @@ class Test extends Component {
   };
 
   getProductList = (page = 1) => {
-    let { search_city_name, search_product_code, search_product_name, search_status } = this.state;
+    // let { search_city_name, search_product_code, search_product_name, search_status } = this.state;
+    const search_city_name = document.getElementById("search_city_name").value;
+    const search_product_code = document.getElementById("search_product_code").value;
+    const search_product_name = document.getElementById("search_product_name").value;
+    const search_status = document.getElementById("search_status").value;
     API.get(
       `/api/department/test?city_name=${encodeURIComponent(
         search_city_name
@@ -269,9 +273,6 @@ class Test extends Component {
     //     showErrorMessage(err, this.props);
     //   });
   }
-
-
-
 
   //for edit
   //   modalCloseHandler = () => {
@@ -382,11 +383,12 @@ class Test extends Component {
       });
   };
 
-  clearSearch = () => {
+ clearSearch = () => {
     document.getElementById("search_city_name").value = "";
     document.getElementById("search_product_code").value = "";
     document.getElementById("search_product_name").value = "";
     document.getElementById("search_status").value = "";
+    
     this.setState(
       {
         search_city_name: "",
@@ -402,7 +404,6 @@ class Test extends Component {
       }
     );
   };
-
   productType = (refObj) => (cell) => {
     //return cell === 1 ? "Active" : "Inactive";
     if (cell === 1) {
@@ -449,7 +450,7 @@ class Test extends Component {
     };
     console.log('post_data_product',post_data_product)
 
-    if (values.cityType === "1") {
+    if (values.cityType === "2") {
       post_data.push({
         city_name: selectedCity.city_name,
         city_id: selectedCity.value,
@@ -730,18 +731,8 @@ class Test extends Component {
           cityType === "2" && Object.keys(selectedCity).length === 0,
         then: Yup.object().required("Please select city"),
       }),
-      // file: Yup.string().when("packageType", {
-      //   is: "1",
-      //   then: Yup.string()
-      //     .required("Please select the image")
-      //     .test(
-      //       "image",
-      //       "Only files with the following extensions are allowed: png jpg jpeg",
-      //       () => this.state.isValidFile
-      //     ),
-      // }),
       file: Yup.mixed().optional(),
-      // status: Yup.number().required("Please select status"),
+      status: Yup.number().required("Please select status"),
     });
 
     let validateStopFlagUpdate = Yup.object().shape({
@@ -957,6 +948,8 @@ class Test extends Component {
                     }) => {
                       return (
                         <Form>
+                          {console.log({errors})}
+                          {console.log({values})}
                           <Modal.Header closeButton>
                             <Modal.Title>
                               {this.state.product_id > 0 ? 'Edit Product' : 'Add Product'}
@@ -1175,9 +1168,7 @@ class Test extends Component {
                                             req,
                                             setFieldTouched
                                           );
-                                          // setTimeout(() => {
-                                          //   setFieldTouched("product", true)
-                                          // }, 230);
+                                          
                                         }}
                                       />
                                       {this.state.selectedValue !== "" ? (
@@ -1199,7 +1190,7 @@ class Test extends Component {
                                     ) : null}
                                   </div>
                                 </Col>
-                                {values.packageType == "1" ? (
+                                {/* {values.packageType == "1" ? ( */}
                                   <Col xs={12} sm={12} md={12}>
                                     <div className="form-group">
                                       <label>
@@ -1227,14 +1218,14 @@ class Test extends Component {
                                           );
                                         }}
                                       />
-                                      {errors.file ? (
+                                      {errors.file && touched.file ? (
                                         <span className="errorMsg">
                                           {errors.file}
                                         </span>
                                       ) : null}
                                     </div>
                                   </Col>
-                                ) : null}
+                                {/* ) : null} */}
 
                                 <br></br>
                               </Row>
