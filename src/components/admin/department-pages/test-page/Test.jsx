@@ -38,6 +38,16 @@ const custStatus = (refObj) => (cell) => {
   }
 };
 
+const custCity = (refObj) => (cell) => {
+  //return cell === 1 ? "Active" : "Inactive";
+  console.log("--------------cell-----------------------",cell);
+  if (cell === null || typeof cell == undefined) {
+    return "All";
+  } else if (cell === 0) {
+    return ""+cell;
+  }
+};
+
 /*For Tooltip*/
 function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
   return (
@@ -338,7 +348,7 @@ class Test extends Component {
     const search_product_code = document.getElementById("search_product_code").value;
     const search_product_name = document.getElementById("search_product_name").value;
     const search_status = document.getElementById("search_status").value;
-    if (search_city_name == "" || search_product_code == "" || search_product_name == "" || search_status == "")  {
+    if (search_city_name == "" && search_product_code == "" && search_product_name == "" && search_status == "")  {
       return false;
     }
     ///api/department/test
@@ -353,11 +363,14 @@ class Test extends Component {
     )
       .then((res) => {
         this.setState({
-          product_data: res.data.data,
+          product_list: res.data.data,
           totalCount: res.data.count,
           isLoading: false,
           activePage: 1,
           search_city_name: search_city_name,
+          search_product_code: search_product_code,
+          search_product_name: search_product_name,
+          search_status: search_status,
           remove_search: true,
         });
       })
@@ -371,10 +384,17 @@ class Test extends Component {
 
   clearSearch = () => {
     document.getElementById("search_city_name").value = "";
+    document.getElementById("search_product_code").value = "";
+    document.getElementById("search_product_name").value = "";
+    document.getElementById("search_status").value = "";
     this.setState(
       {
         search_city_name: "",
+         search_product_code:"",
+      search_product_name:"",
+      search_status:"",
         remove_search: false,
+
       },
       () => {
         // this.setState({ activePage: 1 });
@@ -867,6 +887,15 @@ class Test extends Component {
                   >
                     Package Type
                   </TableHeaderColumn>
+
+                  <TableHeaderColumn
+                    dataField="city_name"
+                    tdStyle={{ wordBreak: "break-word" }}
+                    dataFormat={custCity(this)}
+                  >
+                    City Name
+                  </TableHeaderColumn>
+
                   <TableHeaderColumn
                     dataField="product_image"
                     dataFormat={this.setProductImage(this)}
