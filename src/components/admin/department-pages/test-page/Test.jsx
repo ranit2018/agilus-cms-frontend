@@ -11,7 +11,6 @@ import swal from "sweetalert";
 import Select from "react-select";
 import Switch from "react-switch";
 
-
 import {
   htmlDecode,
   getHeightWidth,
@@ -40,11 +39,10 @@ const custStatus = (refObj) => (cell) => {
 
 const custCity = (refObj) => (cell) => {
   //return cell === 1 ? "Active" : "Inactive";
-  console.log("--------------cell-----------------------",cell);
   if (cell === null || typeof cell == undefined) {
     return "All";
   } else if (cell === 0) {
-    return ""+cell;
+    return "" + cell;
   }
 };
 
@@ -115,7 +113,6 @@ const initialValues = {
   packageType: 1,
   cityType: "1",
   status: "",
-
 };
 
 class Test extends Component {
@@ -133,10 +130,10 @@ class Test extends Component {
       product_id: 0,
       itemPerPage: 10,
       search_city_name: "",
-      search_product_code:"",
-      search_product_name:"",
-      search_status:"",
-      
+      search_product_code: "",
+      search_product_name: "",
+      search_status: "",
+
       selectStatus: [
         { value: "0", label: "Inactive" },
         { value: "1", label: "Active" },
@@ -154,6 +151,7 @@ class Test extends Component {
       product: "",
       suggestions: [],
       value: "",
+      prd_data: "",
       selectedValue: "",
       selectedCity: {
         city_name: "MUMBAI",
@@ -171,7 +169,7 @@ class Test extends Component {
       //     value: 304,
       //   }
     };
-
+    
   }
 
   componentDidMount() {
@@ -202,7 +200,7 @@ class Test extends Component {
   };
 
   getProductCodeList = (page = 1) => {
-    let { search_city_name} = this.state;
+    let { search_city_name } = this.state;
     API.get(
       `api/lead_landing/product?city=${encodeURIComponent(
         search_city_name
@@ -225,11 +223,16 @@ class Test extends Component {
   };
 
   getProductList = (page = 1) => {
-    // let { search_city_name, search_product_code, search_product_name, search_status } = this.state;
-    const search_city_name = document.getElementById("search_city_name").value;
-    const search_product_code = document.getElementById("search_product_code").value;
-    const search_product_name = document.getElementById("search_product_name").value;
-    const search_status = document.getElementById("search_status").value;
+    let {
+      search_city_name,
+      search_product_code,
+      search_product_name,
+      search_status,
+    } = this.state;
+    // const search_city_name = document.getElementById("search_city_name").value;
+    // const search_product_code = document.getElementById("search_product_code").value;
+    // const search_product_name = document.getElementById("search_product_name").value;
+    // const search_status = document.getElementById("search_status").value;
     API.get(
       `/api/department/test?city_name=${encodeURIComponent(
         search_city_name
@@ -257,23 +260,25 @@ class Test extends Component {
   };
 
   getProductdetailsbyId(id) {
-
-    // API.get(`/api/category/${id}`)
-    //   .then((res) => {
-
-    //     this.setState({
-    //       product_list: res.data.data,
-    //       product_id: id,
-    //       showModal: true,
-
-    //     });
-
-    //   })
-    //   .catch((err) => {
-    //     showErrorMessage(err, this.props);
-    //   });
+    API.get(`/api/department/test/${id}`)
+      .then((res) => {
+        const prd_data = {
+          product_name: res.data.data[0].product_name,
+          product_code: res.data.data[0].product_code,
+          product_id: res.data.data[0].product_id,
+        }
+        this.setState({
+          product_Details: res.data.data,
+          product_id: id,
+          selectedValue: prd_data,
+          value:res.data.data[0].product_name,
+          showModal: true,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
   }
-
   //for edit
   //   modalCloseHandler = () => {
   //     this.setState({ categoryDetails: {}, category_id: 0, selectedMediumList: [], showModal: false })
@@ -346,10 +351,19 @@ class Test extends Component {
     e.preventDefault();
 
     const search_city_name = document.getElementById("search_city_name").value;
-    const search_product_code = document.getElementById("search_product_code").value;
-    const search_product_name = document.getElementById("search_product_name").value;
+    const search_product_code = document.getElementById(
+      "search_product_code"
+    ).value;
+    const search_product_name = document.getElementById(
+      "search_product_name"
+    ).value;
     const search_status = document.getElementById("search_status").value;
-    if (search_city_name == "" && search_product_code == "" && search_product_name == "" && search_status == "")  {
+    if (
+      search_city_name == "" &&
+      search_product_code == "" &&
+      search_product_name == "" &&
+      search_status == ""
+    ) {
       return false;
     }
     ///api/department/test
@@ -383,20 +397,19 @@ class Test extends Component {
       });
   };
 
- clearSearch = () => {
+  clearSearch = () => {
     document.getElementById("search_city_name").value = "";
     document.getElementById("search_product_code").value = "";
     document.getElementById("search_product_name").value = "";
     document.getElementById("search_status").value = "";
-    
+
     this.setState(
       {
         search_city_name: "",
-         search_product_code:"",
-      search_product_name:"",
-      search_status:"",
+        search_product_code: "",
+        search_product_name: "",
+        search_status: "",
         remove_search: false,
-
       },
       () => {
         // this.setState({ activePage: 1 });
@@ -404,6 +417,7 @@ class Test extends Component {
       }
     );
   };
+
   productType = (refObj) => (cell) => {
     //return cell === 1 ? "Active" : "Inactive";
     if (cell === 1) {
@@ -435,11 +449,11 @@ class Test extends Component {
       });
   };
 
-  handleSubmitEvent = (values, actions) => {
-    console.log("values",values)
+  handleSubmitEventAdd = (values, actions) => {
+    console.log("values", values);
     const { city_state_list, selectedValue, selectedCity } = this.state;
-    console.log('selectedvalue',selectedValue)
-    console.log('selectedCity',selectedCity)
+    console.log("selectedvalue", selectedValue);
+    console.log("selectedCity", selectedCity);
 
     let method = "";
     let post_data = [];
@@ -448,16 +462,15 @@ class Test extends Component {
       product_code: selectedValue.PRDCT_CODE,
       product_id: selectedValue.ID,
     };
-    console.log('post_data_product',post_data_product)
+    console.log("post_data_product", post_data_product);
 
     if (values.cityType === "2") {
       post_data.push({
         city_name: selectedCity.city_name,
         city_id: selectedCity.value,
         label: selectedCity.label,
-
       });
-    } 
+    }
 
     let formData = new FormData();
 
@@ -542,6 +555,112 @@ class Test extends Component {
     }
   };
 
+  handleSubmitEventUpdate = (values, actions) => {
+    console.log("values", values);
+    const { city_state_list, selectedValue, selectedCity } = this.state;
+    console.log("selectedvalue", selectedValue);
+    console.log("selectedCity", selectedCity);
+
+    let method = "";
+    let post_data = [];
+    let post_data_product = {
+      product_name: selectedValue.NAME,
+      product_code: selectedValue.PRDCT_CODE,
+      product_id: selectedValue.ID,
+    };
+    console.log("post_data_product", post_data_product);
+
+    if (values.cityType === "2") {
+      post_data.push({
+        city_name: selectedCity.city_name,
+        city_id: selectedCity.value,
+        label: selectedCity.label,
+      });
+    }
+
+    let formData = new FormData();
+
+    method = "PUT";
+    let url = `/api/department/test`;
+
+    formData.append("type", values.packageType);
+    formData.append("cities", JSON.stringify(post_data));
+    formData.append("product", JSON.stringify(post_data_product));
+    formData.append("status", String(values.status));
+
+    if (this.state.file !== "") {
+      if (this.state.file.size > FILE_SIZE) {
+        actions.setErrors({ file: FILE_VALIDATION_SIZE_ERROR_MASSAGE });
+        actions.setSubmitting(false);
+      } else {
+        getHeightWidth(this.state.file).then((dimension) => {
+          const { height, width } = dimension;
+          const offerDimension = getResolution("test-details");
+          if (
+            height != offerDimension.height ||
+            width != offerDimension.width
+          ) {
+            actions.setErrors({ file: FILE_VALIDATION_TYPE_ERROR_MASSAGE });
+            actions.setSubmitting(false);
+          } else {
+            formData.append("product_image", this.state.file);
+            API({
+              method: method,
+              url: url,
+              data: formData,
+            })
+            .then((res) => {
+              this.setState({ showModal: false });
+              swal({
+                closeOnClickOutside: false,
+                title: "Success",
+                text: "Record updated successfully.",
+                icon: "success",
+              }).then(() => {
+                this.getProductList();
+              });
+            })
+              .catch((err) => {
+                if (err.data.status === 3) {
+                  showErrorMessage(err, this.props);
+                } else {
+                  actions.setErrors(err.data.errors);
+                  actions.setSubmitting(false);
+                }
+              });
+          }
+        });
+      }
+    } else {
+      API({
+        method: method,
+        url: url,
+        data: formData,
+      })
+        .then((res) => {
+          this.modalCloseHandler();
+          swal({
+            closeOnClickOutside: false,
+            title: "Success",
+            text: "Added Successfully",
+            icon: "success",
+          }).then(() => {
+            this.getProductList();
+          });
+        })
+        .catch((err) => {
+          actions.setSubmitting(false);
+          if (err.data.status === 3) {
+            showErrorMessage(err, this.props);
+          } else {
+            if (err.data && err.data.errors) {
+              actions.setErrors(err.data.errors);
+            }
+          }
+        });
+    }
+  };
+
 
   // FOR AUTOSUGGEST CODE
   onSuggestionsFetchRequested = ({ value }) => {
@@ -571,7 +690,7 @@ class Test extends Component {
     }
   };
 
-  onSuggestionsClearRequested = () => { };
+  onSuggestionsClearRequested = () => {};
 
   onChangeAutoSuggest = (event, { newValue }) => {
     this.setState({ value: newValue });
@@ -589,6 +708,7 @@ class Test extends Component {
   renderSuggestion = (suggestion) => <span>{suggestion.label} </span>;
 
   onSuggestionSelected = (event, { suggestion, method }, setFieldTouched) => {
+    console.log('hello')
     if (method === "click" || method === "enter") {
       let payload = {
         search_name: suggestion.value.toUpperCase(),
@@ -600,8 +720,11 @@ class Test extends Component {
 
       SRL_API.post(`/feed/code-search`, payload)
         .then((res) => {
+          console.log('res.data.data[0]',res.data.data[0])
+
           if (res.data && res.data.data && res.data.data.length > 0) {
             const searchDetails = res.data.data[0];
+            // console.log('res.data.data[0]',res.data.data[0])
             if (
               this.state.packageType === "2" &&
               searchDetails.PROFILE_FLAG == "T"
@@ -753,22 +876,13 @@ class Test extends Component {
           "Only packages are allowed for selected product type",
           () => this.state.validProduct
         ),
-
+      file: Yup.mixed().optional(),
       cities: Yup.object().when("cityType", {
         is: (cityType) =>
           cityType === "2" && Object.keys(selectedCity).length === 0,
         then: Yup.object().required("Please select city"),
       }),
-      // file: Yup.string().when("packageType", {
-      //   is: "1",
-      //   then: Yup.string()
-      //     .required("Please select the image")
-      //     .test(
-      //       "image",
-      //       "Only files with the following extensions are allowed: png jpg jpeg",
-      //       () => this.state.isValidFile
-      //     ),
-      // }),
+
       status: Yup.number().required("Please select status"),
     });
 
@@ -933,8 +1047,18 @@ class Test extends Component {
                 >
                   <Formik
                     initialValues={initialValues}
-                    validationSchema={validateStopFlag}
-                    onSubmit={this.handleSubmitEvent}
+                    validationSchema={
+                      this.state.Product_id > 0
+                        ? validateStopFlagUpdate
+                        : validateStopFlag
+                    }
+                    onSubmit={
+                      this.state.Product_id > 0
+                        ? this.handleSubmitEventUpdate
+                        : this.handleSubmitEventAdd
+                    }
+                    // validationSchema={validateStopFlag}
+                    // onSubmit={this.handleSubmitEvent}
                   >
                     {({
                       values,
@@ -948,11 +1072,13 @@ class Test extends Component {
                     }) => {
                       return (
                         <Form>
-                          {console.log({errors})}
-                          {console.log({values})}
+                          {/* {console.log({ errors })}
+                          {console.log({ values })} */}
                           <Modal.Header closeButton>
                             <Modal.Title>
-                              {this.state.product_id > 0 ? 'Edit Product' : 'Add Product'}
+                              {this.state.product_id > 0
+                                ? "Edit Product"
+                                : "Add Product"}
                             </Modal.Title>
                           </Modal.Header>
                           <Modal.Body>
@@ -993,12 +1119,7 @@ class Test extends Component {
                                         }
                                       }}
                                     >
-                                      {/* <option key="-1" value="1">
-																				Our Top Selling Tests/Packages
-																				</option>
-																				<option key="0" value="2">
-																				Popular Preventive Health Check-Up Packages
-																				</option> */}
+                                     
                                       {this.state.selectPackageType.map(
                                         (element, i) => (
                                           <option key={i} value={element.value}>
@@ -1007,12 +1128,7 @@ class Test extends Component {
                                         )
                                       )}
                                     </Field>
-                                    {/*     {errors.packageType &&
-																		touched.packageType ? (
-																		<span className="errorMsg">
-																			{errors.packageType}
-																		</span>
-																		) : null} */}
+                                   
                                   </div>
                                 </Col>
                                 <Col xs={12} sm={12} md={12}>
@@ -1048,9 +1164,7 @@ class Test extends Component {
                                         }
                                       }}
                                     >
-                                      {/*  <option key="-1" value="">
-																				Select Type
-																			</option> */}
+                              
                                       {this.state.selectCityType.map(
                                         (cityType, i) => (
                                           <option
@@ -1168,7 +1282,6 @@ class Test extends Component {
                                             req,
                                             setFieldTouched
                                           );
-                                          
                                         }}
                                       />
                                       {this.state.selectedValue !== "" ? (
@@ -1191,40 +1304,38 @@ class Test extends Component {
                                   </div>
                                 </Col>
                                 {/* {values.packageType == "1" ? ( */}
-                                  <Col xs={12} sm={12} md={12}>
-                                    <div className="form-group">
-                                      <label>
-                                        Upload Image
-                                        <span className="impField">*</span>
-                                        <br />
-                                        <i>
-                                          {this.state.fileValidationMessage}
-                                        </i>
-                                        <br />
-                                        <i>{this.state.validationMessage}</i>
-                                      </label>
-                                      <Field
-                                        name="file"
-                                        type="file"
-                                        className={`form-control`}
-                                        placeholder="Select Image"
-                                        autoComplete="off"
-                                        onChange={(e) => {
-                                          this.fileChangedHandler(
-                                            e,
-                                            setFieldTouched,
-                                            setFieldValue,
-                                            setErrors
-                                          );
-                                        }}
-                                      />
-                                      {errors.file && touched.file ? (
-                                        <span className="errorMsg">
-                                          {errors.file}
-                                        </span>
-                                      ) : null}
-                                    </div>
-                                  </Col>
+                                <Col xs={12} sm={12} md={12}>
+                                  <div className="form-group">
+                                    <label>
+                                      Upload Image
+                                      <span className="impField">*</span>
+                                      <br />
+                                      <i>{this.state.fileValidationMessage}</i>
+                                      <br />
+                                      <i>{this.state.validationMessage}</i>
+                                    </label>
+                                    <Field
+                                      name="file"
+                                      type="file"
+                                      className={`form-control`}
+                                      placeholder="Select Image"
+                                      autoComplete="off"
+                                      onChange={(e) => {
+                                        this.fileChangedHandler(
+                                          e,
+                                          setFieldTouched,
+                                          setFieldValue,
+                                          setErrors
+                                        );
+                                      }}
+                                    />
+                                    {errors.file && touched.file ? (
+                                      <span className="errorMsg">
+                                        {errors.file}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                </Col>
                                 {/* ) : null} */}
 
                                 <br></br>
@@ -1265,21 +1376,23 @@ class Test extends Component {
                             </div>
                           </Modal.Body>
                           <Modal.Footer>
-                            {console.log('isValid',isSubmitting, isValid)}
+                            {console.log("isValid", isSubmitting, isValid)}
                             <button
-                              className={`btn btn-success btn-sm ${isValid ? "btn-custom-green" : "btn-disable"
-                                } m-r-10`}
+                              className={`btn btn-success btn-sm ${
+                                isValid ? "btn-custom-green" : "btn-disable"
+                              } m-r-10`}
                               type="submit"
-                              disabled={isValid ? (isSubmitting ? true : false) : true}
+                              disabled={
+                                isValid ? (isSubmitting ? true : false) : true
+                              }
                             >
                               {this.state.product_id > 0
-                              ? isSubmitting
-                              ? "Updating..."
-                              : "Update"
-                            : isSubmitting
-                            ? "Submitting..."
-                            : "Submit"}
-                                
+                                ? isSubmitting
+                                  ? "Updating..."
+                                  : "Update"
+                                : isSubmitting
+                                ? "Submitting..."
+                                : "Submit"}
                             </button>
                             <button
                               onClick={(e) => this.modalCloseHandler()}
@@ -1289,12 +1402,12 @@ class Test extends Component {
                               Close
                             </button>
                           </Modal.Footer>
-                          
                         </Form>
                       );
                     }}
                   </Formik>
                 </Modal>
+
                 {/* MODAL FOR IMAGE*/}
                 <Modal
                   show={this.state.thumbNailModal}
