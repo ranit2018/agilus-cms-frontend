@@ -123,6 +123,10 @@ class Test extends Component {
       product_id: 0,
       itemPerPage: 10,
       search_city_name: "",
+      search_product_code:"",
+      search_product_name:"",
+      search_status:"",
+      
       selectStatus: [
         { value: "0", label: "Inactive" },
         { value: "1", label: "Active" },
@@ -149,6 +153,7 @@ class Test extends Component {
       },
 
       validProduct: true,
+      banner_url: "",
       // defaultCity:{
       //     city_name: "MUMBAI",
       //     label: "Mumbai (Maharashtra)",
@@ -187,7 +192,7 @@ class Test extends Component {
   };
 
   getProductCodeList = (page = 1) => {
-    let { search_city_name } = this.state;
+    let { search_city_name} = this.state;
     API.get(
       `api/lead_landing/product?city=${encodeURIComponent(
         search_city_name
@@ -210,27 +215,31 @@ class Test extends Component {
   };
 
   getProductList = (page = 1) => {
-    // let { search_city_name } = this.state;
-    // API.get(
-    //   `api/lead_landing/product?city=${encodeURIComponent(
-    //     search_city_name
-    //   )}&page=${page}`
-    // )
-    //   .then((res) => {
-    //     this.setState({
-    //       activePage: page,
-    //       product_list: res.data.data,
-    //       totalCount: res.data.count,
-    //       product_id: res.data.data.product_id,
-    //       isLoading: false,
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     this.setState({
-    //       isLoading: false,
-    //     });
-    //     showErrorMessage(err, this.props);
-    //   });
+    let { search_city_name, search_product_code, search_product_name, search_status } = this.state;
+    API.get(
+      `/api/department/test?city_name=${encodeURIComponent(
+        search_city_name
+      )}&product_name=${encodeURIComponent(
+        search_product_name
+      )}&product_code=${encodeURIComponent(
+        search_product_code
+      )}&status=${search_status}&page=1`
+    )
+      .then((res) => {
+        this.setState({
+          activePage: page,
+          product_list: res.data.data,
+          totalCount: res.data.count,
+          // product_id: res.data.data.product_id,
+          isLoading: false,
+        });
+      })
+      .catch((err) => {
+        this.setState({
+          isLoading: false,
+        });
+        showErrorMessage(err, this.props);
+      });
   };
 
   getProductdetailsbyId(id) {
@@ -303,38 +312,44 @@ class Test extends Component {
   };
 
   deleteProduct = (id) => {
-    // API.delete(`/api/lead_landing/product/${id}`)
-    //   .then((res) => {
-    //     swal({
-    //       closeOnClickOutside: false,
-    //       title: "Success",
-    //       text: "Record deleted successfully.",
-    //       icon: "success",
-    //     }).then(() => {
-    //       this.getProductList(this.state.activePage);
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     if (err.data.status === 3) {
-    //       this.setState({ closeModal: true });
-    //       showErrorMessage(err, this.props);
-    //     }
-    //   });
+    API.post(`/api/department/test/${id}`)
+      .then((res) => {
+        swal({
+          closeOnClickOutside: false,
+          title: "Success",
+          text: "Record deleted successfully.",
+          icon: "success",
+        }).then(() => {
+          this.getProductList(this.state.activePage);
+        });
+      })
+      .catch((err) => {
+        if (err.data.status === 3) {
+          this.setState({ closeModal: true });
+          showErrorMessage(err, this.props);
+        }
+      });
   };
 
   ProductSearch = (e) => {
     e.preventDefault();
 
     const search_city_name = document.getElementById("search_city_name").value;
-
-    if (search_city_name === "") {
+    const search_product_code = document.getElementById("search_product_code").value;
+    const search_product_name = document.getElementById("search_product_name").value;
+    const search_status = document.getElementById("search_status").value;
+    if (search_city_name == "" || search_product_code == "" || search_product_name == "" || search_status == "")  {
       return false;
     }
     ///api/department/test
     API.get(
-      `api/lead_landing/product?city=${encodeURIComponent(
+      `/api/department/test?city_name=${encodeURIComponent(
         search_city_name
-      )}&page=1`
+      )}&product_name=${encodeURIComponent(
+        search_product_name
+      )}&product_code=${encodeURIComponent(
+        search_product_code
+      )}&status=${search_status}&page=1`
     )
       .then((res) => {
         this.setState({
@@ -378,29 +393,33 @@ class Test extends Component {
   };
 
   chageStatus = (cell, status) => {
-    // API.put(`/api/department/change_status/${cell}`, {
-    //   status: status == 1 ? String(0) : String(1),
-    // })
-    //   .then((res) => {
-    //     swal({
-    //       closeOnClickOutside: false,
-    //       title: "Success",
-    //       text: "Record updated successfully.",
-    //       icon: "success",
-    //     }).then(() => {
-    //       this.getDepartmentsList(this.state.activePage);
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     if (err.data.status === 3) {
-    //       this.setState({ closeModal: true });
-    //       showErrorMessage(err, this.props);
-    //     }
-    //   });
+    API.put(`/api/department/test/change_status/${cell}`, {
+      status: status == 1 ? String(0) : String(1),
+    })
+      .then((res) => {
+        swal({
+          closeOnClickOutside: false,
+          title: "Success",
+          text: "Record updated successfully.",
+          icon: "success",
+        }).then(() => {
+          this.getProductList(this.state.activePage);
+        });
+      })
+      .catch((err) => {
+        if (err.data.status === 3) {
+          this.setState({ closeModal: true });
+          showErrorMessage(err, this.props);
+        }
+      });
   };
 
   handleSubmitEvent = (values, actions) => {
+    console.log("values",values)
     const { city_state_list, selectedValue, selectedCity } = this.state;
+    console.log('selectedvalue',selectedValue)
+    console.log('selectedCity',selectedCity)
+
     let method = "";
     let post_data = [];
     let post_data_product = {
@@ -408,23 +427,16 @@ class Test extends Component {
       product_code: selectedValue.PRDCT_CODE,
       product_id: selectedValue.ID,
     };
+    console.log('post_data_product',post_data_product)
 
     if (values.cityType === "1") {
-      city_state_list.forEach((city) => {
-        post_data.push({
-          city_name: city.city_name,
-          city_id: city.value,
-          label: city.label,
-        });
-      });
-    } else {
       post_data.push({
         city_name: selectedCity.city_name,
         city_id: selectedCity.value,
         label: selectedCity.label,
 
       });
-    }
+    } 
 
     let formData = new FormData();
 
@@ -508,117 +520,6 @@ class Test extends Component {
         });
     }
   };
-
-  handleSubmitEventUpdate= (values, actions) => {
-    const { city_state_list, selectedValue, selectedCity } = this.state;
-    let method = "";
-    let post_data = [];
-    let post_data_product = {
-      product_name: selectedValue.NAME,
-      product_code: selectedValue.PRDCT_CODE,
-      product_id: selectedValue.ID,
-    };
-
-    if (values.cityType === "1") {
-      city_state_list.forEach((city) => {
-        post_data.push({
-          city_name: city.city_name,
-          city_id: city.value,
-          label: city.label,
-        });
-      });
-    } else {
-      post_data.push({
-        city_name: selectedCity.city_name,
-        city_id: selectedCity.value,
-        label: selectedCity.label,
-
-      });
-    }
-
-    let formData = new FormData();
-
-    method = "POST";
-    let url = `/api/department/test`;
-
-    formData.append("type", values.packageType);
-    formData.append("cities", JSON.stringify(post_data));
-    formData.append("product", JSON.stringify(post_data_product));
-    formData.append("status", String(values.status));
-
-    if (this.state.file !== "") {
-      if (this.state.file.size > FILE_SIZE) {
-        actions.setErrors({ file: FILE_VALIDATION_SIZE_ERROR_MASSAGE });
-        actions.setSubmitting(false);
-      } else {
-        getHeightWidth(this.state.file).then((dimension) => {
-          const { height, width } = dimension;
-          const offerDimension = getResolution("test-details");
-          if (
-            height != offerDimension.height ||
-            width != offerDimension.width
-          ) {
-            actions.setErrors({ file: FILE_VALIDATION_TYPE_ERROR_MASSAGE });
-            actions.setSubmitting(false);
-          } else {
-            formData.append("product_image", this.state.file);
-            API({
-              method: method,
-              url: url,
-              data: formData,
-            })
-              .then((res) => {
-                this.modalCloseHandler();
-                swal({
-                  closeOnClickOutside: false,
-                  title: "Success",
-                  text: "Added Successfully",
-                  icon: "success",
-                }).then(() => {
-                  this.getProductList();
-                });
-              })
-              .catch((err) => {
-                if (err.data.status === 3) {
-                  showErrorMessage(err, this.props);
-                } else {
-                  actions.setErrors(err.data.errors);
-                  actions.setSubmitting(false);
-                }
-              });
-          }
-        });
-      }
-    } else {
-      API({
-        method: method,
-        url: url,
-        data: formData,
-      })
-        .then((res) => {
-          this.modalCloseHandler();
-          swal({
-            closeOnClickOutside: false,
-            title: "Success",
-            text: "Added Successfully",
-            icon: "success",
-          }).then(() => {
-            this.getProductList();
-          });
-        })
-        .catch((err) => {
-          actions.setSubmitting(false);
-          if (err.data.status === 3) {
-            showErrorMessage(err, this.props);
-          } else {
-            if (err.data && err.data.errors) {
-              actions.setErrors(err.data.errors);
-            }
-          }
-        });
-    }
-  };
-
 
 
   // FOR AUTOSUGGEST CODE
@@ -809,17 +710,18 @@ class Test extends Component {
           cityType === "2" && Object.keys(selectedCity).length === 0,
         then: Yup.object().required("Please select city"),
       }),
-      file: Yup.string().when("packageType", {
-        is: "1",
-        then: Yup.string()
-          .required("Please select the image")
-          .test(
-            "image",
-            "Only files with the following extensions are allowed: png jpg jpeg",
-            () => this.state.isValidFile
-          ),
-      }),
-      status: Yup.number().required("Please select status"),
+      // file: Yup.string().when("packageType", {
+      //   is: "1",
+      //   then: Yup.string()
+      //     .required("Please select the image")
+      //     .test(
+      //       "image",
+      //       "Only files with the following extensions are allowed: png jpg jpeg",
+      //       () => this.state.isValidFile
+      //     ),
+      // }),
+      file: Yup.mixed().optional(),
+      // status: Yup.number().required("Please select status"),
     });
 
     let validateStopFlagUpdate = Yup.object().shape({
@@ -891,6 +793,22 @@ class Test extends Component {
                       placeholder="Filter by City"
                     />
                   </div>
+                  <div className="">
+                    <input
+                      className="form-control"
+                      id="search_product_name"
+                      placeholder="Filter by Product Name"
+                    />
+                  </div>
+
+                  <div className="">
+                    <input
+                      className="form-control"
+                      id="search_product_code"
+                      placeholder="Filter by Product Code"
+                    />
+                  </div>
+
                   <div className="">
                     <select
                       className="form-control"
@@ -995,18 +913,8 @@ class Test extends Component {
                 >
                   <Formik
                     initialValues={initialValues}
-                    validationSchema={
-                      this.state.product_id > 0
-                        ? validateStopFlagUpdate
-                        : validateStopFlag
-                    }
-                    onSubmit={
-                      this.state.product_id > 0
-                        ? this.handleSubmitEventUpdate
-                        : this.handleSubmitEventAdd
-                    }
-                    // validationSchema={validateStopFlag}
-                    // onSubmit={this.handleSubmitEvent}
+                    validationSchema={validateStopFlag}
+                    onSubmit={this.handleSubmitEvent}
                   >
                     {({
                       values,
@@ -1337,6 +1245,7 @@ class Test extends Component {
                             </div>
                           </Modal.Body>
                           <Modal.Footer>
+                            {console.log('isValid',isSubmitting, isValid)}
                             <button
                               className={`btn btn-success btn-sm ${isValid ? "btn-custom-green" : "btn-disable"
                                 } m-r-10`}
@@ -1344,12 +1253,13 @@ class Test extends Component {
                               disabled={isValid ? (isSubmitting ? true : false) : true}
                             >
                               {this.state.product_id > 0
-                                ? isSubmitting
-                                  ? "Updating..."
-                                  : "Update"
-                                : isSubmitting
-                                  ? "Submitting..."
-                                  : "Submit"}
+                              ? isSubmitting
+                              ? "Updating..."
+                              : "Update"
+                            : isSubmitting
+                            ? "Submitting..."
+                            : "Submit"}
+                                
                             </button>
                             <button
                               onClick={(e) => this.modalCloseHandler()}
