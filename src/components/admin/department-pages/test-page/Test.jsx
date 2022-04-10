@@ -110,8 +110,8 @@ const initialValues = {
   // },
   cities: "",
   product: "",
-  packageType: 1,
-  cityType: "1",
+  type: 1,
+  city_type: "1",
   status: "",
 };
 
@@ -122,6 +122,7 @@ class Test extends Component {
     this.state = {
       product_data: [],
       product_list: [],
+      product_Details: [],
       city_state_list: [],
       isLoading: false,
       showModal: false,
@@ -138,38 +139,35 @@ class Test extends Component {
         { value: "0", label: "Inactive" },
         { value: "1", label: "Active" },
       ],
-      selectCityType: [
+      selectCity_type: [
         { value: "1", label: "Select All Cities" },
         { value: "2", label: "Select Particular City" },
       ],
-      selectPackageType: [
+      selecttype: [
         { value: "1", label: "Tests" },
         { value: "2", label: "Packages" },
       ],
-      cityType: "1",
-      packageType: "1",
+      city_type: "1",
+      type: "1",
       product: "",
       suggestions: [],
       value: "",
+      city_value: "",
       prd_data: "",
       selectedValue: "",
-      selectedCity: {
-        city_name: "MUMBAI",
-        label: "Mumbai (Maharashtra)",
-        state_id: 15,
-        value: 304,
-      },
+      selectedCity: { city_name: "MUMBAI", label: "Mumbai (Maharashtra)", state_id: 15, value: 304, },
+    //   selectedCity: [
+    //     { city_name: "MUMBAI", label: "Mumbai (Maharashtra)", state_id: 15, value: 304, },
+    //     { city_name: "DELHI", label: "Delhi (Delhi)", state_id: 34, value: 129,},
+    // ],
 
+      cities: "",
+      file: "",
+      status: "",
       validProduct: true,
       banner_url: "",
-      // defaultCity:{
-      //     city_name: "MUMBAI",
-      //     label: "Mumbai (Maharashtra)",
-      //     state_id: 15,
-      //     value: 304,
-      //   }
+      
     };
-    
   }
 
   componentDidMount() {
@@ -262,16 +260,31 @@ class Test extends Component {
   getProductdetailsbyId(id) {
     API.get(`/api/department/test/${id}`)
       .then((res) => {
+        // console.log('res',res.data.data)
         const prd_data = {
           product_name: res.data.data[0].product_name,
           product_code: res.data.data[0].product_code,
           product_id: res.data.data[0].product_id,
+        };
+        const city_data = {
+          city_name: res.data.data[0].cities[0].city_name,
+          city_id: res.data.data[0].cities[0].city_id,
+          label: res.data.data[0].cities[0].label,
         }
         this.setState({
           product_Details: res.data.data,
           product_id: id,
           selectedValue: prd_data,
-          value:res.data.data[0].product_name,
+          value: res.data.data[0].product_name,
+          selectedCity: city_data,
+          city_value: res.data.data[0].cities[0].city_name,
+
+          cities: res.data.data[0].cities[0].city_name,
+          city_type: res.data.data[0].city_type,
+          type:  res.data.data[0].type,
+          file: res.data.data[0].file,
+          status: res.data.data[0].status,
+
           showModal: true,
         });
       })
@@ -280,10 +293,6 @@ class Test extends Component {
       });
   }
   //for edit
-  //   modalCloseHandler = () => {
-  //     this.setState({ categoryDetails: {}, category_id: 0, selectedMediumList: [], showModal: false })
-  // };
-
   modalCloseHandler = () => {
     this.setState({
       showModal: false,
@@ -296,8 +305,15 @@ class Test extends Component {
         state_id: 15,
         value: 304,
       },
-      cityType: "1",
-      packageType: 1,
+      city_type: "1",
+      type: 1,
+      product_id: 0,
+      product_Details: [],
+
+      cities: "",
+      // city_type: "",
+      status: "",
+      // type: "",
     });
   };
 
@@ -464,7 +480,7 @@ class Test extends Component {
     };
     console.log("post_data_product", post_data_product);
 
-    if (values.cityType === "2") {
+    if (values.city_type === "2") {
       post_data.push({
         city_name: selectedCity.city_name,
         city_id: selectedCity.value,
@@ -477,7 +493,7 @@ class Test extends Component {
     method = "POST";
     let url = `/api/department/test`;
 
-    formData.append("type", values.packageType);
+    formData.append("type", values.type);
     formData.append("cities", JSON.stringify(post_data));
     formData.append("product", JSON.stringify(post_data_product));
     formData.append("status", String(values.status));
@@ -560,17 +576,35 @@ class Test extends Component {
     const { city_state_list, selectedValue, selectedCity } = this.state;
     console.log("selectedvalue", selectedValue);
     console.log("selectedCity", selectedCity);
+    let post_data_product ;
+    console.log('this.state.value',this.state.value)
+    if(this.state.value == values.product)
+    {
+      post_data_product = {
+        product_name: selectedValue.product_name,
+        product_code: selectedValue.product_code,
+        product_id: selectedValue.product_id,
+      };
+    console.log("post_data_product", post_data_product);
 
-    let method = "";
-    let post_data = [];
-    let post_data_product = {
+    } else {
+    post_data_product = {
       product_name: selectedValue.NAME,
       product_code: selectedValue.PRDCT_CODE,
       product_id: selectedValue.ID,
     };
     console.log("post_data_product", post_data_product);
 
-    if (values.cityType === "2") {
+    }
+
+    let method = "";
+    let post_data = [];
+   
+    // console.log("post_data_product", post_data_product);
+
+
+
+    if (values.city_type === "2") {
       post_data.push({
         city_name: selectedCity.city_name,
         city_id: selectedCity.value,
@@ -583,7 +617,7 @@ class Test extends Component {
     method = "PUT";
     let url = `/api/department/test`;
 
-    formData.append("type", values.packageType);
+    formData.append("type", values.type);
     formData.append("cities", JSON.stringify(post_data));
     formData.append("product", JSON.stringify(post_data_product));
     formData.append("status", String(values.status));
@@ -609,18 +643,19 @@ class Test extends Component {
               url: url,
               data: formData,
             })
-            .then((res) => {
-              this.setState({ showModal: false });
-              swal({
-                closeOnClickOutside: false,
-                title: "Success",
-                text: "Record updated successfully.",
-                icon: "success",
-              }).then(() => {
-                this.getProductList();
-              });
-            })
+              .then((res) => {
+                this.setState({ showModal: false });
+                swal({
+                  closeOnClickOutside: false,
+                  title: "Success",
+                  text: "Record updated successfully.",
+                  icon: "success",
+                }).then(() => {
+                  this.getProductList();
+                });
+              })
               .catch((err) => {
+                console.log('err',err)
                 if (err.data.status === 3) {
                   showErrorMessage(err, this.props);
                 } else {
@@ -642,13 +677,14 @@ class Test extends Component {
           swal({
             closeOnClickOutside: false,
             title: "Success",
-            text: "Added Successfully",
+            text: "Record Updated Successfully",
             icon: "success",
           }).then(() => {
             this.getProductList();
           });
         })
         .catch((err) => {
+          console.log('error',err)
           actions.setSubmitting(false);
           if (err.data.status === 3) {
             showErrorMessage(err, this.props);
@@ -661,7 +697,6 @@ class Test extends Component {
     }
   };
 
-
   // FOR AUTOSUGGEST CODE
   onSuggestionsFetchRequested = ({ value }) => {
     if (value && value.length >= 3) {
@@ -670,7 +705,7 @@ class Test extends Component {
         search_name: value.toUpperCase(),
       };
 
-      if (this.state.cityType && this.state.cityType === "2") {
+      if (this.state.city_type && this.state.city_type === "2") {
         payload.city_id = this.state.selectedCity.value;
       }
 
@@ -708,25 +743,24 @@ class Test extends Component {
   renderSuggestion = (suggestion) => <span>{suggestion.label} </span>;
 
   onSuggestionSelected = (event, { suggestion, method }, setFieldTouched) => {
-    console.log('hello')
     if (method === "click" || method === "enter") {
       let payload = {
         search_name: suggestion.value.toUpperCase(),
       };
 
-      if (this.state.cityType && this.state.cityType === "2") {
+      if (this.state.city_type && this.state.city_type === "2") {
         payload.city_id = this.state.selectedCity.value;
       }
 
       SRL_API.post(`/feed/code-search`, payload)
         .then((res) => {
-          console.log('res.data.data[0]',res.data.data[0])
+          // console.log("res.data.data[0]", res.data.data[0]);
 
           if (res.data && res.data.data && res.data.data.length > 0) {
             const searchDetails = res.data.data[0];
             // console.log('res.data.data[0]',res.data.data[0])
             if (
-              this.state.packageType === "2" &&
+              this.state.type === "2" &&
               searchDetails.PROFILE_FLAG == "T"
             ) {
               this.setState({ validProduct: false });
@@ -816,26 +850,45 @@ class Test extends Component {
 
   render() {
     const {
-      product_data,
+      // product_Details,
       city_state_list,
       totalCount,
       activePage,
       selectedCity,
       selectedValue,
+      // value,
     } = this.state;
 
+    // console.log('product_Details',this.state.product_Details)
+
+
+    const newInitialValues = Object.assign(initialValues, {
+      
+      city_type: this.state.city_type ? this.state.city_type : "",
+      file: "",
+      type:  this.state.type ? this.state.type : "", 
+      product: this.state.value ? this.state.value : "",
+      cities: this.state.cities ? this.state.cities : "",
+      status: 
+      this.state.status || this.state.status === 0
+          ? this.state.status.toString()
+          : "",
+    });
+
+    // console.log('newInitialValues',newInitialValues)
+
     let validateStopFlag = Yup.object().shape({
-      cityType: Yup.string()
+      city_type: Yup.string()
         .trim()
         .required("Please select City Type")
         .matches(/^[1|2]$/, "Invalid city type selected"),
-      packageType: Yup.string()
+      type: Yup.string()
         .trim()
         .required("Please select Product Type")
         .matches(/^[1|2]$/, "Invalid Product type selected"),
       // cities: Yup.array()
       //   .of(Yup.object())
-      //   .when("cityType", {
+      //   .when("city_type", {
       //     is: "2",
       //     then: Yup.array().of(Yup.object()).required("Please select city"),
       //   }),
@@ -849,9 +902,9 @@ class Test extends Component {
           () => this.state.validProduct
         ),
 
-      cities: Yup.object().when("cityType", {
-        is: (cityType) =>
-          cityType === "2" && Object.keys(selectedCity).length === 0,
+      cities: Yup.object().when("city_type", {
+        is: (city_type) =>
+          city_type === "2" && Object.keys(selectedCity).length === 0,
         then: Yup.object().required("Please select city"),
       }),
       file: Yup.mixed().optional(),
@@ -859,27 +912,21 @@ class Test extends Component {
     });
 
     let validateStopFlagUpdate = Yup.object().shape({
-      cityType: Yup.string()
+      city_type: Yup.string()
         .trim()
         .required("Please select City Type")
         .matches(/^[1|2]$/, "Invalid city type selected"),
-      packageType: Yup.string()
+      type: Yup.string()
         .trim()
         .required("Please select Product Type")
         .matches(/^[1|2]$/, "Invalid Product type selected"),
-      product: Yup.object()
-        .test("product", "Please select product", () => {
-          return selectedValue && Object.keys(selectedValue).length > 0;
-        })
-        .test(
-          "pro",
-          "Only packages are allowed for selected product type",
-          () => this.state.validProduct
-        ),
+      product: Yup.mixed()
+      .required("Please select City Type"),
+      // .matches(/^[1|2]$/, "Invalid city type selected"),
       file: Yup.mixed().optional(),
-      cities: Yup.object().when("cityType", {
-        is: (cityType) =>
-          cityType === "2" && Object.keys(selectedCity).length === 0,
+      cities: Yup.object().when("city_type", {
+        is: (city_type) =>
+          city_type === "2" && Object.keys(selectedCity).length === 0,
         then: Yup.object().required("Please select city"),
       }),
 
@@ -1046,14 +1093,14 @@ class Test extends Component {
                   backdrop="static"
                 >
                   <Formik
-                    initialValues={initialValues}
+                    initialValues={newInitialValues}
                     validationSchema={
-                      this.state.Product_id > 0
+                      this.state.product_id > 0
                         ? validateStopFlagUpdate
                         : validateStopFlag
                     }
                     onSubmit={
-                      this.state.Product_id > 0
+                      this.state.product_id > 0
                         ? this.handleSubmitEventUpdate
                         : this.handleSubmitEventAdd
                     }
@@ -1072,8 +1119,8 @@ class Test extends Component {
                     }) => {
                       return (
                         <Form>
-                          {/* {console.log({ errors })}
-                          {console.log({ values })} */}
+                          {console.log({ errors })}
+                          {console.log({ values })}
                           <Modal.Header closeButton>
                             <Modal.Title>
                               {this.state.product_id > 0
@@ -1092,35 +1139,37 @@ class Test extends Component {
                                     </label>
 
                                     <Field
-                                      name="packageType"
+                                      name="type"
                                       component="select"
                                       className={`selectArowGray form-control`}
                                       autoComplete="off"
-                                      //value={values.packageType}
-                                      value={this.state.packageType}
-                                      onChange={(evt) => {
-                                        if (evt) {
-                                          const { value } = evt.target;
-                                          this.setState({
-                                            packageType: value,
-                                            value: "",
-                                            selectedValue: "",
-                                            validProduct: true,
-                                          });
-                                          setFieldValue("packageType", value);
-                                        } else {
-                                          this.setState({
-                                            packageType: "1",
-                                            value: "",
-                                            selectedValue: "",
-                                            validProduct: true,
-                                          });
-                                          setFieldValue("packageType", "1");
-                                        }
-                                      }}
+                                      value={values.type}
+                                      // value={this.state.type}
+                                      // onChange={(evt) => {
+                                      //   if (evt) {
+                                      //     const { value } = evt.target;
+                                      //     this.setState({
+                                      //       type: value,
+                                      //       value: "",
+                                      //       selectedValue: "",
+                                      //       validProduct: true,
+                                      //     });
+                                      //     setFieldValue("type", value);
+                                      //   } else {
+                                      //     this.setState({
+                                      //       type: "1",
+                                      //       value: "",
+                                      //       selectedValue: "",
+                                      //       validProduct: true,
+                                      //     });
+                                      //     setFieldValue("type", "1");
+                                      //   }
+                                      // }}
                                     >
-                                     
-                                      {this.state.selectPackageType.map(
+                                      <option key="-1" value="">
+                                        Select Product Type
+                                      </option>
+                                      {this.state.selecttype.map(
                                         (element, i) => (
                                           <option key={i} value={element.value}>
                                             {element.label}
@@ -1128,7 +1177,6 @@ class Test extends Component {
                                         )
                                       )}
                                     </Field>
-                                   
                                   </div>
                                 </Col>
                                 <Col xs={12} sm={12} md={12}>
@@ -1139,46 +1187,49 @@ class Test extends Component {
                                     </label>
 
                                     <Field
-                                      name="cityType"
+                                      name="city_type"
                                       component="select"
                                       className={`selectArowGray form-control`}
                                       autoComplete="off"
-                                      // value={values.cityType}
-                                      value={this.state.cityType}
+                                      value={values.city_type}
+                                      // value={this.state.city_type}
                                       onChange={(evt) => {
                                         if (evt) {
                                           const { value } = evt.target;
                                           this.setState({
-                                            cityType: value,
+                                            city_type: value,
                                             value: "",
                                             selectedValue: "",
                                           });
-                                          setFieldValue("cityType", value);
+                                          setFieldValue("city_type", value);
                                         } else {
                                           this.setState({
-                                            cityType: "1",
+                                            city_type: "1",
                                             value: "",
                                             selectedValue: "",
                                           });
-                                          setFieldValue("cityType", "1");
+                                          setFieldValue("city_type", "1");
                                         }
                                       }}
                                     >
-                              
-                                      {this.state.selectCityType.map(
-                                        (cityType, i) => (
+                                      {console.log('values.city_type',values.city_type)}
+                                      <option key="-1" value="">
+                                        Select City Type
+                                      </option>
+                                      {this.state.selectCity_type.map(
+                                        (city_type, i) => (
                                           <option
                                             key={i}
-                                            value={cityType.value}
+                                            value={city_type.value}
                                           >
-                                            {cityType.label}
+                                            {city_type.label}
                                           </option>
                                         )
                                       )}
                                     </Field>
-                                    {errors.cityType && touched.cityType ? (
+                                    {errors.city_type && touched.city_type ? (
                                       <span className="errorMsg">
-                                        {errors.cityType}
+                                        {errors.city_type}
                                       </span>
                                     ) : null}
 
@@ -1192,7 +1243,7 @@ class Test extends Component {
                                     ) : null}
                                   </div>
                                 </Col>
-                                {this.state.cityType == "2" ? (
+                                {values.city_type == "2" ? (
                                   <Col xs={12} sm={12} md={12}>
                                     <div className="form-group">
                                       <label>
@@ -1303,7 +1354,7 @@ class Test extends Component {
                                     ) : null}
                                   </div>
                                 </Col>
-                                {/* {values.packageType == "1" ? ( */}
+                                {/* {values.type == "1" ? ( */}
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
@@ -1354,6 +1405,7 @@ class Test extends Component {
                                       autoComplete="off"
                                       value={values.status}
                                     >
+                                     
                                       <option key="-1" value="">
                                         Select
                                       </option>
@@ -1361,6 +1413,7 @@ class Test extends Component {
                                         (status, i) => (
                                           <option key={i} value={status.value}>
                                             {status.label}
+                                
                                           </option>
                                         )
                                       )}
@@ -1376,7 +1429,7 @@ class Test extends Component {
                             </div>
                           </Modal.Body>
                           <Modal.Footer>
-                            {console.log("isValid", isSubmitting, isValid)}
+                            {/* {console.log("isValid", isSubmitting, isValid)} */}
                             <button
                               className={`btn btn-success btn-sm ${
                                 isValid ? "btn-custom-green" : "btn-disable"
