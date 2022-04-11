@@ -40,20 +40,19 @@ class AddDepartment extends Component {
       ],
       department_id: 0,
       suggestions: [],
-      
+
       doctors_arr: [],
       equipments_arr: [],
       publications_arr: [],
       isValidFile: false,
       product_arr: [],
-      
+
       product: "",
       suggestions: [],
-      
+
       value: "",
       selectedValue: "",
       validProduct: true,
-
     };
   }
 
@@ -93,6 +92,10 @@ class AddDepartment extends Component {
   };
 
   componentDidMount() {
+    this.getDoctorArr();
+    this.getEquipmentArr();
+    this.getPublicationArr();
+    this.getProductArr();
     this.setState({
       validationMessage: generateResolutionText("department"),
       fileValidationMessage: FILE_VALIDATION_MASSAGE,
@@ -100,6 +103,22 @@ class AddDepartment extends Component {
   }
 
   getDoctorArr = (value) => {
+    API.get(`/api/department/doctor-search-list`)
+      .then((res) => {
+        this.setState({
+          doctors_arr: res.data.data,
+          isLoading: false,
+        });
+      })
+      .catch((err) => {
+        this.setState({
+          isLoading: false,
+        });
+        showErrorMessage(err, this.props);
+      });
+  };
+
+  getSearchDoctorArr = (value) => {
     if (value.length == 3) {
       API.get(`/api/department/doctor-search-list?doctor_name=${value}`)
         .then((res) => {
@@ -118,8 +137,24 @@ class AddDepartment extends Component {
   };
 
   getEquipmentArr = (value) => {
+    API.get(`/api/department/equipment-search-list`)
+      .then((res) => {
+        this.setState({
+          equipments_arr: res.data.data,
+          isLoading: false,
+        });
+      })
+      .catch((err) => {
+        this.setState({
+          isLoading: false,
+        });
+        showErrorMessage(err, this.props);
+      });
+  };
+
+  getSearchEquipmentArr = (value) => {
     if (value.length == 3) {
-      API.get(`/api/department/equipment-search-list`)
+      API.get(`/api/department/equipment-search-list?equipment_name=${value}`)
         .then((res) => {
           this.setState({
             equipments_arr: res.data.data,
@@ -136,8 +171,26 @@ class AddDepartment extends Component {
   };
 
   getPublicationArr = (value) => {
+    API.get(`/api/department/publication-search-list`)
+      .then((res) => {
+        this.setState({
+          publications_arr: res.data.data,
+          isLoading: false,
+        });
+      })
+      .catch((err) => {
+        this.setState({
+          isLoading: false,
+        });
+        showErrorMessage(err, this.props);
+      });
+  };
+
+  getSearchPublicationArr = (value) => {
     if (value.length == 3) {
-      API.get(`/api/department/publication-search-list`)
+      API.get(
+        `/api/department/publication-search-list?publication_name=${value}`
+      )
         .then((res) => {
           this.setState({
             publications_arr: res.data.data,
@@ -153,12 +206,9 @@ class AddDepartment extends Component {
     }
   };
 
-  getProductArr = (value) => {
-    if (value.length == 3) {
-      // let { search_city_name } = this.state;
-    API.get( `api/lead_landing/product`)
+  getProductArr = (page = 1) => {
+    API.get(`api/department/test-search-list`)
       .then((res) => {
-        console.log('res',res.data.data)
         this.setState({
           product_arr: res.data.data,
           totalCount: res.data.count,
@@ -171,9 +221,28 @@ class AddDepartment extends Component {
         });
         showErrorMessage(err, this.props);
       });
-     
+  };
+
+  getSearchProductArr = (value) => {
+    if (value.length == 3) {
+      // let { city_name } = this.state;
+      let city_name = "";
+      API.get(`api/department/test-search-list`)
+        .then((res) => {
+          this.setState({
+            product_arr: res.data.data,
+            totalCount: res.data.count,
+            isLoading: false,
+          });
+        })
+        .catch((err) => {
+          this.setState({
+            isLoading: false,
+          });
+          showErrorMessage(err, this.props);
+        });
     }
-  }
+  };
 
   handleSubmitEvent = (values, actions) => {
     // let postdata = {
@@ -184,7 +253,7 @@ class AddDepartment extends Component {
     //   doctor_id: values.doctor_id,
     //   equipment_id: values.equipment_id,
     //   publication_id: values.publication_id,
-    //   product_id: values. product_id,
+    //   product_id: values.product_id,
     //   department_image: values.department_image,
     //   date_posted: new Date().toLocaleString(),
     //   status: String(values.status),
@@ -201,10 +270,11 @@ class AddDepartment extends Component {
       values.total_consultant_scientists
     );
 
-    formData.append("doctors[]", JSON.stringify(values.doctor_id));
-    formData.append("equipments[]", JSON.stringify(values.equipment_id));
-    formData.append("publications[]", JSON.stringify(values.publication_id));
-    formData.append("product[]", JSON.stringify(values.product));
+    formData.append("doctors[]", values.doctor_id);
+    formData.append("equipments[]", values.equipment_id);
+    formData.append("publications[]", values.publication_id);
+    formData.append("tests[]", values.product_id);
+    // formData.append("tests[]", JSON.stringify(values.product_id));
 
     formData.append("status", String(values.status));
 
@@ -631,7 +701,7 @@ class AddDepartment extends Component {
                                   className="basic-multi-select"
                                   classNamePrefix="select"
                                   onInputChange={(value) => {
-                                    this.getDoctorArr(value);
+                                    this.getSearchDoctorArr(value);
                                   }}
                                   onChange={(evt) => {
                                     if (evt === null) {
@@ -674,7 +744,7 @@ class AddDepartment extends Component {
                                   getOptionLabel={(x) => x.equipment_name}
                                   noOptionsMessage={() => "No Results Found"}
                                   onInputChange={(value) => {
-                                    this.getEquipmentArr(value);
+                                    this.getSearchEquipmentArr(value);
                                   }}
                                   onChange={(evt) => {
                                     if (evt === null) {
@@ -717,7 +787,7 @@ class AddDepartment extends Component {
                                   classNamePrefix="select"
                                   noOptionsMessage={() => "No Results Found"}
                                   onInputChange={(value) => {
-                                    this.getPublicationArr(value);
+                                    this.getSearchPublicationArr(value);
                                   }}
                                   onChange={(evt) => {
                                     if (evt === null) {
@@ -750,7 +820,7 @@ class AddDepartment extends Component {
                           <Row>
                             <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
-                                <label>Search Product</label>
+                                <label>Products</label>
                                 <Select
                                   isMulti
                                   name="product_id"
@@ -761,7 +831,7 @@ class AddDepartment extends Component {
                                   getOptionLabel={(x) => x.product_name}
                                   noOptionsMessage={() => "No Results Found"}
                                   onInputChange={(value) => {
-                                    this.getProductArr(value);
+                                    this.getSearchProductArr(value);
                                   }}
                                   onChange={(evt) => {
                                     if (evt === null) {
@@ -790,7 +860,7 @@ class AddDepartment extends Component {
                               </div>
                             </Col>
                           </Row>
-                         
+
                           {/* ===== end test form ===== */}
 
                           <Row>
@@ -807,10 +877,10 @@ class AddDepartment extends Component {
                                   name="department_image"
                                   type="file"
                                   className={`form-control`}
-                                  placeholder="Doctor Image"
+                                  placeholder="Department Image"
                                   autoComplete="off"
                                   onChange={(e) => {
-                                    this.fileChangedTestHandler(
+                                    this.fileChangedHandler(
                                       e,
                                       setFieldTouched,
                                       setFieldValue,

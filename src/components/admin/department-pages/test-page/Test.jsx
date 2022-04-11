@@ -40,9 +40,9 @@ const custStatus = (refObj) => (cell) => {
 const custCity = (refObj) => (cell) => {
   //return cell === 1 ? "Active" : "Inactive";
   if (cell === null || typeof cell == undefined) {
-    return "All";
-  } else if (cell === 0) {
-    return "" + cell;
+    return "All Cities";
+  } else if (cell) {
+    return cell;
   }
 };
 
@@ -155,18 +155,24 @@ class Test extends Component {
       city_value: "",
       prd_data: "",
       selectedValue: "",
-      selectedCity: { city_name: "MUMBAI", label: "Mumbai (Maharashtra)", state_id: 15, value: 304, },
-    //   selectedCity: [
-    //     { city_name: "MUMBAI", label: "Mumbai (Maharashtra)", state_id: 15, value: 304, },
-    //     { city_name: "DELHI", label: "Delhi (Delhi)", state_id: 34, value: 129,},
-    // ],
+      selectedCity: {
+        city_name: "MUMBAI",
+        label: "Mumbai (Maharashtra)",
+        state_id: 15,
+        value: 304,
+      },
+      //   selectedCity: [
+      //     { city_name: "MUMBAI", label: "Mumbai (Maharashtra)", state_id: 15, value: 304, },
+      //     { city_name: "DELHI", label: "Delhi (Delhi)", state_id: 34, value: 129,},
+      // ],
 
       cities: "",
       file: "",
       status: "",
       validProduct: true,
       banner_url: "",
-      
+
+      isValidFile: false,
     };
   }
 
@@ -260,7 +266,6 @@ class Test extends Component {
   getProductdetailsbyId(id) {
     API.get(`/api/department/test/${id}`)
       .then((res) => {
-        // console.log('res',res.data.data)
         const prd_data = {
           product_name: res.data.data[0].product_name,
           product_code: res.data.data[0].product_code,
@@ -270,7 +275,7 @@ class Test extends Component {
           city_name: res.data.data[0].cities[0].city_name,
           city_id: res.data.data[0].cities[0].city_id,
           label: res.data.data[0].cities[0].label,
-        }
+        };
         this.setState({
           product_Details: res.data.data,
           product_id: id,
@@ -281,8 +286,8 @@ class Test extends Component {
 
           cities: res.data.data[0].cities[0].city_name,
           city_type: res.data.data[0].city_type,
-          type:  res.data.data[0].type,
-          file: res.data.data[0].file,
+          type: res.data.data[0].type,
+          // file: res.data.data[0].product_image,
           status: res.data.data[0].status,
 
           showModal: true,
@@ -467,9 +472,8 @@ class Test extends Component {
 
   handleSubmitEventAdd = (values, actions) => {
     console.log("values", values);
-    const { city_state_list, selectedValue, selectedCity } = this.state;
-    console.log("selectedvalue", selectedValue);
-    console.log("selectedCity", selectedCity);
+    const { selectedValue, selectedCity } = this.state;
+    console.log('selectedCity',selectedCity);
 
     let method = "";
     let post_data = [];
@@ -478,16 +482,45 @@ class Test extends Component {
       product_code: selectedValue.PRDCT_CODE,
       product_id: selectedValue.ID,
     };
-    console.log("post_data_product", post_data_product);
+    console.log('values.city_type.length',selectedCity.length);
 
     if (values.city_type === "2") {
-      post_data.push({
-        city_name: selectedCity.city_name,
-        city_id: selectedCity.value,
-        label: selectedCity.label,
-      });
+      for(let i =0; i < selectedCity.length; i++){
+        post_data.push({
+          city_name: selectedCity[i].city_name,
+          city_id: selectedCity[i].city_id,
+          label: selectedCity[i].label,
+        });
+      }
     }
+    
 
+    // if (values.city_type === "2" && selectedCity.length > 1) {
+    //   for(let i =0; i < selectedCity.length; i++){
+    //     post_data.push({
+    //       city_name: selectedCity[i].city_name,
+    //       city_id: selectedCity[i].city_id,
+    //       label: selectedCity[i].label,
+    //     });
+    //   }
+      
+    // } else if(values.city_type === "2"){
+    //   post_data.push({
+    //     city_name: selectedCity.city_name,
+    //     city_id: selectedCity.city_id,
+    //     label: selectedCity.label,
+    //   });
+    // }
+
+    let finaldata = {
+      type: values.type,
+      cities: post_data,
+      product: post_data_product,
+      product_image: this.state.file,
+      status: String(values.status),
+      product_id: this.state.product_id,
+    };
+    console.log('finaldata',finaldata)
     let formData = new FormData();
 
     method = "POST";
@@ -573,56 +606,63 @@ class Test extends Component {
 
   handleSubmitEventUpdate = (values, actions) => {
     console.log("values", values);
-    const { city_state_list, selectedValue, selectedCity } = this.state;
-    console.log("selectedvalue", selectedValue);
-    console.log("selectedCity", selectedCity);
-    let post_data_product ;
-    console.log('this.state.value',this.state.value)
-    if(this.state.value == values.product)
-    {
+    const {selectedValue, selectedCity } = this.state;
+    // console.log('selcetedCity',selectedCity, selectedCity.length)
+    let post_data_product;
+    if (this.state.value == values.product) {
       post_data_product = {
         product_name: selectedValue.product_name,
         product_code: selectedValue.product_code,
         product_id: selectedValue.product_id,
       };
-    console.log("post_data_product", post_data_product);
-
     } else {
-    post_data_product = {
-      product_name: selectedValue.NAME,
-      product_code: selectedValue.PRDCT_CODE,
-      product_id: selectedValue.ID,
-    };
-    console.log("post_data_product", post_data_product);
-
+      post_data_product = {
+        product_name: selectedValue.NAME,
+        product_code: selectedValue.PRDCT_CODE,
+        product_id: selectedValue.ID,
+      };
     }
 
     let method = "";
-    let post_data = [];
-   
-    // console.log("post_data_product", post_data_product);
+    // let post_data = [];
+    let post_data = selectedCity;
 
 
+    // if (values.city_type === 2) {
+    //   console.log('hello')
+    //   for(let i =0; i < selectedCity.length; i++){
+    //     // console.log('data',selectedCity[i].city_name)
+    //     post_data.push({
+    //       city_name: selectedCity[i].city_name,
+    //       city_id: selectedCity[i].city_id,
+    //       label: selectedCity[i].label,
+    //     });
+    //   }
+    // }
+console.log('post_data',post_data)
 
-    if (values.city_type === "2") {
-      post_data.push({
-        city_name: selectedCity.city_name,
-        city_id: selectedCity.value,
-        label: selectedCity.label,
-      });
-    }
+    let finaldata = {
+      type: values.type,
+      cities: post_data,
+
+      product: post_data_product,
+      product_image: this.state.file,
+      status: String(values.status),
+      product_id: this.state.product_id,
+    };
+    console.log('finaldata',finaldata)
 
     let formData = new FormData();
 
     method = "PUT";
-    let url = `/api/department/test`;
+    let url = `/api/department/test/${this.state.product_id}`;
 
     formData.append("type", values.type);
     formData.append("cities", JSON.stringify(post_data));
     formData.append("product", JSON.stringify(post_data_product));
     formData.append("status", String(values.status));
 
-    if (this.state.file !== "") {
+    if (this.state.file) {
       if (this.state.file.size > FILE_SIZE) {
         actions.setErrors({ file: FILE_VALIDATION_SIZE_ERROR_MASSAGE });
         actions.setSubmitting(false);
@@ -655,7 +695,7 @@ class Test extends Component {
                 });
               })
               .catch((err) => {
-                console.log('err',err)
+                console.log("err", err);
                 if (err.data.status === 3) {
                   showErrorMessage(err, this.props);
                 } else {
@@ -684,7 +724,7 @@ class Test extends Component {
           });
         })
         .catch((err) => {
-          console.log('error',err)
+          console.log("error", err);
           actions.setSubmitting(false);
           if (err.data.status === 3) {
             showErrorMessage(err, this.props);
@@ -754,15 +794,9 @@ class Test extends Component {
 
       SRL_API.post(`/feed/code-search`, payload)
         .then((res) => {
-          // console.log("res.data.data[0]", res.data.data[0]);
-
           if (res.data && res.data.data && res.data.data.length > 0) {
             const searchDetails = res.data.data[0];
-            // console.log('res.data.data[0]',res.data.data[0])
-            if (
-              this.state.type === "2" &&
-              searchDetails.PROFILE_FLAG == "T"
-            ) {
+            if (this.state.type === "2" && searchDetails.PROFILE_FLAG == "T") {
               this.setState({ validProduct: false });
             } else {
               this.setState({ validProduct: true });
@@ -821,7 +855,6 @@ class Test extends Component {
   };
 
   imageModalShowHandler = (url) => {
-    //  console.log(url);
     this.setState({ thumbNailModal: true, banner_url: url });
   };
 
@@ -856,26 +889,19 @@ class Test extends Component {
       activePage,
       selectedCity,
       selectedValue,
-      // value,
     } = this.state;
 
-    // console.log('product_Details',this.state.product_Details)
-
-
     const newInitialValues = Object.assign(initialValues, {
-      
       city_type: this.state.city_type ? this.state.city_type : "",
       file: "",
-      type:  this.state.type ? this.state.type : "", 
+      type: this.state.type ? this.state.type : "",
       product: this.state.value ? this.state.value : "",
       cities: this.state.cities ? this.state.cities : "",
-      status: 
-      this.state.status || this.state.status === 0
+      status:
+        this.state.status || this.state.status === 0
           ? this.state.status.toString()
           : "",
     });
-
-    // console.log('newInitialValues',newInitialValues)
 
     let validateStopFlag = Yup.object().shape({
       city_type: Yup.string()
@@ -892,7 +918,7 @@ class Test extends Component {
       //     is: "2",
       //     then: Yup.array().of(Yup.object()).required("Please select city"),
       //   }),
-      product: Yup.object()
+      product: Yup.mixed()
         .test("product", "Please select product", () => {
           return selectedValue && Object.keys(selectedValue).length > 0;
         })
@@ -902,7 +928,7 @@ class Test extends Component {
           () => this.state.validProduct
         ),
 
-      cities: Yup.object().when("city_type", {
+      cities: Yup.mixed().when("city_type", {
         is: (city_type) =>
           city_type === "2" && Object.keys(selectedCity).length === 0,
         then: Yup.object().required("Please select city"),
@@ -920,11 +946,23 @@ class Test extends Component {
         .trim()
         .required("Please select Product Type")
         .matches(/^[1|2]$/, "Invalid Product type selected"),
-      product: Yup.mixed()
-      .required("Please select City Type"),
+      product: Yup.mixed().required("Please select City Type"),
+      // cities: Yup.mixed().required("Please select City Type"),
       // .matches(/^[1|2]$/, "Invalid city type selected"),
-      file: Yup.mixed().optional(),
-      cities: Yup.object().when("city_type", {
+      file: Yup.string()
+        .notRequired()
+        .test(
+          "departmentimage",
+          "Only files with the following extensions are allowed: png jpg jpeg",
+          (file) => {
+            if (file) {
+              return this.state.isValidFile;
+            } else {
+              return true;
+            }
+          }
+        ),
+      cities: Yup.mixed().when("city_type", {
         is: (city_type) =>
           city_type === "2" && Object.keys(selectedCity).length === 0,
         then: Yup.object().required("Please select city"),
@@ -1119,8 +1157,8 @@ class Test extends Component {
                     }) => {
                       return (
                         <Form>
-                          {console.log({ errors })}
-                          {console.log({ values })}
+                          {/* {console.log({errors})}
+                          {console.log({values})} */}
                           <Modal.Header closeButton>
                             <Modal.Title>
                               {this.state.product_id > 0
@@ -1212,7 +1250,6 @@ class Test extends Component {
                                         }
                                       }}
                                     >
-                                      {console.log('values.city_type',values.city_type)}
                                       <option key="-1" value="">
                                         Select City Type
                                       </option>
@@ -1251,9 +1288,9 @@ class Test extends Component {
                                         <span className="impField">*</span>
                                       </label>
                                       <Select
+                                        isMulti={true}
                                         name="cities"
                                         maxMenuHeight={200}
-                                        isMulti={false}
                                         isClearable={false}
                                         isSearchable={true}
                                         placeholder="Select City"
@@ -1371,6 +1408,7 @@ class Test extends Component {
                                       className={`form-control`}
                                       placeholder="Select Image"
                                       autoComplete="off"
+                                      value={values.file}
                                       onChange={(e) => {
                                         this.fileChangedHandler(
                                           e,
@@ -1405,7 +1443,6 @@ class Test extends Component {
                                       autoComplete="off"
                                       value={values.status}
                                     >
-                                     
                                       <option key="-1" value="">
                                         Select
                                       </option>
@@ -1413,7 +1450,6 @@ class Test extends Component {
                                         (status, i) => (
                                           <option key={i} value={status.value}>
                                             {status.label}
-                                
                                           </option>
                                         )
                                       )}
@@ -1429,7 +1465,6 @@ class Test extends Component {
                             </div>
                           </Modal.Body>
                           <Modal.Footer>
-                            {/* {console.log("isValid", isSubmitting, isValid)} */}
                             <button
                               className={`btn btn-success btn-sm ${
                                 isValid ? "btn-custom-green" : "btn-disable"

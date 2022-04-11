@@ -167,7 +167,7 @@ class Departments extends Component {
 
     this.state = {
       departmentList: [],
-      departmentDetails: [],
+      // departmentDetails: [],
       department_id: 0,
       isLoading: false,
       showModal: false,
@@ -193,7 +193,6 @@ class Departments extends Component {
       search_publications: "",
       search_status: "",
       types: [],
-      
     };
   }
   componentDidMount() {
@@ -243,22 +242,6 @@ class Departments extends Component {
         showErrorMessage(err, this.props);
       });
   }
-
-  getdepartmentDetailsbyId = (id) => {
-    API.get(`/api/department/${id}`)
-      .then((res) => {
-        this.setState({
-          departmentDetails: res.data.data[0],
-          department_id: res.data.data[0].id,
-          isLoading: false,
-          showModal: true,
-          showModalLoader: true,
-        });
-      })
-      .catch((err) => {
-        showErrorMessage(err, this.props);
-      });
-  };
 
   departmentSearch = (e) => {
     e.preventDefault();
@@ -396,19 +379,22 @@ class Departments extends Component {
   //for edit/add part
   editDepartment(e, id) {
     e.preventDefault();
+    this.setState({ department_id: id })
+    this.props.history.push(`/departments/edit-department/${id}`);
 
-    API.get(`/api/department/${id}`)
-      .then((res) => {
-        this.props.history.push({
-          pathname: "/departments/edit-department/" + id,
-          state: {
-            alldata: res.data.data[0],
-          },
-        });
-      })
-      .catch((err) => {
-        showErrorMessage(err, this.props);
-      });
+    // API.get(`/api/department/${id}`)
+    //   .then((res) => {
+    //     this.props.history.push({
+    //       // pathname: "/departments/edit-department/" + id,
+    //       pathname: `/departments/edit-department/${id}`,
+    //       state: {
+    //         alldata: res.data.data[0],
+    //       },
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     showErrorMessage(err, this.props);
+    //   });
   }
 
   //for department doctors
@@ -443,10 +429,7 @@ class Departments extends Component {
   //for department test
   departmentTests(e, row) {
     e.preventDefault();
-    this.props.history.push(
-      `/departments/department-test/${row.id}`
-    );
-    
+    this.props.history.push(`/departments/department-test/${row.id}`);
   }
 
   fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {

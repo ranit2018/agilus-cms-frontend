@@ -33,6 +33,8 @@ class EditEquipment extends Component {
         { value: "2", label: "Equipment" },
       ],
       equipment_id: this.props.match.params.id,
+      alldata: [],
+      isLoading: true,
     };
   }
 
@@ -72,11 +74,26 @@ class EditEquipment extends Component {
   };
 
   componentDidMount() {
+    this.getEquipmentbyId(this.state.equipment_id);
     this.setState({
       validationMessage: generateResolutionText("equipment"),
       fileValidationMessage: FILE_VALIDATION_MASSAGE,
     });
   }
+
+  getEquipmentbyId = (id) => {
+    API.get(`/api/department/equipment/${id}`)
+      .then((res) => {
+        this.setState({
+          alldata: res.data.data[0],
+          equipment_id: res.data.data[0].id,
+          isLoading: false,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  };
 
   handleSubmitEvent = (values, actions) => {
     // let postdata = {
@@ -184,7 +201,7 @@ class EditEquipment extends Component {
   };
 
   render() {
-    const { alldata } = this.props.location.state;
+    const { alldata, isLoading } = this.state;
 
     const initialValues = {
       id: "",
@@ -228,268 +245,274 @@ class EditEquipment extends Component {
 
     return (
       <Layout {...this.props}>
-        <div className="content-wrapper">
-          <section className="content-header">
-            <h1>
-              Edit Equipment
-              <small />
-            </h1>
-            <input
-              type="button"
-              value="Go Back"
-              className="btn btn-warning btn-sm"
-              onClick={() => {
-                window.history.go(-1);
-                return false;
-              }}
-              style={{ right: "9px", position: "absolute", top: "13px" }}
-            />
-          </section>
-          <section className="content">
-            <div className="box">
-              <div className="box-body">
-                <Formik
-                  initialValues={newInitialValues}
-                  validationSchema={validateStopFlag}
-                  onSubmit={this.handleSubmitEvent}
-                >
-                  {({
-                    values,
-                    errors,
-                    touched,
-                    isValid,
-                    isSubmitting,
-                    setFieldValue,
-                    setFieldTouched,
-                    handleChange,
-                    setErrors,
-                  }) => {
-                    return (
-                      <Form>
-                        <div className="contBox">
-                          <Row>
-                            <Col xs={12} sm={12} md={12}>
-                              <div className="form-group">
-                                <label>
-                                  Type
-                                  <span className="impField">*</span>
-                                </label>
-                                <Field
-                                  name="type"
-                                  component="select"
-                                  className={`selectArowGray form-control`}
-                                  autoComplete="off"
-                                  value={values.type}
-                                >
-                                  <option key="-1" value="">
-                                    Select
-                                  </option>
-                                  {this.state.selectType.map((status, i) => (
-                                    <option key={i} value={status.value}>
-                                      {status.label}
+        {isLoading ? (
+          <div></div>
+        ) : (
+          <div className="content-wrapper">
+            <section className="content-header">
+              <h1>
+                Edit Equipment
+                <small />
+              </h1>
+              <input
+                type="button"
+                value="Go Back"
+                className="btn btn-warning btn-sm"
+                onClick={() => {
+                  window.history.go(-1);
+                  return false;
+                }}
+                style={{ right: "9px", position: "absolute", top: "13px" }}
+              />
+            </section>
+            <section className="content">
+              <div className="box">
+                <div className="box-body">
+                  <Formik
+                    initialValues={newInitialValues}
+                    validationSchema={validateStopFlag}
+                    onSubmit={this.handleSubmitEvent}
+                  >
+                    {({
+                      values,
+                      errors,
+                      touched,
+                      isValid,
+                      isSubmitting,
+                      setFieldValue,
+                      setFieldTouched,
+                      handleChange,
+                      setErrors,
+                    }) => {
+                      return (
+                        <Form>
+                          <div className="contBox">
+                            <Row>
+                              <Col xs={12} sm={12} md={12}>
+                                <div className="form-group">
+                                  <label>
+                                    Type
+                                    <span className="impField">*</span>
+                                  </label>
+                                  <Field
+                                    name="type"
+                                    component="select"
+                                    className={`selectArowGray form-control`}
+                                    autoComplete="off"
+                                    value={values.type}
+                                  >
+                                    <option key="-1" value="">
+                                      Select
                                     </option>
-                                  ))}
-                                </Field>
-                                {errors.type && touched.type ? (
-                                  <span className="errorMsg">
-                                    {errors.type}
-                                  </span>
-                                ) : null}
-                              </div>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col xs={12} sm={12} md={12}>
-                              <div className="form-group">
-                                <label>
-                                  Equipment Name
-                                  <span className="impField">*</span>
-                                </label>
-                                <Field
-                                  name="equipment_name"
-                                  type="text"
-                                  className={`form-control`}
-                                  placeholder="Enter Equipment Name"
-                                  autoComplete="off"
-                                  value={values.equipment_name}
-                                />
-                                {errors.equipment_name &&
-                                touched.equipment_name ? (
-                                  <span className="errorMsg">
-                                    {errors.equipment_name}
-                                  </span>
-                                ) : null}
-                              </div>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col xs={12} sm={12} md={12}>
-                              <div className="form-group">
-                                <label>
-                                  Upload Image
-                                  <br />{" "}
-                                  <i> {this.state.fileValidationMessage}</i>
-                                  <br /> <i>{this.state.validationMessage}</i>
-                                </label>
-                                <Field
-                                  name="equipment_image"
-                                  type="file"
-                                  className={`form-control`}
-                                  placeholder="Equipment Image"
-                                  autoComplete="off"
-                                  onChange={(e) => {
-                                    this.fileChangedHandler(
-                                      e,
-                                      setFieldTouched,
-                                      setFieldValue,
-                                      setErrors
-                                    );
-                                  }}
-                                />
+                                    {this.state.selectType.map((status, i) => (
+                                      <option key={i} value={status.value}>
+                                        {status.label}
+                                      </option>
+                                    ))}
+                                  </Field>
+                                  {errors.type && touched.type ? (
+                                    <span className="errorMsg">
+                                      {errors.type}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </Col>
+                            </Row>
+                            <Row>
+                              <Col xs={12} sm={12} md={12}>
+                                <div className="form-group">
+                                  <label>
+                                    Equipment Name
+                                    <span className="impField">*</span>
+                                  </label>
+                                  <Field
+                                    name="equipment_name"
+                                    type="text"
+                                    className={`form-control`}
+                                    placeholder="Enter Equipment Name"
+                                    autoComplete="off"
+                                    value={values.equipment_name}
+                                  />
+                                  {errors.equipment_name &&
+                                  touched.equipment_name ? (
+                                    <span className="errorMsg">
+                                      {errors.equipment_name}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </Col>
+                            </Row>
+                            <Row>
+                              <Col xs={12} sm={12} md={12}>
+                                <div className="form-group">
+                                  <label>
+                                    Upload Image
+                                    <br />{" "}
+                                    <i> {this.state.fileValidationMessage}</i>
+                                    <br /> <i>{this.state.validationMessage}</i>
+                                  </label>
+                                  <Field
+                                    name="equipment_image"
+                                    type="file"
+                                    className={`form-control`}
+                                    placeholder="Equipment Image"
+                                    autoComplete="off"
+                                    onChange={(e) => {
+                                      this.fileChangedHandler(
+                                        e,
+                                        setFieldTouched,
+                                        setFieldValue,
+                                        setErrors
+                                      );
+                                    }}
+                                  />
 
-                                {errors.equipment_image &&
-                                touched.equipment_image ? (
-                                  <span className="errorMsg">
-                                    {errors.equipment_image}
-                                  </span>
-                                ) : null}
-                              </div>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col xs={12} sm={12} md={12}>
-                              <div className="form-group">
-                                <label>
-                                  Description
-                                  <span className="impField">*</span>
-                                </label>
+                                  {errors.equipment_image &&
+                                  touched.equipment_image ? (
+                                    <span className="errorMsg">
+                                      {errors.equipment_image}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </Col>
+                            </Row>
+                            <Row>
+                              <Col xs={12} sm={12} md={12}>
+                                <div className="form-group">
+                                  <label>
+                                    Description
+                                    <span className="impField">*</span>
+                                  </label>
 
-                                <input
-                                  id="my-file"
-                                  type="file"
-                                  name="my-file"
-                                  style={{ display: "none" }}
-                                />
-                                <TinyMCE
-                                  name="equipment_description"
-                                  content={values.equipment_description}
-                                  config={{
-                                    menubar: false,
-                                    branding: false,
-                                    selector: "textarea",
-                                    height: 350,
-                                    plugins: [
-                                      "advlist autolink lists link image charmap print preview anchor",
-                                      "searchreplace wordcount visualblocks code fullscreen",
-                                      "insertdatetime media table contextmenu paste code",
-                                    ],
-                                    // plugins:
-                                    //     "link table hr visualblocks code placeholder lists autoresize textcolor",
-                                    font_formats:
-                                      "Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats",
-                                    toolbar:
-                                      "bold italic strikethrough superscript subscript | forecolor backcolor | removeformat underline | link unlink | alignleft aligncenter alignright alignjustify | numlist bullist | blockquote table  hr | visualblocks code | fontselect | link image",
-                                    content_css:
-                                      "//www.tinymce.com/css/codepen.min.css",
-                                    file_browser_callback_types: "image",
-                                    file_picker_callback: function (
-                                      callback,
-                                      value,
-                                      meta
-                                    ) {
-                                      if (meta.filetype == "image") {
-                                        var input =
-                                          document.getElementById("my-file");
-                                        input.click();
-                                        input.onchange = function () {
-                                          var file = input.files[0];
-                                          var reader = new FileReader();
-                                          reader.onload = function (e) {
-                                            callback(e.target.result, {
-                                              alt: file.name,
-                                            });
+                                  <input
+                                    id="my-file"
+                                    type="file"
+                                    name="my-file"
+                                    style={{ display: "none" }}
+                                  />
+                                  <TinyMCE
+                                    name="equipment_description"
+                                    content={values.equipment_description}
+                                    config={{
+                                      menubar: false,
+                                      branding: false,
+                                      selector: "textarea",
+                                      height: 350,
+                                      plugins: [
+                                        "advlist autolink lists link image charmap print preview anchor",
+                                        "searchreplace wordcount visualblocks code fullscreen",
+                                        "insertdatetime media table contextmenu paste code",
+                                      ],
+                                      // plugins:
+                                      //     "link table hr visualblocks code placeholder lists autoresize textcolor",
+                                      font_formats:
+                                        "Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats",
+                                      toolbar:
+                                        "bold italic strikethrough superscript subscript | forecolor backcolor | removeformat underline | link unlink | alignleft aligncenter alignright alignjustify | numlist bullist | blockquote table  hr | visualblocks code | fontselect | link image",
+                                      content_css:
+                                        "//www.tinymce.com/css/codepen.min.css",
+                                      file_browser_callback_types: "image",
+                                      file_picker_callback: function (
+                                        callback,
+                                        value,
+                                        meta
+                                      ) {
+                                        if (meta.filetype == "image") {
+                                          var input =
+                                            document.getElementById("my-file");
+                                          input.click();
+                                          input.onchange = function () {
+                                            var file = input.files[0];
+                                            var reader = new FileReader();
+                                            reader.onload = function (e) {
+                                              callback(e.target.result, {
+                                                alt: file.name,
+                                              });
+                                            };
+                                            reader.readAsDataURL(file);
                                           };
-                                          reader.readAsDataURL(file);
-                                        };
-                                      }
-                                    },
-                                    paste_data_images: true,
-                                  }}
-                                  onChange={(e) => {
-                                    setFieldValue(
-                                      "equipment_description",
-                                      e.target.getContent()
-                                    );
-                                  }}
-                                />
+                                        }
+                                      },
+                                      paste_data_images: true,
+                                    }}
+                                    onChange={(e) => {
+                                      setFieldValue(
+                                        "equipment_description",
+                                        e.target.getContent()
+                                      );
+                                    }}
+                                  />
 
-                                {errors.equipment_description &&
-                                touched.equipment_description ? (
-                                  <span className="errorMsg">
-                                    {errors.equipment_description}
-                                  </span>
-                                ) : null}
-                              </div>
-                            </Col>
-                          </Row>
-                          <hr className="blue" />
-                          <Row>
-                            <Col xs={12} sm={12} md={12}>
-                              <div className="form-group">
-                                <label>
-                                  Status
-                                  <span className="impField">*</span>
-                                </label>
-                                <Field
-                                  name="status"
-                                  component="select"
-                                  className={`selectArowGray form-control`}
-                                  autoComplete="off"
-                                  value={values.status}
-                                >
-                                  <option key="-1" value="">
-                                    Select
-                                  </option>
-                                  {this.state.selectStatus.map((status, i) => (
-                                    <option key={i} value={status.value}>
-                                      {status.label}
+                                  {errors.equipment_description &&
+                                  touched.equipment_description ? (
+                                    <span className="errorMsg">
+                                      {errors.equipment_description}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </Col>
+                            </Row>
+                            <hr className="blue" />
+                            <Row>
+                              <Col xs={12} sm={12} md={12}>
+                                <div className="form-group">
+                                  <label>
+                                    Status
+                                    <span className="impField">*</span>
+                                  </label>
+                                  <Field
+                                    name="status"
+                                    component="select"
+                                    className={`selectArowGray form-control`}
+                                    autoComplete="off"
+                                    value={values.status}
+                                  >
+                                    <option key="-1" value="">
+                                      Select
                                     </option>
-                                  ))}
-                                </Field>
-                                {errors.status && touched.status ? (
-                                  <span className="errorMsg">
-                                    {errors.status}
-                                  </span>
-                                ) : null}
-                              </div>
-                            </Col>
-                          </Row>
-                        </div>
-                        <button
-                          className={`btn btn-success btn-sm ${
-                            isValid ? "btn-custom-green" : "btn-disable"
-                          } m-r-10`}
-                          type="submit"
-                          disabled={
-                            isValid ? (isSubmitting ? true : false) : true
-                          }
-                        >
-                          {this.state.equipment_id > 0
-                            ? isSubmitting
-                              ? "Updating..."
-                              : "Update"
-                            : isSubmitting
-                            ? "Submitting..."
-                            : "Submit"}
-                        </button>
-                      </Form>
-                    );
-                  }}
-                </Formik>
+                                    {this.state.selectStatus.map(
+                                      (status, i) => (
+                                        <option key={i} value={status.value}>
+                                          {status.label}
+                                        </option>
+                                      )
+                                    )}
+                                  </Field>
+                                  {errors.status && touched.status ? (
+                                    <span className="errorMsg">
+                                      {errors.status}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </Col>
+                            </Row>
+                          </div>
+                          <button
+                            className={`btn btn-success btn-sm ${
+                              isValid ? "btn-custom-green" : "btn-disable"
+                            } m-r-10`}
+                            type="submit"
+                            disabled={
+                              isValid ? (isSubmitting ? true : false) : true
+                            }
+                          >
+                            {this.state.equipment_id > 0
+                              ? isSubmitting
+                                ? "Updating..."
+                                : "Update"
+                              : isSubmitting
+                              ? "Submitting..."
+                              : "Submit"}
+                          </button>
+                        </Form>
+                      );
+                    }}
+                  </Formik>
+                </div>
               </div>
-            </div>
-          </section>
-        </div>
+            </section>
+          </div>
+        )}
       </Layout>
     );
   }

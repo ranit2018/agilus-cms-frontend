@@ -32,6 +32,8 @@ class EditDoctor extends Component {
         { value: "1", label: "Active" },
       ],
       doctor_id: this.props.match.params.id,
+      alldata: [],
+      isLoading: true,
     };
   }
 
@@ -71,11 +73,26 @@ class EditDoctor extends Component {
   };
 
   componentDidMount() {
+    this.getDoctorsbyId(this.state.doctor_id);
     this.setState({
       validationMessage: generateResolutionText("doctor"),
       fileValidationMessage: FILE_VALIDATION_MASSAGE,
     });
   }
+
+  getDoctorsbyId = (id) => {
+    API.get(`/api/department/doctor/${id}`)
+      .then((res) => {
+        this.setState({
+          alldata: res.data.data[0],
+          doctor_id: res.data.data[0].id,
+          isLoading: false,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  };
 
   handleSubmitEvent = (values, actions) => {
     // let postdata = {
@@ -185,7 +202,7 @@ class EditDoctor extends Component {
   };
 
   render() {
-    const { alldata } = this.props.location.state;
+    const { alldata, isLoading } = this.state;
 
     const initialValues = {
       id: "",
@@ -234,332 +251,339 @@ class EditDoctor extends Component {
 
     return (
       <Layout {...this.props}>
-        <div className="content-wrapper">
-          <section className="content-header">
-            <h1>
-              Edit Doctor
-              <small />
-            </h1>
-            <input
-              type="button"
-              value="Go Back"
-              className="btn btn-warning btn-sm"
-              onClick={() => {
-                window.history.go(-1);
-                return false;
-              }}
-              style={{ right: "9px", position: "absolute", top: "13px" }}
-            />
-          </section>
-          <section className="content">
-            <div className="box">
-              <div className="box-body">
-                <Formik
-                  initialValues={newInitialValues}
-                  validationSchema={validateStopFlag}
-                  onSubmit={this.handleSubmitEvent}
-                >
-                  {({
-                    values,
-                    errors,
-                    touched,
-                    isValid,
-                    isSubmitting,
-                    setFieldValue,
-                    setFieldTouched,
-                    handleChange,
-                    setErrors,
-                  }) => {
-                    return (
-                      <Form>
-                        <div className="contBox">
-                          <Row>
-                            <Col xs={12} sm={12} md={12}>
-                              <div className="form-group">
-                                <label>
-                                  Doctor Name
-                                  <span className="impField">*</span>
-                                </label>
-                                <Field
-                                  name="doctor_name"
-                                  type="text"
-                                  className={`form-control`}
-                                  placeholder="Enter Doctor Name"
-                                  autoComplete="off"
-                                  value={values.doctor_name}
-                                />
-                                {errors.doctor_name && touched.doctor_name ? (
-                                  <span className="errorMsg">
-                                    {errors.doctor_name}
-                                  </span>
-                                ) : null}
-                              </div>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col xs={12} sm={12} md={12}>
-                              <div className="form-group">
-                                <label>
-                                  Designation
-                                  <span className="impField">*</span>
-                                </label>
-                                <Field
-                                  name="designation"
-                                  type="text"
-                                  className={`form-control`}
-                                  placeholder="Enter Designation"
-                                  autoComplete="off"
-                                  value={values.designation}
-                                />
-                                {errors.designation && touched.designation ? (
-                                  <span className="errorMsg">
-                                    {errors.designation}
-                                  </span>
-                                ) : null}
-                              </div>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col xs={12} sm={12} md={12}>
-                              <div className="form-group">
-                                <label>
-                                  Upload Image
-                                  <br />{" "}
-                                  <i> {this.state.fileValidationMessage}</i>
-                                  <br /> <i>{this.state.validationMessage}</i>
-                                </label>
-                                <Field
-                                  name="doctor_image"
-                                  type="file"
-                                  className={`form-control`}
-                                  placeholder="Doctor Image"
-                                  autoComplete="off"
-                                  onChange={(e) => {
-                                    this.fileChangedHandler(
-                                      e,
-                                      setFieldTouched,
-                                      setFieldValue,
-                                      setErrors
-                                    );
-                                  }}
-                                />
+        {isLoading ? (
+          <div></div>
+        ) : (
+          <div className="content-wrapper">
+            <section className="content-header">
+              <h1>
+                Edit Doctor
+                <small />
+              </h1>
+              <input
+                type="button"
+                value="Go Back"
+                className="btn btn-warning btn-sm"
+                onClick={() => {
+                  window.history.go(-1);
+                  return false;
+                }}
+                style={{ right: "9px", position: "absolute", top: "13px" }}
+              />
+            </section>
+            <section className="content">
+              <div className="box">
+                <div className="box-body">
+                  <Formik
+                    initialValues={newInitialValues}
+                    validationSchema={validateStopFlag}
+                    onSubmit={this.handleSubmitEvent}
+                  >
+                    {({
+                      values,
+                      errors,
+                      touched,
+                      isValid,
+                      isSubmitting,
+                      setFieldValue,
+                      setFieldTouched,
+                      handleChange,
+                      setErrors,
+                    }) => {
+                      return (
+                        <Form>
+                          <div className="contBox">
+                            <Row>
+                              <Col xs={12} sm={12} md={12}>
+                                <div className="form-group">
+                                  <label>
+                                    Doctor Name
+                                    <span className="impField">*</span>
+                                  </label>
+                                  <Field
+                                    name="doctor_name"
+                                    type="text"
+                                    className={`form-control`}
+                                    placeholder="Enter Doctor Name"
+                                    autoComplete="off"
+                                    value={values.doctor_name}
+                                  />
+                                  {errors.doctor_name && touched.doctor_name ? (
+                                    <span className="errorMsg">
+                                      {errors.doctor_name}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </Col>
+                            </Row>
+                            <Row>
+                              <Col xs={12} sm={12} md={12}>
+                                <div className="form-group">
+                                  <label>
+                                    Designation
+                                    <span className="impField">*</span>
+                                  </label>
+                                  <Field
+                                    name="designation"
+                                    type="text"
+                                    className={`form-control`}
+                                    placeholder="Enter Designation"
+                                    autoComplete="off"
+                                    value={values.designation}
+                                  />
+                                  {errors.designation && touched.designation ? (
+                                    <span className="errorMsg">
+                                      {errors.designation}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </Col>
+                            </Row>
+                            <Row>
+                              <Col xs={12} sm={12} md={12}>
+                                <div className="form-group">
+                                  <label>
+                                    Upload Image
+                                    <br />{" "}
+                                    <i> {this.state.fileValidationMessage}</i>
+                                    <br /> <i>{this.state.validationMessage}</i>
+                                  </label>
+                                  <Field
+                                    name="doctor_image"
+                                    type="file"
+                                    className={`form-control`}
+                                    placeholder="Doctor Image"
+                                    autoComplete="off"
+                                    onChange={(e) => {
+                                      this.fileChangedHandler(
+                                        e,
+                                        setFieldTouched,
+                                        setFieldValue,
+                                        setErrors
+                                      );
+                                    }}
+                                  />
 
-                                {errors.doctor_image && touched.doctor_image ? (
-                                  <span className="errorMsg">
-                                    {errors.doctor_image}
-                                  </span>
-                                ) : null}
-                              </div>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col xs={12} sm={12} md={12}>
-                              <div className="form-group">
-                                <label>
-                                  Education
-                                  <span className="impField">*</span>
-                                </label>
+                                  {errors.doctor_image &&
+                                  touched.doctor_image ? (
+                                    <span className="errorMsg">
+                                      {errors.doctor_image}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </Col>
+                            </Row>
+                            <Row>
+                              <Col xs={12} sm={12} md={12}>
+                                <div className="form-group">
+                                  <label>
+                                    Education
+                                    <span className="impField">*</span>
+                                  </label>
 
-                                <input
-                                  id="my-file"
-                                  type="file"
-                                  name="my-file"
-                                  style={{ display: "none" }}
-                                />
-                                <TinyMCE
-                                  name="education"
-                                  content={values.education}
-                                  config={{
-                                    menubar: false,
-                                    branding: false,
-                                    selector: "textarea",
-                                    height: 350,
-                                    plugins: [
-                                      "advlist autolink lists link image charmap print preview anchor",
-                                      "searchreplace wordcount visualblocks code fullscreen",
-                                      "insertdatetime media table contextmenu paste code",
-                                    ],
-                                    // plugins:
-                                    //     "link table hr visualblocks code placeholder lists autoresize textcolor",
-                                    font_formats:
-                                      "Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats",
-                                    toolbar:
-                                      "bold italic strikethrough superscript subscript | forecolor backcolor | removeformat underline | link unlink | alignleft aligncenter alignright alignjustify | numlist bullist | blockquote table  hr | visualblocks code | fontselect | link image",
-                                    content_css:
-                                      "//www.tinymce.com/css/codepen.min.css",
-                                    file_browser_callback_types: "image",
-                                    file_picker_callback: function (
-                                      callback,
-                                      value,
-                                      meta
-                                    ) {
-                                      if (meta.filetype == "image") {
-                                        var input =
-                                          document.getElementById("my-file");
-                                        input.click();
-                                        input.onchange = function () {
-                                          var file = input.files[0];
-                                          var reader = new FileReader();
-                                          reader.onload = function (e) {
-                                            callback(e.target.result, {
-                                              alt: file.name,
-                                            });
+                                  <input
+                                    id="my-file"
+                                    type="file"
+                                    name="my-file"
+                                    style={{ display: "none" }}
+                                  />
+                                  <TinyMCE
+                                    name="education"
+                                    content={values.education}
+                                    config={{
+                                      menubar: false,
+                                      branding: false,
+                                      selector: "textarea",
+                                      height: 350,
+                                      plugins: [
+                                        "advlist autolink lists link image charmap print preview anchor",
+                                        "searchreplace wordcount visualblocks code fullscreen",
+                                        "insertdatetime media table contextmenu paste code",
+                                      ],
+                                      // plugins:
+                                      //     "link table hr visualblocks code placeholder lists autoresize textcolor",
+                                      font_formats:
+                                        "Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats",
+                                      toolbar:
+                                        "bold italic strikethrough superscript subscript | forecolor backcolor | removeformat underline | link unlink | alignleft aligncenter alignright alignjustify | numlist bullist | blockquote table  hr | visualblocks code | fontselect | link image",
+                                      content_css:
+                                        "//www.tinymce.com/css/codepen.min.css",
+                                      file_browser_callback_types: "image",
+                                      file_picker_callback: function (
+                                        callback,
+                                        value,
+                                        meta
+                                      ) {
+                                        if (meta.filetype == "image") {
+                                          var input =
+                                            document.getElementById("my-file");
+                                          input.click();
+                                          input.onchange = function () {
+                                            var file = input.files[0];
+                                            var reader = new FileReader();
+                                            reader.onload = function (e) {
+                                              callback(e.target.result, {
+                                                alt: file.name,
+                                              });
+                                            };
+                                            reader.readAsDataURL(file);
                                           };
-                                          reader.readAsDataURL(file);
-                                        };
-                                      }
-                                    },
-                                    paste_data_images: true,
-                                  }}
-                                  onChange={(e) => {
-                                    setFieldValue(
-                                      "education",
-                                      e.target.getContent()
-                                    );
-                                  }}
-                                />
+                                        }
+                                      },
+                                      paste_data_images: true,
+                                    }}
+                                    onChange={(e) => {
+                                      setFieldValue(
+                                        "education",
+                                        e.target.getContent()
+                                      );
+                                    }}
+                                  />
 
-                                {errors.education && touched.education ? (
-                                  <span className="errorMsg">
-                                    {errors.education}
-                                  </span>
-                                ) : null}
-                              </div>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col xs={12} sm={12} md={12}>
-                              <div className="form-group">
-                                <label>
-                                  Expertise
-                                  <span className="impField">*</span>
-                                </label>
+                                  {errors.education && touched.education ? (
+                                    <span className="errorMsg">
+                                      {errors.education}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </Col>
+                            </Row>
+                            <Row>
+                              <Col xs={12} sm={12} md={12}>
+                                <div className="form-group">
+                                  <label>
+                                    Expertise
+                                    <span className="impField">*</span>
+                                  </label>
 
-                                <input
-                                  id="my-file"
-                                  type="file"
-                                  name="my-file"
-                                  style={{ display: "none" }}
-                                />
-                                <TinyMCE
-                                  name="expertise"
-                                  content={values.expertise}
-                                  config={{
-                                    menubar: false,
-                                    branding: false,
-                                    selector: "textarea",
-                                    height: 350,
-                                    plugins: [
-                                      "advlist autolink lists link image charmap print preview anchor",
-                                      "searchreplace wordcount visualblocks code fullscreen",
-                                      "insertdatetime media table contextmenu paste code",
-                                    ],
-                                    // plugins:
-                                    //     "link table hr visualblocks code placeholder lists autoresize textcolor",
-                                    font_formats:
-                                      "Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats",
-                                    toolbar:
-                                      "bold italic strikethrough superscript subscript | forecolor backcolor | removeformat underline | link unlink | alignleft aligncenter alignright alignjustify | numlist bullist | blockquote table  hr | visualblocks code | fontselect | link image",
-                                    content_css:
-                                      "//www.tinymce.com/css/codepen.min.css",
-                                    file_browser_callback_types: "image",
-                                    file_picker_callback: function (
-                                      callback,
-                                      value,
-                                      meta
-                                    ) {
-                                      if (meta.filetype == "image") {
-                                        var input =
-                                          document.getElementById("my-file");
-                                        input.click();
-                                        input.onchange = function () {
-                                          var file = input.files[0];
-                                          var reader = new FileReader();
-                                          reader.onload = function (e) {
-                                            callback(e.target.result, {
-                                              alt: file.name,
-                                            });
+                                  <input
+                                    id="my-file"
+                                    type="file"
+                                    name="my-file"
+                                    style={{ display: "none" }}
+                                  />
+                                  <TinyMCE
+                                    name="expertise"
+                                    content={values.expertise}
+                                    config={{
+                                      menubar: false,
+                                      branding: false,
+                                      selector: "textarea",
+                                      height: 350,
+                                      plugins: [
+                                        "advlist autolink lists link image charmap print preview anchor",
+                                        "searchreplace wordcount visualblocks code fullscreen",
+                                        "insertdatetime media table contextmenu paste code",
+                                      ],
+                                      // plugins:
+                                      //     "link table hr visualblocks code placeholder lists autoresize textcolor",
+                                      font_formats:
+                                        "Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats",
+                                      toolbar:
+                                        "bold italic strikethrough superscript subscript | forecolor backcolor | removeformat underline | link unlink | alignleft aligncenter alignright alignjustify | numlist bullist | blockquote table  hr | visualblocks code | fontselect | link image",
+                                      content_css:
+                                        "//www.tinymce.com/css/codepen.min.css",
+                                      file_browser_callback_types: "image",
+                                      file_picker_callback: function (
+                                        callback,
+                                        value,
+                                        meta
+                                      ) {
+                                        if (meta.filetype == "image") {
+                                          var input =
+                                            document.getElementById("my-file");
+                                          input.click();
+                                          input.onchange = function () {
+                                            var file = input.files[0];
+                                            var reader = new FileReader();
+                                            reader.onload = function (e) {
+                                              callback(e.target.result, {
+                                                alt: file.name,
+                                              });
+                                            };
+                                            reader.readAsDataURL(file);
                                           };
-                                          reader.readAsDataURL(file);
-                                        };
-                                      }
-                                    },
-                                    paste_data_images: true,
-                                  }}
-                                  onChange={(e) => {
-                                    setFieldValue(
-                                      "expertise",
-                                      e.target.getContent()
-                                    );
-                                  }}
-                                />
+                                        }
+                                      },
+                                      paste_data_images: true,
+                                    }}
+                                    onChange={(e) => {
+                                      setFieldValue(
+                                        "expertise",
+                                        e.target.getContent()
+                                      );
+                                    }}
+                                  />
 
-                                {errors.expertise && touched.expertise ? (
-                                  <span className="errorMsg">
-                                    {errors.expertise}
-                                  </span>
-                                ) : null}
-                              </div>
-                            </Col>
-                          </Row>
-                          <hr className="blue" />
-                          <Row>
-                            <Col xs={12} sm={12} md={12}>
-                              <div className="form-group">
-                                <label>
-                                  Status
-                                  <span className="impField">*</span>
-                                </label>
-                                <Field
-                                  name="status"
-                                  component="select"
-                                  className={`selectArowGray form-control`}
-                                  autoComplete="off"
-                                  value={values.status}
-                                >
-                                  <option key="-1" value="">
-                                    Select
-                                  </option>
-                                  {this.state.selectStatus.map((status, i) => (
-                                    <option key={i} value={status.value}>
-                                      {status.label}
+                                  {errors.expertise && touched.expertise ? (
+                                    <span className="errorMsg">
+                                      {errors.expertise}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </Col>
+                            </Row>
+                            <hr className="blue" />
+                            <Row>
+                              <Col xs={12} sm={12} md={12}>
+                                <div className="form-group">
+                                  <label>
+                                    Status
+                                    <span className="impField">*</span>
+                                  </label>
+                                  <Field
+                                    name="status"
+                                    component="select"
+                                    className={`selectArowGray form-control`}
+                                    autoComplete="off"
+                                    value={values.status}
+                                  >
+                                    <option key="-1" value="">
+                                      Select
                                     </option>
-                                  ))}
-                                </Field>
-                                {errors.status && touched.status ? (
-                                  <span className="errorMsg">
-                                    {errors.status}
-                                  </span>
-                                ) : null}
-                              </div>
-                            </Col>
-                          </Row>
-                        </div>
-                        <button
-                          className={`btn btn-success btn-sm ${
-                            isValid ? "btn-custom-green" : "btn-disable"
-                          } m-r-10`}
-                          type="submit"
-                          disabled={
-                            isValid ? (isSubmitting ? true : false) : true
-                          }
-                        >
-                          {this.state.banner_id > 0
-                            ? isSubmitting
-                              ? "Updating..."
-                              : "Update"
-                            : isSubmitting
-                            ? "Submitting..."
-                            : "Submit"}
-                        </button>
-                      </Form>
-                    );
-                  }}
-                </Formik>
+                                    {this.state.selectStatus.map(
+                                      (status, i) => (
+                                        <option key={i} value={status.value}>
+                                          {status.label}
+                                        </option>
+                                      )
+                                    )}
+                                  </Field>
+                                  {errors.status && touched.status ? (
+                                    <span className="errorMsg">
+                                      {errors.status}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </Col>
+                            </Row>
+                          </div>
+                          <button
+                            className={`btn btn-success btn-sm ${
+                              isValid ? "btn-custom-green" : "btn-disable"
+                            } m-r-10`}
+                            type="submit"
+                            disabled={
+                              isValid ? (isSubmitting ? true : false) : true
+                            }
+                          >
+                            {this.state.banner_id > 0
+                              ? isSubmitting
+                                ? "Updating..."
+                                : "Update"
+                              : isSubmitting
+                              ? "Submitting..."
+                              : "Submit"}
+                          </button>
+                        </Form>
+                      );
+                    }}
+                  </Formik>
+                </div>
               </div>
-            </div>
-          </section>
-        </div>
+            </section>
+          </div>
+        )}
       </Layout>
     );
   }

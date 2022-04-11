@@ -343,18 +343,20 @@ class Doctor extends Component {
   editDoctor(e, id) {
     e.preventDefault();
 
-    API.get(`/api/department/doctor/${id}`)
-      .then((res) => {
-        this.props.history.push({
-          pathname: "/department/edit-doctor/" + id,
-          state: {
-            alldata: res.data.data[0],
-          },
-        });
-      })
-      .catch((err) => {
-        showErrorMessage(err, this.props);
-      });
+    this.props.history.push(`/department/edit-doctor/${id}`)
+
+    // API.get(`/api/department/doctor/${id}`)
+    //   .then((res) => {
+    //     this.props.history.push({
+    //       pathname: "/department/edit-doctor/" + id,
+    //       state: {
+    //         alldata: res.data.data[0],
+    //       },
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     showErrorMessage(err, this.props);
+    //   });
   }
 
   modalCloseHandler = () => {

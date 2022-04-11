@@ -317,18 +317,20 @@ class Publications extends Component {
   editPublication(e, id) {
     e.preventDefault();
 
-    API.get(`/api/department/publication/${id}`)
-      .then((res) => {
-        this.props.history.push({
-          pathname: "/department/edit-publication/" + id,
-          state: {
-            alldata: res.data.data[0],
-          },
-        });
-      })
-      .catch((err) => {
-        showErrorMessage(err, this.props);
-      });
+    this.props.history.push(`/department/edit-publication/${id}`)
+    
+    // API.get(`/api/department/publication/${id}`)
+    //   .then((res) => {
+    //     this.props.history.push({
+    //       pathname: "/department/edit-publication/" + id,
+    //       state: {
+    //         alldata: res.data.data[0],
+    //       },
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     showErrorMessage(err, this.props);
+    //   });
   }
 
   //image modal

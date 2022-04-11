@@ -124,6 +124,7 @@ export function getUserEmail() {
   }
 }
 export const getHeightWidth = (file) => {
+  console.log('file',file)
   return new Promise((resolve, reject) => {
     var reader = new FileReader();
     var height;
@@ -299,6 +300,7 @@ export const generateResolutionText = (tag) => {
 }
 
 export const getResolution = (tag) => {
+  console.log('tag',tag)
   for (let i in resolution_arr) {
     if (resolution_arr[i].tag === tag) {
       return resolution_arr[i]

@@ -375,18 +375,20 @@ class Equipment extends Component {
   editEquipment(e, id) {
     e.preventDefault();
 
-    API.get(`/api/department/equipment/${id}`)
-      .then((res) => {
-        this.props.history.push({
-          pathname: "/department/edit-equipment/" + id,
-          state: {
-            alldata: res.data.data[0],
-          },
-        });
-      })
-      .catch((err) => {
-        showErrorMessage(err, this.props);
-      });
+    this.props.history.push(`/department/edit-equipment/${id}`)
+
+    // API.get(`/api/department/equipment/${id}`)
+    //   .then((res) => {
+    //     this.props.history.push({
+    //       pathname: "/department/edit-equipment/" + id,
+    //       state: {
+    //         alldata: res.data.data[0],
+    //       },
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     showErrorMessage(err, this.props);
+    //   });
   }
 
   modalCloseHandler = () => {
