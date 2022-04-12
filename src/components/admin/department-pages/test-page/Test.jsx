@@ -37,12 +37,15 @@ const custStatus = (refObj) => (cell) => {
   }
 };
 
-const custCity = (refObj) => (cell) => {
+const custCity = (refObj) => (cell, row) => {
+  // console.log("row", row);
+  // console.log("cell",cell, cell.length);
+
   //return cell === 1 ? "Active" : "Inactive";
-  if (cell === null || typeof cell == undefined) {
+  if (cell.length === 0 ||  cell == undefined) {
     return "All Cities";
-  } else if (cell) {
-    return cell;
+  } else if (cell.length > 0) {
+    return "Particular cities";
   }
 };
 
@@ -140,8 +143,8 @@ class Test extends Component {
         { value: "1", label: "Active" },
       ],
       selectCity_type: [
-        { value: "1", label: "Select All Cities" },
-        { value: "2", label: "Select Particular City" },
+        { value: "1", label: "All Cities" },
+        { value: "2", label: "Particular City" },
       ],
       selecttype: [
         { value: "1", label: "Tests" },
@@ -163,7 +166,6 @@ class Test extends Component {
       },
       //   selectedCity: [
       //     { city_name: "MUMBAI", label: "Mumbai (Maharashtra)", state_id: 15, value: 304, },
-      //     { city_name: "DELHI", label: "Delhi (Delhi)", state_id: 34, value: 129,},
       // ],
 
       cities: "",
@@ -233,10 +235,6 @@ class Test extends Component {
       search_product_name,
       search_status,
     } = this.state;
-    // const search_city_name = document.getElementById("search_city_name").value;
-    // const search_product_code = document.getElementById("search_product_code").value;
-    // const search_product_name = document.getElementById("search_product_name").value;
-    // const search_status = document.getElementById("search_status").value;
     API.get(
       `/api/department/test?city_name=${encodeURIComponent(
         search_city_name
@@ -247,6 +245,7 @@ class Test extends Component {
       )}&status=${search_status}&page=1`
     )
       .then((res) => {
+       
         this.setState({
           activePage: page,
           product_list: res.data.data,
@@ -271,20 +270,30 @@ class Test extends Component {
           product_code: res.data.data[0].product_code,
           product_id: res.data.data[0].product_id,
         };
-        const city_data = {
-          city_name: res.data.data[0].cities[0].city_name,
-          city_id: res.data.data[0].cities[0].city_id,
-          label: res.data.data[0].cities[0].label,
-        };
+        let city_data= [];
+        let value = [];
+        console.log('res.data.data[0].cities.length',res.data.data[0].cities.length)
+        if(res.data.data[0].cities.length > 0){
+         for(let i= 0; i < res.data.data[0].cities.length; i++){
+          value.push(res.data.data[0].cities[i].city_name);
+
+          city_data.push({
+            city_name: res.data.data[0].cities[i].city_name,
+            city_id: res.data.data[0].cities[i].city_id,
+            label: res.data.data[0].cities[i].label,
+          });
+         }
+        }
+        console.log('city_data',city_data)
         this.setState({
           product_Details: res.data.data,
           product_id: id,
           selectedValue: prd_data,
           value: res.data.data[0].product_name,
           selectedCity: city_data,
-          city_value: res.data.data[0].cities[0].city_name,
+          city_value: value,
 
-          cities: res.data.data[0].cities[0].city_name,
+          cities: value,
           city_type: res.data.data[0].city_type,
           type: res.data.data[0].type,
           // file: res.data.data[0].product_image,
@@ -294,6 +303,7 @@ class Test extends Component {
         });
       })
       .catch((err) => {
+        console.log('error',err)
         showErrorMessage(err, this.props);
       });
   }
@@ -310,6 +320,7 @@ class Test extends Component {
         state_id: 15,
         value: 304,
       },
+      city_value: "",
       city_type: "1",
       type: 1,
       product_id: 0,
@@ -442,9 +453,9 @@ class Test extends Component {
   productType = (refObj) => (cell) => {
     //return cell === 1 ? "Active" : "Inactive";
     if (cell === 1) {
-      return "Our Top Selling Tests/Packages";
+      return "Test";
     } else if (cell === 2) {
-      return "Popular Preventive Health Check-Up Packages";
+      return "Package";
     }
   };
 
@@ -471,9 +482,9 @@ class Test extends Component {
   };
 
   handleSubmitEventAdd = (values, actions) => {
-    console.log("values", values);
+    // console.log("values", values);
     const { selectedValue, selectedCity } = this.state;
-    console.log('selectedCity',selectedCity);
+    // console.log("selectedCity", selectedCity);
 
     let method = "";
     let post_data = [];
@@ -482,18 +493,19 @@ class Test extends Component {
       product_code: selectedValue.PRDCT_CODE,
       product_id: selectedValue.ID,
     };
-    console.log('values.city_type.length',selectedCity.length);
+    // console.log("values.city_type.length", selectedCity.length);
 
     if (values.city_type === "2") {
-      for(let i =0; i < selectedCity.length; i++){
+      for (let i = 0; i < selectedCity.length; i++) {
         post_data.push({
           city_name: selectedCity[i].city_name,
-          city_id: selectedCity[i].city_id,
+          city_id: selectedCity[i].value,
           label: selectedCity[i].label,
         });
       }
     }
-    
+
+    // console.log("postdata", post_data);
 
     // if (values.city_type === "2" && selectedCity.length > 1) {
     //   for(let i =0; i < selectedCity.length; i++){
@@ -503,7 +515,7 @@ class Test extends Component {
     //       label: selectedCity[i].label,
     //     });
     //   }
-      
+
     // } else if(values.city_type === "2"){
     //   post_data.push({
     //     city_name: selectedCity.city_name,
@@ -512,15 +524,15 @@ class Test extends Component {
     //   });
     // }
 
-    let finaldata = {
-      type: values.type,
-      cities: post_data,
-      product: post_data_product,
-      product_image: this.state.file,
-      status: String(values.status),
-      product_id: this.state.product_id,
-    };
-    console.log('finaldata',finaldata)
+    // let finaldata = {
+    //   type: values.type,
+    //   cities: post_data,
+    //   product: post_data_product,
+    //   product_image: this.state.file,
+    //   status: String(values.status),
+    //   product_id: this.state.product_id,
+    // };
+    // console.log("finaldata", finaldata);
     let formData = new FormData();
 
     method = "POST";
@@ -605,8 +617,8 @@ class Test extends Component {
   };
 
   handleSubmitEventUpdate = (values, actions) => {
-    console.log("values", values);
-    const {selectedValue, selectedCity } = this.state;
+    // console.log("values", values);
+    const { selectedValue, selectedCity } = this.state;
     // console.log('selcetedCity',selectedCity, selectedCity.length)
     let post_data_product;
     if (this.state.value == values.product) {
@@ -627,7 +639,6 @@ class Test extends Component {
     // let post_data = [];
     let post_data = selectedCity;
 
-
     // if (values.city_type === 2) {
     //   console.log('hello')
     //   for(let i =0; i < selectedCity.length; i++){
@@ -639,18 +650,18 @@ class Test extends Component {
     //     });
     //   }
     // }
-console.log('post_data',post_data)
+    // console.log("post_data", post_data);
 
-    let finaldata = {
-      type: values.type,
-      cities: post_data,
+    // let finaldata = {
+    //   type: values.type,
+    //   cities: post_data,
 
-      product: post_data_product,
-      product_image: this.state.file,
-      status: String(values.status),
-      product_id: this.state.product_id,
-    };
-    console.log('finaldata',finaldata)
+    //   product: post_data_product,
+    //   product_image: this.state.file,
+    //   status: String(values.status),
+    //   product_id: this.state.product_id,
+    // };
+    // console.log("finaldata", finaldata);
 
     let formData = new FormData();
 
@@ -1079,7 +1090,7 @@ console.log('post_data',post_data)
                   </TableHeaderColumn>
 
                   <TableHeaderColumn
-                    dataField="city_name"
+                    dataField="cities"
                     tdStyle={{ wordBreak: "break-word" }}
                     dataFormat={custCity(this)}
                   >

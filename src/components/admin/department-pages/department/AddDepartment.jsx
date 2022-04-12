@@ -270,10 +270,10 @@ class AddDepartment extends Component {
       values.total_consultant_scientists
     );
 
-    formData.append("doctors[]", values.doctor_id);
-    formData.append("equipments[]", values.equipment_id);
-    formData.append("publications[]", values.publication_id);
-    formData.append("tests[]", values.product_id);
+    formData.append("doctors[]", JSON.stringify(values.doctor_id));
+    formData.append("equipments[]", JSON.stringify(values.equipment_id));
+    formData.append("publications[]", JSON.stringify(values.publication_id));
+    formData.append("tests[]", JSON.stringify(values.product_id));
     // formData.append("tests[]", JSON.stringify(values.product_id));
 
     formData.append("status", String(values.status));

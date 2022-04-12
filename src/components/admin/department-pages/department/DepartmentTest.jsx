@@ -36,9 +36,23 @@ const actionFormatter = (refObj) => (cell, row) => {
   return (
     <div className="actionStyle">
       <LinkWithTooltip
+        tooltip={"Click to change status"}
+        // clicked={(e) => refObj.chageStatus(e, cell, row.status)}
+        href="#"
+        id="tooltip-1"
+      >
+        <Switch
+          checked={row.status == 1 ? true : false}
+          uncheckedIcon={false}
+          onChange={() => refObj.chageStatus(row.product_id, row.status)}
+          height={20}
+          width={45}
+        />
+      </LinkWithTooltip>
+      <LinkWithTooltip
         tooltip="Click to Delete"
         href="#"
-        clicked={(e) => refObj.confirmDelete(e, row.doctor_id)}
+        clicked={(e) => refObj.confirmDelete(e, cell)}
         id="tooltip-1"
       >
         <i className="far fa-trash-alt" />
@@ -50,11 +64,32 @@ const actionFormatter = (refObj) => (cell, row) => {
 const productType = (refObj) => (cell) => {
   //return cell === 1 ? "Active" : "Inactive";
   if (cell === 1) {
-    return "Our Top Selling Tests";
+    return "Test";
   } else if (cell === 2) {
-    return "Popular Preventive Health Check-Up Packages";
+    return "Package";
   }
 };
+
+const custStatus = (refObj) => (cell) => {
+  //return cell === 1 ? "Active" : "Inactive";
+  if (cell === 1) {
+    return "Active";
+  } else if (cell === 0) {
+    return "Inactive";
+  }
+};
+
+// const custCity = (refObj) => (cell, row) => {
+//   console.log("row", row);
+//   console.log("cell",cell);
+
+//   //return cell === 1 ? "Active" : "Inactive";
+//   if (cell.length === 0 ||  cell == undefined) {
+//     return "All Cities";
+//   } else if (cell.length > 0) {
+//     return "Particular cities";
+//   }
+// };
 
 const setProductImage = (refObj) => (cell, row) => {
   if (row.product_image !== null) {
@@ -68,15 +103,6 @@ const setProductImage = (refObj) => (cell, row) => {
     );
   } else {
     return null;
-  }
-};
-
-const setDate = (refOBj) => (cell) => {
-  if (cell && cell != "") {
-    var mydate = new Date(cell);
-    return dateFormat(mydate, "dd-mm-yyyy");
-  } else {
-    return "---";
   }
 };
 
@@ -97,8 +123,8 @@ class DepartmentTest extends Component {
   }
 
   componentDidMount() {
-    // this.getTypes();
-    // this.getTestList(this.state.activePage);
+    this.getTypes();
+    this.getTestList(this.state.activePage);
   }
 
   handlePageChange = (pageNumber) => {
@@ -108,12 +134,13 @@ class DepartmentTest extends Component {
 
   getTestList = (page = 1) => {
     API.get(
-      `/api/department/department-all-type/${this.state.department_id}/1?page=1`
+      `/api/department/department-all-type/${this.state.department_id}/4?page=1`
     )
       .then((res) => {
         this.setState({
-          doctorList: res.data.data,
-          totalCount: Number(res.data.count),
+          activePage: page,
+          productList: res.data.data,
+          totalCount: res.data.count,
 
           isLoading: false,
         });
@@ -214,18 +241,13 @@ class DepartmentTest extends Component {
       dangerMode: true,
     }).then((willDelete) => {
       if (willDelete) {
-        this.deleteDoctor(id);
+        this.deleteProduct(id);
       }
     });
   };
 
-  deleteDoctor = (id) => {
-    const doctortype = this.state.types.doctor;
-
-    API.post(
-      `/api/department/department-all-type/${this.state.department_id}/${doctortype}/${id}`
-    )
-
+  deleteProduct = (id) => {
+    API.post(`/api/department/test/${id}`)
       .then((res) => {
         swal({
           closeOnClickOutside: false,
@@ -233,7 +255,30 @@ class DepartmentTest extends Component {
           text: "Record deleted successfully.",
           icon: "success",
         }).then(() => {
-          this.getTestList(this.state.activePage);
+          this.getTestList();
+        });
+      })
+      .catch((err) => {
+        if (err.data.status === 3) {
+          this.setState({ closeModal: true });
+          showErrorMessage(err, this.props);
+        }
+      });
+  };
+
+  //chnage status
+  chageStatus = (id, status) => {
+    API.put(`/api/department/test/change_status/${id}`, {
+      status: status == 1 ? String(0) : String(1),
+    })
+      .then((res) => {
+        swal({
+          closeOnClickOutside: false,
+          title: "Success",
+          text: "Record updated successfully.",
+          icon: "success",
+        }).then(() => {
+          this.getProductList(this.state.activePage);
         });
       })
       .catch((err) => {
@@ -283,25 +328,7 @@ class DepartmentTest extends Component {
                   >
                     <i className="fas fa-plus m-r-5" /> Add Product
                   </button>
-                  {this.state.totalCount > 0 ? (
-                    <button
-                      type="button"
-                      className="btn btn-info btn-sm"
-                      onClick={(e) => this.confirmDeleteAllProducts(e)}
-                    >
-                      <i className="fas fa-minus m-r-5" /> Remove All Products
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      className="btn btn-info btn-sm"
-                      disabled
-                    >
-                      <i className="fas fa-minus m-r-5" /> Remove All Products
-                    </button>
-                  )}
                 </div>
-                &nbsp; &nbsp; &nbsp;
                 <form className="form">
                   <div className="">
                     <input
@@ -350,21 +377,32 @@ class DepartmentTest extends Component {
                   >
                     Product Name
                   </TableHeaderColumn>
-
-                  <TableHeaderColumn dataField="city_name">
-                    City
-                  </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="type"
                     dataFormat={productType(this)}
                   >
                     Package Type
                   </TableHeaderColumn>
+
+                  {/* <TableHeaderColumn
+                    dataField="cities"
+                    tdStyle={{ wordBreak: "break-word" }}
+                    dataFormat={custCity(this)}
+                  >
+                    City Name
+                  </TableHeaderColumn> */}
+
                   <TableHeaderColumn
                     dataField="product_image"
                     dataFormat={setProductImage(this)}
                   >
                     Image
+                  </TableHeaderColumn>
+                  <TableHeaderColumn
+                    dataField="status"
+                    dataFormat={custStatus(this)}
+                  >
+                    Status
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="id"

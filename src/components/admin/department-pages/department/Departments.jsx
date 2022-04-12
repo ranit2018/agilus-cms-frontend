@@ -429,7 +429,9 @@ class Departments extends Component {
   //for department test
   departmentTests(e, row) {
     e.preventDefault();
-    this.props.history.push(`/departments/department-test/${row.id}`);
+    const producttype = this.state.types.product;
+
+    this.props.history.push(`/departments/department-test/${row.id}/${producttype}`);
   }
 
   fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
