@@ -123,22 +123,28 @@ const actionFormatter = (refObj) => (cell, row) => {
   );
 };
 const setDepartmentImage = (refObj) => (cell, row) => {
-  return (
-    <div
-      style={{
-        width: "80px",
-        height: "80px",
-        overflow: "hidden",
-      }}
-    >
-      <img
-        src={cell}
-        alt="department"
-        width="100%"
-        onClick={(e) => refObj.imageModalShowHandler(row.department_image)}
-      ></img>
-    </div>
-  );
+  if(row.department_image === null)
+  {
+    return "No image"
+  } else {
+    return (
+      <div
+        style={{
+          width: "80px",
+          height: "80px",
+          overflow: "hidden",
+        }}
+      >
+        <img
+          src={cell}
+          alt="Department image"
+          width="100%"
+          onClick={(e) => refObj.imageModalShowHandler(row.department_image)}
+        ></img>
+      </div>
+    );
+  }
+  
 };
 
 const setDate = (refOBj) => (cell) => {

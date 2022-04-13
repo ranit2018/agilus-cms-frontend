@@ -189,7 +189,7 @@ class AddDepartment extends Component {
   getSearchPublicationArr = (value) => {
     if (value.length == 3) {
       API.get(
-        `/api/department/publication-search-list?publication_name=${value}`
+        `/api/department/publication-search-list?short_name=${value}`
       )
         .then((res) => {
           this.setState({
@@ -511,8 +511,6 @@ class AddDepartment extends Component {
                   }) => {
                     return (
                       <Form>
-                        {/* {console.log({ errors })}
-                        {console.log({ values })} */}
                         <div className="contBox">
                           <Row>
                             <Col xs={12} sm={12} md={12}>
@@ -820,7 +818,7 @@ class AddDepartment extends Component {
                           <Row>
                             <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
-                                <label>Products</label>
+                                <label>Search Products</label>
                                 <Select
                                   isMulti
                                   name="product_id"
@@ -862,12 +860,11 @@ class AddDepartment extends Component {
                           </Row>
 
                           {/* ===== end test form ===== */}
-
                           <Row>
                             <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
                                 <label>
-                                  Upload Department Image
+                                  Upload Image
                                   <span className="impField">*</span>
                                   <br />{" "}
                                   <i> {this.state.fileValidationMessage}</i>

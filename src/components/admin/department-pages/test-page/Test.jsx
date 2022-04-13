@@ -38,9 +38,6 @@ const custStatus = (refObj) => (cell) => {
 };
 
 const custCity = (refObj) => (cell, row) => {
-  // console.log("row", row);
-  // console.log("cell",cell, cell.length);
-
   //return cell === 1 ? "Active" : "Inactive";
   if (cell.length === 0 ||  cell == undefined) {
     return "All Cities";
@@ -104,6 +101,10 @@ const actionFormatter = (refObj) => (cell, row) => {
   );
 };
 
+const __htmlDecode = (refObj) => (cell) => {
+  return htmlDecode(cell);
+};
+
 const initialValues = {
   // cities: {
   //   city_name: "MUMBAI",
@@ -123,7 +124,7 @@ class Test extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      product_data: [],
+      // product_data: [],
       product_list: [],
       product_Details: [],
       city_state_list: [],
@@ -180,7 +181,7 @@ class Test extends Component {
 
   componentDidMount() {
     this.getCityStateList();
-    this.getProductCodeList();
+    // this.getProductCodeList();
     this.getProductList();
     this.setState({
       validationMessage: generateResolutionText("test-details"),
@@ -205,28 +206,28 @@ class Test extends Component {
     this.getProductList(pageNumber > 0 ? pageNumber : 1);
   };
 
-  getProductCodeList = (page = 1) => {
-    let { search_city_name } = this.state;
-    API.get(
-      `api/lead_landing/product?city=${encodeURIComponent(
-        search_city_name
-      )}&page=${page}`
-    )
-      .then((res) => {
-        this.setState({
-          // activePage: page,
-          product_data: res.data.data,
-          // totalCount: res.data.count,
-          isLoading: false,
-        });
-      })
-      .catch((err) => {
-        this.setState({
-          isLoading: false,
-        });
-        showErrorMessage(err, this.props);
-      });
-  };
+  // getProductCodeList = (page = 1) => {
+  //   let { search_city_name } = this.state;
+  //   API.get(
+  //     `api/lead_landing/product?city=${encodeURIComponent(
+  //       search_city_name
+  //     )}&page=${page}`
+  //   )
+  //     .then((res) => {
+  //       this.setState({
+  //         // activePage: page,
+  //         product_data: res.data.data,
+  //         // totalCount: res.data.count,
+  //         isLoading: false,
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       this.setState({
+  //         isLoading: false,
+  //       });
+  //       showErrorMessage(err, this.props);
+  //     });
+  // };
 
   getProductList = (page = 1) => {
     let {
@@ -242,10 +243,9 @@ class Test extends Component {
         search_product_name
       )}&product_code=${encodeURIComponent(
         search_product_code
-      )}&status=${search_status}&page=1`
+      )}&status=${search_status}&page=${page}`
     )
       .then((res) => {
-       
         this.setState({
           activePage: page,
           product_list: res.data.data,
@@ -272,7 +272,6 @@ class Test extends Component {
         };
         let city_data= [];
         let value = [];
-        console.log('res.data.data[0].cities.length',res.data.data[0].cities.length)
         if(res.data.data[0].cities.length > 0){
          for(let i= 0; i < res.data.data[0].cities.length; i++){
           value.push(res.data.data[0].cities[i].city_name);
@@ -284,7 +283,6 @@ class Test extends Component {
           });
          }
         }
-        console.log('city_data',city_data)
         this.setState({
           product_Details: res.data.data,
           product_id: id,
@@ -390,6 +388,7 @@ class Test extends Component {
       "search_product_name"
     ).value;
     const search_status = document.getElementById("search_status").value;
+
     if (
       search_city_name == "" &&
       search_product_code == "" &&
@@ -484,7 +483,6 @@ class Test extends Component {
   handleSubmitEventAdd = (values, actions) => {
     // console.log("values", values);
     const { selectedValue, selectedCity } = this.state;
-    // console.log("selectedCity", selectedCity);
 
     let method = "";
     let post_data = [];
@@ -493,7 +491,6 @@ class Test extends Component {
       product_code: selectedValue.PRDCT_CODE,
       product_id: selectedValue.ID,
     };
-    // console.log("values.city_type.length", selectedCity.length);
 
     if (values.city_type === "2") {
       for (let i = 0; i < selectedCity.length; i++) {
@@ -504,8 +501,6 @@ class Test extends Component {
         });
       }
     }
-
-    // console.log("postdata", post_data);
 
     // if (values.city_type === "2" && selectedCity.length > 1) {
     //   for(let i =0; i < selectedCity.length; i++){
@@ -532,7 +527,6 @@ class Test extends Component {
     //   status: String(values.status),
     //   product_id: this.state.product_id,
     // };
-    // console.log("finaldata", finaldata);
     let formData = new FormData();
 
     method = "POST";
@@ -619,7 +613,6 @@ class Test extends Component {
   handleSubmitEventUpdate = (values, actions) => {
     // console.log("values", values);
     const { selectedValue, selectedCity } = this.state;
-    // console.log('selcetedCity',selectedCity, selectedCity.length)
     let post_data_product;
     if (this.state.value == values.product) {
       post_data_product = {
@@ -640,7 +633,6 @@ class Test extends Component {
     let post_data = selectedCity;
 
     // if (values.city_type === 2) {
-    //   console.log('hello')
     //   for(let i =0; i < selectedCity.length; i++){
     //     // console.log('data',selectedCity[i].city_name)
     //     post_data.push({
@@ -650,7 +642,6 @@ class Test extends Component {
     //     });
     //   }
     // }
-    // console.log("post_data", post_data);
 
     // let finaldata = {
     //   type: values.type,
@@ -661,7 +652,6 @@ class Test extends Component {
     //   status: String(values.status),
     //   product_id: this.state.product_id,
     // };
-    // console.log("finaldata", finaldata);
 
     let formData = new FormData();
 
@@ -913,6 +903,7 @@ class Test extends Component {
           ? this.state.status.toString()
           : "",
     });
+
 
     let validateStopFlag = Yup.object().shape({
       city_type: Yup.string()
@@ -1168,8 +1159,6 @@ class Test extends Component {
                     }) => {
                       return (
                         <Form>
-                          {/* {console.log({errors})}
-                          {console.log({values})} */}
                           <Modal.Header closeButton>
                             <Modal.Title>
                               {this.state.product_id > 0

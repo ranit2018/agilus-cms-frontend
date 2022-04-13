@@ -6,7 +6,6 @@ import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import { Row, Col, Tooltip, OverlayTrigger, Modal } from "react-bootstrap";
 import Layout from "../../layout/Layout";
 import Pagination from "react-js-pagination";
-import dateFormat from "dateformat";
 import API from "../../../../shared/admin-axios";
 import { Link } from "react-router-dom";
 import Switch from "react-switch";
@@ -102,7 +101,7 @@ const setProductImage = (refObj) => (cell, row) => {
       ></img>
     );
   } else {
-    return null;
+    return "No image";
   }
 };
 
@@ -304,7 +303,7 @@ class DepartmentTest extends Component {
             <div className="row">
               <div className="col-lg-12 col-sm-12 col-xs-12">
                 <h1>
-                  Department Test Products
+                  Department Products
                   <small />
                 </h1>
                 <input

@@ -103,6 +103,14 @@ export function inArray(needle, haystack) {
   return false;
 }
 
+export const getUniqueListBy = (arr, key) => {
+  return [...new Map(arr.map(item => [item[key], item])).values()]
+}
+
+// export const getUniqueListBy = (arr, key) => {
+//   return  [...new Set(arr)]
+// } it's works on array nd the above one works for array of object
+
 export const setFieldName = (fieldName, sperator = "_") => {
 	if (fieldName) {
 		return fieldName.split(sperator).map((word) => {

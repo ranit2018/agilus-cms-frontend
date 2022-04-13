@@ -79,14 +79,18 @@ const doctorStatus = (refObj) => (cell) => {
 };
 
 const setDoctorImage = (refObj) => (cell, row) => {
-  return (
-    <img
-      src={row.doctor_image}
-      alt="Doctor"
-      height="100"
-      onClick={(e) => refObj.imageModalShowHandler(row.doctor_image)}
-    ></img>
-  );
+  if (row.doctor_image !== null) {
+    return (
+      <img
+        src={row.doctor_image}
+        alt="Product Image"
+        height="100"
+        onClick={(e) => refObj.imageModalShowHandler(row.doctor_image)}
+      ></img>
+    );
+  } else {
+    return "No image";
+  }
 };
 
 const setDate = (refOBj) => (cell) => {

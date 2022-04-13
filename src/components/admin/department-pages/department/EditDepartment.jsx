@@ -19,6 +19,7 @@ import {
   FILE_SIZE,
   FILE_VALIDATION_TYPE_ERROR_MASSAGE,
   FILE_VALIDATION_SIZE_ERROR_MASSAGE,
+  getUniqueListBy,
 } from "../../../../shared/helper";
 import Layout from "../../layout/Layout";
 import Select from "react-select";
@@ -41,6 +42,8 @@ class EditDepartment extends Component {
       department_id: this.props.match.params.id,
       departmentDetails: [],
       doctors_arr: [],
+      doctor_data: "",
+      selected_doctors: "",
       equipments_arr: [],
       publications_arr: [],
       product_arr: [],
@@ -88,19 +91,87 @@ class EditDepartment extends Component {
   };
 
   componentDidMount() {
+    this.getAllDoctors();
+    this.getAllEquipments();
+    this.getAllPublications();
+    this.getAllProducts();
     this.getDepartmentById(this.state.department_id);
+
     this.setState({
       validationMessage: generateResolutionText("department"),
       fileValidationMessage: FILE_VALIDATION_MASSAGE,
     });
   }
 
+  getAllDoctors = () => {
+    API.get(`/api/department/doctor-search-list`)
+      .then((res) => {
+        this.setState({
+          doctors_arr: res.data.data,
+        });
+      })
+      .catch((err) => {
+        this.setState({
+          isLoading: false,
+        });
+        showErrorMessage(err, this.props);
+      });
+  };
+
+  getAllEquipments = () => {
+    API.get(`/api/department/equipment-search-list`)
+      .then((res) => {
+        this.setState({
+          equipments_arr: res.data.data,
+        });
+      })
+      .catch((err) => {
+        this.setState({
+          isLoading: false,
+        });
+        showErrorMessage(err, this.props);
+      });
+  };
+
+  getAllPublications = () => {
+    API.get(`/api/department/publication-search-list`)
+      .then((res) => {
+        this.setState({
+          publications_arr: res.data.data,
+        });
+      })
+      .catch((err) => {
+        this.setState({
+          isLoading: false,
+        });
+        showErrorMessage(err, this.props);
+      });
+  };
+
+  getAllProducts = () => {
+    API.get(`api/department/test-search-list`)
+      .then((res) => {
+        this.setState({
+          product_arr: res.data.data,
+        });
+      })
+      .catch((err) => {
+        this.setState({
+          isLoading: false,
+        });
+        showErrorMessage(err, this.props);
+      });
+  };
+
   getDepartmentById = (id) => {
-   
     API.get(`/api/department/${id}`)
       .then((res) => {
         this.setState({
           departmentDetails: res.data.data[0],
+          selected_doctors: res.data.data[0].doctors,
+          selected_equipments: res.data.data[0].equipments,
+          selected_publications: res.data.data[0].publications,
+          selected_products: res.data.data[0].products,
           department_id: res.data.data[0].id,
           isLoading: false,
         });
@@ -114,9 +185,11 @@ class EditDepartment extends Component {
     if (value.length == 3) {
       API.get(`/api/department/doctor-search-list?doctor_name=${value}`)
         .then((res) => {
+          let doctors_arr = [...this.state.doctors_arr, ...res.data.data];
+          doctors_arr = getUniqueListBy(doctors_arr, "id");
+
           this.setState({
-            doctors_arr: res.data.data,
-            isLoading: false,
+            doctors_arr: doctors_arr,
           });
         })
         .catch((err) => {
@@ -130,11 +203,13 @@ class EditDepartment extends Component {
 
   getEquipmentArr = (value) => {
     if (value.length == 3) {
-      API.get(`/api/department/equipment-search-list`)
+      API.get(`/api/department/equipment-search-list?equipment_name=${value}`)
         .then((res) => {
+          let equipments_arr = [...this.state.equipments_arr, ...res.data.data];
+          equipments_arr = getUniqueListBy(equipments_arr, "id");
+
           this.setState({
             equipments_arr: res.data.data,
-            isLoading: false,
           });
         })
         .catch((err) => {
@@ -150,9 +225,14 @@ class EditDepartment extends Component {
     if (value.length == 3) {
       API.get(`/api/department/publication-search-list`)
         .then((res) => {
+          let publications_arr = [
+            ...this.state.publications_arr,
+            ...res.data.data,
+          ];
+          publications_arr = getUniqueListBy(publications_arr, "id");
+
           this.setState({
             publications_arr: res.data.data,
-            isLoading: false,
           });
         })
         .catch((err) => {
@@ -166,13 +246,13 @@ class EditDepartment extends Component {
 
   getProductArr = (value) => {
     if (value.length == 3) {
-      // let { search_city_name } = this.state;
       API.get(`api/lead_landing/product`)
         .then((res) => {
+          let product_arr = [...this.state.product_arr, ...res.data.data];
+          product_arr = getUniqueListBy(product_arr, "id");
+
           this.setState({
             product_arr: res.data.data,
-            totalCount: res.data.count,
-            isLoading: false,
           });
         })
         .catch((err) => {
@@ -190,10 +270,10 @@ class EditDepartment extends Component {
     //   department_description: values.department_description,
     //   total_lab_technical: values.total_lab_technical,
     //   total_lab_executive: values.total_lab_executive,
-    //   doctor_id: values.doctor_id,
-    //   equipment_id: values.equipment_id,
-    //   publication_id: values.publication_id,
-    //   product_id: values.product_id,
+    //   doctors: values.doctors,
+    //   equipments: values.equipments,
+    //   publications: values.publications,
+    //   products: values.products,
     //   department_image: values.department_image,
     //   date_posted: new Date().toLocaleString(),
     //   status: String(values.status),
@@ -209,14 +289,14 @@ class EditDepartment extends Component {
       "total_consultant_scientists",
       values.total_consultant_scientists
     );
-    formData.append("doctors[]", JSON.stringify(values.doctor_id));
-    formData.append("equipments[]", JSON.stringify(values.equipment_id));
-    formData.append("publications[]", JSON.stringify(values.publication_id));
-    formData.append("product[]", JSON.stringify(values.product_id));
+    formData.append("doctors[]", JSON.stringify(values.doctors));
+    formData.append("equipments[]", JSON.stringify(values.equipments));
+    formData.append("publications[]", JSON.stringify(values.publications));
+    formData.append("tests[]", JSON.stringify(values.products));
 
     formData.append("status", String(values.status));
 
-    let url = `/api/department/doctor/${this.props.match.params.id}`;
+    let url = `/api/department/${this.state.department_id}`;
     let method = "PUT";
     if (this.state.department_image) {
       if (this.state.department_image.size > FILE_SIZE) {
@@ -287,7 +367,7 @@ class EditDepartment extends Component {
             text: "Record updated successfully.",
             icon: "success",
           }).then(() => {
-            this.props.history.push("/department/doctor");
+            this.props.history.push("/department/departments");
           });
         })
         .catch((err) => {
@@ -306,7 +386,14 @@ class EditDepartment extends Component {
   };
 
   render() {
-    const { departmentDetails, isLoading } = this.state;
+    const {
+      departmentDetails,
+      selected_doctors,
+      selected_equipments,
+      selected_publications,
+      selected_products,
+      isLoading,
+    } = this.state;
 
     const initialValues = {
       id: "",
@@ -316,10 +403,10 @@ class EditDepartment extends Component {
       total_lab_technical: "",
       total_lab_executive: "",
       total_consultant_scientists: "",
-      doctor_id: "",
-      equipment_id: "",
-      publication_id: "",
-      product_id: "",
+      doctors: "",
+      equipments: "",
+      publications: "",
+      products: "",
       date_posted: "",
       status: "",
     };
@@ -340,23 +427,10 @@ class EditDepartment extends Component {
       total_consultant_scientists: departmentDetails.total_consultant_scientists
         ? departmentDetails.total_consultant_scientists
         : "",
-      doctors:
-        departmentDetails.doctor_id || departmentDetails.doctor_id === 0
-          ? departmentDetails.doctor_id.toString()
-          : "",
-      equipments:
-        departmentDetails.equipment_id || departmentDetails.equipment_id === 0
-          ? departmentDetails.equipment_id.toString()
-          : "",
-      publications:
-        departmentDetails.publication_id ||
-        departmentDetails.publication_id === 0
-          ? departmentDetails.publication_id.toString()
-          : "",
-      product_id:
-        departmentDetails.product_id || departmentDetails.product_id === 0
-          ? departmentDetails.product_id.toString()
-          : "",
+      doctors: selected_doctors ? selected_doctors : "",
+      equipments: selected_equipments ? selected_equipments : "",
+      publications: selected_publications ? selected_publications : "",
+      products: selected_products ? selected_products : "",
       date_posted: departmentDetails.date_posted
         ? departmentDetails.date_posted
         : "",
@@ -393,10 +467,10 @@ class EditDepartment extends Component {
       total_consultant_scientists: Yup.number().required(
         "Please enter total consltant scientists"
       ),
-      doctor_id: Yup.array().optional(),
-      equipment_id: Yup.array().optional(),
-      publication_id: Yup.array().optional(),
-      product_id: Yup.array().optional(),
+      doctors: Yup.array().optional(),
+      equipments: Yup.array().optional(),
+      publications: Yup.array().optional(),
+      products: Yup.array().optional(),
       status: Yup.number().required("Please select status"),
     });
 
@@ -621,28 +695,30 @@ class EditDepartment extends Component {
                             <Row>
                               <Col xs={12} sm={12} md={12}>
                                 <div className="form-group">
-                                  <label>Doctor</label>
+                                  <label>Doctors</label>
                                   <Select
                                     isMulti
-                                    name="doctor_id"
+                                    name="doctors"
+                                    maxMenuHeight={200}
                                     options={this.state.doctors_arr}
                                     getOptionValue={(x) => x.id}
                                     getOptionLabel={(x) => x.doctor_name}
                                     noOptionsMessage={() => "No Results Found"}
                                     className="basic-multi-select"
                                     classNamePrefix="select"
+                                    value={values.doctors}
                                     onInputChange={(value) => {
                                       this.getDoctorArr(value);
                                     }}
                                     onChange={(evt) => {
                                       if (evt === null) {
-                                        setFieldValue("doctor_id", []);
+                                        setFieldValue("doctors", []);
                                       } else {
                                         setFieldValue(
-                                          "doctor_id",
+                                          "doctors",
                                           [].slice.call(evt).map((val) => {
                                             return {
-                                              doctor_id: val.id,
+                                              id: val.id,
                                               doctor_name: val.doctor_name,
                                             };
                                           })
@@ -651,9 +727,9 @@ class EditDepartment extends Component {
                                     }}
                                     placeholder="Choose Doctor Name"
                                   />
-                                  {errors.doctor_id && touched.doctor_id ? (
+                                  {errors.doctors && touched.doctors ? (
                                     <span className="errorMsg">
-                                      {errors.doctor_id}
+                                      {errors.doctors}
                                     </span>
                                   ) : null}
                                 </div>
@@ -662,28 +738,29 @@ class EditDepartment extends Component {
                             <Row>
                               <Col xs={12} sm={12} md={12}>
                                 <div className="form-group">
-                                  <label>Equipment & Instrument</label>
+                                  <label>Equipments & Instruments</label>
                                   <Select
                                     isMulti
-                                    name="equipment_id"
+                                    name="equipments"
                                     options={this.state.equipments_arr}
                                     className="basic-multi-select"
                                     classNamePrefix="select"
                                     getOptionValue={(x) => x.id}
                                     getOptionLabel={(x) => x.equipment_name}
                                     noOptionsMessage={() => "No Results Found"}
+                                    value={values.equipments}
                                     onInputChange={(value) => {
                                       this.getEquipmentArr(value);
                                     }}
                                     onChange={(evt) => {
                                       if (evt === null) {
-                                        setFieldValue("equipment_id", []);
+                                        setFieldValue("equipments", []);
                                       } else {
                                         setFieldValue(
-                                          "equipment_id",
+                                          "equipments",
                                           [].slice.call(evt).map((val) => {
                                             return {
-                                              equipment_id: val.id,
+                                              id: val.id,
                                               equipment_name:
                                                 val.equipment_name,
                                             };
@@ -693,10 +770,9 @@ class EditDepartment extends Component {
                                     }}
                                     placeholder="Choose Equipment & Instrument"
                                   />
-                                  {errors.equipment_id &&
-                                  touched.equipment_id ? (
+                                  {errors.equipments && touched.equipments ? (
                                     <span className="errorMsg">
-                                      {errors.equipment_id}
+                                      {errors.equipments}
                                     </span>
                                   ) : null}
                                 </div>
@@ -705,30 +781,31 @@ class EditDepartment extends Component {
                             <Row>
                               <Col xs={12} sm={12} md={12}>
                                 <div className="form-group">
-                                  <label>Publication</label>
+                                  <label>Publications</label>
                                   <Select
                                     isMulti
-                                    name="publication_id"
+                                    name="publications"
                                     options={this.state.publications_arr}
                                     getOptionValue={(x) => x.id}
                                     getOptionLabel={(x) => x.short_name}
                                     noOptionsMessage={() => "No Results Found"}
                                     className="basic-multi-select"
                                     classNamePrefix="select"
+                                    value={values.publications}
                                     onInputChange={(value) => {
                                       this.getPublicationArr(value);
                                     }}
                                     onChange={(evt) => {
                                       if (evt === null) {
-                                        setFieldValue("publication_id", []);
+                                        setFieldValue("publications", []);
                                       } else {
-                                        setFieldValue("publication_id", evt);
+                                        setFieldValue("publications", evt);
                                         setFieldValue(
-                                          "publication_id",
+                                          "publications",
                                           [].slice.call(evt).map((val) => {
                                             return {
-                                              publication_id: val.id,
-                                              publication_name: val.short_name,
+                                              id: val.id,
+                                              short_name: val.short_name,
                                             };
                                           })
                                         );
@@ -736,10 +813,10 @@ class EditDepartment extends Component {
                                     }}
                                     placeholder="Choose Publications"
                                   />
-                                  {errors.publication_id &&
-                                  touched.publication_id ? (
+                                  {errors.publications &&
+                                  touched.publications ? (
                                     <span className="errorMsg">
-                                      {errors.publication_id}
+                                      {errors.publications}
                                     </span>
                                   ) : null}
                                 </div>
@@ -749,30 +826,31 @@ class EditDepartment extends Component {
                             <Row>
                               <Col xs={12} sm={12} md={12}>
                                 <div className="form-group">
-                                  <label>Search Test Product</label>
+                                  <label>Search Products</label>
                                   <Select
                                     isMulti
-                                    name="product_id"
+                                    name="products"
                                     options={this.state.product_arr}
                                     className="basic-multi-select"
                                     classNamePrefix="select"
                                     getOptionValue={(x) => x.id}
                                     getOptionLabel={(x) => x.product_name}
                                     noOptionsMessage={() => "No Results Found"}
+                                    value={values.products}
                                     onInputChange={(value) => {
                                       this.getProductArr(value);
                                     }}
                                     onChange={(evt) => {
                                       if (evt === null) {
-                                        setFieldValue("product_id", []);
+                                        setFieldValue("products", []);
                                       } else {
                                         // setFieldValue( "product_id", evt)
 
                                         setFieldValue(
-                                          "product_id",
+                                          "products",
                                           [].slice.call(evt).map((val) => {
                                             return {
-                                              product_id: val.id,
+                                              id: val.id,
                                               product_name: val.product_name,
                                             };
                                           })
@@ -781,9 +859,9 @@ class EditDepartment extends Component {
                                     }}
                                     placeholder="Choose Product Code"
                                   />
-                                  {errors.product_id && touched.product_id ? (
+                                  {errors.product && touched.product ? (
                                     <span className="errorMsg">
-                                      {errors.product_id}
+                                      {errors.product}
                                     </span>
                                   ) : null}
                                 </div>

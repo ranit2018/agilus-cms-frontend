@@ -104,7 +104,7 @@ const setPublicationsImage = (refObj) => (cell, row) => {
   return (
     <img
       src={row.publication_image}
-      alt="Publications"
+      alt="Publication image"
       height="100"
       onClick={(e) => refObj.imageModalShowHandler(row.publication_image)}
     ></img>

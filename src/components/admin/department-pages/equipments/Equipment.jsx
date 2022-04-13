@@ -106,7 +106,7 @@ const imageFormatter = (refObj) => (cell, row) => {
           >
             <img
               src={val.equipment_image}
-              alt="Equipment"
+              alt="Equipment image"
               height="30"
               onClick={(e) =>
                 refObj.imageModalShowHandler(e, val.equipment_image)

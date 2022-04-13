@@ -84,14 +84,20 @@ const PublicationsStatus = (refObj) => (cell) => {
 };
 
 const setPublicationsImage = (refObj) => (cell, row) => {
-  return (
-    <img
-      src={row.publication_image}
-      alt="Publication"
-      height="100"
-      onClick={(e) => refObj.imageModalShowHandler(e, row.publication_image)}
-    ></img>
-  );
+  if(row.publication_image === null)
+  {
+    return "No image"
+  } else {
+    return (
+      <img
+        src={row.publication_image}
+        alt="Publication image"
+        height="100"
+        onClick={(e) => refObj.imageModalShowHandler(e, row.publication_image)}
+      ></img>
+    );
+  }
+  
 };
 
 const setDate = (refOBj) => (cell) => {
