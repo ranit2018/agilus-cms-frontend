@@ -258,6 +258,11 @@ const resolution_arr = [
     width: `360`,
     height: `183`,
   },
+  {
+    tag: `center-current-offers`,
+    width: `360`,
+    height: `183`,
+  },
 
 ]
 

@@ -217,6 +217,23 @@ class SidebarAdmin extends Component {
               </Link>{" "}
             </li>
           )}
+          {this.props.path_name === "/center-currentoffers" ? (
+            <li className="active">
+              {" "}
+              <Link to="/center-currentoffers">
+                {" "}
+                <i className="fa fa-rss"></i> <span> Current Offers </span>
+              </Link>{" "}
+            </li>
+          ) : (
+            <li>
+              {" "}
+              <Link to="/center-currentoffers">
+                {" "}
+                <i className="fa fa-rss"></i> <span> Current Offers </span>
+              </Link>{" "}
+            </li>
+          )}
           {this.props.path_name === "/events" ? (
             <li className="active">
               {" "}
