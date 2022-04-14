@@ -40,9 +40,8 @@ function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
 const actionFormatter = (refObj) => (cell, row) => {
   return (
     <div className="actionStyle">
-      <LinkWithTooltip
+      {/* <LinkWithTooltip
         tooltip={"Click to change status"}
-        // clicked={(e) => refObj.chageStatus(e, cell, row.status)}
         href="#"
         id="tooltip-1"
       >
@@ -53,7 +52,7 @@ const actionFormatter = (refObj) => (cell, row) => {
           height={20}
           width={45}
         />
-      </LinkWithTooltip>
+      </LinkWithTooltip> */}
       <LinkWithTooltip
         tooltip="Click to Delete"
         href="#"
@@ -74,19 +73,18 @@ const setName = (refObj) => (cell) => {
   return cell.replace(".png", " ");
 };
 
-const PublicationsStatus = (refObj) => (cell) => {
-  //return cell === 1 ? "Active" : "Inactive";
-  if (cell === 1) {
-    return "Active";
-  } else if (cell === 0) {
-    return "Inactive";
-  }
-};
+// const PublicationsStatus = (refObj) => (cell) => {
+//   //return cell === 1 ? "Active" : "Inactive";
+//   if (cell === 1) {
+//     return "Active";
+//   } else if (cell === 0) {
+//     return "Inactive";
+//   }
+// };
 
 const setPublicationsImage = (refObj) => (cell, row) => {
-  if(row.publication_image === null)
-  {
-    return "No image"
+  if (row.publication_image === null) {
+    return "No image";
   } else {
     return (
       <img
@@ -97,7 +95,6 @@ const setPublicationsImage = (refObj) => (cell, row) => {
       ></img>
     );
   }
-  
 };
 
 const setDate = (refOBj) => (cell) => {
@@ -135,15 +132,11 @@ class DepartmentPublications extends Component {
   };
 
   getPublicationsList = (page = 1) => {
-    // var publication_heading = document.getElementById("publication_heading").value;
     var short_name = document.getElementById("short_name").value;
-    let status = document.getElementById("status").value;
     API.get(
       `/api/department/department-all-type/${
         this.state.department_id
-      }/3?page=${page}&short_name=${encodeURIComponent(
-        short_name
-      )}&status=${encodeURIComponent(status)}`
+      }/3?page=${page}&short_name=${encodeURIComponent(short_name)}`
     )
       .then((res) => {
         this.setState({
@@ -177,16 +170,14 @@ class DepartmentPublications extends Component {
     e.preventDefault();
     const publicationtype = this.state.types.publication;
     var short_name = document.getElementById("short_name").value;
-    let status = document.getElementById("status").value;
-    if (short_name === "" && status === "") {
+
+    if (short_name === "") {
       return false;
     }
     API.get(
       `/api/department/department-all-type/${
         this.state.department_id
-      }/${publicationtype}?page=1&short_name=${encodeURIComponent(
-        short_name
-      )}&status=${encodeURIComponent(status)}`
+      }/${publicationtype}?page=1&short_name=${encodeURIComponent(short_name)}`
     )
       .then((res) => {
         this.setState({
@@ -194,7 +185,6 @@ class DepartmentPublications extends Component {
           totalCount: Number(res.data.count),
           isLoading: false,
           short_name: short_name,
-          status: status,
           activePage: 1,
           remove_search: true,
         });
@@ -209,11 +199,9 @@ class DepartmentPublications extends Component {
 
   clearSearch = () => {
     document.getElementById("short_name").value = "";
-    document.getElementById("status").value = "";
     this.setState(
       {
         short_name: "",
-        status: "",
         remove_search: false,
       },
       () => {
@@ -224,32 +212,32 @@ class DepartmentPublications extends Component {
   };
 
   //change status
-  chageStatus = (id, status) => {
-    const publicationtype = this.state.types.publication;
+  // chageStatus = (id, status) => {
+  //   const publicationtype = this.state.types.publication;
 
-    API.put(
-      `/api/department/department-all-type/change_status/${this.state.department_id}/${publicationtype}/${id}`,
-      {
-        status: status == 1 ? String(0) : String(1),
-      }
-    )
-      .then((res) => {
-        swal({
-          closeOnClickOutside: false,
-          title: "Success",
-          text: "Status updated successfully.",
-          icon: "success",
-        }).then(() => {
-          this.getPublicationsList(this.state.activePage);
-        });
-      })
-      .catch((err) => {
-        if (err.data.status === 3) {
-          this.setState({ closeModal: true });
-          showErrorMessage(err, this.props);
-        }
-      });
-  };
+  //   API.put(
+  //     `/api/department/department-all-type/change_status/${this.state.department_id}/${publicationtype}/${id}`,
+  //     {
+  //       status: status == 1 ? String(0) : String(1),
+  //     }
+  //   )
+  //     .then((res) => {
+  //       swal({
+  //         closeOnClickOutside: false,
+  //         title: "Success",
+  //         text: "Status updated successfully.",
+  //         icon: "success",
+  //       }).then(() => {
+  //         this.getPublicationsList(this.state.activePage);
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       if (err.data.status === 3) {
+  //         this.setState({ closeModal: true });
+  //         showErrorMessage(err, this.props);
+  //       }
+  //     });
+  // };
 
   //delete
   confirmDelete = (event, id) => {
@@ -333,7 +321,7 @@ class DepartmentPublications extends Component {
                     />
                   </div>
 
-                  <div className="">
+                  {/* <div className="">
                     <select name="status" id="status" className="form-control">
                       <option value="">Select Status</option>
                       {this.state.selectStatus.map((val) => {
@@ -344,7 +332,7 @@ class DepartmentPublications extends Component {
                         );
                       })}
                     </select>
-                  </div>
+                  </div> */}
 
                   <div className="">
                     <input
@@ -411,13 +399,13 @@ class DepartmentPublications extends Component {
                   >
                     Date Added
                   </TableHeaderColumn>
-                  <TableHeaderColumn
+                  {/* <TableHeaderColumn
                     dataField="status"
                     dataFormat={PublicationsStatus(this)}
                     tdStyle={{ wordBreak: "break-word" }}
                   >
                     Status
-                  </TableHeaderColumn>
+                  </TableHeaderColumn> */}
                   <TableHeaderColumn
                     dataField="id"
                     dataFormat={actionFormatter(this)}

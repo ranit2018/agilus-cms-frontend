@@ -39,7 +39,7 @@ const custStatus = (refObj) => (cell) => {
 
 const custCity = (refObj) => (cell, row) => {
   //return cell === 1 ? "Active" : "Inactive";
-  if (cell.length === 0 ||  cell == undefined) {
+  if (cell.length === 0 || cell == undefined) {
     return "All Cities";
   } else if (cell.length > 0) {
     return "Particular cities";
@@ -112,7 +112,7 @@ const initialValues = {
   //   state_id: 15,
   //   value: 304,
   // },
-  cities: "",
+  cities: [],
   product: "",
   type: 1,
   city_type: "1",
@@ -157,14 +157,13 @@ class Test extends Component {
       suggestions: [],
       value: "",
       city_value: "",
-      prd_data: "",
       selectedValue: "",
-      selectedCity: {
+      selectedCity: [{
         city_name: "MUMBAI",
         label: "Mumbai (Maharashtra)",
         state_id: 15,
         value: 304,
-      },
+      }],
       //   selectedCity: [
       //     { city_name: "MUMBAI", label: "Mumbai (Maharashtra)", state_id: 15, value: 304, },
       // ],
@@ -206,40 +205,11 @@ class Test extends Component {
     this.getProductList(pageNumber > 0 ? pageNumber : 1);
   };
 
-  // getProductCodeList = (page = 1) => {
-  //   let { search_city_name } = this.state;
-  //   API.get(
-  //     `api/lead_landing/product?city=${encodeURIComponent(
-  //       search_city_name
-  //     )}&page=${page}`
-  //   )
-  //     .then((res) => {
-  //       this.setState({
-  //         // activePage: page,
-  //         product_data: res.data.data,
-  //         // totalCount: res.data.count,
-  //         isLoading: false,
-  //       });
-  //     })
-  //     .catch((err) => {
-  //       this.setState({
-  //         isLoading: false,
-  //       });
-  //       showErrorMessage(err, this.props);
-  //     });
-  // };
-
   getProductList = (page = 1) => {
-    let {
-      search_city_name,
-      search_product_code,
-      search_product_name,
-      search_status,
-    } = this.state;
+    let { search_product_code, search_product_name, search_status } =
+      this.state;
     API.get(
-      `/api/department/test?city_name=${encodeURIComponent(
-        search_city_name
-      )}&product_name=${encodeURIComponent(
+      `/api/department/test?product_name=${encodeURIComponent(
         search_product_name
       )}&product_code=${encodeURIComponent(
         search_product_code
@@ -250,7 +220,7 @@ class Test extends Component {
           activePage: page,
           product_list: res.data.data,
           totalCount: res.data.count,
-          // product_id: res.data.data.product_id,
+
           isLoading: false,
         });
       })
@@ -266,42 +236,27 @@ class Test extends Component {
     API.get(`/api/department/test/${id}`)
       .then((res) => {
         const prd_data = {
-          product_name: res.data.data[0].product_name,
-          product_code: res.data.data[0].product_code,
-          product_id: res.data.data[0].product_id,
+          NAME: res.data.data[0].product_name,
+          PRDCT_CODE: res.data.data[0].product_code,
+          ID: res.data.data[0].product_id,
         };
-        let city_data= [];
-        let value = [];
-        if(res.data.data[0].cities.length > 0){
-         for(let i= 0; i < res.data.data[0].cities.length; i++){
-          value.push(res.data.data[0].cities[i].city_name);
 
-          city_data.push({
-            city_name: res.data.data[0].cities[i].city_name,
-            city_id: res.data.data[0].cities[i].city_id,
-            label: res.data.data[0].cities[i].label,
-          });
-         }
-        }
         this.setState({
           product_Details: res.data.data,
           product_id: id,
-          selectedValue: prd_data,
-          value: res.data.data[0].product_name,
-          selectedCity: city_data,
-          city_value: value,
 
-          cities: value,
+          value: res.data.data[0].product_name,
           city_type: res.data.data[0].city_type,
           type: res.data.data[0].type,
-          // file: res.data.data[0].product_image,
+          selectedValue: prd_data,
+          selectedCity: res.data.data[0].cities,
           status: res.data.data[0].status,
 
           showModal: true,
         });
       })
       .catch((err) => {
-        console.log('error',err)
+        console.log("error", err);
         showErrorMessage(err, this.props);
       });
   }
@@ -380,7 +335,6 @@ class Test extends Component {
   ProductSearch = (e) => {
     e.preventDefault();
 
-    const search_city_name = document.getElementById("search_city_name").value;
     const search_product_code = document.getElementById(
       "search_product_code"
     ).value;
@@ -390,7 +344,6 @@ class Test extends Component {
     const search_status = document.getElementById("search_status").value;
 
     if (
-      search_city_name == "" &&
       search_product_code == "" &&
       search_product_name == "" &&
       search_status == ""
@@ -399,9 +352,7 @@ class Test extends Component {
     }
     ///api/department/test
     API.get(
-      `/api/department/test?city_name=${encodeURIComponent(
-        search_city_name
-      )}&product_name=${encodeURIComponent(
+      `/api/department/test?product_name=${encodeURIComponent(
         search_product_name
       )}&product_code=${encodeURIComponent(
         search_product_code
@@ -413,7 +364,6 @@ class Test extends Component {
           totalCount: res.data.count,
           isLoading: false,
           activePage: 1,
-          search_city_name: search_city_name,
           search_product_code: search_product_code,
           search_product_name: search_product_name,
           search_status: search_status,
@@ -429,14 +379,12 @@ class Test extends Component {
   };
 
   clearSearch = () => {
-    document.getElementById("search_city_name").value = "";
     document.getElementById("search_product_code").value = "";
     document.getElementById("search_product_name").value = "";
     document.getElementById("search_status").value = "";
 
     this.setState(
       {
-        search_city_name: "",
         search_product_code: "",
         search_product_name: "",
         search_status: "",
@@ -481,7 +429,7 @@ class Test extends Component {
   };
 
   handleSubmitEventAdd = (values, actions) => {
-    // console.log("values", values);
+    console.log("values", values);
     const { selectedValue, selectedCity } = this.state;
 
     let method = "";
@@ -501,23 +449,6 @@ class Test extends Component {
         });
       }
     }
-
-    // if (values.city_type === "2" && selectedCity.length > 1) {
-    //   for(let i =0; i < selectedCity.length; i++){
-    //     post_data.push({
-    //       city_name: selectedCity[i].city_name,
-    //       city_id: selectedCity[i].city_id,
-    //       label: selectedCity[i].label,
-    //     });
-    //   }
-
-    // } else if(values.city_type === "2"){
-    //   post_data.push({
-    //     city_name: selectedCity.city_name,
-    //     city_id: selectedCity.city_id,
-    //     label: selectedCity.label,
-    //   });
-    // }
 
     // let finaldata = {
     //   type: values.type,
@@ -612,15 +543,11 @@ class Test extends Component {
 
   handleSubmitEventUpdate = (values, actions) => {
     // console.log("values", values);
-    const { selectedValue, selectedCity } = this.state;
+    const { selectedValue, selectedCity, value } = this.state;
     let post_data_product;
-    if (this.state.value == values.product) {
-      post_data_product = {
-        product_name: selectedValue.product_name,
-        product_code: selectedValue.product_code,
-        product_id: selectedValue.product_id,
-      };
-    } else {
+
+    if (value === values.product) {
+      console.log("hello");
       post_data_product = {
         product_name: selectedValue.NAME,
         product_code: selectedValue.PRDCT_CODE,
@@ -629,19 +556,7 @@ class Test extends Component {
     }
 
     let method = "";
-    // let post_data = [];
     let post_data = selectedCity;
-
-    // if (values.city_type === 2) {
-    //   for(let i =0; i < selectedCity.length; i++){
-    //     // console.log('data',selectedCity[i].city_name)
-    //     post_data.push({
-    //       city_name: selectedCity[i].city_name,
-    //       city_id: selectedCity[i].city_id,
-    //       label: selectedCity[i].label,
-    //     });
-    //   }
-    // }
 
     // let finaldata = {
     //   type: values.type,
@@ -890,20 +805,20 @@ class Test extends Component {
       activePage,
       selectedCity,
       selectedValue,
+      value,
     } = this.state;
 
     const newInitialValues = Object.assign(initialValues, {
       city_type: this.state.city_type ? this.state.city_type : "",
       file: "",
       type: this.state.type ? this.state.type : "",
-      product: this.state.value ? this.state.value : "",
-      cities: this.state.cities ? this.state.cities : "",
+      product: value ? value : "",
+      cities: selectedCity ? selectedCity : "",
       status:
         this.state.status || this.state.status === 0
           ? this.state.status.toString()
           : "",
     });
-
 
     let validateStopFlag = Yup.object().shape({
       city_type: Yup.string()
@@ -931,8 +846,7 @@ class Test extends Component {
         ),
 
       cities: Yup.mixed().when("city_type", {
-        is: (city_type) =>
-          city_type === "2" && Object.keys(selectedCity).length === 0,
+        is: (city_type) => city_type === "2" && !selectedCity,
         then: Yup.object().required("Please select city"),
       }),
       file: Yup.mixed().optional(),
@@ -949,12 +863,10 @@ class Test extends Component {
         .required("Please select Product Type")
         .matches(/^[1|2]$/, "Invalid Product type selected"),
       product: Yup.mixed().required("Please select City Type"),
-      // cities: Yup.mixed().required("Please select City Type"),
-      // .matches(/^[1|2]$/, "Invalid city type selected"),
       file: Yup.string()
         .notRequired()
         .test(
-          "departmentimage",
+          "product_image",
           "Only files with the following extensions are allowed: png jpg jpeg",
           (file) => {
             if (file) {
@@ -998,13 +910,6 @@ class Test extends Component {
                 </div>
 
                 <form className="form">
-                  <div className="">
-                    <input
-                      className="form-control"
-                      id="search_city_name"
-                      placeholder="Filter by City"
-                    />
-                  </div>
                   <div className="">
                     <input
                       className="form-control"
@@ -1144,8 +1049,6 @@ class Test extends Component {
                         ? this.handleSubmitEventUpdate
                         : this.handleSubmitEventAdd
                     }
-                    // validationSchema={validateStopFlag}
-                    // onSubmit={this.handleSubmitEvent}
                   >
                     {({
                       values,
@@ -1215,6 +1118,11 @@ class Test extends Component {
                                         )
                                       )}
                                     </Field>
+                                    {errors.type && touched.type ? (
+                                        <p className="errorMsg">
+                                          {errors.type}
+                                        </p>
+                                      ) : null}
                                   </div>
                                 </Col>
                                 <Col xs={12} sm={12} md={12}>
@@ -1396,7 +1304,6 @@ class Test extends Component {
                                   <div className="form-group">
                                     <label>
                                       Upload Image
-                                      <span className="impField">*</span>
                                       <br />
                                       <i>{this.state.fileValidationMessage}</i>
                                       <br />

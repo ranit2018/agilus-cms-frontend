@@ -239,7 +239,9 @@ class EditDoctor extends Component {
           }
         ),
       doctor_name: Yup.string().required("Please enter doctor name"),
-      education: Yup.string().required("Please enter education"),
+      education: Yup.string()
+      .ensure()
+      .min(2, "Please add at least two words in education").required("Please enter education"),
       expertise: Yup.string().required("Please enter expetise"),
       designation: Yup.string().required("Please enter designation"),
       status: Yup.number().required("Please select status"),
@@ -439,7 +441,6 @@ class EditDoctor extends Component {
                                       );
                                     }}
                                   />
-
                                   {errors.education && touched.education ? (
                                     <span className="errorMsg">
                                       {errors.education}
@@ -567,7 +568,7 @@ class EditDoctor extends Component {
                               isValid ? (isSubmitting ? true : false) : true
                             }
                           >
-                            {this.state.banner_id > 0
+                            {this.state.doctor_id > 0
                               ? isSubmitting
                                 ? "Updating..."
                                 : "Update"

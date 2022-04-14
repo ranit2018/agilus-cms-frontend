@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable eqeqeq */
 /* eslint-disable jsx-a11y/img-redundant-alt */
 /* eslint-disable no-unused-vars */
@@ -29,14 +30,16 @@ function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
     </OverlayTrigger>
   );
 }
-/*For Tooltip*/
 
+/*For Tooltip*/
 const actionFormatter = (refObj) => (cell, row) => {
+  console.log('cell', cell)
+  console.log('row', row)
+
   return (
     <div className="actionStyle">
-      <LinkWithTooltip
+      {/* <LinkWithTooltip
         tooltip={"Click to change status"}
-        // clicked={(e) => refObj.chageStatus(e, cell, row.status)}
         href="#"
         id="tooltip-1"
       >
@@ -47,11 +50,11 @@ const actionFormatter = (refObj) => (cell, row) => {
           height={20}
           width={45}
         />
-      </LinkWithTooltip>
+      </LinkWithTooltip> */}
       <LinkWithTooltip
         tooltip="Click to Delete"
         href="#"
-        clicked={(e) => refObj.confirmDelete(e, cell)}
+        clicked={(e) => refObj.confirmDelete(e, row.product_id)}
         id="tooltip-1"
       >
         <i className="far fa-trash-alt" />
@@ -69,24 +72,12 @@ const productType = (refObj) => (cell) => {
   }
 };
 
-const custStatus = (refObj) => (cell) => {
-  //return cell === 1 ? "Active" : "Inactive";
-  if (cell === 1) {
-    return "Active";
-  } else if (cell === 0) {
-    return "Inactive";
-  }
-};
-
-// const custCity = (refObj) => (cell, row) => {
-//   console.log("row", row);
-//   console.log("cell",cell);
-
+// const custStatus = (refObj) => (cell) => {
 //   //return cell === 1 ? "Active" : "Inactive";
-//   if (cell.length === 0 ||  cell == undefined) {
-//     return "All Cities";
-//   } else if (cell.length > 0) {
-//     return "Particular cities";
+//   if (cell === 1) {
+//     return "Active";
+//   } else if (cell === 0) {
+//     return "Inactive";
 //   }
 // };
 
@@ -118,6 +109,9 @@ class DepartmentTest extends Component {
       productList: [],
       types: [],
       totalCount: 0,
+
+      search_product_code: "",
+      search_product_name: "",
     };
   }
 
@@ -165,38 +159,30 @@ class DepartmentTest extends Component {
   }
 
   //search
-  doctorSearch = (e) => {
+  ProductSearch = (e) => {
     e.preventDefault();
-    var doctor_name = document.getElementById("doctor_name").value;
-    var designation = document.getElementById("designation").value;
-    let status = document.getElementById("status").value;
+    const product_type = this.state.types.product;
+    const search_product_name = document.getElementById(
+      "search_product_name"
+    ).value;
 
-    const doctortype = this.state.types.doctor;
-
-    if (doctor_name === "" && designation === "" && status === "") {
+    if (  search_product_name == "" ) {
       return false;
     }
-
     API.get(
-      `/api/department/department-all-type/${
-        this.state.department_id
-      }/${doctortype}?page=1&doctor_name=${encodeURIComponent(
-        doctor_name
-      )}&designation=${encodeURIComponent(
-        designation
-      )}&status=${encodeURIComponent(status)}`
+      `/api/department/department-all-type/${this.state.department_id}/${product_type}?page=1&product_name=${encodeURIComponent(
+        search_product_name
+      )}`
     )
       .then((res) => {
         this.setState({
-          doctorList: res.data.data,
-          totalCount: Number(res.data.count),
+          productList: res.data.data,
+          totalCount: res.data.count,
           isLoading: false,
-
-          doctor_name: doctor_name,
-          designation: designation,
-          status: status,
-
           activePage: 1,
+
+          search_product_name: search_product_name,
+
           remove_search: true,
         });
       })
@@ -209,25 +195,20 @@ class DepartmentTest extends Component {
   };
 
   clearSearch = () => {
-    document.getElementById("doctor_name").value = "";
-    document.getElementById("designation").value = "";
-    document.getElementById("status").value = "";
+    document.getElementById("search_product_name").value = "";
 
     this.setState(
       {
-        designation: "",
-        doctor_name: "",
-        status: "",
+        search_product_name: "",
 
         remove_search: false,
       },
       () => {
-        this.setState({ activePage: 1 });
+        // this.setState({ activePage: 1 });
         this.getTestList();
       }
     );
   };
-
   //delete
   confirmDelete = (event, id) => {
     event.preventDefault();
@@ -246,7 +227,10 @@ class DepartmentTest extends Component {
   };
 
   deleteProduct = (id) => {
-    API.post(`/api/department/test/${id}`)
+    const producttype = this.state.types.product;
+
+    console.log('id',id)
+    API.post(`/api/department/department-all-type/${ this.state.department_id}/${producttype}/${id}`)
       .then((res) => {
         swal({
           closeOnClickOutside: false,
@@ -266,27 +250,27 @@ class DepartmentTest extends Component {
   };
 
   //chnage status
-  chageStatus = (id, status) => {
-    API.put(`/api/department/test/change_status/${id}`, {
-      status: status == 1 ? String(0) : String(1),
-    })
-      .then((res) => {
-        swal({
-          closeOnClickOutside: false,
-          title: "Success",
-          text: "Record updated successfully.",
-          icon: "success",
-        }).then(() => {
-          this.getProductList(this.state.activePage);
-        });
-      })
-      .catch((err) => {
-        if (err.data.status === 3) {
-          this.setState({ closeModal: true });
-          showErrorMessage(err, this.props);
-        }
-      });
-  };
+  // chageStatus = (id, status) => {
+  //   API.put(`/api/department/test/change_status/${id}`, {
+  //     status: status == 1 ? String(0) : String(1),
+  //   })
+  //     .then((res) => {
+  //       swal({
+  //         closeOnClickOutside: false,
+  //         title: "Success",
+  //         text: "Record updated successfully.",
+  //         icon: "success",
+  //       }).then(() => {
+  //         this.getProductList(this.state.activePage);
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       if (err.data.status === 3) {
+  //         this.setState({ closeModal: true });
+  //         showErrorMessage(err, this.props);
+  //       }
+  //     });
+  // };
 
   //image modal
   imageModalShowHandler = (url) => {
@@ -329,20 +313,20 @@ class DepartmentTest extends Component {
                   </button>
                 </div>
                 <form className="form">
-                  <div className="">
+                <div className="">
                     <input
                       className="form-control"
-                      name="city_name"
-                      id="city_name"
-                      placeholder="Filter by City"
+                      id="search_product_name"
+                      placeholder="Filter by Product Name"
                     />
                   </div>
+
                   <div className="">
                     <input
                       type="submit"
                       value="Search"
                       className="btn btn-warning btn-sm"
-                      onClick={(e) => this.doctorSearch(e)}
+                      onClick={(e) => this.ProductSearch(e)}
                     />
                     {this.state.remove_search ? (
                       <a
@@ -383,26 +367,18 @@ class DepartmentTest extends Component {
                     Package Type
                   </TableHeaderColumn>
 
-                  {/* <TableHeaderColumn
-                    dataField="cities"
-                    tdStyle={{ wordBreak: "break-word" }}
-                    dataFormat={custCity(this)}
-                  >
-                    City Name
-                  </TableHeaderColumn> */}
-
                   <TableHeaderColumn
                     dataField="product_image"
                     dataFormat={setProductImage(this)}
                   >
                     Image
                   </TableHeaderColumn>
-                  <TableHeaderColumn
+                  {/* <TableHeaderColumn
                     dataField="status"
                     dataFormat={custStatus(this)}
                   >
                     Status
-                  </TableHeaderColumn>
+                  </TableHeaderColumn> */}
                   <TableHeaderColumn
                     dataField="id"
                     dataFormat={actionFormatter(this)}

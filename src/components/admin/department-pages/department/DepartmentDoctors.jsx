@@ -36,7 +36,7 @@ function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
 const actionFormatter = (refObj) => (cell, row) => {
   return (
     <div className="actionStyle">
-      <LinkWithTooltip
+      {/* <LinkWithTooltip
         tooltip={"Click to change status"}
         href="#"
         id="tooltip-1"
@@ -44,11 +44,11 @@ const actionFormatter = (refObj) => (cell, row) => {
         <Switch
           checked={row.status == 1 ? true : false}
           uncheckedIcon={false}
-          onChange={(e) => refObj.chageStatus(row.doctor_id, row.status)}
+          onChange={(e) => refObj.changeStatus(row.doctor_id, row.status)}
           height={20}
           width={45}
         />
-      </LinkWithTooltip>
+      </LinkWithTooltip> */}
       <LinkWithTooltip
         tooltip="Click to Delete"
         href="#"
@@ -69,14 +69,14 @@ const setName = (refObj) => (cell) => {
   return cell.replace(".png", " ");
 };
 
-const doctorStatus = (refObj) => (cell) => {
-  //return cell === 1 ? "Active" : "Inactive";
-  if (cell === 1) {
-    return "Active";
-  } else if (cell === 0) {
-    return "Inactive";
-  }
-};
+// const doctorStatus = (refObj) => (cell) => {
+//   //return cell === 1 ? "Active" : "Inactive";
+//   if (cell === 1) {
+//     return "Active";
+//   } else if (cell === 0) {
+//     return "Inactive";
+//   }
+// };
 
 const setDoctorImage = (refObj) => (cell, row) => {
   if (row.doctor_image !== null) {
@@ -164,11 +164,9 @@ class DepartmentDoctors extends Component {
     e.preventDefault();
     var doctor_name = document.getElementById("doctor_name").value;
     var designation = document.getElementById("designation").value;
-    let status = document.getElementById("status").value;
-
     const doctortype = this.state.types.doctor;
 
-    if (doctor_name === "" && designation === "" && status === "") {
+    if (doctor_name === "" && designation === "") {
       return false;
     }
 
@@ -177,9 +175,7 @@ class DepartmentDoctors extends Component {
         this.state.department_id
       }/${doctortype}?page=1&doctor_name=${encodeURIComponent(
         doctor_name
-      )}&designation=${encodeURIComponent(
-        designation
-      )}&status=${encodeURIComponent(status)}`
+      )}&designation=${encodeURIComponent(designation)}`
     )
       .then((res) => {
         this.setState({
@@ -189,7 +185,6 @@ class DepartmentDoctors extends Component {
 
           doctor_name: doctor_name,
           designation: designation,
-          status: status,
 
           activePage: 1,
           remove_search: true,
@@ -206,13 +201,11 @@ class DepartmentDoctors extends Component {
   clearSearch = () => {
     document.getElementById("doctor_name").value = "";
     document.getElementById("designation").value = "";
-    document.getElementById("status").value = "";
 
     this.setState(
       {
         designation: "",
         doctor_name: "",
-        status: "",
 
         remove_search: false,
       },
@@ -224,32 +217,32 @@ class DepartmentDoctors extends Component {
   };
 
   //change status
-  chageStatus = (id, status) => {
-    const doctortype = this.state.types.doctor;
+  // changeStatus = (id, status) => {
+  //   const doctortype = this.state.types.doctor;
 
-    API.put(
-      `/api/department/department-all-type/change_status/${this.state.department_id}/${doctortype}/${id}`,
-      {
-        status: status == 1 ? String(0) : String(1),
-      }
-    )
-      .then((res) => {
-        swal({
-          closeOnClickOutside: false,
-          title: "Success",
-          text: "Record updated successfully.",
-          icon: "success",
-        }).then(() => {
-          this.getDoctorList(this.state.activePage);
-        });
-      })
-      .catch((err) => {
-        if (err.data.status === 3) {
-          this.setState({ closeModal: true });
-          showErrorMessage(err, this.props);
-        }
-      });
-  };
+  //   API.put(
+  //     `/api/department/department-all-type/change_status/${this.state.department_id}/${doctortype}/${id}`,
+  //     {
+  //       status: status == 1 ? String(0) : String(1),
+  //     }
+  //   )
+  //     .then((res) => {
+  //       swal({
+  //         closeOnClickOutside: false,
+  //         title: "Success",
+  //         text: "Record updated successfully.",
+  //         icon: "success",
+  //       }).then(() => {
+  //         this.getDoctorList(this.state.activePage);
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       if (err.data.status === 3) {
+  //         this.setState({ closeModal: true });
+  //         showErrorMessage(err, this.props);
+  //       }
+  //     });
+  // };
 
   //delete
   confirmDelete = (event, id) => {
@@ -342,7 +335,7 @@ class DepartmentDoctors extends Component {
                     />
                   </div>
 
-                  <div className="">
+                  {/* <div className="">
                     <select name="status" id="status" className="form-control">
                       <option value="">Select Status</option>
                       {this.state.selectStatus.map((val) => {
@@ -353,7 +346,7 @@ class DepartmentDoctors extends Component {
                         );
                       })}
                     </select>
-                  </div>
+                  </div> */}
 
                   <div className="">
                     <input
@@ -414,13 +407,13 @@ class DepartmentDoctors extends Component {
                   >
                     Date Added
                   </TableHeaderColumn>
-                  <TableHeaderColumn
+                  {/* <TableHeaderColumn
                     dataField="status"
                     dataFormat={doctorStatus(this)}
                     tdStyle={{ wordBreak: "break-word" }}
                   >
                     Status
-                  </TableHeaderColumn>
+                  </TableHeaderColumn> */}
                   <TableHeaderColumn
                     dataField="id"
                     dataFormat={actionFormatter(this)}

@@ -381,7 +381,7 @@ class SidebarAdmin extends Component {
                   <Link to="/department/test">
                     {" "}
                     <i className="fas fa-compress"></i>{" "}
-                    <span> Test </span>
+                    <span> Products </span>
                   </Link>{" "}
                 </li>
               ) : (
@@ -390,7 +390,7 @@ class SidebarAdmin extends Component {
                   <Link to="/department/test">
                     {" "}
                     <i className="fas fa-compress"></i>{" "}
-                    <span> Test </span>
+                    <span> Products </span>
                   </Link>{" "}
                 </li>
               )}

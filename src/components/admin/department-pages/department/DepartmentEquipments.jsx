@@ -38,7 +38,7 @@ function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
 const actionFormatter = (refObj) => (cell, row) => {
   return (
     <div className="actionStyle">
-      <LinkWithTooltip
+      {/* <LinkWithTooltip
         tooltip={"Click to change status"}
         // clicked={(e) => refObj.chageStatus(e, cell, row.status)}
         href="#"
@@ -51,7 +51,7 @@ const actionFormatter = (refObj) => (cell, row) => {
           height={20}
           width={45}
         />
-      </LinkWithTooltip>
+      </LinkWithTooltip> */}
       <LinkWithTooltip
         tooltip="Click to Delete"
         href="#"
@@ -72,14 +72,14 @@ const setName = (refObj) => (cell) => {
   return cell.replace(".png", " ");
 };
 
-const equipmentStatus = (refObj) => (cell) => {
-  //return cell === 1 ? "Active" : "Inactive";
-  if (cell === 1) {
-    return "Active";
-  } else if (cell === 0) {
-    return "Inactive";
-  }
-};
+// const equipmentStatus = (refObj) => (cell) => {
+//   //return cell === 1 ? "Active" : "Inactive";
+//   if (cell === 1) {
+//     return "Active";
+//   } else if (cell === 0) {
+//     return "Inactive";
+//   }
+// };
 
 const setType = (refObj) => (cell) => {
   //return cell === 1 ? "Active" : "Inactive";
@@ -107,7 +107,6 @@ const imageFormatter = (refObj) => (cell, row) => {
           <LinkWithTooltip
             tooltip="Click to see picture"
             href="#"
-            // clicked={(e) => refObj.imageModalShowHandler(val.equipment_image)}
             id="tooltip-1"
             key={index}
           >
@@ -160,14 +159,13 @@ class DepartmentEquipments extends Component {
   getequipmentList = (page = 1) => {
     let type = document.getElementById("type").value;
     var equipment_name = document.getElementById("equipment_name").value;
-    let status = document.getElementById("status").value;
 
     API.get(
       `/api/department/department-all-type/${
         this.state.department_id
       }/2?page=${page}&equipment_name=${encodeURIComponent(
         equipment_name
-      )}&type=${encodeURIComponent(type)}&status=${encodeURIComponent(status)}`
+      )}&type=${encodeURIComponent(type)}`
     )
       .then((res) => {
         this.setState({
@@ -203,9 +201,8 @@ class DepartmentEquipments extends Component {
     const equipmenttype = this.state.types.equipment_and_instrument;
     let type = document.getElementById("type").value;
     var equipment_name = document.getElementById("equipment_name").value;
-    let status = document.getElementById("status").value;
 
-    if (type === "" && equipment_name === "" && status === "") {
+    if (type === "" && equipment_name === "") {
       return false;
     }
 
@@ -214,7 +211,7 @@ class DepartmentEquipments extends Component {
         this.state.department_id
       }/${equipmenttype}?page=1&equipment_name=${encodeURIComponent(
         equipment_name
-      )}&type=${encodeURIComponent(type)}&status=${encodeURIComponent(status)}`
+      )}&type=${encodeURIComponent(type)}`
     )
       .then((res) => {
         this.setState({
@@ -223,7 +220,6 @@ class DepartmentEquipments extends Component {
           isLoading: false,
 
           equipment_name: equipment_name,
-          status: status,
           type: type,
 
           activePage: 1,
@@ -259,32 +255,32 @@ class DepartmentEquipments extends Component {
   };
 
   //change status
-  chageStatus = (id, status) => {
-    const equipmenttype = this.state.types.equipment_and_instrument;
+  // chageStatus = (id, status) => {
+  //   const equipmenttype = this.state.types.equipment_and_instrument;
 
-    API.put(
-      `/api/department/department-all-type/change_status/${this.state.department_id}/${equipmenttype}/${id}`,
-      {
-        status: status == 1 ? String(0) : String(1),
-      }
-    )
-      .then((res) => {
-        swal({
-          closeOnClickOutside: false,
-          title: "Success",
-          text: "Status updated successfully.",
-          icon: "success",
-        }).then(() => {
-          this.getequipmentList(this.state.activePage);
-        });
-      })
-      .catch((err) => {
-        if (err.data.status === 3) {
-          this.setState({ closeModal: true });
-          showErrorMessage(err, this.props);
-        }
-      });
-  };
+  //   API.put(
+  //     `/api/department/department-all-type/change_status/${this.state.department_id}/${equipmenttype}/${id}`,
+  //     {
+  //       status: status == 1 ? String(0) : String(1),
+  //     }
+  //   )
+  //     .then((res) => {
+  //       swal({
+  //         closeOnClickOutside: false,
+  //         title: "Success",
+  //         text: "Status updated successfully.",
+  //         icon: "success",
+  //       }).then(() => {
+  //         this.getequipmentList(this.state.activePage);
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       if (err.data.status === 3) {
+  //         this.setState({ closeModal: true });
+  //         showErrorMessage(err, this.props);
+  //       }
+  //     });
+  // };
 
   //delete
   confirmDelete = (event, id) => {
@@ -381,7 +377,7 @@ class DepartmentEquipments extends Component {
                     </select>
                   </div>
 
-                  <div className="">
+                  {/* <div className="">
                     <select name="status" id="status" className="form-control">
                       <option value="">Select Status</option>
                       {this.state.selectStatus.map((val) => {
@@ -392,7 +388,7 @@ class DepartmentEquipments extends Component {
                         );
                       })}
                     </select>
-                  </div>
+                  </div> */}
 
                   <div className="">
                     <input
@@ -463,13 +459,13 @@ class DepartmentEquipments extends Component {
                   >
                     Post Date
                   </TableHeaderColumn>
-                  <TableHeaderColumn
+                  {/* <TableHeaderColumn
                     dataField="status"
                     dataFormat={equipmentStatus(this)}
                     tdStyle={{ wordBreak: "break-word" }}
                   >
                     Status
-                  </TableHeaderColumn>
+                  </TableHeaderColumn> */}
                   <TableHeaderColumn
                     dataField="id"
                     dataFormat={actionFormatter(this)}

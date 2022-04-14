@@ -420,13 +420,13 @@ class EditDepartment extends Component {
       ),
       total_lab_technical: departmentDetails.total_lab_technical
         ? departmentDetails.total_lab_technical
-        : "",
+        : 0,
       total_lab_executive: departmentDetails.total_lab_executive
         ? departmentDetails.total_lab_executive
-        : "",
+        : 0,
       total_consultant_scientists: departmentDetails.total_consultant_scientists
         ? departmentDetails.total_consultant_scientists
-        : "",
+        : 0,
       doctors: selected_doctors ? selected_doctors : "",
       equipments: selected_equipments ? selected_equipments : "",
       publications: selected_publications ? selected_publications : "",
@@ -439,6 +439,8 @@ class EditDepartment extends Component {
           ? departmentDetails.status.toString()
           : "",
     });
+
+    console.log('newInitialValues',newInitialValues)
 
     const validateStopFlag = Yup.object().shape({
       department_image: Yup.string()

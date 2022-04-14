@@ -158,18 +158,14 @@ class Doctor extends Component {
   getDoctorList = (page = 1) => {
     var doctor_name = document.getElementById("doctor_name").value;
     var designation = document.getElementById("designation").value;
-    var expertise = document.getElementById("expertise").value;
-    let education = document.getElementById("education").value;
     let status = document.getElementById("status").value;
 
     API.get(
       `/api/department/doctor?page=${page}&doctor_name=${encodeURIComponent(
         doctor_name
-      )}&education=${encodeURIComponent(
-        education
       )}&designation=${encodeURIComponent(
         designation
-      )}&expertise=${encodeURIComponent(expertise)}&status=${encodeURIComponent(
+      )}&status=${encodeURIComponent(
         status
       )}`
     )
@@ -193,15 +189,11 @@ class Doctor extends Component {
     e.preventDefault();
     var doctor_name = document.getElementById("doctor_name").value;
     var designation = document.getElementById("designation").value;
-    var expertise = document.getElementById("expertise").value;
-    let education = document.getElementById("education").value;
     let status = document.getElementById("status").value;
 
     if (
       doctor_name === "" &&
       designation === "" &&
-      education === "" &&
-      expertise === "" &&
       status === ""
     ) {
       return false;
@@ -210,11 +202,9 @@ class Doctor extends Component {
     API.get(
       `/api/department/doctor?page=1&doctor_name=${encodeURIComponent(
         doctor_name
-      )}&education=${encodeURIComponent(
-        education
       )}&designation=${encodeURIComponent(
         designation
-      )}&expertise=${encodeURIComponent(expertise)}&status=${encodeURIComponent(
+      )}&status=${encodeURIComponent(
         status
       )}`
     )
@@ -226,8 +216,6 @@ class Doctor extends Component {
 
           doctor_name: doctor_name,
           designation: designation,
-          education: education,
-          expertise: expertise,
           status: status,
 
           activePage: 1,
@@ -245,16 +233,12 @@ class Doctor extends Component {
   clearSearch = () => {
     document.getElementById("doctor_name").value = "";
     document.getElementById("designation").value = "";
-    document.getElementById("education").value = "";
-    document.getElementById("expertise").value = "";
     document.getElementById("status").value = "";
 
     this.setState(
       {
         designation: "",
         doctor_name: "",
-        education: "",
-        expertise: "",
         status: "",
 
         remove_search: false,
@@ -431,22 +415,6 @@ class Doctor extends Component {
                       name="doctor_name"
                       id="doctor_name"
                       placeholder="Filter by Doctor Name"
-                    />
-                  </div>
-                  <div className="">
-                    <input
-                      className="form-control"
-                      name="education"
-                      id="education"
-                      placeholder="Filter by Education"
-                    />
-                  </div>
-                  <div className="">
-                    <input
-                      className="form-control"
-                      name="expertise"
-                      id="expertise"
-                      placeholder="Filter by Expertise"
                     />
                   </div>
                   <div className="">

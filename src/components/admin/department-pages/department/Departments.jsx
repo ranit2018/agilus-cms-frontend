@@ -583,7 +583,7 @@ class Departments extends Component {
                     dataField="total_lab_technical"
                     // dataFormat={__htmlDecode(this)}
                   >
-                    Total Technical Lab
+                    Total Technical Labs
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="total_lab_executive"
