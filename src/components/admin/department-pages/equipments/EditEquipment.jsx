@@ -239,7 +239,7 @@ class EditEquipment extends Component {
       equipment_name: Yup.string().required(
         "Please enter equipment & instrument name"
       ),
-      equipment_description: Yup.string().required("Please enter description"),
+      equipment_description: Yup.string().required("Please enter machine description"),
       status: Yup.number().required("Please select status"),
     });
 
@@ -442,12 +442,10 @@ class EditEquipment extends Component {
                                       );
                                     }}
                                   />
-
-                                  {errors.equipment_description &&
-                                  touched.equipment_description ? (
-                                    <span className="errorMsg">
-                                      {errors.equipment_description}
-                                    </span>
+                                  {/* {console.log( "values.equipment_description",  values.equipment_description )}
+                                  {console.log( "values.equipment_description",  typeof(values.equipment_description) )} */}
+                                  {values.equipment_description === "" ? (
+                                    <span className="errorMsg">{errors.equipment_description}</span>
                                   ) : null}
                                 </div>
                               </Col>

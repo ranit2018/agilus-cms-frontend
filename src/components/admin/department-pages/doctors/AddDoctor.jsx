@@ -361,8 +361,9 @@ class AddDoctor extends Component {
                                     );
                                   }}
                                 />
-
-                                {errors.education && touched.education ? (
+                                {console.log( "values.education",  values.education)}
+                                {console.log( "values.education", typeof values.education )}
+                                {values.education === "" ? (
                                   <span className="errorMsg">
                                     {errors.education}
                                   </span>
@@ -436,11 +437,11 @@ class AddDoctor extends Component {
                                   }}
                                 />
 
-                                {errors.expertise && touched.expertise ? (
-                                  <span className="errorMsg">
-                                    {errors.expertise}
-                                  </span>
-                                ) : null}
+                               {/* {console.log( "values.expertise",  values.expertise )}
+                                  {console.log( "values.expertise",  typeof(values.expertise) )} */}
+                                  {values.expertise === "" ? (
+                                    <span className="errorMsg">{errors.expertise}</span>
+                                  ) : null}
                               </div>
                             </Col>
                           </Row>

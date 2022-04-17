@@ -433,12 +433,9 @@ class EditPublication extends Component {
                                       );
                                     }}
                                   />
-
-                                  {errors.publication_description &&
-                                  touched.publication_description ? (
-                                    <span className="errorMsg">
-                                      {errors.publication_description}
-                                    </span>
+                                 
+                                  {values.publication_description === "" ? (
+                                    <span className="errorMsg">{errors.publication_description}</span>
                                   ) : null}
                                 </div>
                               </Col>

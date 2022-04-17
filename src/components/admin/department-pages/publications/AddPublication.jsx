@@ -367,13 +367,12 @@ class AddPublication extends Component {
                                     );
                                   }}
                                 />
-
-                                {errors.publication_description &&
-                                touched.publication_description ? (
-                                  <span className="errorMsg">
-                                    {errors.publication_description}
-                                  </span>
-                                ) : null}
+                                  {/* {console.log( "values.publication_description",  values.publication_description )}
+                                  {console.log( "values.publication_description",  typeof(values.publication_description) )} */}
+                                  {values.publication_description === "" ? (
+                                    <span className="errorMsg">{errors.publication_description}</span>
+                                  ) : null}
+                              
                               </div>
                             </Col>
                           </Row>

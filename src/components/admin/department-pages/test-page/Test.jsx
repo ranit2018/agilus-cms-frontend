@@ -158,12 +158,14 @@ class Test extends Component {
       value: "",
       city_value: "",
       selectedValue: "",
-      selectedCity: [{
-        city_name: "MUMBAI",
-        label: "Mumbai (Maharashtra)",
-        state_id: 15,
-        value: 304,
-      }],
+      selectedCity: [
+        {
+          city_name: "MUMBAI",
+          label: "Mumbai (Maharashtra)",
+          state_id: 15,
+          value: 304,
+        },
+      ],
       //   selectedCity: [
       //     { city_name: "MUMBAI", label: "Mumbai (Maharashtra)", state_id: 15, value: 304, },
       // ],
@@ -789,7 +791,8 @@ class Test extends Component {
         ></img>
       );
     } else {
-      return null;
+      return "No image";
+      // return null;
     }
   };
 
@@ -969,7 +972,14 @@ class Test extends Component {
             <div className="box">
               <div className="box-body">
                 <BootstrapTable data={this.state.product_list}>
-                  <TableHeaderColumn isKey dataField="product_code">
+                  <TableHeaderColumn
+                    isKey
+                    dataField="product_image"
+                    dataFormat={this.setProductImage(this)}
+                  >
+                    Image
+                  </TableHeaderColumn>
+                  <TableHeaderColumn dataField="product_code">
                     Product Code
                   </TableHeaderColumn>
                   <TableHeaderColumn
@@ -993,12 +1003,6 @@ class Test extends Component {
                     City Name
                   </TableHeaderColumn>
 
-                  <TableHeaderColumn
-                    dataField="product_image"
-                    dataFormat={this.setProductImage(this)}
-                  >
-                    Image
-                  </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="status"
                     dataFormat={custStatus(this)}
@@ -1119,10 +1123,8 @@ class Test extends Component {
                                       )}
                                     </Field>
                                     {errors.type && touched.type ? (
-                                        <p className="errorMsg">
-                                          {errors.type}
-                                        </p>
-                                      ) : null}
+                                      <p className="errorMsg">{errors.type}</p>
+                                    ) : null}
                                   </div>
                                 </Col>
                                 <Col xs={12} sm={12} md={12}>

@@ -93,30 +93,36 @@ const actionFormatter = (refObj) => (cell, row) => {
 };
 
 const imageFormatter = (refObj) => (cell, row) => {
-  return (
-    <div className="actionStyle">
-      {row.images.map((val, index) => {
-        return (
-          <LinkWithTooltip
-            tooltip="Click to see picture"
-            href="#"
-            // clicked={(e) => refObj.imageModalShowHandler(val.equipment_image)}
-            id="tooltip-1"
-            key={index}
-          >
-            <img
-              src={val.equipment_image}
-              alt="Equipment image"
-              height="30"
-              onClick={(e) =>
-                refObj.imageModalShowHandler(e, val.equipment_image)
-              }
-            />
-          </LinkWithTooltip>
-        );
-      })}
-    </div>
-  );
+  if(row.images.length === 0)
+  {
+    return "No image"
+  } else {
+    return (
+      <div className="actionStyle">
+        {row.images.map((val, index) => {
+          return (
+            <LinkWithTooltip
+              tooltip="Click to see picture"
+              href="#"
+              // clicked={(e) => refObj.imageModalShowHandler(val.equipment_image)}
+              id="tooltip-1"
+              key={index}
+            >
+              <img
+                src={val.equipment_image}
+                alt="Equipment image"
+                height="30"
+                onClick={(e) =>
+                  refObj.imageModalShowHandler(e, val.equipment_image)
+                }
+              />
+            </LinkWithTooltip>
+          );
+        })}
+      </div>
+    );
+  }
+  
 };
 
 const __htmlDecode = (refObj) => (cell) => {

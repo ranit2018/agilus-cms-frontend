@@ -219,7 +219,8 @@ class EditDoctor extends Component {
       doctor_image: "",
       doctor_name: htmlDecode(alldata.doctor_name),
       education: htmlDecode(alldata.education),
-      expertise: htmlDecode(alldata.expertise),
+      // expertise: htmlDecode(alldata.expertise),
+      expertise: alldata.expertise ? htmlDecode(alldata.expertise) : "",
       designation: htmlDecode(alldata.designation),
       status: alldata.status,
     };
@@ -239,9 +240,7 @@ class EditDoctor extends Component {
           }
         ),
       doctor_name: Yup.string().required("Please enter doctor name"),
-      education: Yup.string()
-      .ensure()
-      .min(2, "Please add at least two words in education").required("Please enter education"),
+      education:  Yup.string().required("Please enter education"),
       expertise: Yup.string().required("Please enter expetise"),
       designation: Yup.string().required("Please enter designation"),
       status: Yup.number().required("Please select status"),
@@ -294,6 +293,8 @@ class EditDoctor extends Component {
                     }) => {
                       return (
                         <Form>
+                          {console.log(errors)}
+                          {console.log(values)}
                           <div className="contBox">
                             <Row>
                               <Col xs={12} sm={12} md={12}>
@@ -441,10 +442,11 @@ class EditDoctor extends Component {
                                       );
                                     }}
                                   />
-                                  {errors.education && touched.education ? (
-                                    <span className="errorMsg">
-                                      {errors.education}
-                                    </span>
+
+                                   {console.log( "values.education",  values.education )}
+                                  {console.log( "values.education",  typeof(values.education) )}
+                                  {values.education === "" ? (
+                                    <span className="errorMsg">{errors.education}</span>
                                   ) : null}
                                 </div>
                               </Col>
@@ -515,12 +517,21 @@ class EditDoctor extends Component {
                                       );
                                     }}
                                   />
+                                  {/* {console.log( "values.expertise",  values.expertise )}
+                                  {console.log( "values.expertise",  typeof(values.expertise) )} */}
+                                  {values.expertise === "" ? (
+                                    <span className="errorMsg">{errors.expertise}</span>
+                                  ) : null}
 
-                                  {errors.expertise && touched.expertise ? (
+                                  {/* {errors.expertise && touched.expertise ? (
                                     <span className="errorMsg">
+                                      {console.log(
+                                        "errors.expertise",
+                                        errors.expertise
+                                      )}
                                       {errors.expertise}
                                     </span>
-                                  ) : null}
+                                  ) : null} */}
                                 </div>
                               </Col>
                             </Row>
