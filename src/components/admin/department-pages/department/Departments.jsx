@@ -123,9 +123,8 @@ const actionFormatter = (refObj) => (cell, row) => {
   );
 };
 const setDepartmentImage = (refObj) => (cell, row) => {
-  if(row.department_image === null)
-  {
-    return "No image"
+  if (row.department_image === null) {
+    return "No image";
   } else {
     return (
       <div
@@ -144,7 +143,6 @@ const setDepartmentImage = (refObj) => (cell, row) => {
       </div>
     );
   }
-  
 };
 
 const setDate = (refOBj) => (cell) => {
@@ -385,7 +383,7 @@ class Departments extends Component {
   //for edit/add part
   editDepartment(e, id) {
     e.preventDefault();
-    this.setState({ department_id: id })
+    this.setState({ department_id: id });
     this.props.history.push(`/departments/edit-department/${id}`);
 
     // API.get(`/api/department/${id}`)
@@ -437,7 +435,9 @@ class Departments extends Component {
     e.preventDefault();
     const producttype = this.state.types.product;
 
-    this.props.history.push(`/departments/department-test/${row.id}/${producttype}`);
+    this.props.history.push(
+      `/departments/department-test/${row.id}/${producttype}`
+    );
   }
 
   fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
@@ -573,28 +573,22 @@ class Departments extends Component {
                   >
                     Department
                   </TableHeaderColumn>
-                  <TableHeaderColumn
+                  {/* <TableHeaderColumn
                     dataField="department_description"
                     dataFormat={__htmlDecode(this)}
                   >
                     Description
-                  </TableHeaderColumn>
-                  <TableHeaderColumn
-                    dataField="total_lab_technical"
-                    // dataFormat={__htmlDecode(this)}
-                  >
+                  </TableHeaderColumn> */}
+                  <TableHeaderColumn 
+                    dataField="total_lab_technical">
                     Total Technical Labs
                   </TableHeaderColumn>
-                  <TableHeaderColumn
-                    dataField="total_lab_executive"
-                    // dataFormat={__htmlDecode(this)}
-                  >
+                  <TableHeaderColumn 
+                    dataField="total_lab_executive">
                     Total Executive Labs
                   </TableHeaderColumn>
-                  <TableHeaderColumn
-                    dataField="total_consultant_scientists"
-                    // dataFormat={__htmlDecode(this)}
-                  >
+                  <TableHeaderColumn 
+                    dataField="total_consultant_scientists">
                     Total Consultant Scientists
                   </TableHeaderColumn>
                   <TableHeaderColumn

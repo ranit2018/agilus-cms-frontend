@@ -132,7 +132,6 @@ export function getUserEmail() {
   }
 }
 export const getHeightWidth = (file) => {
-  console.log('file',file)
   return new Promise((resolve, reject) => {
     var reader = new FileReader();
     var height;
@@ -155,14 +154,12 @@ export const getHeightWidth = (file) => {
 }
 
 export const getHeightWidthFromURL = (url) => {
-  console.log(url);
   return new Promise((resolve, reject) => {
     const image = new Image();
     image.src = url;
     image.onload = function () {
       const height = this.height;
       const width = this.width;
-      console.log(height, width);
       resolve({
         height: this.height,
         width: this.width
@@ -308,7 +305,6 @@ export const generateResolutionText = (tag) => {
 }
 
 export const getResolution = (tag) => {
-  console.log('tag',tag)
   for (let i in resolution_arr) {
     if (resolution_arr[i].tag === tag) {
       return resolution_arr[i]

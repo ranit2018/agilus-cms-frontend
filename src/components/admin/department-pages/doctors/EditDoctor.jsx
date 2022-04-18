@@ -239,10 +239,15 @@ class EditDoctor extends Component {
             }
           }
         ),
-      doctor_name: Yup.string().required("Please enter doctor name"),
+      doctor_name: Yup.string()
+        .min(5, "please add at least five characters")
+        .max(100, "doctor name can be maximum 100 characters")
+        .required("Please enter doctor name")
+        .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "Doctor name validation field"),
       education:  Yup.string().required("Please enter education"),
       expertise: Yup.string().required("Please enter expetise"),
-      designation: Yup.string().required("Please enter designation"),
+      designation: Yup.string().required("Please enter designation")
+        .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "Doctor designation validation field"),
       status: Yup.number().required("Please select status"),
       // status: Yup.string()
       //   .trim()
@@ -293,8 +298,8 @@ class EditDoctor extends Component {
                     }) => {
                       return (
                         <Form>
-                          {console.log(errors)}
-                          {console.log(values)}
+                          {/* {console.log(errors)}
+                          {console.log(values)} */}
                           <div className="contBox">
                             <Row>
                               <Col xs={12} sm={12} md={12}>
@@ -443,8 +448,8 @@ class EditDoctor extends Component {
                                     }}
                                   />
 
-                                   {console.log( "values.education",  values.education )}
-                                  {console.log( "values.education",  typeof(values.education) )}
+                                   {/* {console.log( "values.education",  values.education )}
+                                  {console.log( "values.education",  typeof(values.education) )} */}
                                   {values.education === "" ? (
                                     <span className="errorMsg">{errors.education}</span>
                                   ) : null}

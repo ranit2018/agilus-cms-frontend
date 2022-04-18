@@ -168,10 +168,16 @@ class AddDoctor extends Component {
           "Only files with the following extensions are allowed: png jpg jpeg",
           () => this.state.isValidFile
         ),
-      doctor_name: Yup.string().required("Please enter doctor name"),
+      // doctor_name: Yup.string().required("Please enter doctor name"),
+      doctor_name: Yup.string()
+      .min(5, "please add at least five characters")
+      .max(100, "doctor name cannot be more than 100  characters")
+      .required("Please enter doctor name")
+      .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "Doctor name validation field"),
       education: Yup.string().required("Please enter education"),
       expertise: Yup.string().required("Please enter expetise"),
-      designation: Yup.string().required("Please enter designation"),
+      designation: Yup.string().required("Please enter designation")
+      .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "Doctor designation validation field"),
       status: Yup.number().required("Please select status"),
     });
 
@@ -361,8 +367,7 @@ class AddDoctor extends Component {
                                     );
                                   }}
                                 />
-                                {console.log( "values.education",  values.education)}
-                                {console.log( "values.education", typeof values.education )}
+                                
                                 {values.education === "" ? (
                                   <span className="errorMsg">
                                     {errors.education}
@@ -436,9 +441,6 @@ class AddDoctor extends Component {
                                     );
                                   }}
                                 />
-
-                               {/* {console.log( "values.expertise",  values.expertise )}
-                                  {console.log( "values.expertise",  typeof(values.expertise) )} */}
                                   {values.expertise === "" ? (
                                     <span className="errorMsg">{errors.expertise}</span>
                                   ) : null}

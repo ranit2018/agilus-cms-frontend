@@ -236,9 +236,11 @@ class EditEquipment extends Component {
             }
           }
         ),
-      equipment_name: Yup.string().required(
-        "Please enter equipment & instrument name"
-      ),
+      equipment_name: Yup.string()
+        .min(5, "please add at least five characters")
+        .max(100, "equipment & instrument name cannot be more than 100 characters")
+        .required("Please enter equipment & instrument name")
+        .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "equipment & instrument name validation field"),
       equipment_description: Yup.string().required("Please enter machine description"),
       status: Yup.number().required("Please select status"),
     });

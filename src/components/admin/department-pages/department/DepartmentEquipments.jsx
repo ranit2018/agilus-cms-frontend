@@ -236,7 +236,7 @@ class DepartmentEquipments extends Component {
 
   clearSearch = () => {
     document.getElementById("equipment_name").value = "";
-    document.getElementById("status").value = "";
+    // document.getElementById("status").value = "";
     document.getElementById("type").value = "";
 
     this.setState(

@@ -165,13 +165,20 @@ class AddPublication extends Component {
           "Only files with the following extensions are allowed: png jpg jpeg",
           () => this.state.isValidFile
         ),
-      short_name: Yup.string().required("Please enter short name"),
-      publication_heading: Yup.string().required(
-        "Please enter publication heading"
-      ),
-      publication_description: Yup.string().required(
-        "Please enter description"
-      ),
+        short_name: Yup.string()
+        .min(5, "please add at least five characters")
+        .max(30, "short name cannot be more than 30  characters")
+        .required("Please enter short name")
+        .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "short name validation field"),
+      // publication_heading: Yup.string().required(
+      //   "Please enter publication heading"
+      // ),
+      publication_heading: Yup.string()
+        .min(5, "please add at least five characters")
+        .max(100, "publication heading cannot be more than 100  characters")
+        .required("Please enter publication heading")
+        .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "publication heading validation field"),
+      publication_description: Yup.string().required("Please enter description"),
       status: Yup.number().required("Please select status"),
       // status: Yup.string()
       //   .trim()

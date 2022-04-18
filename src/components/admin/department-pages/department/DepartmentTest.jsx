@@ -33,8 +33,6 @@ function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
 
 /*For Tooltip*/
 const actionFormatter = (refObj) => (cell, row) => {
-  console.log('cell', cell)
-  console.log('row', row)
 
   return (
     <div className="actionStyle">
@@ -54,7 +52,7 @@ const actionFormatter = (refObj) => (cell, row) => {
       <LinkWithTooltip
         tooltip="Click to Delete"
         href="#"
-        clicked={(e) => refObj.confirmDelete(e, row.product_id)}
+        clicked={(e) => refObj.confirmDelete(e, row.id)}
         id="tooltip-1"
       >
         <i className="far fa-trash-alt" />
@@ -229,7 +227,6 @@ class DepartmentTest extends Component {
   deleteProduct = (id) => {
     const producttype = this.state.types.product;
 
-    console.log('id',id)
     API.post(`/api/department/department-all-type/${ this.state.department_id}/${producttype}/${id}`)
       .then((res) => {
         swal({

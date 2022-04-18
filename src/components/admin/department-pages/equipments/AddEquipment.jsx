@@ -168,9 +168,11 @@ class AddEquipment extends Component {
           "Only files with the following extensions are allowed: png jpg jpeg",
           () => this.state.isValidFile
         ),
-      equipment_name: Yup.string().required(
-        "Please enter equipment & instrument name"
-      ),
+      equipment_name: Yup.string()
+        .min(5, "please add at least five characters")
+        .max(100, "equipment & instrument name cannot be more than 100 characters")
+        .required("Please enter equipment & instrument name")
+        .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "equipment & instrument name validation field"),
       equipment_description: Yup.string().required(
         "Please enter machine description"
       ),
@@ -374,14 +376,7 @@ class AddEquipment extends Component {
                                     );
                                   }}
                                 />
-                                {/* {console.log(
-                                  "values.equipment_description",
-                                  values.equipment_description
-                                )}
-                                {console.log(
-                                  "values.equipment_description",
-                                  typeof values.equipment_description
-                                )} */}
+                               
                                 {values.equipment_description === "" ? (
                                   <span className="errorMsg">
                                     {errors.equipment_description}

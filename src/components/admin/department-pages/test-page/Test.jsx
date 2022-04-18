@@ -112,7 +112,7 @@ const initialValues = {
   //   state_id: 15,
   //   value: 304,
   // },
-  cities: [],
+  cities: "",
   product: "",
   type: 1,
   city_type: "1",
@@ -157,7 +157,7 @@ class Test extends Component {
       suggestions: [],
       value: "",
       city_value: "",
-      selectedValue: "",
+      selectedProduct: "",
       selectedCity: [
         {
           city_name: "MUMBAI",
@@ -166,9 +166,6 @@ class Test extends Component {
           value: 304,
         },
       ],
-      //   selectedCity: [
-      //     { city_name: "MUMBAI", label: "Mumbai (Maharashtra)", state_id: 15, value: 304, },
-      // ],
 
       cities: "",
       file: "",
@@ -250,7 +247,7 @@ class Test extends Component {
           value: res.data.data[0].product_name,
           city_type: res.data.data[0].city_type,
           type: res.data.data[0].type,
-          selectedValue: prd_data,
+          selectedProduct: prd_data,
           selectedCity: res.data.data[0].cities,
           status: res.data.data[0].status,
 
@@ -268,7 +265,7 @@ class Test extends Component {
       showModal: false,
       file: "",
       value: "",
-      selectedValue: "",
+      selectedProduct: "",
       selectedCity: {
         city_name: "MUMBAI",
         label: "Mumbai (Maharashtra)",
@@ -431,15 +428,14 @@ class Test extends Component {
   };
 
   handleSubmitEventAdd = (values, actions) => {
-    console.log("values", values);
-    const { selectedValue, selectedCity } = this.state;
-
+    // console.log("values", values);
+    const { selectedCity, selectedProduct } = this.state;
     let method = "";
     let post_data = [];
     let post_data_product = {
-      product_name: selectedValue.NAME,
-      product_code: selectedValue.PRDCT_CODE,
-      product_id: selectedValue.ID,
+      product_name: selectedProduct.NAME,
+      product_code: selectedProduct.PRDCT_CODE,
+      product_id: selectedProduct.ID,
     };
 
     if (values.city_type === "2") {
@@ -502,11 +498,11 @@ class Test extends Component {
                   this.getProductList();
                 });
               })
-              .catch((err) => {
-                if (err.data.status === 3) {
-                  showErrorMessage(err, this.props);
+              .catch((response) => {
+                if (response.data.status === 3) {
+                  showErrorMessage(response, this.props);
                 } else {
-                  actions.setErrors(err.data.errors);
+                  actions.setErrors(response.data.err.errors);
                   actions.setSubmitting(false);
                 }
               });
@@ -545,20 +541,31 @@ class Test extends Component {
 
   handleSubmitEventUpdate = (values, actions) => {
     // console.log("values", values);
-    const { selectedValue, selectedCity, value } = this.state;
-    let post_data_product;
 
+    const { selectedCity, value, selectedProduct } = this.state;
+
+    let post_data_product;
     if (value === values.product) {
-      console.log("hello");
       post_data_product = {
-        product_name: selectedValue.NAME,
-        product_code: selectedValue.PRDCT_CODE,
-        product_id: selectedValue.ID,
+        product_name: selectedProduct.NAME,
+        product_code: selectedProduct.PRDCT_CODE,
+        product_id: selectedProduct.ID,
       };
     }
 
     let method = "";
-    let post_data = selectedCity;
+    let post_data = [];
+    // let post_data = selectedCity;
+
+    if (values.city_type === "2") {
+      for (let i = 0; i < selectedCity.length; i++) {
+        post_data.push({
+          city_name: selectedCity[i].city_name,
+          city_id: selectedCity[i].value,
+          label: selectedCity[i].label,
+        });
+      }
+    }
 
     // let finaldata = {
     //   type: values.type,
@@ -719,14 +726,14 @@ class Test extends Component {
             } else {
               this.setState({ validProduct: true });
             }
-            this.setState({ selectedValue: searchDetails }, () => {
+            this.setState({ selectedProduct: searchDetails }, () => {
               setFieldTouched("product");
             });
           }
         })
         .catch((error) => {
           console.log(error);
-          this.setState({ selectedValue: "" }, () => {
+          this.setState({ selectedProduct: "" }, () => {
             setFieldTouched("product");
           });
         });
@@ -734,7 +741,7 @@ class Test extends Component {
   };
 
   handleAutoSuggestClick = () => {
-    this.setState({ selectedValue: "", value: "" });
+    this.setState({ selectedProduct: "", value: "" });
   };
 
   //image
@@ -803,14 +810,14 @@ class Test extends Component {
   render() {
     const {
       // product_Details,
+      product_id,
       city_state_list,
       totalCount,
       activePage,
       selectedCity,
-      selectedValue,
+      selectedProduct,
       value,
     } = this.state;
-
     const newInitialValues = Object.assign(initialValues, {
       city_type: this.state.city_type ? this.state.city_type : "",
       file: "",
@@ -840,7 +847,7 @@ class Test extends Component {
       //   }),
       product: Yup.mixed()
         .test("product", "Please select product", () => {
-          return selectedValue && Object.keys(selectedValue).length > 0;
+          return selectedProduct && Object.keys(selectedProduct).length > 0;
         })
         .test(
           "pro",
@@ -1066,6 +1073,7 @@ class Test extends Component {
                     }) => {
                       return (
                         <Form>
+
                           <Modal.Header closeButton>
                             <Modal.Title>
                               {this.state.product_id > 0
@@ -1089,27 +1097,6 @@ class Test extends Component {
                                       className={`selectArowGray form-control`}
                                       autoComplete="off"
                                       value={values.type}
-                                      // value={this.state.type}
-                                      // onChange={(evt) => {
-                                      //   if (evt) {
-                                      //     const { value } = evt.target;
-                                      //     this.setState({
-                                      //       type: value,
-                                      //       value: "",
-                                      //       selectedValue: "",
-                                      //       validProduct: true,
-                                      //     });
-                                      //     setFieldValue("type", value);
-                                      //   } else {
-                                      //     this.setState({
-                                      //       type: "1",
-                                      //       value: "",
-                                      //       selectedValue: "",
-                                      //       validProduct: true,
-                                      //     });
-                                      //     setFieldValue("type", "1");
-                                      //   }
-                                      // }}
                                     >
                                       <option key="-1" value="">
                                         Select Product Type
@@ -1146,15 +1133,11 @@ class Test extends Component {
                                           const { value } = evt.target;
                                           this.setState({
                                             city_type: value,
-                                            value: "",
-                                            selectedValue: "",
                                           });
                                           setFieldValue("city_type", value);
                                         } else {
                                           this.setState({
                                             city_type: "1",
-                                            value: "",
-                                            selectedValue: "",
                                           });
                                           setFieldValue("city_type", "1");
                                         }
@@ -1210,8 +1193,6 @@ class Test extends Component {
                                         onChange={(evt) => {
                                           this.setState({
                                             selectedCity: evt,
-                                            value: "",
-                                            selectedValue: "",
                                           });
                                           setFieldValue("cities", evt);
                                         }}
@@ -1231,6 +1212,7 @@ class Test extends Component {
                                   </label>
                                   <div className="form-group">
                                     <div className="position-relative">
+
                                       <Autosuggest
                                         suggestions={this.state.suggestions}
                                         onSuggestionsFetchRequested={(req) => {
@@ -1239,7 +1221,9 @@ class Test extends Component {
                                         }}
                                         onSuggestionsClearRequested={() => {
                                           this.onSuggestionsClearRequested();
-                                          this.setState({ selectedValue: "" });
+                                          this.setState({
+                                            selectedProduct: "",
+                                          });
                                         }}
                                         getSuggestionValue={
                                           this.getSuggestionValue
@@ -1272,7 +1256,11 @@ class Test extends Component {
                                           onBlur: () =>
                                             setFieldTouched("product"),
                                           disabled:
-                                            this.state.selectedValue != "",
+                                            this.state.product_id > 0
+                                              ? true
+                                              : false,
+                                          // disabled:
+                                          //   this.state.selectedProduct != "",
                                         }}
                                         onSuggestionSelected={(event, req) => {
                                           this.onSuggestionSelected(
@@ -1282,8 +1270,13 @@ class Test extends Component {
                                           );
                                         }}
                                       />
-                                      {this.state.selectedValue !== "" ? (
+                                      {this.state.selectedProduct !== "" ? (
                                         <button
+                                          disabled={
+                                            this.state.product_id > 0
+                                              ? true
+                                              : false
+                                          }
                                           onClick={() =>
                                             this.handleAutoSuggestClick()
                                           }
@@ -1371,6 +1364,17 @@ class Test extends Component {
                                   </div>
                                 </Col>
                               </Row>
+                              {errors.message ? (
+                                <Row>
+                                  <Col xs={12} sm={12} md={12}>
+                                    <span className="errorMsg">
+                                      {errors.message}
+                                    </span>
+                                  </Col>
+                                </Row>
+                              ) : (
+                                ""
+                              )}
                             </div>
                           </Modal.Body>
                           <Modal.Footer>

@@ -440,8 +440,6 @@ class EditDepartment extends Component {
           : "",
     });
 
-    console.log('newInitialValues',newInitialValues)
-
     const validateStopFlag = Yup.object().shape({
       department_image: Yup.string()
         .notRequired()
@@ -456,7 +454,11 @@ class EditDepartment extends Component {
             }
           }
         ),
-      department_name: Yup.string().required("Please enter department name"),
+      department_name: Yup.string()
+        .min(5, "please add at least five characters")
+        .max(100, "department name cannot be more than 100  characters")
+        .required("Please enter department name")
+        .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "department name validation field"),
       department_description: Yup.string().required(
         "Please enter department description"
       ),

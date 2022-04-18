@@ -31,7 +31,6 @@ import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-load
 //   str = str.replace(/[-[\]{}@'!*+?.,/;\\^$|#\s]/g, " ");
 //   str = str.split(" ");
 //   const strArr = [];
-//   console.log(str);
 
 //   for (let i in str) {
 //     if (str[i] !== "") {
@@ -94,14 +93,13 @@ class AddEquipment extends Component {
   }
 
   handleSubmitEvent = (values, actions) => {
-    let postdata = {
-      equipment_name: values.equipment_name,
-      equipment_description: values.equipment_description,
-      images: this.state.files,
-      date_posted: new Date().toLocaleString(),
-      status: String(values.status),
-    };
-    console.log("postdata", postdata);
+    // let postdata = {
+    //   equipment_name: values.equipment_name,
+    //   equipment_description: values.equipment_description,
+    //   images: this.state.files,
+    //   date_posted: new Date().toLocaleString(),
+    //   status: String(values.status),
+    // };
 
     //file upload
     // if (this.state.files && this.state.files.length > 0) {
@@ -130,7 +128,6 @@ class AddEquipment extends Component {
 
     let url = `/api/department/equipment`;
     let method = "POST";
-    console.log("this.state.files.size false", this.state.files[0].size);
     // actions.setSubmitting(false);
 
     if (this.state.files && this.state.files.length > 0) {
@@ -162,7 +159,6 @@ class AddEquipment extends Component {
               element.push(this.state.files[index].name)
               
               // formData.append("images", element);
-              console.log(" element", element);
 
               // API({
               //   method: method,
@@ -322,7 +318,6 @@ class AddEquipment extends Component {
       date_posted: "",
       status: "",
     };
-    // console.log('this.state.isValidFile',this.state.isValidFile)
 
     const validateStopFlag = Yup.object().shape({
       files: Yup.mixed()
@@ -379,7 +374,6 @@ class AddEquipment extends Component {
                   }) => {
                     return (
                       <Form>
-                        {console.log("errors formik", errors)}
                         <div className="contBox">
                           <Row>
                             <Col xs={12} sm={12} md={12}>
@@ -431,11 +425,7 @@ class AddEquipment extends Component {
                                         <p>Choose file</p>
                                       </div>
                                       <div className="custom-file-upload-area">
-                                        {console.log(
-                                          "this.state.files",
-                                          this.state.files,
-                                          this.state.filesHtml
-                                        )}
+                                       
                                         {/* { this.state.filesHtml &&
                                           this.showAttachments()
                                         } */}
@@ -507,7 +497,6 @@ class AddEquipment extends Component {
                                           var file = input.files[0];
                                           var reader = new FileReader();
                                           reader.onload = function (e) {
-                                            console.log("name", value);
                                             callback(e.target.result, {
                                               alt: file.name,
                                             });
@@ -578,8 +567,7 @@ class AddEquipment extends Component {
                             isValid ? (isSubmitting ? true : false) : true
                           }
                         >
-                          {console.log("isSubmitting", isSubmitting)}
-                          {console.log("isValid", isValid)}
+                         
                           {this.state.equipment_id > 0
                             ? isSubmitting
                               ? "Updating..."
@@ -1081,7 +1069,6 @@ class Equipment extends Component {
   //image modal
   imageModalShowHandler = (e, url) => {
     e.preventDefault();
-    console.log("url", url);
     this.setState({ thumbNailModal: true, equipment_image: url });
   };
   imageModalCloseHandler = () => {
