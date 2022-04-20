@@ -59,7 +59,6 @@ const actionFormatter = (refObj) => (cell, row) => {
       </LinkWithTooltip>
       <LinkWithTooltip
         tooltip={"Click to change status"}
-        // clicked={(e) => refObj.chageStatus(e, cell, row.status)}
         href="#"
         id="tooltip-1"
       >
@@ -324,19 +323,6 @@ class Publications extends Component {
     e.preventDefault();
 
     this.props.history.push(`/department/edit-publication/${id}`)
-    
-    // API.get(`/api/department/publication/${id}`)
-    //   .then((res) => {
-    //     this.props.history.push({
-    //       pathname: "/department/edit-publication/" + id,
-    //       state: {
-    //         alldata: res.data.data[0],
-    //       },
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     showErrorMessage(err, this.props);
-    //   });
   }
 
   //image modal
@@ -465,14 +451,6 @@ class Publications extends Component {
                   >
                     Publication Heading
                   </TableHeaderColumn>
-                  {/* <TableHeaderColumn
-                    dataField="publication_description"
-                    dataFormat={__htmlDecode(this)}
-                    tdStyle={{ wordBreak: "break-word" }}
-                  >
-                    Description
-                  </TableHeaderColumn> */}
-
                   <TableHeaderColumn
                     dataField="date_posted"
                     dataFormat={setDate(this)}

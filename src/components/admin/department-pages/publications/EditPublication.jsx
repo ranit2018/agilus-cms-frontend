@@ -8,7 +8,6 @@ import * as Yup from "yup";
 import swal from "sweetalert";
 import { showErrorMessage } from "../../../../shared/handle_error";
 import Layout from "../../layout/Layout";
-// import { Editor } from "@tinymce/tinymce-react";
 import TinyMCE from "react-tinymce";
 import {
   htmlDecode,
@@ -94,15 +93,6 @@ class EditPublication extends Component {
   };
 
   handleSubmitEvent = (values, actions) => {
-    // let postdata = {
-    //   publication_heading: values.publication_heading,
-    //   short_name: values.short_name,
-    //   publication_description: values.publication_description,
-    //   publication_image: values.publication_image,
-    //   date_posted: new Date().toLocaleString(),
-    //   status: String(values.status),
-    // };
-
     let formData = new FormData();
 
     formData.append("publication_heading", values.publication_heading);
@@ -233,9 +223,6 @@ class EditPublication extends Component {
             }
           }
         ),
-      // publication_heading: Yup.string().required(
-      //   "Please enter publication heading"
-      // ),
       publication_heading: Yup.string()
         .min(5, "please add at least five characters")
         .max(100, "publication heading cannot be more than 100  characters")

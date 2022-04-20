@@ -225,8 +225,6 @@ class AddDepartment extends Component {
 
   getSearchProductArr = (value) => {
     if (value.length == 3) {
-      // let { city_name } = this.state;
-      let city_name = "";
       API.get(`api/department/test-search-list`)
         .then((res) => {
           this.setState({
@@ -245,20 +243,6 @@ class AddDepartment extends Component {
   };
 
   handleSubmitEvent = (values, actions) => {
-    // let postdata = {
-    //   department_name: values.department_name,
-    //   department_description: values.department_description,
-    //   total_lab_technical: values.total_lab_technical,
-    //   total_lab_executive: values.total_lab_executive,
-    //   doctor_id: values.doctor_id,
-    //   equipment_id: values.equipment_id,
-    //   publication_id: values.publication_id,
-    //   product_id: values.product_id,
-    //   department_image: values.department_image,
-    //   date_posted: new Date().toLocaleString(),
-    //   status: String(values.status),
-    // };
-
     let formData = new FormData();
 
     formData.append("department_name", values.department_name);
@@ -274,7 +258,6 @@ class AddDepartment extends Component {
     formData.append("equipments[]", JSON.stringify(values.equipment_id));
     formData.append("publications[]", JSON.stringify(values.publication_id));
     formData.append("tests[]", JSON.stringify(values.product_id));
-    // formData.append("tests[]", JSON.stringify(values.product_id));
 
     formData.append("status", String(values.status));
 
@@ -457,21 +440,8 @@ class AddDepartment extends Component {
         "Please enter total consltant scientists"
       ),
       doctor_id: Yup.array().optional(),
-      // .ensure()
-      // .min(1, "Please add at least one doctor name")
-      // .of(Yup.string().ensure().required("doctor name cannot be empty")),
       equipment_id: Yup.array().optional(),
-      // .ensure()
-      // .min(1, "Please add at least one equipment & instrument")
-      // .of(
-      //   Yup.string()
-      //     .ensure()
-      //     .required("equipment & instrument cannot be empty")
-      // ),
       publication_id: Yup.array().optional(),
-      // .ensure()
-      // .min(1, "Please add at least one publication")
-      // .of(Yup.string().ensure().required("publication cannot be empty")),
       product_id: Yup.array().optional(),
       status: Yup.number().required("Please select status"),
     });

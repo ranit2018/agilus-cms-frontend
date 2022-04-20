@@ -3,7 +3,6 @@
 import React, { Component } from "react";
 import { Row, Col, Button } from "react-bootstrap";
 import { Formik, Field, Form } from "formik";
-// import { Editor } from "@tinymce/tinymce-react";
 import TinyMCE from "react-tinymce";
 import API from "../../../../shared/admin-axios";
 import * as Yup from "yup";
@@ -95,16 +94,6 @@ class EditDoctor extends Component {
   };
 
   handleSubmitEvent = (values, actions) => {
-    // let postdata = {
-    //   doctor_name: values.doctor_name,
-    //   education: values.education,
-    //   expertise: values.expertise,
-    //   designation: values.designation,
-    //   doctor_image: values.doctor_image,
-    //   date_posted: new Date().toLocaleString(),
-    //   status: String(values.status),
-    // };
-
     let formData = new FormData();
 
     formData.append("doctor_name", values.doctor_name);
@@ -219,7 +208,6 @@ class EditDoctor extends Component {
       doctor_image: "",
       doctor_name: htmlDecode(alldata.doctor_name),
       education: htmlDecode(alldata.education),
-      // expertise: htmlDecode(alldata.expertise),
       expertise: alldata.expertise ? htmlDecode(alldata.expertise) : "",
       designation: htmlDecode(alldata.designation),
       status: alldata.status,
@@ -249,10 +237,6 @@ class EditDoctor extends Component {
       designation: Yup.string().required("Please enter designation")
         .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "Doctor designation validation field"),
       status: Yup.number().required("Please select status"),
-      // status: Yup.string()
-      //   .trim()
-      //   .required("Please select status")
-      //   .matches(/^[0|1]$/, "Invalid status selected"),
     });
 
     return (
@@ -447,9 +431,6 @@ class EditDoctor extends Component {
                                       );
                                     }}
                                   />
-
-                                   {/* {console.log( "values.education",  values.education )}
-                                  {console.log( "values.education",  typeof(values.education) )} */}
                                   {values.education === "" ? (
                                     <span className="errorMsg">{errors.education}</span>
                                   ) : null}
@@ -522,21 +503,9 @@ class EditDoctor extends Component {
                                       );
                                     }}
                                   />
-                                  {/* {console.log( "values.expertise",  values.expertise )}
-                                  {console.log( "values.expertise",  typeof(values.expertise) )} */}
                                   {values.expertise === "" ? (
                                     <span className="errorMsg">{errors.expertise}</span>
                                   ) : null}
-
-                                  {/* {errors.expertise && touched.expertise ? (
-                                    <span className="errorMsg">
-                                      {console.log(
-                                        "errors.expertise",
-                                        errors.expertise
-                                      )}
-                                      {errors.expertise}
-                                    </span>
-                                  ) : null} */}
                                 </div>
                               </Col>
                             </Row>

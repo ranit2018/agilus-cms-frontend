@@ -45,17 +45,8 @@ const actionFormatter = (refObj) => (cell, row) => {
       >
         <i className="far fa-edit" />
       </LinkWithTooltip>
-      {/* <LinkWithTooltip
-        tooltip={"Click to Edit"}
-        clicked={(e) => refObj.modalShowHandler(e, cell)}
-        href="#"
-        id="tooltip-1"
-      >
-        <i className="far fa-edit" />
-      </LinkWithTooltip> */}
       <LinkWithTooltip
         tooltip={"Click to change status"}
-        // clicked={(e) => refObj.chageStatus(e, cell, row.status)}
         href="#"
         id="tooltip-1"
       >
@@ -329,24 +320,10 @@ class Doctor extends Component {
   };
 
   //for edit/add part
-
   editDoctor(e, id) {
     e.preventDefault();
 
     this.props.history.push(`/department/edit-doctor/${id}`)
-
-    // API.get(`/api/department/doctor/${id}`)
-    //   .then((res) => {
-    //     this.props.history.push({
-    //       pathname: "/department/edit-doctor/" + id,
-    //       state: {
-    //         alldata: res.data.data[0],
-    //       },
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     showErrorMessage(err, this.props);
-    //   });
   }
 
   modalCloseHandler = () => {

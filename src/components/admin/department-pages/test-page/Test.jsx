@@ -124,7 +124,6 @@ class Test extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // product_data: [],
       product_list: [],
       product_Details: [],
       city_state_list: [],
@@ -448,14 +447,6 @@ class Test extends Component {
       }
     }
 
-    // let finaldata = {
-    //   type: values.type,
-    //   cities: post_data,
-    //   product: post_data_product,
-    //   product_image: this.state.file,
-    //   status: String(values.status),
-    //   product_id: this.state.product_id,
-    // };
     let formData = new FormData();
 
     method = "POST";
@@ -566,16 +557,6 @@ class Test extends Component {
         });
       }
     }
-
-    // let finaldata = {
-    //   type: values.type,
-    //   cities: post_data,
-
-    //   product: post_data_product,
-    //   product_image: this.state.file,
-    //   status: String(values.status),
-    //   product_id: this.state.product_id,
-    // };
 
     let formData = new FormData();
 
@@ -839,12 +820,6 @@ class Test extends Component {
         .trim()
         .required("Please select Product Type")
         .matches(/^[1|2]$/, "Invalid Product type selected"),
-      // cities: Yup.array()
-      //   .of(Yup.object())
-      //   .when("city_type", {
-      //     is: "2",
-      //     then: Yup.array().of(Yup.object()).required("Please select city"),
-      //   }),
       product: Yup.mixed()
         .test("product", "Please select product", () => {
           return selectedProduct && Object.keys(selectedProduct).length > 0;
@@ -999,7 +974,7 @@ class Test extends Component {
                     dataField="type"
                     dataFormat={this.productType(this)}
                   >
-                    Package Type
+                    Product Type
                   </TableHeaderColumn>
 
                   <TableHeaderColumn
@@ -1007,7 +982,7 @@ class Test extends Component {
                     tdStyle={{ wordBreak: "break-word" }}
                     dataFormat={custCity(this)}
                   >
-                    City Name
+                    City Type
                   </TableHeaderColumn>
 
                   <TableHeaderColumn
@@ -1127,7 +1102,6 @@ class Test extends Component {
                                       className={`selectArowGray form-control`}
                                       autoComplete="off"
                                       value={values.city_type}
-                                      // value={this.state.city_type}
                                       onChange={(evt) => {
                                         if (evt) {
                                           const { value } = evt.target;
@@ -1188,7 +1162,6 @@ class Test extends Component {
                                         isSearchable={true}
                                         placeholder="Select City"
                                         options={city_state_list}
-                                        // value={values.cities}
                                         value={this.state.selectedCity}
                                         onChange={(evt) => {
                                           this.setState({
@@ -1294,7 +1267,6 @@ class Test extends Component {
                                     ) : null}
                                   </div>
                                 </Col>
-                                {/* {values.type == "1" ? ( */}
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
@@ -1327,7 +1299,6 @@ class Test extends Component {
                                     ) : null}
                                   </div>
                                 </Col>
-                                {/* ) : null} */}
 
                                 <br></br>
                               </Row>

@@ -80,16 +80,6 @@ class AddDoctor extends Component {
   }
 
   handleSubmitEvent = (values, actions) => {
-    // let postdata = {
-    //   doctor_name: values.doctor_name,
-    //   education: values.education,
-    //   expertise: values.expertise,
-    //   designation: values.designation,
-    //   doctor_image: values.doctor_image,
-    //   date_posted: new Date().toLocaleString(),
-    //   status: String(values.status),
-    // };
-
     let formData = new FormData();
 
     formData.append("doctor_name", values.doctor_name);
@@ -168,16 +158,15 @@ class AddDoctor extends Component {
           "Only files with the following extensions are allowed: png jpg jpeg",
           () => this.state.isValidFile
         ),
-      // doctor_name: Yup.string().required("Please enter doctor name"),
       doctor_name: Yup.string()
-      .min(5, "please add at least five characters")
-      .max(100, "doctor name cannot be more than 100  characters")
-      .required("Please enter doctor name")
-      .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "Doctor name validation field"),
+        .min(5, "please add at least five characters")
+        .max(100, "doctor name cannot be more than 100  characters")
+        .required("Please enter doctor name")
+        .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "Doctor name validation field"),
       education: Yup.string().required("Please enter education"),
       expertise: Yup.string().required("Please enter expetise"),
       designation: Yup.string().required("Please enter designation")
-      .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "Doctor designation validation field"),
+        .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "Doctor designation validation field"),
       status: Yup.number().required("Please select status"),
     });
 

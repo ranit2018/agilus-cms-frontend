@@ -104,7 +104,6 @@ const imageFormatter = (refObj) => (cell, row) => {
             <LinkWithTooltip
               tooltip="Click to see picture"
               href="#"
-              // clicked={(e) => refObj.imageModalShowHandler(val.equipment_image)}
               id="tooltip-1"
               key={index}
             >
@@ -122,7 +121,7 @@ const imageFormatter = (refObj) => (cell, row) => {
       </div>
     );
   }
-  
+
 };
 
 const __htmlDecode = (refObj) => (cell) => {
@@ -381,26 +380,12 @@ class Equipment extends Component {
   editEquipment(e, id) {
     e.preventDefault();
 
-    this.props.history.push(`/department/edit-equipment/${id}`)
-
-    // API.get(`/api/department/equipment/${id}`)
-    //   .then((res) => {
-    //     this.props.history.push({
-    //       pathname: "/department/edit-equipment/" + id,
-    //       state: {
-    //         alldata: res.data.data[0],
-    //       },
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     showErrorMessage(err, this.props);
-    //   });
+    this.props.history.push(`/department/edit-equipment/${id}`);
   }
 
   modalCloseHandler = () => {
     this.setState({
       showModal: false,
-      // id: "",
       type: "",
       alldata: "",
       equipment_name: "",
@@ -408,7 +393,6 @@ class Equipment extends Component {
       equipment_image: "",
       date_posted: "",
       status: "",
-      // equipmentDetails: "",
       equipment_id: 0,
       message: "",
       fileValidationMessage: "",
@@ -536,13 +520,9 @@ class Equipment extends Component {
                   wrapperClasses="table-responsive"
                   data={this.state.equipmentDetails}
                 >
+                  
                   <TableHeaderColumn
-                    dataField="type"
-                    dataFormat={setType(this)}
-                  >
-                    Type
-                  </TableHeaderColumn>
-                  <TableHeaderColumn
+                    isKey
                     dataField="id"
                     dataAlign=""
                     width="125"
@@ -552,13 +532,18 @@ class Equipment extends Component {
                     Image
                   </TableHeaderColumn>
                   <TableHeaderColumn
-                    isKey
+                    dataField="type"
+                    dataFormat={setType(this)}
+                  >
+                    Type
+                  </TableHeaderColumn>
+                  <TableHeaderColumn
                     dataField="equipment_name"
                     dataFormat={setName(this)}
                     width="125"
                     tdStyle={{ wordBreak: "break-word" }}
                   >
-                    Equipment & Instrument Name
+                    Name
                   </TableHeaderColumn>
 
                   <TableHeaderColumn

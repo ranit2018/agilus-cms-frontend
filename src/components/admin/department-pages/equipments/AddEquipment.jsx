@@ -80,15 +80,6 @@ class AddEquipment extends Component {
   }
 
   handleSubmitEvent = (values, actions) => {
-    // let postdata = {
-    //   type: String(values.type),
-    //   equipment_name: values.equipment_name,
-    //   equipment_description: values.equipment_description,
-    //   equipment_image: values.equipment_image,
-    //   date_posted: new Date().toLocaleString(),
-    //   status: String(values.status),
-    // };
-
     let formData = new FormData();
 
     formData.append("type", String(values.type));

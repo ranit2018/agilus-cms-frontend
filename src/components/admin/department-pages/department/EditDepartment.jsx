@@ -265,20 +265,6 @@ class EditDepartment extends Component {
   };
 
   handleSubmitEvent = (values, actions) => {
-    // let postdata = {
-    //   department_name: values.department_name,
-    //   department_description: values.department_description,
-    //   total_lab_technical: values.total_lab_technical,
-    //   total_lab_executive: values.total_lab_executive,
-    //   doctors: values.doctors,
-    //   equipments: values.equipments,
-    //   publications: values.publications,
-    //   products: values.products,
-    //   department_image: values.department_image,
-    //   date_posted: new Date().toLocaleString(),
-    //   status: String(values.status),
-    // };
-
     let formData = new FormData();
 
     formData.append("department_name", values.department_name);

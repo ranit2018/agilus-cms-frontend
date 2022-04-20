@@ -444,8 +444,6 @@ class EditEquipment extends Component {
                                       );
                                     }}
                                   />
-                                  {/* {console.log( "values.equipment_description",  values.equipment_description )}
-                                  {console.log( "values.equipment_description",  typeof(values.equipment_description) )} */}
                                   {values.equipment_description === "" ? (
                                     <span className="errorMsg">{errors.equipment_description}</span>
                                   ) : null}

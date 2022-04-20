@@ -571,14 +571,8 @@ class Departments extends Component {
                     dataField="department_name"
                     dataFormat={__htmlDecode(this)}
                   >
-                    Department
+                    Name
                   </TableHeaderColumn>
-                  {/* <TableHeaderColumn
-                    dataField="department_description"
-                    dataFormat={__htmlDecode(this)}
-                  >
-                    Description
-                  </TableHeaderColumn> */}
                   <TableHeaderColumn 
                     dataField="total_lab_technical">
                     Total Technical Labs
@@ -595,7 +589,7 @@ class Departments extends Component {
                     dataField="date_posted"
                     dataFormat={setDate(this)}
                   >
-                    Added Date
+                    Date Added
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="status"

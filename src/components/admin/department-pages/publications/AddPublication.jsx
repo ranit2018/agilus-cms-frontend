@@ -3,7 +3,6 @@
 import React, { Component } from "react";
 import { Row, Col } from "react-bootstrap";
 import { Formik, Field, Form } from "formik";
-// import { Editor } from "@tinymce/tinymce-react";
 import TinyMCE from "react-tinymce";
 import API from "../../../../shared/admin-axios";
 import * as Yup from "yup";
@@ -78,15 +77,6 @@ class AddPublication extends Component {
   }
 
   handleSubmitEvent = (values, actions) => {
-    // let postdata = {
-    //   publication_heading: values.publication_heading,
-    //   publication_description: values.publication_description,
-    //   short_name: values.short_name,
-    //   publication_image: values.publication_image,
-    //   date_posted: new Date().toLocaleString(),
-    //   status: String(values.status),
-    // };
-
     let formData = new FormData();
 
     formData.append("publication_heading", values.publication_heading);
@@ -170,9 +160,6 @@ class AddPublication extends Component {
         .max(30, "short name cannot be more than 30  characters")
         .required("Please enter short name")
         .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "short name validation field"),
-      // publication_heading: Yup.string().required(
-      //   "Please enter publication heading"
-      // ),
       publication_heading: Yup.string()
         .min(5, "please add at least five characters")
         .max(100, "publication heading cannot be more than 100  characters")
@@ -180,10 +167,6 @@ class AddPublication extends Component {
         .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "publication heading validation field"),
       publication_description: Yup.string().required("Please enter description"),
       status: Yup.number().required("Please select status"),
-      // status: Yup.string()
-      //   .trim()
-      //   .required("Please select status")
-      //   .matches(/^[0|1]$/, "Invalid status selected"),
     });
 
     return (
@@ -374,8 +357,6 @@ class AddPublication extends Component {
                                     );
                                   }}
                                 />
-                                  {/* {console.log( "values.publication_description",  values.publication_description )}
-                                  {console.log( "values.publication_description",  typeof(values.publication_description) )} */}
                                   {values.publication_description === "" ? (
                                     <span className="errorMsg">{errors.publication_description}</span>
                                   ) : null}

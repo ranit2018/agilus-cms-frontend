@@ -300,7 +300,7 @@ class DepartmentTest extends Component {
               </div>
               <div className="col-lg-12 col-sm-12 col-xs-12  topSearchSection">
                 {/* <div className="row"> */}
-                <div className="col-lg-4 col-sm-4 col-xs-4">
+                {/* <div className="col-lg-4 col-sm-4 col-xs-4">
                   <button
                     type="button"
                     className="btn btn-info btn-sm"
@@ -308,7 +308,7 @@ class DepartmentTest extends Component {
                   >
                     <i className="fas fa-plus m-r-5" /> Add Product
                   </button>
-                </div>
+                </div> */}
                 <form className="form">
                 <div className="">
                     <input
