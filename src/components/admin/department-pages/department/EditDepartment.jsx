@@ -24,6 +24,7 @@ import {
 import Layout from "../../layout/Layout";
 import Select from "react-select";
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
+import Loader from "../../../shared-components/Loader";
 
 class EditDepartment extends Component {
   constructor(props) {
@@ -444,7 +445,7 @@ class EditDepartment extends Component {
         .min(5, "please add at least five characters")
         .max(100, "department name cannot be more than 100  characters")
         .required("Please enter department name")
-        .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "department name validation field"),
+        .matches(/^[a-zA-Z'.]+( [a-zA-Z'.]+)*$/, "department name validation field"),
       department_description: Yup.string().required(
         "Please enter department description"
       ),
@@ -467,7 +468,9 @@ class EditDepartment extends Component {
     return (
       <Layout {...this.props}>
         {isLoading ? (
-          <div></div>
+          <>
+            <Loader/>
+          </>
         ) : (
           <div className="content-wrapper">
             <section className="content-header">

@@ -21,6 +21,7 @@ import {
   FILE_VALIDATION_SIZE_ERROR_MASSAGE,
 } from "../../../../shared/helper";
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
+import Loader from "../../../shared-components/Loader";
 
 class EditDoctor extends Component {
   constructor(props) {
@@ -231,7 +232,7 @@ class EditDoctor extends Component {
         .min(5, "please add at least five characters")
         .max(100, "doctor name can be maximum 100 characters")
         .required("Please enter doctor name")
-        .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "Doctor name validation field"),
+        .matches(/^[a-zA-Z'.]+( [a-zA-Z'.]+)*$/, "Doctor name validation field"),
       education:  Yup.string().required("Please enter education"),
       expertise: Yup.string().required("Please enter expetise"),
       designation: Yup.string().required("Please enter designation")
@@ -242,7 +243,9 @@ class EditDoctor extends Component {
     return (
       <Layout {...this.props}>
         {isLoading ? (
-          <div></div>
+          <>
+            <Loader/>
+          </>
         ) : (
           <div className="content-wrapper">
             <section className="content-header">

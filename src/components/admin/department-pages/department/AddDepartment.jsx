@@ -426,7 +426,7 @@ class AddDepartment extends Component {
         .min(5, "please add at least five characters")
         .max(100, "department name cannot be more than 100  characters")
         .required("Please enter department name")
-        .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "department name validation field"),
+        .matches(/^[a-zA-Z'.]+( [a-zA-Z'.]+)*$/, "department name validation field"),
       department_description: Yup.string().required(
         "Please enter department description"
       ),

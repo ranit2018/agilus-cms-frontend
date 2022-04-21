@@ -348,7 +348,14 @@ class DepartmentTest extends Component {
                   wrapperClasses="table-responsive"
                   data={this.state.productList}
                 >
-                  <TableHeaderColumn isKey dataField="product_code">
+                  <TableHeaderColumn
+                    isKey
+                    dataField="product_image"
+                    dataFormat={setProductImage(this)}
+                  >
+                    Image
+                  </TableHeaderColumn>
+                  <TableHeaderColumn  dataField="product_code">
                     Product Code
                   </TableHeaderColumn>
                   <TableHeaderColumn
@@ -361,14 +368,7 @@ class DepartmentTest extends Component {
                     dataField="type"
                     dataFormat={productType(this)}
                   >
-                    Package Type
-                  </TableHeaderColumn>
-
-                  <TableHeaderColumn
-                    dataField="product_image"
-                    dataFormat={setProductImage(this)}
-                  >
-                    Image
+                    Product Type
                   </TableHeaderColumn>
                   {/* <TableHeaderColumn
                     dataField="status"

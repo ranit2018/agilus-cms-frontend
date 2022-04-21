@@ -159,7 +159,7 @@ class AddPublication extends Component {
         .min(5, "please add at least five characters")
         .max(30, "short name cannot be more than 30  characters")
         .required("Please enter short name")
-        .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "short name validation field"),
+        .matches(/^[a-zA-Z'.]+( [a-zA-Z'.]+)*$/, "short name validation field"),
       publication_heading: Yup.string()
         .min(5, "please add at least five characters")
         .max(100, "publication heading cannot be more than 100  characters")

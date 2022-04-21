@@ -1,6 +1,6 @@
 /* eslint-disable eqeqeq */
 import React, { Component } from "react";
-import { Row, Col, Button } from "react-bootstrap";
+import { Row, Col, Button, Spinner } from "react-bootstrap";
 import { Formik, Field, Form } from "formik";
 import TinyMCE from "react-tinymce";
 import API from "../../../../shared/admin-axios";
@@ -19,6 +19,7 @@ import {
   FILE_VALIDATION_SIZE_ERROR_MASSAGE,
 } from "../../../../shared/helper";
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
+import Loader from "../../../shared-components/Loader";
 
 class EditEquipment extends Component {
   constructor(props) {
@@ -238,17 +239,27 @@ class EditEquipment extends Component {
         ),
       equipment_name: Yup.string()
         .min(5, "please add at least five characters")
-        .max(100, "equipment & instrument name cannot be more than 100 characters")
+        .max(
+          100,
+          "equipment & instrument name cannot be more than 100 characters"
+        )
         .required("Please enter equipment & instrument name")
-        .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "equipment & instrument name validation field"),
-      equipment_description: Yup.string().required("Please enter machine description"),
+        .matches(
+          /^[a-zA-Z'.]+( [a-zA-Z'.]+)*$/,
+          "equipment & instrument name validation field"
+        ),
+      equipment_description: Yup.string().required(
+        "Please enter machine description"
+      ),
       status: Yup.number().required("Please select status"),
     });
 
     return (
       <Layout {...this.props}>
         {isLoading ? (
-          <div></div>
+          <>
+            <Loader />
+          </>
         ) : (
           <div className="content-wrapper">
             <section className="content-header">
@@ -319,30 +330,53 @@ class EditEquipment extends Component {
                                   ) : null}
                                 </div>
                               </Col>
-                            </Row>
-                            <Row>
-                              <Col xs={12} sm={12} md={12}>
-                                <div className="form-group">
-                                  <label>
-                                    Equipment Name
-                                    <span className="impField">*</span>
-                                  </label>
-                                  <Field
-                                    name="equipment_name"
-                                    type="text"
-                                    className={`form-control`}
-                                    placeholder="Enter Equipment Name"
-                                    autoComplete="off"
-                                    value={values.equipment_name}
-                                  />
-                                  {errors.equipment_name &&
-                                  touched.equipment_name ? (
-                                    <span className="errorMsg">
-                                      {errors.equipment_name}
-                                    </span>
-                                  ) : null}
-                                </div>
-                              </Col>
+                              {values.type == "1" ? (
+                                <Col xs={12} sm={12} md={12}>
+                                  <div className="form-group">
+                                    <label>
+                                      Instrument Name
+                                      <span className="impField">*</span>
+                                    </label>
+                                    <Field
+                                      name="equipment_name"
+                                      type="text"
+                                      className={`form-control`}
+                                      placeholder="Enter Instrument Name"
+                                      autoComplete="off"
+                                      value={values.equipment_name}
+                                    />
+                                    {errors.equipment_name &&
+                                    touched.equipment_name ? (
+                                      <span className="errorMsg">
+                                        {errors.equipment_name}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                </Col>
+                              ) : (
+                                <Col xs={12} sm={12} md={12}>
+                                  <div className="form-group">
+                                    <label>
+                                      Equipment Name
+                                      <span className="impField">*</span>
+                                    </label>
+                                    <Field
+                                      name="equipment_name"
+                                      type="text"
+                                      className={`form-control`}
+                                      placeholder="Enter Equipment Name"
+                                      autoComplete="off"
+                                      value={values.equipment_name}
+                                    />
+                                    {errors.equipment_name &&
+                                    touched.equipment_name ? (
+                                      <span className="errorMsg">
+                                        {errors.equipment_name}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                </Col>
+                              )}
                             </Row>
                             <Row>
                               <Col xs={12} sm={12} md={12}>
@@ -445,7 +479,9 @@ class EditEquipment extends Component {
                                     }}
                                   />
                                   {values.equipment_description === "" ? (
-                                    <span className="errorMsg">{errors.equipment_description}</span>
+                                    <span className="errorMsg">
+                                      {errors.equipment_description}
+                                    </span>
                                   ) : null}
                                 </div>
                               </Col>

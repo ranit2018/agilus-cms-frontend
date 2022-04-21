@@ -93,36 +93,56 @@ const actionFormatter = (refObj) => (cell, row) => {
 };
 
 const imageFormatter = (refObj) => (cell, row) => {
-  if(row.images.length === 0)
-  {
-    return "No image"
+  if (row.images.length === 0) {
+    return "No image";
   } else {
+    let url;
+    row.images.map((val, index) => {
+      url = val.equipment_image;
+    });
     return (
-      <div className="actionStyle">
-        {row.images.map((val, index) => {
-          return (
-            <LinkWithTooltip
-              tooltip="Click to see picture"
-              href="#"
-              id="tooltip-1"
-              key={index}
-            >
-              <img
-                src={val.equipment_image}
-                alt="Equipment image"
-                height="30"
-                onClick={(e) =>
-                  refObj.imageModalShowHandler(e, val.equipment_image)
-                }
-              />
-            </LinkWithTooltip>
-          );
-        })}
-      </div>
+      <img
+        src={url}
+        alt="Equipment image"
+        height="100"
+        onClick={(e) => refObj.imageModalShowHandler(e, url)}
+      ></img>
     );
   }
-
 };
+
+//for multiple images
+// const imageFormatter = (refObj) => (cell, row) => {
+//   if(row.images.length === 0)
+//   {
+//     return "No image"
+//   } else {
+//     return (
+//       <div className="actionStyle">
+//         {row.images.map((val, index) => {
+//           return (
+//              <LinkWithTooltip
+//                tooltip="Click to see picture"
+//                href="#"
+//                id="tooltip-1"
+//                key={index}
+//              >
+//               <img
+//                 src={val.equipment_image}
+//                 alt="Equipment image"
+//                 height="30"
+//                 onClick={(e) =>
+//                   refObj.imageModalShowHandler(e, val.equipment_image)
+//                 }
+//               />
+//              </LinkWithTooltip>
+//           );
+//         })}
+//       </div>
+//     );
+//   }
+
+// };
 
 const __htmlDecode = (refObj) => (cell) => {
   return htmlDecode(cell);
@@ -453,7 +473,7 @@ class Equipment extends Component {
                       className="form-control"
                       name="equipment_name"
                       id="equipment_name"
-                      placeholder="Filter by Equipment Name"
+                      placeholder="Filter by Name"
                     />
                   </div>
                   <div className="">
@@ -520,7 +540,6 @@ class Equipment extends Component {
                   wrapperClasses="table-responsive"
                   data={this.state.equipmentDetails}
                 >
-                  
                   <TableHeaderColumn
                     isKey
                     dataField="id"
@@ -559,7 +578,7 @@ class Equipment extends Component {
                     dataFormat={setDate(this)}
                     tdStyle={{ wordBreak: "break-word" }}
                   >
-                    Post Date
+                    Date Added
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="status"

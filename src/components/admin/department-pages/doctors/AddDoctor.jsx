@@ -162,7 +162,7 @@ class AddDoctor extends Component {
         .min(5, "please add at least five characters")
         .max(100, "doctor name cannot be more than 100  characters")
         .required("Please enter doctor name")
-        .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "Doctor name validation field"),
+        .matches(/^[a-zA-Z'.]+( [a-zA-Z'.]+)*$/, "Doctor name validation field"),
       education: Yup.string().required("Please enter education"),
       expertise: Yup.string().required("Please enter expetise"),
       designation: Yup.string().required("Please enter designation")

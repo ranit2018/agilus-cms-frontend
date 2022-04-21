@@ -143,7 +143,7 @@ class AddEquipment extends Component {
   render() {
     const initialValues = {
       id: "",
-      type: "",
+      type: 1,
       equipment_name: "",
       equipment_description: "",
       equipment_image: "",
@@ -161,9 +161,9 @@ class AddEquipment extends Component {
         ),
       equipment_name: Yup.string()
         .min(5, "please add at least five characters")
-        .max(100, "equipment & instrument name cannot be more than 100 characters")
-        .required("Please enter equipment & instrument name")
-        .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "equipment & instrument name validation field"),
+        .max(100, " name cannot be more than 100 characters")
+        .required("Please enter  name")
+        .matches(/^[a-zA-Z'.]+( [a-zA-Z'.]+)*$/, "name validation field"),
       equipment_description: Yup.string().required(
         "Please enter machine description"
       ),
@@ -241,8 +241,33 @@ class AddEquipment extends Component {
                                 ) : null}
                               </div>
                             </Col>
-                          </Row>
-                          <Row>
+                          {/* </Row> */}
+                          {/* <Row> */}
+                          {values.type == "1" ? (
+
+                            <Col xs={12} sm={12} md={12}>
+                              <div className="form-group">
+                                <label>
+                                  Instrument Name
+                                  <span className="impField">*</span>
+                                </label>
+                                <Field
+                                  name="equipment_name"
+                                  type="text"
+                                  className={`form-control`}
+                                  placeholder="Enter Instrument  Name"
+                                  autoComplete="off"
+                                  value={values.equipment_name}
+                                />
+                                {errors.equipment_name &&
+                                touched.equipment_name ? (
+                                  <span className="errorMsg">
+                                    {errors.equipment_name}
+                                  </span>
+                                ) : null}
+                              </div>
+                            </Col>
+                          ) : (
                             <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
                                 <label>
@@ -265,7 +290,9 @@ class AddEquipment extends Component {
                                 ) : null}
                               </div>
                             </Col>
-                          </Row>
+                          )
+                          }
+                        </Row>
 
                           <Row>
                             <Col xs={12} sm={12} md={12}>

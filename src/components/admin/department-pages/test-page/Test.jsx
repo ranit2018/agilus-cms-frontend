@@ -1072,6 +1072,9 @@ class Test extends Component {
                                       className={`selectArowGray form-control`}
                                       autoComplete="off"
                                       value={values.type}
+                                      disabled={ this.state.product_id > 0
+                                              ? true
+                                              : false}
                                     >
                                       <option key="-1" value="">
                                         Select Product Type
@@ -1102,6 +1105,10 @@ class Test extends Component {
                                       className={`selectArowGray form-control`}
                                       autoComplete="off"
                                       value={values.city_type}
+                                      disabled={this.state.product_id > 0
+                                              ? true
+                                              : false}
+
                                       onChange={(evt) => {
                                         if (evt) {
                                           const { value } = evt.target;
@@ -1163,12 +1170,17 @@ class Test extends Component {
                                         placeholder="Select City"
                                         options={city_state_list}
                                         value={this.state.selectedCity}
+                                        disabled={this.state.product_id > 0
+                                              ? true
+                                              : false}
+
                                         onChange={(evt) => {
                                           this.setState({
                                             selectedCity: evt,
                                           });
                                           setFieldValue("cities", evt);
                                         }}
+                                        
                                       />
                                       {errors.cities && touched.cities ? (
                                         <p className="errorMsg">

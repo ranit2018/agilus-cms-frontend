@@ -100,29 +100,22 @@ const setDate = (refOBj) => (cell) => {
 };
 
 const imageFormatter = (refObj) => (cell, row) => {
-  return (
-    <div className="actionStyle">
-      {row.images.map((val, index) => {
-        return (
-          <LinkWithTooltip
-            tooltip="Click to see picture"
-            href="#"
-            id="tooltip-1"
-            key={index}
-          >
-            <img
-              src={val.equipment_image}
-              alt="Equipment image"
-              height="30"
-              onClick={(e) =>
-                refObj.imageModalShowHandler(e, val.equipment_image)
-              }
-            />
-          </LinkWithTooltip>
-        );
-      })}
-    </div>
-  );
+  if (row.images.length === 0) {
+    return "No image";
+  } else {
+    let url;
+    row.images.map((val, index) => {
+      url = val.equipment_image;
+    });
+    return (
+      <img
+        src={url}
+        alt="Equipment image"
+        height="100"
+        onClick={(e) => refObj.imageModalShowHandler(e, url)}
+      ></img>
+    );
+  }
 };
 
 class DepartmentEquipments extends Component {
@@ -339,7 +332,7 @@ class DepartmentEquipments extends Component {
             <div className="row">
               <div className="col-lg-12 col-sm-12 col-xs-12">
                 <h1>
-                  Departments Equipments & Instruments
+                  Department Equipments & Instruments
                   <small />
                 </h1>
                 <input
@@ -360,7 +353,7 @@ class DepartmentEquipments extends Component {
                       className="form-control"
                       name="equipment_name"
                       id="equipment_name"
-                      placeholder="Filter by Equipment Name"
+                      placeholder="Filter by Name"
                     />
                   </div>
 
@@ -420,12 +413,7 @@ class DepartmentEquipments extends Component {
                   data={this.state.equipmentList}
                 >
                   <TableHeaderColumn
-                    dataField="type"
-                    dataFormat={setType(this)}
-                  >
-                    Type
-                  </TableHeaderColumn>
-                  <TableHeaderColumn
+                    isKey
                     dataField="id"
                     dataAlign=""
                     width="125"
@@ -435,13 +423,18 @@ class DepartmentEquipments extends Component {
                     Image
                   </TableHeaderColumn>
                   <TableHeaderColumn
-                    isKey
+                    dataField="type"
+                    dataFormat={setType(this)}
+                  >
+                    Type
+                  </TableHeaderColumn>
+                  <TableHeaderColumn
                     dataField="equipment_name"
                     dataFormat={setName(this)}
                     width="125"
                     tdStyle={{ wordBreak: "break-word" }}
                   >
-                    Equipment & Instrument Name
+                    Name
                   </TableHeaderColumn>
 
                   <TableHeaderColumn
@@ -457,7 +450,7 @@ class DepartmentEquipments extends Component {
                     dataFormat={setDate(this)}
                     tdStyle={{ wordBreak: "break-word" }}
                   >
-                    Post Date
+                    Date Added
                   </TableHeaderColumn>
                   {/* <TableHeaderColumn
                     dataField="status"

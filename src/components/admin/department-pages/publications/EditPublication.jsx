@@ -20,6 +20,7 @@ import {
   FILE_VALIDATION_SIZE_ERROR_MASSAGE,
 } from "../../../../shared/helper";
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
+import Loader from "../../../shared-components/Loader";
 
 class EditPublication extends Component {
   constructor(props) {
@@ -232,7 +233,7 @@ class EditPublication extends Component {
         .min(5, "please add at least five characters")
         .max(30, "short name cannot be more than 30  characters")
         .required("Please enter short name")
-        .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "short name validation field"),
+        .matches(/^[a-zA-Z'.]+( [a-zA-Z'.]+)*$/, "short name validation field"),
       publication_description: Yup.string().required(
         "Please enter description"
       ),
@@ -242,7 +243,9 @@ class EditPublication extends Component {
     return (
       <Layout {...this.props}>
         {isLoading ? (
-          <div></div>
+          <>
+            <Loader/>
+          </>
         ) : (
           <div className="content-wrapper">
             <section className="content-header">
