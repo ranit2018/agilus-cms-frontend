@@ -67,7 +67,6 @@ const actionFormatter = (refObj) => (cell, row) => {
       </LinkWithTooltip>
       <LinkWithTooltip
         tooltip={"Click to change status"}
-        // clicked={(e) => refObj.chageStatus(e, cell, row.status)}
         href="#"
         id="tooltip-1"
       >
@@ -171,7 +170,6 @@ class Departments extends Component {
 
     this.state = {
       departmentList: [],
-      // departmentDetails: [],
       department_id: 0,
       isLoading: false,
       showModal: false,
@@ -235,7 +233,6 @@ class Departments extends Component {
   };
 
   getTypes() {
-    ///api/department/type?page=1&department_type=Publication
     API.get(`/api/department/type?page=1`)
       .then((res) => {
         this.setState({
@@ -270,9 +267,7 @@ class Departments extends Component {
           totalCount: Number(res.data.count),
           isLoading: false,
           search_department_name: search_department_name,
-          // search_doctors: search_doctors,
-          // search_publications: search_publications,
-          // search_equipments: search_equipments,
+        
           activePage: 1,
           remove_search: true,
         });
@@ -287,17 +282,11 @@ class Departments extends Component {
 
   clearSearch = () => {
     document.getElementById("search_department_name").value = "";
-    // document.getElementById("search_doctors").value = "";
-    // document.getElementById("search_publications").value = "";
-    // document.getElementById("search_equipments").value = "";
     document.getElementById("search_status").value = "";
 
     this.setState(
       {
         search_department_name: "",
-        // search_doctors: "",
-        // search_equipments: "",
-        // search_publications: "",
         search_status: "",
 
         remove_search: false,
@@ -385,20 +374,6 @@ class Departments extends Component {
     e.preventDefault();
     this.setState({ department_id: id });
     this.props.history.push(`/departments/edit-department/${id}`);
-
-    // API.get(`/api/department/${id}`)
-    //   .then((res) => {
-    //     this.props.history.push({
-    //       // pathname: "/departments/edit-department/" + id,
-    //       pathname: `/departments/edit-department/${id}`,
-    //       state: {
-    //         alldata: res.data.data[0],
-    //       },
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     showErrorMessage(err, this.props);
-    //   });
   }
 
   //for department doctors

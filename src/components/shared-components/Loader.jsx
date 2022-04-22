@@ -9,7 +9,6 @@ const Loader = () => {
         <FadeLoader color={"#4A90E2"} isLoading={true} size={65} />
       </div>
     </div>
-  
   );
 };
 
