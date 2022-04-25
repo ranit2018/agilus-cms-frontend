@@ -24,6 +24,8 @@ import Pagination from "react-js-pagination";
 import Layout from "../../layout/Layout";
 import dateFormat from "dateformat";
 import Switch from "react-switch";
+import Select from "react-select";
+import MultiSelect from "multiselect-react-dropdown";
 
 const __htmlDecode = (refObj) => (cell) => {
   return htmlDecode(cell);
@@ -181,6 +183,18 @@ class Departments extends Component {
         { value: "0", label: "Inactive" },
         { value: "1", label: "Active" },
       ],
+
+      // options : [
+      //   { value: 'bugatti', label: 'Bugatti' },
+      //   { value: 'ferrari', label: 'Ferrari' },
+      //   { value: 'am', label: 'Aston Martin' },
+      //   { value: 'koenigsegg', label: 'Koenigsegg' },
+      //   { value: 'bmw', label: 'BMW' },
+      //   { value: 'cadillac', label: 'Cadillac' },
+      // ],
+      // selectedOption: null,
+      // selCategories: 'php',
+
       thumbNailModal: false,
       department_name: "",
       doctors: "",
@@ -195,6 +209,7 @@ class Departments extends Component {
       search_publications: "",
       search_status: "",
       types: [],
+      // selected: [],
     };
   }
   componentDidMount() {
@@ -255,6 +270,7 @@ class Departments extends Component {
     if (search_department_name === "" && search_status === "") {
       return false;
     }
+    console.log("search_status", search_status);
 
     API.get(
       `/api/department?page=1&department_name=${encodeURIComponent(
@@ -267,7 +283,7 @@ class Departments extends Component {
           totalCount: Number(res.data.count),
           isLoading: false,
           search_department_name: search_department_name,
-        
+
           activePage: 1,
           remove_search: true,
         });
@@ -450,6 +466,20 @@ class Departments extends Component {
     }
   };
 
+  // handleonSelected = this.handleonSelected.bind(this);
+
+  // handleonSelected(event) {
+    
+  //   const selected=[];
+  //   let selectedOption=(event.target.selectedOptions);
+ 
+  //   for (let i = 0; i < selectedOption.length; i++){
+  //       selected.push(selectedOption.item(i).value)
+  //   }
+  
+  //   this.setState({selCategories: selected});
+  // }
+
   render() {
     return (
       <Layout {...this.props}>
@@ -508,6 +538,32 @@ class Departments extends Component {
                       })}
                     </select>
                   </div>
+                  
+                  {/* <div>
+                  <select multiple onChange={this.handleonSelected.bind(this)}>
+                    {
+                      this.state.options.map(item => (
+                      <option value={item.label}>{item.value}</option>
+                      ))
+                   }
+                  </select>
+                  </div> */}
+
+                  <div>
+                    <Select
+                      isMulti
+                      name="status"
+                      id="search_status"
+                      options={this.state.selectStatus}
+                      getOptionValue={(x) => x.value}
+                      getOptionLabel={(x) => x.label}
+                      noOptionsMessage={() => "No Results Found"}
+                      // className="basic-multi-select"
+                      classNamePrefix="select"
+                      placeholder="Choose status"
+                    />
+                  </div>
+
 
                   <div className="">
                     <input
@@ -548,16 +604,13 @@ class Departments extends Component {
                   >
                     Name
                   </TableHeaderColumn>
-                  <TableHeaderColumn 
-                    dataField="total_lab_technical">
+                  <TableHeaderColumn dataField="total_lab_technical">
                     Total Technical Labs
                   </TableHeaderColumn>
-                  <TableHeaderColumn 
-                    dataField="total_lab_executive">
+                  <TableHeaderColumn dataField="total_lab_executive">
                     Total Executive Labs
                   </TableHeaderColumn>
-                  <TableHeaderColumn 
-                    dataField="total_consultant_scientists">
+                  <TableHeaderColumn dataField="total_consultant_scientists">
                     Total Consultant Scientists
                   </TableHeaderColumn>
                   <TableHeaderColumn
