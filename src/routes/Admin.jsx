@@ -39,7 +39,10 @@ import EditWhyUs from "../components/admin/pages/whyus/EditWhyUs";
 import Values from "../components/admin/pages/values/Values";
 import EditValues from "../components/admin/pages/values/EditValues";
 import KeyMembers from "../components/admin/pages/keymembers/KeyMembers";
-import EditKeyMembers from "../components/admin/pages/keymembers/EditKeyMembers";
+import AddMember from "../components/admin/pages/keymembers/AddMember";
+import EditMember from "../components/admin/pages/keymembers/EditMember";
+// import EditKeyMembers from "../components/admin/pages/keymembers/EditKeyMembers";
+
 import Awards from "../components/admin/pages/awards&accreditations/Awards";
 import EditAwards from "../components/admin/pages/awards&accreditations/EditAwards";
 import EditTermsConditions from "../components/admin/pages/terms-conditions/EditTermsConditions";
@@ -72,6 +75,7 @@ import "../assets/css/all.css";
 import "../assets/css/admin-style.css";
 import "../assets/css/admin-skin-blue.css";
 import "react-bootstrap-table/dist/react-bootstrap-table.min.css";
+
 
 // Private Route for inner component
 const PrivateRoute = ({ component: RefComponent, ...rest }) => (
@@ -169,10 +173,14 @@ class Admin extends Component {
         <PrivateRoute path="/about-us/values" component={Values} />
         <PrivateRoute path="/about-us/edit-values/:id" component={EditValues} />
         <PrivateRoute path="/about-us/key-members" component={KeyMembers} />
-        <PrivateRoute
+        {/* <PrivateRoute
           path="/about-us/edit-key-members/:id"
           component={EditKeyMembers}
-        />
+        /> */}
+        <PrivateRoute path="/about-us/add-key-members" component={AddMember} />
+        <PrivateRoute path="/about-us/edit-key-member/:id" component={EditMember} />
+
+
         <PrivateRoute
           path="/about-us/awards-accreditation"
           component={Awards}

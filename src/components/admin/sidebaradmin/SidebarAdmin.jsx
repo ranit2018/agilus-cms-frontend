@@ -119,7 +119,7 @@ class SidebarAdmin extends Component {
   innerHandlePlus = (event) => {
     event.preventDefault();
     const id = event.target.getAttribute("inner-data-id");
-    console.log(id);
+    // console.log(id);
     id != this.state.innerShown
       ? this.setState({ innerShown: id })
       : this.setState({ innerShown: "" });

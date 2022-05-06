@@ -129,6 +129,7 @@ export const getHeightWidth = (file) => {
     var height;
     var width;
     reader.readAsDataURL(file);
+    console.log('file',file)
     reader.onload = function (e) {
       var image = new Image();
       image.src = e.target.result;
@@ -258,6 +259,11 @@ const resolution_arr = [
     width: `360`,
     height: `183`,
   },
+  {
+    tag: `key-members`,
+    width: `240`,
+    height: `240`,
+  }
 
 ]
 
