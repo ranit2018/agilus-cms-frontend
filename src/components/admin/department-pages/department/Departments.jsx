@@ -183,18 +183,6 @@ class Departments extends Component {
         { value: "0", label: "Inactive" },
         { value: "1", label: "Active" },
       ],
-
-      // options : [
-      //   { value: 'bugatti', label: 'Bugatti' },
-      //   { value: 'ferrari', label: 'Ferrari' },
-      //   { value: 'am', label: 'Aston Martin' },
-      //   { value: 'koenigsegg', label: 'Koenigsegg' },
-      //   { value: 'bmw', label: 'BMW' },
-      //   { value: 'cadillac', label: 'Cadillac' },
-      // ],
-      // selectedOption: null,
-      // selCategories: 'php',
-
       thumbNailModal: false,
       department_name: "",
       doctors: "",
@@ -209,7 +197,6 @@ class Departments extends Component {
       search_publications: "",
       search_status: "",
       types: [],
-      // selected: [],
     };
   }
   componentDidMount() {
@@ -466,20 +453,6 @@ class Departments extends Component {
     }
   };
 
-  // handleonSelected = this.handleonSelected.bind(this);
-
-  // handleonSelected(event) {
-    
-  //   const selected=[];
-  //   let selectedOption=(event.target.selectedOptions);
- 
-  //   for (let i = 0; i < selectedOption.length; i++){
-  //       selected.push(selectedOption.item(i).value)
-  //   }
-  
-  //   this.setState({selCategories: selected});
-  // }
-
   render() {
     return (
       <Layout {...this.props}>
@@ -538,33 +511,6 @@ class Departments extends Component {
                       })}
                     </select>
                   </div>
-                  
-                  {/* <div>
-                  <select multiple onChange={this.handleonSelected.bind(this)}>
-                    {
-                      this.state.options.map(item => (
-                      <option value={item.label}>{item.value}</option>
-                      ))
-                   }
-                  </select>
-                  </div> */}
-
-                  <div>
-                    <Select
-                      isMulti
-                      name="status"
-                      id="search_status"
-                      options={this.state.selectStatus}
-                      getOptionValue={(x) => x.value}
-                      getOptionLabel={(x) => x.label}
-                      noOptionsMessage={() => "No Results Found"}
-                      // className="basic-multi-select"
-                      classNamePrefix="select"
-                      placeholder="Choose status"
-                    />
-                  </div>
-
-
                   <div className="">
                     <input
                       type="submit"
