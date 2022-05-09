@@ -54,11 +54,6 @@ const generateHTML = (data) => {
             let uploadData = data["document"];
             if (
                 [
-                    "Company Profile",
-                    "Product Specification",
-                    "Prescription",
-                    "File",
-                    "UTM",
                     "demographic_doc",
                     "document",
                 ].includes(key)
@@ -70,7 +65,7 @@ const generateHTML = (data) => {
                             {documentArray.map((item, index) => (
                                 <Row key={item + key}>
                                     <Col xs={6} sm={6} md={6} key={key}>
-                                        {`${key} ${index + 1}`}
+                                        {`${setFieldName(key)} ${index + 1}`}
                                     </Col>
                                     <Col xs={6} sm={6} md={6}>
                                         <a target="_blank" href={item}>
@@ -87,7 +82,7 @@ const generateHTML = (data) => {
                             {documentArray.map((item, index) => (
                                 <Row key={item + key}>
                                     <Col xs={6} sm={6} md={6} key={key}>
-                                        {key}
+                                        {setFieldName(key)}
                                     </Col>
                                     <Col xs={6} sm={6} md={6}>
                                         <a target="_blank" href={item}>
@@ -103,7 +98,7 @@ const generateHTML = (data) => {
                 ret.push(
                     <Row>
                         <Col xs={6} sm={6} md={6} key={key}>
-                            {key}
+                            {setFieldName(key)}
                         </Col>
                         <Col xs={6} sm={6} md={6}>
                             {element!==""?element:"N/A"}
