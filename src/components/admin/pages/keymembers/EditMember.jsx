@@ -3,10 +3,10 @@ import { Row, Col, Button } from "react-bootstrap";
 import { Formik, Field, Form } from "formik";
 import { Editor } from "@tinymce/tinymce-react";
 import TinyMCE from "react-tinymce";
-// import API from "../../../../shared/admin-axios";
+import API from "../../../../shared/admin-axios";
 import * as Yup from "yup";
 import swal from "sweetalert";
-// import { showErrorMessage } from "../../../../shared/handle_error";
+import { showErrorMessage } from "../../../../shared/handle_error";
 import Select from "react-select";
 import {
   htmlDecode,
@@ -19,6 +19,7 @@ import {
   FILE_VALIDATION_SIZE_ERROR_MASSAGE,
 } from "../../../../shared/helper";
 import Layout from "../../layout/Layout";
+import Loader from "../../../shared-components/Loader";
 
 import TagsInput from "react-tagsinput";
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
@@ -38,6 +39,7 @@ const stringFormat = (str) => {
   return formatedString.toLowerCase();
 };
 
+
 class EditMember extends Component {
   constructor(props) {
     super(props);
@@ -47,7 +49,13 @@ class EditMember extends Component {
         { value: "0", label: "Inactive" },
         { value: "1", label: "Active" },
       ],
+
+      member_id: this.props.match.params.id,
+      alldata: [],
+      isLoading: true,
+      name: '',
     };
+    
   }
 
   fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
@@ -87,32 +95,47 @@ class EditMember extends Component {
   };
 
   componentDidMount() {
+    this.getMembersbyId(this.state.member_id);
     this.setState({
       validationMessage: generateResolutionText("KeyMember"),
       fileValidationMessage: FILE_VALIDATION_MASSAGE,
     });
   }
 
+  getMembersbyId = (id) => {
+    API.get(`/api/feed/key-members/${id}`)
+      .then((res) => {
+        this.setState({
+          alldata: res.data.data[0],
+          member_id: res.data.data[0].id,
+          isLoading: false,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  };
+
   handleSubmitEvent = (values, actions) => {
     console.log(values);
     // let formData = new FormData();
 
-    // formData.append("doctor_name", values.doctor_name);
-    // formData.append("education", values.education);
-    // formData.append("expertise", values.expertise);
+    // formData.append("name", values.name);
+    // formData.append("about", values.about);
     // formData.append("designation", values.designation);
     // formData.append("status", String(values.status));
 
-    // let url = `/api/department/doctor/${this.props.match.params.id}`;
+
+    // let url = `/api/feed/key-members/${this.props.match.params.id}`;
     // let method = "PUT";
-    // if (this.state.doctor_image) {
-    //   if (this.state.doctor_image.size > FILE_SIZE) {
+    // if (this.state.member_image) {
+    //   if (this.state.member_image.size > FILE_SIZE) {
     //     actions.setErrors({
-    //       doctor_image: FILE_VALIDATION_SIZE_ERROR_MASSAGE,
+    //       member_image: FILE_VALIDATION_SIZE_ERROR_MASSAGE,
     //     });
     //     actions.setSubmitting(false);
     //   } else {
-    //     getHeightWidth(this.state.doctor_image).then((dimension) => {
+    //     getHeightWidth(this.state.member_image).then((dimension) => {
     //       const { height, width } = dimension;
     //       const offerDimension = getResolution("keyMember");
 
@@ -122,11 +145,11 @@ class EditMember extends Component {
     //       ) {
     //         //    actions.setErrors({ file: "The file is not of desired height and width" });
     //         actions.setErrors({
-    //           doctor_image: FILE_VALIDATION_TYPE_ERROR_MASSAGE,
+    //           member_image: FILE_VALIDATION_TYPE_ERROR_MASSAGE,
     //         });
     //         actions.setSubmitting(false);
     //       } else {
-    //         formData.append("doctor_image", this.state.doctor_image);
+    //         formData.append("member_image", this.state.member_image);
 
     //         API({
     //           method: method,
@@ -141,7 +164,7 @@ class EditMember extends Component {
     //               text: "Record updated successfully.",
     //               icon: "success",
     //             }).then(() => {
-    //               this.props.history.push("/department/doctor");
+    //               this.props.history.push("/about-us/key-members");
     //             });
     //           })
     //           .catch((err) => {
@@ -173,7 +196,7 @@ class EditMember extends Component {
     //         text: "Record updated successfully.",
     //         icon: "success",
     //       }).then(() => {
-    //         this.props.history.push("/department/doctor");
+    //         this.props.history.push("/about-us/key-members");
     //       });
     //     })
     //     .catch((err) => {
@@ -191,24 +214,29 @@ class EditMember extends Component {
     // }
   };
 
+ 
+
   render() {
+    const {alldata, isLoading}  = this.state;
+    console.log('all',alldata)
+
     const initialValues = {
       member_image: "",
       designation: "",
       member_id: "",
       status: "",
-      member_name: "",
-      about_member: "",
+      name: "",
+      about: "",
     };
 
-    // const newInitialValues = {
-    //     member_image: "",
-    //     member_name: htmlDecode(alldata.member_name),
-    //     about_member: htmlDecode(alldata.about_member),
-    //     designation: htmlDecode(alldata.designation),
-    //     status: alldata.status,
-    //   };
-
+    const newInitialValues = {
+        member_image: "",
+        name: htmlDecode(alldata.name),
+        about: htmlDecode(alldata.about),
+        designation: htmlDecode(alldata.designation),
+        status: alldata.status,
+      };
+    console.log('newInitial',newInitialValues)
       
     const validateStopFlag = Yup.object().shape({
         member_image: Yup.string()
@@ -224,7 +252,7 @@ class EditMember extends Component {
             }
           }
         ),
-      member_name: Yup.string()
+      name: Yup.string()
         .min(5, "please add at least five characters")
         .max(100, "doctor name cannot be more than 100  characters")
         .required("Please enter name")
@@ -238,7 +266,7 @@ class EditMember extends Component {
           /^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/,
           "designation validation field"
         ),
-      about_member: Yup.string().required("Please enter about"),
+      about: Yup.string().required("Please enter about"),
       status: Yup.string()
         .trim()
         .required("Please select status")
@@ -247,7 +275,13 @@ class EditMember extends Component {
 
     return (
       <Layout {...this.props}>
-        <div className="content-wrapper">
+        {console.log('LOADING',isLoading)}
+        {isLoading ? (
+          <>
+            <Loader/>
+          </>
+        ) : (
+          <div className="content-wrapper">
           <section className="content-header">
             <h1>
               Edit Key Member
@@ -268,7 +302,7 @@ class EditMember extends Component {
             <div className="box">
               <div className="box-body">
                 <Formik
-                  initialValues={initialValues}
+                  initialValues={newInitialValues}
                   validationSchema={validateStopFlag}
                   onSubmit={this.handleSubmitEvent}
                 >
@@ -285,6 +319,8 @@ class EditMember extends Component {
                   }) => {
                     return (
                       <Form>
+                        {console.log({errors})}
+                        {console.log(values,'values')}
                         <div className="contBox">
                           <Row>
                             <Col xs={12} sm={12} md={12}>
@@ -294,17 +330,23 @@ class EditMember extends Component {
                                   <span className="impField">*</span>
                                 </label>
                                 <Field
-                                  name="member_name"
+                                  name="name"
                                   type="text"
                                   className={`form-control`}
-                                  placeholder="Enter member name"
+                                  placeholder="Enter name"
                                   autoComplete="off"
-                                  value={values.member_name}
+                                  value={values.name || ""}
+											            onChange={(e) => {
+                                    setFieldValue(
+                                      "name",
+                                      e.target.value
+                                    );
+                                  }}
                                 />
 
-                                {errors.member_name && touched.member_name ? (
+                                {errors.name && touched.name ? (
                                   <span className="errorMsg">
-                                    {errors.member_name}
+                                    {errors.name}
                                   </span>
                                 ) : null}
                               </div>
@@ -357,6 +399,7 @@ class EditMember extends Component {
                                   placeholder="Enter designation"
                                   autoComplete="off"
                                   value={values.designation}
+                                  // onChange={handleChange}
                                 />
                                 {errors.designation && touched.designation ? (
                                   <span className="errorMsg">
@@ -381,7 +424,8 @@ class EditMember extends Component {
                                   style={{ display: "none" }}
                                 />
                                 <TinyMCE
-                                  name="about_member"
+                                  name="about"
+                                  content={values.about}
                                   config={{
                                     menubar: false,
                                     branding: false,
@@ -426,15 +470,15 @@ class EditMember extends Component {
                                   }}
                                   onChange={(e) => {
                                     setFieldValue(
-                                      "about_member",
+                                      "about",
                                       e.target.getContent()
                                     );
                                   }}
                                 />
 
-                                {values.about_member === "" ? (
+                                {values.about === "" ? (
                                   <span className="errorMsg">
-                                    {errors.about_member}
+                                    {errors.about}
                                   </span>
                                 ) : null}
                               </div>
@@ -499,6 +543,9 @@ class EditMember extends Component {
             </div>
           </section>
         </div>
+        )
+        }
+        
       </Layout>
     );
   }

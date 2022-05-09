@@ -11,10 +11,10 @@ import {
 } from "react-bootstrap";
 import { Formik, Field, Form } from "formik";
 // import { Editor } from "@tinymce/tinymce-react";
-// import API from "../../../shared/admin-axios";
+import API from "../../../../shared/admin-axios";
 import * as Yup from "yup";
 import swal from "sweetalert";
-// import { showErrorMessage } from "../../../shared/handle_error";
+import { showErrorMessage } from "../../../../shared/handle_error";
 import Pagination from "react-js-pagination";
 import { htmlDecode } from "../../../../shared/helper";
 import Select from "react-select";
@@ -59,6 +59,7 @@ function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
 }
 
 const actionFormatter = (refObj) => (cell, row) => {
+  console.log('cell',cell)
   return (
     <div className="actionStyle">
       <LinkWithTooltip
@@ -140,7 +141,7 @@ class KeyMembers extends Component {
         { value: "1", label: "Active" },
       ],
       thumbNailModal: false,
-      member_name: "",
+      name: "",
       status: "",
     };
   }
@@ -149,27 +150,28 @@ class KeyMembers extends Component {
   }
 
   getKeyMemberList = (page = 1) => {
-    // let member_name = this.state.member_name;
-    // let status = this.state.status;
+    let name = this.state.name;
+    let status = this.state.status;
 
-    // API.get(
-    //   `/api/blog?page=${page}&blog_title=${encodeURIComponent(
-    //     blog_title
-    //   )}&status=${encodeURIComponent(status)}`
-    // )
-    //   .then((res) => {
-    //     this.setState({
-    //       keyMembers: res.data.data,
-    //       totalCount: Number(res.data.count),
-    //       isLoading: false,
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     this.setState({
-    //       isLoading: false,
-    //     });
-    //     showErrorMessage(err, this.props);
-    //   });
+    API.get(
+      `/api/feed/key-members?page=${page}&name=${encodeURIComponent(
+        name
+      )}&status=${encodeURIComponent(status)}`
+    )
+      .then((res) => {
+        console.log('res',res.data.data)
+        this.setState({
+          keyMembers: res.data.data,
+          totalCount: Number(res.data.count),
+          isLoading: false,
+        });
+      })
+      .catch((err) => {
+        this.setState({
+          isLoading: false,
+        });
+        showErrorMessage(err, this.props);
+      });
   };
 
   editKeyMember(e, id) {
@@ -181,51 +183,51 @@ class KeyMembers extends Component {
   keyMemberSearch = (e) => {
     e.preventDefault();
 
-    // const member_name = document.getElementById("member_name").value;
-    // const status = document.getElementById("status").value;
+    const name = document.getElementById("name").value;
+    const status = document.getElementById("status").value;
 
-    // if (member_name === "" && status === "") {
-    //   return false;
-    // }
-    // API.get(
-    //   `/api/blog?page=1&member_name=${encodeURIComponent(
-    //     member_name
-    //   )}&status=${encodeURIComponent(status)}`
-    // )
-    //   .then((res) => {
-    //     this.setState({
-    //       keyMembers: res.data.data,
-    //       totalCount: Number(res.data.count),
-    //       isLoading: false,
-    //       member_name: member_name,
-    //       status: status,
-    //       activePage: 1,
-    //       remove_search: true,
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     this.setState({
-    //       isLoading: false,
-    //     });
-    //     showErrorMessage(err, this.props);
-    //   });
+    if (name === "" && status === "") {
+      return false;
+    }
+    API.get(
+      `/api/feed/key-members?page=1&name=${encodeURIComponent(
+        name
+      )}&status=${encodeURIComponent(status)}`
+    )
+      .then((res) => {
+        this.setState({
+          keyMembers: res.data.data,
+          totalCount: Number(res.data.count),
+          isLoading: false,
+          name: name,
+          status: status,
+          activePage: 1,
+          remove_search: true,
+        });
+      })
+      .catch((err) => {
+        this.setState({
+          isLoading: false,
+        });
+        showErrorMessage(err, this.props);
+      });
   };
 
   clearSearch = () => {
-    // document.getElementById("member_name").value = "";
-    // document.getElementById("status").value = "";
+    document.getElementById("name").value = "";
+    document.getElementById("status").value = "";
 
-    // this.setState(
-    //   {
-    //     member_namemember_name: "",
-    //     status: "",
-    //     remove_search: false,
-    //   },
-    //   () => {
-    //     this.setState({ activePage: 1 });
-    //     this.getKeyMemberList();
-    //   }
-    // );
+    this.setState(
+      {
+        name: "",
+        status: "",
+        remove_search: false,
+      },
+      () => {
+        this.setState({ activePage: 1 });
+        this.getKeyMemberList();
+      }
+    );
   };
 
   confirmDelete = (event, id) => {
@@ -245,45 +247,46 @@ class KeyMembers extends Component {
   };
 
   deleteKeyMmember = (id) => {
-    // API.delete(`/api/blog/${id}`)
-    //   .then((res) => {
-    //     swal({
-    //       closeOnClickOutside: false,
-    //       title: "Success",
-    //       text: "Record deleted successfully.",
-    //       icon: "success",
-    //     }).then(() => {
-    //       this.getKeyMemberList(this.state.activePage);
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     if (err.data.status === 3) {
-    //       this.setState({ closeModal: true });
-    //       showErrorMessage(err, this.props);
-    //     }
-    //   });
+    API.delete(`/api/feed/key-members/${id}`)
+      .then((res) => {
+        swal({
+          closeOnClickOutside: false,
+          title: "Success",
+          text: "Record deleted successfully.",
+          icon: "success",
+        }).then(() => {
+          this.getKeyMemberList(this.state.activePage);
+        });
+      })
+      .catch((err) => {
+        if (err.data.status === 3) {
+          this.setState({ closeModal: true });
+          showErrorMessage(err, this.props);
+        }
+      });
   };
 
   chageStatus = (cell, status) => {
-    // API.put(`/api/blog/change_status/${cell}`, {
-    //   status: status == 1 ? String(0) : String(1),
-    // })
-    //   .then((res) => {
-    //     swal({
-    //       closeOnClickOutside: false,
-    //       title: "Success",
-    //       text: "Record updated successfully.",
-    //       icon: "success",
-    //     }).then(() => {
-    //       this.getKeyMemberList(this.state.activePage);
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     if (err.data.status === 3) {
-    //       this.setState({ closeModal: true });
-    //       showErrorMessage(err, this.props);
-    //     }
-    //   });
+    console.log('id',cell , status)
+    API.put(`/api/feed/key-members/change_status/${cell}`, {
+      status: status == 1 ? String(0) : String(1),
+    })
+      .then((res) => {
+        swal({
+          closeOnClickOutside: false,
+          title: "Success",
+          text: "Record updated successfully.",
+          icon: "success",
+        }).then(() => {
+          this.getKeyMemberList(this.state.activePage);
+        });
+      })
+      .catch((err) => {
+        if (err.data.status === 3) {
+          this.setState({ closeModal: true });
+          showErrorMessage(err, this.props);
+        }
+      });
   };
 
   imageModalShowHandler = (url) => {
@@ -329,8 +332,8 @@ class KeyMembers extends Component {
                   <div className="">
                     <input
                       className="form-control"
-                      name="member-name"
-                      id="member_name"
+                      name="name"
+                      id="name"
                       placeholder="Filter by Member Name"
                     />
                   </div>
@@ -375,7 +378,7 @@ class KeyMembers extends Component {
                 <BootstrapTable data={this.state.keyMembers}>
                   <TableHeaderColumn
                     isKey
-                    dataField="member_name"
+                    dataField="name"
                     dataFormat={__htmlDecode(this)}
                   >
                     Name
@@ -392,12 +395,12 @@ class KeyMembers extends Component {
                   >
                     Designation
                   </TableHeaderColumn>
-                  <TableHeaderColumn
-                    dataField="description"
+                  {/* <TableHeaderColumn
+                    dataField="about"
                     dataFormat={__htmlDecode(this)}
                   >
                     About
-                  </TableHeaderColumn>
+                  </TableHeaderColumn> */}
                   <TableHeaderColumn
                     dataField="date_added"
                     dataFormat={setDate(this)}

@@ -4393,6 +4393,15 @@ text-align: center;
 .form-control.auto{width: auto;}
 
 
+/* Key Member page Loader */
+.form-loader { display: block; align-items: center; position:absolute; left: 50%!important; top: 40%; }
 
+@media (max-width: 767px) {
+  .form-loader { display: block; align-items: center; position:absolute; left: 38%!important; top: 40%; }
+}
+
+@media (max-width: 991px) {
+  .form-loader { display: block; align-items: center; position:absolute; left: 38%!important; top: 40%; }
+}
 
 

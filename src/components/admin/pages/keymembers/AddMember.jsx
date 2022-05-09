@@ -146,6 +146,8 @@ class AddMember extends Component {
                 showErrorMessage(err, this.props);
               } else {
                 actions.setErrors(err.data.errors);
+              actions.setSubmitting(false);
+
               }
             });
         }
