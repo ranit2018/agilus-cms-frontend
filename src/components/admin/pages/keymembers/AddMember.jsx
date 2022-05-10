@@ -171,12 +171,12 @@ class AddMember extends Component {
           "Only files with the following extensions are allowed: png jpg jpeg",
           () => this.state.isValidFile
         ), 
-      member_name: Yup.string()
+      member_name: Yup.string().trim()
       .min(5, "please add at least five characters")
         .max(100, "name cannot be more than 100  characters")
       .required("Please enter name")
       .matches(/^[a-zA-Z'.]+( [a-zA-Z'.]+)*$/, "Member name validation field"),
-      designation: Yup.string().required("Please enter designation")
+      designation: Yup.string().trim().required("Please enter designation")
       .matches(/^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/, "designation validation field"),
       about_member: Yup.string().required("Please enter about"),
       status: Yup.string()

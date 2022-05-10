@@ -1,13 +1,13 @@
+/* eslint-disable eqeqeq */
 import React, { Component } from "react";
-import { Row, Col, Button } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import { Formik, Field, Form } from "formik";
-import { Editor } from "@tinymce/tinymce-react";
+// import { Editor } from "@tinymce/tinymce-react";
 import TinyMCE from "react-tinymce";
 import API from "../../../../shared/admin-axios";
 import * as Yup from "yup";
 import swal from "sweetalert";
 import { showErrorMessage } from "../../../../shared/handle_error";
-import Select from "react-select";
 import {
   htmlDecode,
   getHeightWidth,
@@ -21,23 +21,7 @@ import {
 import Layout from "../../layout/Layout";
 import Loader from "../../../shared-components/Loader";
 
-import TagsInput from "react-tagsinput";
 import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
-
-const stringFormat = (str) => {
-  str = str.replace(/[-[\]{}@'!*+?.,/;\\^$|#\s]/g, " ");
-  str = str.split(" ");
-  const strArr = [];
-  console.log(str);
-
-  for (let i in str) {
-    if (str[i] !== "") {
-      strArr.push(str[i]);
-    }
-  }
-  const formatedString = strArr.join("-");
-  return formatedString.toLowerCase();
-};
 
 
 class EditMember extends Component {
@@ -97,7 +81,7 @@ class EditMember extends Component {
   componentDidMount() {
     this.getMembersbyId(this.state.member_id);
     this.setState({
-      validationMessage: generateResolutionText("KeyMember"),
+      validationMessage: generateResolutionText("key-members"),
       fileValidationMessage: FILE_VALIDATION_MASSAGE,
     });
   }
@@ -117,117 +101,118 @@ class EditMember extends Component {
   };
 
   handleSubmitEvent = (values, actions) => {
-    console.log(values);
-    // let formData = new FormData();
+    console.log('submit',values);
+    let formData = new FormData();
 
-    // formData.append("name", values.name);
-    // formData.append("about", values.about);
-    // formData.append("designation", values.designation);
-    // formData.append("status", String(values.status));
+    formData.append("name", values.name);
+    formData.append("about", values.about);
+    formData.append("designation", values.designation);
+    formData.append("status", String(values.status));
 
 
-    // let url = `/api/feed/key-members/${this.props.match.params.id}`;
-    // let method = "PUT";
-    // if (this.state.member_image) {
-    //   if (this.state.member_image.size > FILE_SIZE) {
-    //     actions.setErrors({
-    //       member_image: FILE_VALIDATION_SIZE_ERROR_MASSAGE,
-    //     });
-    //     actions.setSubmitting(false);
-    //   } else {
-    //     getHeightWidth(this.state.member_image).then((dimension) => {
-    //       const { height, width } = dimension;
-    //       const offerDimension = getResolution("keyMember");
+    let url = `/api/feed/key-members/${this.props.match.params.id}`;
+    let method = "PUT";
+    if (this.state.member_image) {
+      if (this.state.member_image.size > FILE_SIZE) {
+        actions.setErrors({
+          member_image: FILE_VALIDATION_SIZE_ERROR_MASSAGE,
+        });
+        actions.setSubmitting(false);
+      } else {
+        getHeightWidth(this.state.member_image).then((dimension) => {
+          const { height, width } = dimension;
+          const offerDimension = getResolution("key-members");
 
-    //       if (
-    //         height != offerDimension.height ||
-    //         width != offerDimension.width
-    //       ) {
-    //         //    actions.setErrors({ file: "The file is not of desired height and width" });
-    //         actions.setErrors({
-    //           member_image: FILE_VALIDATION_TYPE_ERROR_MASSAGE,
-    //         });
-    //         actions.setSubmitting(false);
-    //       } else {
-    //         formData.append("member_image", this.state.member_image);
+          if (
+            height != offerDimension.height ||
+            width != offerDimension.width
+          ) {
+            //    actions.setErrors({ file: "The file is not of desired height and width" });
+            actions.setErrors({
+              member_image: FILE_VALIDATION_TYPE_ERROR_MASSAGE,
+            });
+            actions.setSubmitting(false);
+          } else {
+            formData.append("member_image", this.state.member_image);
 
-    //         API({
-    //           method: method,
-    //           url: url,
-    //           data: formData,
-    //         })
-    //           .then((res) => {
-    //             this.setState({ showModal: false });
-    //             swal({
-    //               closeOnClickOutside: false,
-    //               title: "Success",
-    //               text: "Record updated successfully.",
-    //               icon: "success",
-    //             }).then(() => {
-    //               this.props.history.push("/about-us/key-members");
-    //             });
-    //           })
-    //           .catch((err) => {
-    //             this.setState({ showModalLoader: false });
-    //             if (err.data.status === 3) {
-    //               this.setState({
-    //                 showModal: false,
-    //               });
-    //               showErrorMessage(err, this.props);
-    //             } else {
-    //               actions.setErrors(err.data.errors);
-    //               actions.setSubmitting(false);
-    //             }
-    //           });
-    //       }
-    //     });
-    //   }
-    // } else {
-    //   API({
-    //     method: method,
-    //     url: url,
-    //     data: formData,
-    //   })
-    //     .then((res) => {
-    //       this.setState({ showModal: false });
-    //       swal({
-    //         closeOnClickOutside: false,
-    //         title: "Success",
-    //         text: "Record updated successfully.",
-    //         icon: "success",
-    //       }).then(() => {
-    //         this.props.history.push("/about-us/key-members");
-    //       });
-    //     })
-    //     .catch((err) => {
-    //       this.setState({ showModalLoader: false });
-    //       if (err.data.status === 3) {
-    //         this.setState({
-    //           showModal: false,
-    //         });
-    //         showErrorMessage(err, this.props);
-    //       } else {
-    //         actions.setErrors(err.data.errors);
-    //         actions.setSubmitting(false);
-    //       }
-    //     });
-    // }
+            API({
+              method: method,
+              url: url,
+              data: formData,
+            })
+              .then((res) => {
+                this.setState({ showModal: false });
+                swal({
+                  closeOnClickOutside: false,
+                  title: "Success",
+                  text: "Record updated successfully.",
+                  icon: "success",
+                }).then(() => {
+                  this.props.history.push("/about-us/key-members");
+                });
+              })
+              .catch((err) => {
+                console.log('err',err)
+                this.setState({ showModalLoader: false });
+                if (err.data.status === 3) {
+                  this.setState({
+                    showModal: false,
+                  });
+                  showErrorMessage(err, this.props);
+                } else {
+                  actions.setErrors(err.data.errors);
+                  actions.setSubmitting(false);
+                }
+              });
+          }
+        });
+      }
+    } else {
+      API({
+        method: method,
+        url: url,
+        data: formData,
+      })
+        .then((res) => {
+          this.setState({ showModal: false });
+          swal({
+            closeOnClickOutside: false,
+            title: "Success",
+            text: "Record updated successfully.",
+            icon: "success",
+          }).then(() => {
+            this.props.history.push("/about-us/key-members");
+          });
+        })
+        .catch((err) => {
+          console.log('err',err)
+          this.setState({ showModalLoader: false });
+          if (err.data.status === 3) {
+            this.setState({
+              showModal: false,
+            });
+            showErrorMessage(err, this.props);
+          } else {
+            actions.setErrors(err.data.errors);
+            actions.setSubmitting(false);
+          }
+        });
+    }
   };
 
  
 
   render() {
     const {alldata, isLoading}  = this.state;
-    console.log('all',alldata)
 
-    const initialValues = {
-      member_image: "",
-      designation: "",
-      member_id: "",
-      status: "",
-      name: "",
-      about: "",
-    };
+    // const initialValues = {
+    //   member_image: "",
+    //   designation: "",
+    //   member_id: "",
+    //   status: "",
+    //   name: "",
+    //   about: "",
+    // };
 
     const newInitialValues = {
         member_image: "",
@@ -236,7 +221,6 @@ class EditMember extends Component {
         designation: htmlDecode(alldata.designation),
         status: alldata.status,
       };
-    console.log('newInitial',newInitialValues)
       
     const validateStopFlag = Yup.object().shape({
         member_image: Yup.string()
@@ -252,7 +236,7 @@ class EditMember extends Component {
             }
           }
         ),
-      name: Yup.string()
+      name: Yup.string().trim()
         .min(5, "please add at least five characters")
         .max(100, "doctor name cannot be more than 100  characters")
         .required("Please enter name")
@@ -260,12 +244,12 @@ class EditMember extends Component {
           /^[a-zA-Z'.]+( [a-zA-Z'.]+)*$/,
           "Member name validation field"
         ),
-      designation: Yup.string()
-        .required("Please enter designation")
-        .matches(
-          /^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/,
-          "designation validation field"
-        ),
+      designation: Yup.string().trim()
+        .required("Please enter designation"),
+        // .matches(
+        //   /^([A-Za-z0-9_(),&@!?#'-.\/]+\s?)*$/,
+        //   "designation validation field"
+        // ),
       about: Yup.string().required("Please enter about"),
       status: Yup.string()
         .trim()
@@ -275,7 +259,6 @@ class EditMember extends Component {
 
     return (
       <Layout {...this.props}>
-        {console.log('LOADING',isLoading)}
         {isLoading ? (
           <>
             <Loader/>
@@ -319,8 +302,8 @@ class EditMember extends Component {
                   }) => {
                     return (
                       <Form>
-                        {console.log({errors})}
-                        {console.log(values,'values')}
+                        {/* {console.log({errors})}
+                        {console.log(values,'values')} */}
                         <div className="contBox">
                           <Row>
                             <Col xs={12} sm={12} md={12}>
@@ -336,6 +319,7 @@ class EditMember extends Component {
                                   placeholder="Enter name"
                                   autoComplete="off"
                                   value={values.name || ""}
+                                  // onChange={(event)=>setFieldValue('name',event.target.value)}
 											            onChange={(e) => {
                                     setFieldValue(
                                       "name",

@@ -59,7 +59,6 @@ function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
 }
 
 const actionFormatter = (refObj) => (cell, row) => {
-  console.log('cell',cell)
   return (
     <div className="actionStyle">
       <LinkWithTooltip
@@ -159,7 +158,6 @@ class KeyMembers extends Component {
       )}&status=${encodeURIComponent(status)}`
     )
       .then((res) => {
-        console.log('res',res.data.data)
         this.setState({
           keyMembers: res.data.data,
           totalCount: Number(res.data.count),

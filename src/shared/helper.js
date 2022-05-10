@@ -129,7 +129,6 @@ export const getHeightWidth = (file) => {
     var height;
     var width;
     reader.readAsDataURL(file);
-    console.log('file',file)
     reader.onload = function (e) {
       var image = new Image();
       image.src = e.target.result;
