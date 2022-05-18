@@ -529,8 +529,8 @@ class AddAccordion extends Component {
     this.setState({ selProducts: new_arr }, () => {
       this.getHtmlSIW(this.state.selProducts);
     });
-  };
-
+  }
+  /** changed **/
   getProductDataByCode = (search_name) => {
     return new Promise((resolve, reject) => {
       let payload = {
@@ -538,10 +538,26 @@ class AddAccordion extends Component {
       };
       SRL_API.post(`/feed/code-search`, payload)
       .then((res) => {
-        if (res.data && res.data.data && res.data.data.length > 0) {
-          const searchDetails = res.data.data[0];
-          resolve(searchDetails);
-        }
+        if(res.data && res.data.data && res.data.data.length > 0){
+          if(res.data.data.CITY_NM != null){
+            const searchDetails = res.data.data[0];
+            resolve(searchDetails);
+          }else{
+            swal({
+              closeOnClickOutside: true,
+              title: "Error",
+              text: `This Product is in-active on SRL, You can't update the Content`,
+              icon: "error",
+            });
+          }
+      }else{
+        swal({
+          closeOnClickOutside: true,
+          title: "Error",
+          text: `This Product is in-active on SRL, You can't update the Content.`,
+          icon: "error",
+        });
+      }
       })
       .catch((error) => {
         console.log(error);
@@ -551,6 +567,7 @@ class AddAccordion extends Component {
   }
 
   handleSubmitEvent = async (values, actions) => {
+    // console.log('values',values)
     const { selectedValue, NewAccordionDetails } = this.state;
 
     let swiData = this.state.selProducts;
@@ -561,6 +578,7 @@ class AddAccordion extends Component {
 
     let err = 0;
     for (let index = 0; index < swiData.length; index++) {
+
       const element = swiData[index];
       element.common_err = "";
       let err_arr = [];
@@ -597,7 +615,9 @@ class AddAccordion extends Component {
         scrollTo("top");
         actions.setSubmitting(false);
       });
+     
     } else {
+  
       for (var i = 0; i < swiData.length; i++) {
         contentarray.push({
           title: swiData[i].type === "1" ? swiData[i].newTitle : "",
@@ -626,7 +646,7 @@ class AddAccordion extends Component {
         product_city: product_city, 
         product_id: NewAccordionDetails.product_id,
       };
-
+      
       API({
         method: method,
         url: url,
