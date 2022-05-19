@@ -548,6 +548,8 @@ class AddAccordion extends Component {
               title: "Error",
               text: `This Product is in-active on SRL, You can't update the Content`,
               icon: "error",
+            }).then(() => {
+              this.props.history.push("/product-details/accordion");
             });
           }
       }else{
@@ -556,6 +558,8 @@ class AddAccordion extends Component {
           title: "Error",
           text: `This Product is in-active on SRL, You can't update the Content.`,
           icon: "error",
+        }).then(() => {
+          this.props.history.push("/product-details/accordion");
         });
       }
       })
