@@ -539,7 +539,7 @@ class AddAccordion extends Component {
       SRL_API.post(`/feed/code-search`, payload)
       .then((res) => {
         if(res.data && res.data.data && res.data.data.length > 0){
-          if(res.data.data.CITY_NM != null){
+          if(res.data.data[0].CITY_NM != null){
             const searchDetails = res.data.data[0];
             resolve(searchDetails);
           }else{
