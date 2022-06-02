@@ -28,8 +28,6 @@ const stringFormat = (str) => {
   str = str.replace(/[-[\]{}@'!*+?.,/;\\^$|#\s]/g, " ");
   str = str.split(" ");
   const strArr = [];
-  console.log(str);
-
   for (let i in str) {
     if (str[i] !== "") {
       strArr.push(str[i]);
@@ -476,7 +474,7 @@ class EditBlog extends Component {
                                   style={{ display: "none" }}
                                 />
                                 <Editor
-                                  initialValue={values.content}
+                                  value={values.content}
                                   init={{
                                     height: 500,
                                     menubar: false,
@@ -503,10 +501,10 @@ class EditBlog extends Component {
                                           var file = input.files[0];
                                           var reader = new FileReader();
                                           reader.onload = function (e) {
-                                            console.log(
-                                              "name",
-                                              e.target.result
-                                            );
+                                            // console.log(
+                                            //   "name",
+                                            //   e.target.result
+                                            // );
                                             callback(e.target.result, {
                                               alt: file.name,
                                             });

@@ -25,8 +25,6 @@ const stringFormat = (str) => {
   str = str.replace(/[-[\]{}@'!*+?.,/;\\^$|#\s]/g, " ");
   str = str.split(" ");
   const strArr = [];
-  console.log(str);
-
   for (let i in str) {
     if (str[i] !== "") {
       strArr.push(str[i]);
@@ -92,7 +90,6 @@ class AddBlog extends Component {
   }
 
   handleSubmitEvent = (values, actions) => {
-    console.log(values);
     let method = "POST";
     let url = "/api/blog";
     const formData = new FormData();
@@ -102,7 +99,6 @@ class AddBlog extends Component {
         formData.append("category_id", values.category_id[i]);
       }
     } else {
-      console.log("else");
       formData.append("category_id[]", values.category_id);
     }
     formData.append("keywords", values.keywords.toString());
@@ -425,7 +421,7 @@ class AddBlog extends Component {
                                   style={{ display: "none" }}
                                 />
                                 <Editor
-                                  initialValue={values.content}
+                                  value={values.content}
                                   init={{
                                     height: 500,
                                     menubar: false,
@@ -452,10 +448,10 @@ class AddBlog extends Component {
                                           var file = input.files[0];
                                           var reader = new FileReader();
                                           reader.onload = function (e) {
-                                            console.log(
-                                              "name",
-                                              e.target.result
-                                            );
+                                            // console.log(
+                                            //   "name",
+                                            //   e.target.result
+                                            // );
                                             callback(e.target.result, {
                                               alt: file.name,
                                             });
