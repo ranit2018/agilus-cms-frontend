@@ -144,14 +144,49 @@ class AddAccordion extends Component {
     });
   };
 
-  handleSWI = (event, index, key) => {
-    let value = "";
-    if (event.target.getContent) {
-      value = event.target.getContent();
-    } else {
-      value = event.target.value;
-    }
+  // handleSWI = (event, index, key) => {
+  //   let value = "";
+  //   if (event.target.getContent) {
+  //     value = event.target.getContent();
+  //   } else {
+  //     value = event.target.value;
+  //   }
+  //   console.log("getContent",event.target.getContent())
+  //   console.log("value: ",event.target.value)
+  //   console.log("selProduct",this.state.selProducts)
+  //   let prev_state = this.state.selProducts;
+  //   prev_state[index].common_err = "";
 
+  //   if (key === "type") {
+  //     prev_state[index].type = value;
+  //   }
+  //   if (key === "newTitle") {
+  //     prev_state[index].newTitle = value;
+  //   }
+
+  //   if (key === "newContent") {
+  //     prev_state[index].newContent = value;
+  //   }
+  //   if (key === "newDescription") {
+  //     prev_state[index].newDescription = value;
+  //   }
+
+  //   this.setState({ selProducts: prev_state }, () => {
+  //     this.getHtmlSIW(prev_state);
+  //   });
+  // };
+
+  handleSWI = (val, index, key,event) => {
+    let value=""
+    if(event){
+      if (event.target.getContent) {
+        value = event.target.getContent();
+      } else {
+        value = event.target.value;
+      }
+    }else{
+      value=val;
+    }
     let prev_state = this.state.selProducts;
     prev_state[index].common_err = "";
 
@@ -179,7 +214,6 @@ class AddAccordion extends Component {
     let htmlData = [];
     for (let index = 0; index < theState.length; index++) {
       const element = theState[index];
-      console.log("element>>", element);
       htmlData.push(
         <div
           className="sampleCheckSec addMoreSec"
@@ -209,7 +243,7 @@ class AddAccordion extends Component {
               className={`selectArowGray form-control`}
               autoComplete="off"
               onChange={(e) => {
-                this.handleSWI(e, index, "type");
+                this.handleSWI("", index, "type",e);
               }}
               value={element.type}
             >
@@ -239,7 +273,7 @@ class AddAccordion extends Component {
                   autoComplete="off"
                   value={element.newTitle}
                   onChange={(e) => {
-                    this.handleSWI(e, index, "newTitle");
+                    this.handleSWI("", index, "newTitle",e);
                   }}
                 />
               </div>
@@ -249,7 +283,7 @@ class AddAccordion extends Component {
                   <span className="impField">*</span>
                 </label>
                 <Editor
-                  initialValue={element.newContent}
+                  value={element.newContent}
                   init={{
                     height: 250,
                     menubar: false,
@@ -281,8 +315,8 @@ class AddAccordion extends Component {
                     },
                     paste_data_images: true,
                   }}
-                  onChange={(e) => {
-                    this.handleSWI(e, index, "newContent");
+                  onEditorChange={(value)=>{
+                    this.handleSWI(value,index,"newContent")
                   }}
                 />
               </div>
@@ -370,7 +404,7 @@ class AddAccordion extends Component {
                 </label>
 
                 <Editor
-                  initialValue={element.newDescription}
+                  value={element.newDescription}
                   init={{
                     height: 250,
                     menubar: false,
@@ -402,8 +436,8 @@ class AddAccordion extends Component {
                     },
                     paste_data_images: true,
                   }}
-                  onChange={(e) => {
-                    this.handleSWI(e, index, "newDescription");
+                  onEditorChange={(value)=>{
+                    this.handleSWI(value,index,"newDescription")
                   }}
                 />
               </div>
@@ -564,7 +598,7 @@ class AddAccordion extends Component {
       }
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
         resolve(null);
       });
     })
@@ -832,7 +866,7 @@ class AddAccordion extends Component {
               value="Change Ordering"
               className="btn btn-primary btn-sm"
               onClick={() => {
-                console.log('this.state.selProducts', this.state.selProducts);
+                // console.log('this.state.selProducts', this.state.selProducts);
                 this.setState({ openPopup: true });
               }}
               style={{ right: "83px", position: "absolute", top: "13px" }}
