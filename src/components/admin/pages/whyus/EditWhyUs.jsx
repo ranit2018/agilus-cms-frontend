@@ -130,7 +130,7 @@ class EditWhyUs extends Component {
                                                                 </label>
                                                                 <input id="my-file" type='file' name="my-file" style={{ display: "none" }}  />
                                                                 <Editor
-                                                                    initialValue={values.content}
+                                                                    value={values.content}
                                                                     init={{
                                                                         height: 500,
                                                                         menubar: false,
