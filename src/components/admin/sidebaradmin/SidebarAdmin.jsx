@@ -217,7 +217,7 @@ class SidebarAdmin extends Component {
               </Link>{" "}
             </li>
           )}
-          {this.props.path_name === "/center-currentoffers" ? (
+          {/* {this.props.path_name === "/center-currentoffers" ? (
             <li className="active">
               {" "}
               <Link to="/center-currentoffers">
@@ -233,7 +233,128 @@ class SidebarAdmin extends Component {
                 <i className="fa fa-rss"></i> <span> Current Offers </span>
               </Link>{" "}
             </li>
-          )}
+          )} */}
+          <li className={rotate == "6" ? "treeview active" : "treeview"}>
+            <Link to="#" data-id="6" onClick={this.handlePlus}>
+              <i
+                className="fas fa-certificate sub-menu"
+                data-id="6"
+                onClick={this.handlePlus}
+              ></i>{" "}
+              <span data-id="6" onClick={this.handlePlus}>
+                Partner Page{" "}
+              </span>
+              <span className="pull-right-container">
+                <i
+                  data-id="6"
+                  onClick={this.handlePlus}
+                  className={
+                    rotate == "6"
+                      ? "fa pull-right fa-minus"
+                      : "fa pull-right fa-plus"
+                  }
+                ></i>
+              </span>
+            </Link>
+
+            <ul className="treeview-menu">
+              {this.props.path_name === "/partner-page/aboutus" ? (
+                <li className="active">
+                  {" "}
+                  <Link to="/partner-page/aboutus">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> About Us </span>
+                  </Link>{" "}
+                </li>
+              ) : (
+                <li>
+                  {" "}
+                  <Link to="/partner-page/aboutus">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> About Us </span>
+                  </Link>{" "}
+                </li>
+              )}
+            </ul>
+            <ul className="treeview-menu">
+              {this.props.path_name === "/partner-page/amenities" ? (
+                <li className="active">
+                  {" "}
+                  <Link to="/partner-page/amenities">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> Amenities </span>
+                  </Link>{" "}
+                </li>
+              ) : (
+                <li>
+                  {" "}
+                  <Link to="/partner-page/amenities">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> Amenities </span>
+                  </Link>{" "}
+                </li>
+              )}
+            </ul>
+            <ul className="treeview-menu">
+              {this.props.path_name === "/partner-page/services" ? (
+                <li className="active">
+                  {" "}
+                  <Link to="/partner-page/services">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> Services </span>
+                  </Link>{" "}
+                </li>
+              ) : (
+                <li>
+                  {" "}
+                  <Link to="/partner-page/services">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> Services </span>
+                  </Link>{" "}
+                </li>
+              )}
+            </ul>
+            <ul className="treeview-menu">
+              {this.props.path_name === "/partner-page/center-images" ? (
+                <li className="active">
+                  {" "}
+                  <Link to="/partner-page/center-images">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> Center Images </span>
+                  </Link>{" "}
+                </li>
+              ) : (
+                <li>
+                  {" "}
+                  <Link to="/partner-page/center-images">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> Center Images </span>
+                  </Link>{" "}
+                </li>
+              )}
+            </ul>
+            <ul className="treeview-menu">
+              {this.props.path_name === "/partner-page/current-offers" ? (
+                <li className="active">
+                  {" "}
+                  <Link to="/partner-page/current-offers">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> Current Offers </span>
+                  </Link>{" "}
+                </li>
+              ) : (
+                <li>
+                  {" "}
+                  <Link to="/partner-page/current-offers">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> Current Offers </span>
+                  </Link>{" "}
+                </li>
+              )}
+            </ul>
+            
+          </li>
+    
           {this.props.path_name === "/events" ? (
             <li className="active">
               {" "}

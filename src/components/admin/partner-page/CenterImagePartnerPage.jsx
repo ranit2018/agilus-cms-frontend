@@ -31,9 +31,12 @@ import {
   FILE_SIZE,
   FILE_VALIDATION_SIZE_ERROR_MASSAGE,
 } from "../../../shared/helper";
+import Autosuggest from "react-autosuggest";
 const initialValues = {
   status:"",
   offer_image:"",
+  labId:"",
+  heading:"",
 };
 const __htmlDecode = (refObj) => (cell) => {
   return ReactHtmlParser(htmlDecode(cell));
@@ -116,14 +119,14 @@ const actionFormatter = (refObj) => (cell, row) => {
     </div>
   );
 };
-class CenterCurrentOffers extends Component {
+class CenterImagePartnerPage extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       CurrentOffersList: [],
       offerDetail: {},
-      offerId: 0,
+      offerEditType: 0,
       isLoading: false,
       showModal: false,
       thumbNailModal: false,
@@ -135,6 +138,9 @@ class CenterCurrentOffers extends Component {
         { value: "0", label: "Inactive" },
         { value: "1", label: "Active" },
       ],
+      suggestions:[],
+      labIdValue:"",
+      selectedLabIdValue:"",
     };
   }
 
@@ -147,7 +153,7 @@ class CenterCurrentOffers extends Component {
           CurrentOffersList: res.data.data,
           totalCount: res.data.count,
           isLoading: false,
-          offerId: 0,
+          offerEditType: 0,
         });
       })
       .catch((err) => {
@@ -200,7 +206,7 @@ class CenterCurrentOffers extends Component {
         this.setState({
           showModal: true,
           offerDetail: res.data.data[0],
-          offerId: id,
+          offerEditType: id,
         });
       })
       .catch((err) => {
@@ -257,7 +263,7 @@ class CenterCurrentOffers extends Component {
             data: formData,
           })
             .then((res) => {
-              this.setState({ showModal: false, file: "" });
+              this.setState({ showModal: false, file: "",suggestions:[] });
               swal({
                 closeOnClickOutside: false,
                 title: "Success",
@@ -272,6 +278,7 @@ class CenterCurrentOffers extends Component {
                 closeModal: true,
                 showModalLoader: false,
                 file: "",
+                suggestions:[]
               });
               if (err.data.status === 3) {
                 showErrorMessage(err, this.props);
@@ -288,7 +295,7 @@ class CenterCurrentOffers extends Component {
   handleSubmitEventUpdate = (values, actions) => {
     let formData = new FormData();
     formData.append("status", values.status);
-    let url = `/api/center/offers/${this.state.offerId}`;
+    let url = `/api/center/offers/${this.state.offerEditType}`;
     let method = "PUT";
 
     if (this.state.file) {
@@ -314,7 +321,7 @@ class CenterCurrentOffers extends Component {
               data: formData,
             })
               .then((res) => {
-                this.setState({ showModal: false });
+                this.setState({ showModal: false,suggestions:[] });
                 swal({
                   closeOnClickOutside: false,
                   title: "Success",
@@ -325,7 +332,7 @@ class CenterCurrentOffers extends Component {
                 });
               })
               .catch((err) => {
-                this.setState({ closeModal: true, showModalLoader: false });
+                this.setState({ closeModal: true, showModalLoader: false,suggestions:[] });
                 if (err.data.status === 3) {
                   showErrorMessage(err, this.props);
                 } else {
@@ -343,7 +350,7 @@ class CenterCurrentOffers extends Component {
         data: formData,
       })
         .then((res) => {
-          this.setState({ showModal: false });
+          this.setState({ showModal: false,suggestions:[] });
           swal({
             closeOnClickOutside: false,
             title: "Success",
@@ -354,7 +361,7 @@ class CenterCurrentOffers extends Component {
           });
         })
         .catch((err) => {
-          this.setState({ closeModal: true, showModalLoader: false });
+          this.setState({ closeModal: true, showModalLoader: false,suggestions:[] });
           if (err.data.status === 3) {
             showErrorMessage(err, this.props);
           } else {
@@ -373,7 +380,7 @@ class CenterCurrentOffers extends Component {
   }
 
   modalCloseHandler = () => {
-    this.setState({ offerDetail: {}, offerId: 0, showModal: false });
+    this.setState({ offerDetail: {}, offerEditType: 0, showModal: false,suggestion:[] });
   };
 
   modalShowHandler = (event, id) => {
@@ -381,7 +388,7 @@ class CenterCurrentOffers extends Component {
     if (id) {
       this.getCurrentOffersDetails(id);
     } else {
-      this.setState({ offerDetail: {}, offerId: 0, showModal: true });
+      this.setState({ offerDetail: {}, offerEditType: 0, showModal: true,suggestion:[] });
     }
   };
 
@@ -449,12 +456,15 @@ class CenterCurrentOffers extends Component {
     e.preventDefault();
 
     const search_by_status = document.getElementById("status").value;
+    const search_lab_code = document.getElementById(
+      "search_lab_code"
+    ).value;
 
-    if (search_by_status === "") {
+    if (search_by_status === "" && search_lab_code === "") {
       return false;
     }
     API.get(
-      `/api/center/offers?page=1&status=${search_by_status}`
+      `/api/center/offers?page=1&status=${search_by_status}&lab_id=${encodeURIComponent(search_lab_code)}`
     )
       .then((res) => {
         this.setState({
@@ -487,8 +497,72 @@ class CenterCurrentOffers extends Component {
       }
     );
   };
+
+  onSuggestionsFetchRequested = ({ value }) => {
+    if (value && value.length >= 3) {
+      let payload = {
+        //  city_id:location.value,
+        search_name: value.toUpperCase(),
+      };
+
+      API.post(`/feed/code-search-autocomplete`, payload)
+        .then((res) => {
+          const suggestion_list = res.data.data;
+          this.setState({
+            suggestions: suggestion_list.length > 0 ? suggestion_list : [],
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+          this.setState({ suggestions: [] });
+        });
+    } else {
+      this.setState({ suggestions: [] });
+    }
+  };
+
+  onSuggestionsClearRequested = () => {};
+
+  getSuggestionValue = (suggestion) => suggestion.label;
+
+  renderSuggestion = (suggestion) => <span>{suggestion.label}</span>;
+
+  onChangeAutoSuggest = (event, { newValue }) => {
+    this.setState({ labIdValue: newValue });
+  };
+
+  handleSearchLab = (event) => {
+    if (event.key === "Enter") {
+      event.target.blur();
+      // history.push(`/health-packages/search/${stringToSlug(location.city_name)}/${encodeURIComponent(value)}`);
+    }
+  };
+
+  onSuggestionSelected = (event, { suggestion, method }, setFieldTouched) => {
+    if (method === "click" || method === "enter") {
+      let payload = {
+        search_name: suggestion.value.toUpperCase(),
+      };
+      API.post(`/feed/code-search`, payload)
+        .then((res) => {
+          if (res.data && res.data.data && res.data.data.length > 0) {
+            const searchDetails = res.data.data[0];
+            this.setState({ selectedLabIdValue: searchDetails }, () => {
+              setFieldTouched("labId");
+            });
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          this.setState({ selectedLabIdValue: "" }, () => {
+            setFieldTouched("labId");
+          });
+        });
+    }
+  };
+
   render() {
-    const { offerDetail } = this.state;
+    const { offerDetail,selectedLabIdValue } = this.state;
     const newInitialValues = Object.assign(initialValues, {
       status:
         offerDetail.status || +offerDetail.status === 0
@@ -504,31 +578,41 @@ class CenterCurrentOffers extends Component {
           "Only files with the following extensions are allowed: png jpg jpeg",
           () => this.state.isValidFile
         ),
+      labId: Yup.string()
+        .test("labId", "Please select a Lab Id", () => {
+          return selectedLabIdValue && selectedLabIdValue !== "";
+        }),
+        // .test(
+        //   "pro",
+        //   "Only packages are allowed for selected product type",
+        //   () => this.state.validProduct
+        // ),
       status: Yup.string()
         .trim()
         .required("Please select status")
         .matches(/^[0|1]$/, "Invalid status selected"),
+      title: Yup.string().required("Please enter the title"),
     });
 
-    const validateStopFlagUpdate = Yup.object().shape({
-      file: Yup.string()
-        .notRequired()
-        .test(
-          "image",
-          "Only files with the following extensions are allowed: png jpg jpeg",
-          (file) => {
-            if (file) {
-              return this.state.isValidFile;
-            } else {
-              return true;
-            }
-          }
-        ),
-      status: Yup.string()
-        .trim()
-        .required("Please select status")
-        .matches(/^[0|1]$/, "Invalid status selected"),
-    });
+    // const validateStopFlagUpdate = Yup.object().shape({
+    //   file: Yup.string()
+    //     .notRequired()
+    //     .test(
+    //       "image",
+    //       "Only files with the following extensions are allowed: png jpg jpeg",
+    //       (file) => {
+    //         if (file) {
+    //           return this.state.isValidFile;
+    //         } else {
+    //           return true;
+    //         }
+    //       }
+    //     ),
+    //   status: Yup.string()
+    //     .trim()
+    //     .required("Please select status")
+    //     .matches(/^[0|1]$/, "Invalid status selected"),
+    // });
 
     return (
       <Layout {...this.props}>
@@ -537,7 +621,7 @@ class CenterCurrentOffers extends Component {
             <div className="row">
               <div className="col-lg-12 col-sm-12 col-xs-12">
                 <h1>
-                  Manage Current Offers
+                  Manage Center Images
                   <small />
                 </h1>
               </div>
@@ -549,7 +633,7 @@ class CenterCurrentOffers extends Component {
                     className="btn btn-info btn-sm"
                     onClick={(e) => this.modalShowHandler(e, "")}
                   >
-                    <i className="fas fa-plus m-r-5" /> Add Offer
+                    <i className="fas fa-plus m-r-5" /> Add Center Image
                   </button>
                 </div>
 
@@ -568,6 +652,11 @@ class CenterCurrentOffers extends Component {
                             })}
                         </select>
                   </div>
+                  <input
+                      className="form-control"
+                      id="search_lab_code"
+                      placeholder="Filter by Lab Id"
+                    />
 
                   <div className="">
                     <input
@@ -603,12 +692,22 @@ class CenterCurrentOffers extends Component {
                     Image
                   </TableHeaderColumn>
                   <TableHeaderColumn
+                    dataField="labId"
+                  >
+                    Lab Id
+                  </TableHeaderColumn>
+                  <TableHeaderColumn
                     dataField="status"
                     dataFormat={custStatus(this)}
                   >
                     Status
                   </TableHeaderColumn>
-
+                  <TableHeaderColumn
+                    dataField="title"
+                    dataFormat={__htmlDecode(this)}
+                  >
+                    Title
+                  </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="id"
                     dataFormat={actionFormatter(this)}
@@ -644,13 +743,9 @@ class CenterCurrentOffers extends Component {
                 >
                   <Formik
                     initialValues={newInitialValues}
-                    validationSchema={
-                      this.state.offerId > 0
-                        ? validateStopFlagUpdate
-                        : validateStopFlag
-                    }
+                    validationSchema={validateStopFlag}
                     onSubmit={
-                      this.state.offerId > 0
+                      this.state.offerEditType > 0
                         ? this.handleSubmitEventUpdate
                         : this.handleSubmitEventAdd
                     }
@@ -680,9 +775,9 @@ class CenterCurrentOffers extends Component {
                           )}
                           <Modal.Header closeButton>
                             <Modal.Title>
-                              {this.state.offerId > 0
-                                ? "Edit Current Offers"
-                                : "Add Current Offers"}
+                              {this.state.offerEditType > 0
+                                ? "Edit Center Images"
+                                : "Add Center Images"}
                             </Modal.Title>
                           </Modal.Header>
                           <Modal.Body>
@@ -735,11 +830,86 @@ class CenterCurrentOffers extends Component {
                               </Row> */}
 
                               <Row>
+                              <Col xs={12} sm={12} md={12}>
+                              <div className="form-group">
+                                <label>
+                                  Search Product
+                                  <span className="impField">*</span>
+                                </label>
+                                <div className="position-relative">
+                                  <Autosuggest
+                                    suggestions={this.state.suggestions}
+                                    onSuggestionsFetchRequested={(req) => {
+                                      this.onSuggestionsFetchRequested(req);
+                                      setFieldTouched("labId");
+                                    }}
+                                    onSuggestionsClearRequested={() => {
+                                      this.onSuggestionsClearRequested();
+                                      this.setState({
+                                        selectedValue: "",
+                                      });
+                                    }}
+                                    getSuggestionValue={this.getSuggestionValue}
+                                    renderSuggestion={this.renderSuggestion}
+                                    focusInputOnSuggestionClick={false}
+                                    inputProps={{
+                                      style: {
+                                        width: "100%",
+                                        textTransform: "uppercase",
+                                        display: "block",
+                                        width: "100%",
+                                        height: "34px",
+                                        padding: "6px 12px",
+                                        fontSize: "14px",
+                                        lineHeight: "1.42857143",
+                                        color: "#555555",
+                                        backgroundColor: "#fff",
+                                        backgroundImage: "none",
+                                        border: "1px solid #d2d6de",
+                                      },
+                                      placeholder: "Enter Product Code",
+
+                                      value: this.state.labIdValue,
+                                      onChange: this.onChangeAutoSuggest,
+                                      onKeyDown: this.handleSearchLab,
+                                      onBlur: () => setFieldTouched("labId"),
+                                      disabled: this.state.selectedLabIdValue != "",
+                                    }}
+                                    onSuggestionSelected={(event, req) => {
+                                      this.onSuggestionSelected(
+                                        event,
+                                        req,
+                                        setFieldTouched
+                                      );
+                                      // setTimeout(() => {
+                                      //   setFieldTouched("labId", true)
+                                      // }, 230);
+                                    }}
+                                    container="form-control"
+                                  />
+                                  {this.state.selectedLabIdValue !== "" ? (
+                                    <button
+                                      className="crossBtn btn btn-danger pull-right"
+                                      onClick={() =>
+                                        this.handleAutoSuggestClick()
+                                      }
+                                    >
+                                      X
+                                    </button>
+                                  ) : null}
+                                </div>
+                                {errors.labId && touched.labId ? (
+                                  <span className="errorMsg">
+                                    {errors.labId}
+                                  </span>
+                                ) : null}
+                              </div>
+                            </Col>
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
                                       Upload Image
-                                      {this.state.offerId > 0 ? null : (
+                                      {this.state.offerEditType > 0 ? null : (
                                         <span className="impField">*</span>
                                       )}
                                       <br />{" "}
@@ -770,6 +940,29 @@ class CenterCurrentOffers extends Component {
                                   </div>
                                 </Col>
                               </Row>
+                              <Row>
+                                <Col xs={12} sm={12} md={12}>
+                                    <div className="form-group">
+                                        <label>
+                                            Title
+                                        <span className="impField">*</span>
+                                        </label>
+                                        <Field
+                                            name="title"
+                                            type="text"
+                                            className={`form-control`}
+                                            placeholder="Enter Title"
+                                            autoComplete="off"
+                                            value={values.title}
+                                        />
+                                        {errors.title && touched.title ? (
+                                            <span className="errorMsg">
+                                                {errors.title}
+                                            </span>
+                                        ) : null}
+                                    </div>
+                                </Col>
+                            </Row>
 
                               <Row>
                                 <Col xs={12} sm={12} md={12}>
@@ -814,7 +1007,7 @@ class CenterCurrentOffers extends Component {
                                 isValid ? (isSubmitting ? true : false) : true
                               }
                             >
-                              {this.state.offerId > 0
+                              {this.state.offerEditType > 0
                                 ? isSubmitting
                                   ? "Updating..."
                                   : "Update"
@@ -864,4 +1057,4 @@ class CenterCurrentOffers extends Component {
     );
   }
 }
-export default CenterCurrentOffers;
+export default CenterImagePartnerPage;
