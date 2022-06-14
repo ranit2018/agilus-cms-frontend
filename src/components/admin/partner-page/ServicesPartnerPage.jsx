@@ -453,15 +453,14 @@ class ServicesPartnerPage extends Component {
     }
   };
 
-  CurrentOffersSearch = (e) => {
+  ServicesSearch = (e) => {
     e.preventDefault();
 
     const search_by_status = document.getElementById("status").value;
-    const search_lab_code = document.getElementById(
-      "search_lab_code"
-    ).value;
+    const search_lab_code = document.getElementById("search_lab_code").value;
+    const search_by_title = document.getElementById("search_service_title").value
 
-    if (search_by_status === "" && search_lab_code === "") {
+    if (search_by_status === "" && search_lab_code === "" && search_by_title) {
       return false;
     }
     API.get(
@@ -654,18 +653,26 @@ class ServicesPartnerPage extends Component {
                             })}
                         </select>
                   </div>
+                  <div className="">
+                  <input
+                      className="form-control"
+                      id="search_service_title"
+                      placeholder="Filter by Service Title"
+                    />
+                  </div>
+                  <div className="">
                   <input
                       className="form-control"
                       id="search_lab_code"
                       placeholder="Filter by Lab Id"
                     />
-
+                  </div>
                   <div className="">
                     <input
                       type="submit"
                       value="Search"
                       className="btn btn-warning btn-sm"
-                      onClick={(e) => this.CurrentOffersSearch(e)}
+                      onClick={(e) => this.ServicesSearch(e)}
                     />
                     
                     {this.state.remove_search ? (
