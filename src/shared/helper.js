@@ -259,10 +259,25 @@ const resolution_arr = [
     height: `183`,
   },
   {
-    tag: `center-current-offers`,
+    tag: `partner-current-offers`,
     width: `360`,
     height: `183`,
   },
+  {
+    tag: `partner-center-images`,
+    width: `360`,
+    height: `183`,
+  },
+  {
+    tag: `partner-services`,
+    width: `360`,
+    height: `183`,
+  },
+  {
+    tag: `partner-amenities`,
+    width: `360`,
+    height: `183`,
+  }
 
 ]
 

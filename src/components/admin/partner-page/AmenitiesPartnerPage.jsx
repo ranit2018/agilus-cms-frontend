@@ -127,7 +127,7 @@ class AmenitiesPartnerPage extends Component {
     this.state = {
       AmenitiesList: [],
       amenityDetail: {},
-      offerEditType: 0,
+      amenitiesEditType: 0,
       isLoading: false,
       showModal: false,
       thumbNailModal: false,
@@ -154,7 +154,7 @@ class AmenitiesPartnerPage extends Component {
           AmenitiesList: res.data.data,
           totalCount: res.data.count,
           isLoading: false,
-          offerEditType: 0,
+          amenitiesEditType: 0,
         });
       })
       .catch((err) => {
@@ -207,7 +207,7 @@ class AmenitiesPartnerPage extends Component {
         this.setState({
           showModal: true,
           amenityDetail: res.data.data[0],
-          offerEditType: id,
+          amenitiesEditType: id,
         });
       })
       .catch((err) => {
@@ -296,7 +296,7 @@ class AmenitiesPartnerPage extends Component {
   handleSubmitEventUpdate = (values, actions) => {
     let formData = new FormData();
     formData.append("status", values.status);
-    let url = `/api/center/offers/${this.state.offerEditType}`;
+    let url = `/api/center/offers/${this.state.amenitiesEditType}`;
     let method = "PUT";
 
     if (this.state.file) {
@@ -375,13 +375,13 @@ class AmenitiesPartnerPage extends Component {
   componentDidMount() {
     this.getAmenitiesList();
     this.setState({
-      validationMessage: generateResolutionText("center-current-offers"),
+      validationMessage: generateResolutionText("partner-amenities"),
       fileValidationMessage: FILE_VALIDATION_MASSAGE,
     });
   }
 
   modalCloseHandler = () => {
-    this.setState({ amenityDetail: {}, offerEditType: 0, showModal: false,suggestion:[] });
+    this.setState({ amenityDetail: {}, amenitiesEditType: 0, showModal: false,suggestion:[] });
   };
 
   modalShowHandler = (event, id) => {
@@ -389,7 +389,7 @@ class AmenitiesPartnerPage extends Component {
     if (id) {
       this.getCurrentOffersDetails(id);
     } else {
-      this.setState({ amenityDetail: {}, offerEditType: 0, showModal: true,suggestion:[] });
+      this.setState({ amenityDetail: {}, amenitiesEditType: 0, showModal: true,suggestion:[] });
     }
   };
 
@@ -760,7 +760,7 @@ class AmenitiesPartnerPage extends Component {
                     initialValues={newInitialValues}
                     validationSchema={validateStopFlag}
                     onSubmit={
-                      this.state.offerEditType > 0
+                      this.state.amenitiesEditType > 0
                         ? this.handleSubmitEventUpdate
                         : this.handleSubmitEventAdd
                     }
@@ -790,7 +790,7 @@ class AmenitiesPartnerPage extends Component {
                           )}
                           <Modal.Header closeButton>
                             <Modal.Title>
-                              {this.state.offerEditType > 0
+                              {this.state.amenitiesEditType > 0
                                 ? "Edit Amenities"
                                 : "Add Amenities"}
                             </Modal.Title>
@@ -924,7 +924,7 @@ class AmenitiesPartnerPage extends Component {
                                   <div className="form-group">
                                     <label>
                                       Upload Image
-                                      {this.state.offerEditType > 0 ? null : (
+                                      {this.state.amenitiesEditType > 0 ? null : (
                                         <span className="impField">*</span>
                                       )}
                                       <br />{" "}
@@ -1047,7 +1047,7 @@ class AmenitiesPartnerPage extends Component {
                                 isValid ? (isSubmitting ? true : false) : true
                               }
                             >
-                              {this.state.offerEditType > 0
+                              {this.state.amenitiesEditType > 0
                                 ? isSubmitting
                                   ? "Updating..."
                                   : "Update"

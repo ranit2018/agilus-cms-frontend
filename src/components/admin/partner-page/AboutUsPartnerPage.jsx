@@ -126,7 +126,7 @@ class AboutUsPartnerPage extends Component {
     this.state = {
       AboutUsList: [],
       AboutUsDetail: {},
-      offerEditType: 0,
+      abousUsEditType: 0,
       isLoading: false,
       showModal: false,
       thumbNailModal: false,
@@ -153,7 +153,7 @@ class AboutUsPartnerPage extends Component {
           AboutUsList: res.data.data,
           totalCount: res.data.count,
           isLoading: false,
-          offerEditType: 0,
+          abousUsEditType: 0,
         });
       })
       .catch((err) => {
@@ -206,7 +206,7 @@ class AboutUsPartnerPage extends Component {
         this.setState({
           showModal: true,
           AboutUsDetail: res.data.data[0],
-          offerEditType: id,
+          abousUsEditType: id,
         });
       })
       .catch((err) => {
@@ -239,148 +239,80 @@ class AboutUsPartnerPage extends Component {
   handleSubmitEventAdd = (values, actions) => {
     let formData = new FormData();
     // formData.append("title", values.title);
-    // formData.append("content", values.content);
+    formData.append("content", values.content);
     formData.append("status", values.status);
     let url = `api/center/offers/`;
     let method = "POST";
-
-    if (this.state.file.size > FILE_SIZE) {
-      actions.setErrors({ file: FILE_VALIDATION_SIZE_ERROR_MASSAGE });
-      actions.setSubmitting(false);
-    } else {
-      getHeightWidth(this.state.file).then((dimension) => {
-        const { height, width } = dimension;
-        const offerDimension = getResolution("center-current-offers");
-        if (height != offerDimension.height || width != offerDimension.width) {
-          //    actions.setErrors({ file: "The file is not of desired height and width" });
-          actions.setErrors({ file: FILE_VALIDATION_TYPE_ERROR_MASSAGE });
-          actions.setSubmitting(false);
-        } else {
-          formData.append("center_offers", this.state.file);
-          API({
-            method: method,
-            url: url,
-            data: formData,
-          })
-            .then((res) => {
-              this.setState({ showModal: false, file: "",suggestions:[] });
-              swal({
-                closeOnClickOutside: false,
-                title: "Success",
-                text: "Added Successfully",
-                icon: "success",
-              }).then(() => {
-                this.getAboutUsList();
-              });
-            })
-            .catch((err) => {
-              this.setState({
-                closeModal: true,
-                showModalLoader: false,
-                file: "",
-                suggestions:[]
-              });
-              if (err.data.status === 3) {
-                showErrorMessage(err, this.props);
-              } else {
-                actions.setErrors(err.data.errors);
-                actions.setSubmitting(false);
-              }
-            });
-        }
+   API({
+    method: method,
+    url: url,
+    data: formData,
+   })
+    .then((res) => {
+      this.setState({ showModal: false, file: "",suggestions:[] });
+      swal({
+        closeOnClickOutside: false,
+        title: "Success",
+        text: "Added Successfully",
+        icon: "success",
+      }).then(() => {
+        this.getAboutUsList();
       });
-    }
+    })
+    .catch((err) => {
+      this.setState({
+        closeModal: true,
+        showModalLoader: false,
+        file: "",
+        suggestions:[]
+      });
+      if (err.data.status === 3) {
+        showErrorMessage(err, this.props);
+      } else {
+        actions.setErrors(err.data.errors);
+        actions.setSubmitting(false);
+      }
+    });
   };
 
   handleSubmitEventUpdate = (values, actions) => {
     let formData = new FormData();
     formData.append("status", values.status);
-    let url = `/api/center/offers/${this.state.offerEditType}`;
+    let url = `/api/center/offers/${this.state.abousUsEditType}`;
     let method = "PUT";
-
-    if (this.state.file) {
-      if (this.state.file.size > FILE_SIZE) {
-        actions.setErrors({ file: FILE_VALIDATION_SIZE_ERROR_MASSAGE });
-        actions.setSubmitting(false);
+    API({
+      method: method,
+      url: url,
+      data: formData,
+    })
+    .then((res) => {
+      this.setState({ showModal: false,suggestions:[] });
+      swal({
+        closeOnClickOutside: false,
+        title: "Success",
+        text: "Updated Successfully",
+        icon: "success",
+      }).then(() => {
+        this.getAboutUsList();
+      });
+    })
+    .catch((err) => {
+      this.setState({ closeModal: true, showModalLoader: false,suggestions:[] });
+      if (err.data.status === 3) {
+        showErrorMessage(err, this.props);
       } else {
-        getHeightWidth(this.state.file).then((dimension) => {
-          const { height, width } = dimension;
-          const offerDimension = getResolution("center-current-offers");
-          if (
-            height != offerDimension.height ||
-            width != offerDimension.width
-          ) {
-            //    actions.setErrors({ file: "The file is not of desired height and width" });
-            actions.setErrors({ file: FILE_VALIDATION_TYPE_ERROR_MASSAGE });
-            actions.setSubmitting(false);
-          } else {
-            formData.append("center_offers", this.state.file);
-            API({
-              method: method,
-              url: url,
-              data: formData,
-            })
-              .then((res) => {
-                this.setState({ showModal: false,suggestions:[] });
-                swal({
-                  closeOnClickOutside: false,
-                  title: "Success",
-                  text: "Updated Successfully",
-                  icon: "success",
-                }).then(() => {
-                  this.getAboutUsList();
-                });
-              })
-              .catch((err) => {
-                this.setState({ closeModal: true, showModalLoader: false,suggestions:[] });
-                if (err.data.status === 3) {
-                  showErrorMessage(err, this.props);
-                } else {
-                  actions.setErrors(err.data.errors);
-                  actions.setSubmitting(false);
-                }
-              });
-          }
-        });
+        actions.setErrors(err.data.errors);
+        actions.setSubmitting(false);
       }
-    } else {
-      API({
-        method: method,
-        url: url,
-        data: formData,
-      })
-        .then((res) => {
-          this.setState({ showModal: false,suggestions:[] });
-          swal({
-            closeOnClickOutside: false,
-            title: "Success",
-            text: "Updated Successfully",
-            icon: "success",
-          }).then(() => {
-            this.getAboutUsList();
-          });
-        })
-        .catch((err) => {
-          this.setState({ closeModal: true, showModalLoader: false,suggestions:[] });
-          if (err.data.status === 3) {
-            showErrorMessage(err, this.props);
-          } else {
-            actions.setErrors(err.data.errors);
-            actions.setSubmitting(false);
-          }
-        });
-    }
+    });
   };
+
   componentDidMount() {
     this.getAboutUsList();
-    this.setState({
-      validationMessage: generateResolutionText("center-current-offers"),
-      fileValidationMessage: FILE_VALIDATION_MASSAGE,
-    });
   }
 
   modalCloseHandler = () => {
-    this.setState({ AboutUsDetail: {}, offerEditType: 0, showModal: false,suggestion:[] });
+    this.setState({ AboutUsDetail: {}, abousUsEditType: 0, showModal: false,suggestion:[] });
   };
 
   modalShowHandler = (event, id) => {
@@ -388,69 +320,69 @@ class AboutUsPartnerPage extends Component {
     if (id) {
       this.getAboutUsDetails(id);
     } else {
-      this.setState({ AboutUsDetail: {}, offerEditType: 0, showModal: true,suggestion:[] });
+      this.setState({ AboutUsDetail: {}, abousUsEditType: 0, showModal: true,suggestion:[] });
     }
   };
 
-  imageModalShowHandler = (url) => {
-    console.log(url);
-    this.setState({ thumbNailModal: true, banner_url: url });
-  };
-  imageModalCloseHandler = () => {
-    this.setState({ thumbNailModal: false, banner_url: "" });
-  };
+  // imageModalShowHandler = (url) => {
+  //   console.log(url);
+  //   this.setState({ thumbNailModal: true, banner_url: url });
+  // };
+  // imageModalCloseHandler = () => {
+  //   this.setState({ thumbNailModal: false, banner_url: "" });
+  // };
   handlePageChange = (pageNumber) => {
     this.setState({ activePage: pageNumber });
     this.getAboutUsList(pageNumber > 0 ? pageNumber : 1);
   };
-  fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
-    //console.log(event.target.files);
-    setFieldTouched("file");
-    setFieldValue("file", event.target.value);
-    const SUPPORTED_FORMATS = ["image/png", "image/jpeg", "image/jpg"];
-    if (!event.target.files[0]) {
-      //Supported
-      this.setState({
-        file: "",
-        isValidFile: true,
-      });
-      return;
-    }
-    if (
-      event.target.files[0] &&
-      SUPPORTED_FORMATS.includes(event.target.files[0].type)
-    ) {
-      //Supported
-      this.setState({
-        file: event.target.files[0],
-        isValidFile: true,
-      });
-    } else {
-      //Unsupported
-      setErrors({
-        file: "Only files with the following extensions are allowed: png jpg jpeg",
-      }); //Not working- So Added validation in "yup"
-      this.setState({
-        file: "",
-        isValidFile: false,
-      });
-    }
-  };
+  // fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
+  //   //console.log(event.target.files);
+  //   setFieldTouched("file");
+  //   setFieldValue("file", event.target.value);
+  //   const SUPPORTED_FORMATS = ["image/png", "image/jpeg", "image/jpg"];
+  //   if (!event.target.files[0]) {
+  //     //Supported
+  //     this.setState({
+  //       file: "",
+  //       isValidFile: true,
+  //     });
+  //     return;
+  //   }
+  //   if (
+  //     event.target.files[0] &&
+  //     SUPPORTED_FORMATS.includes(event.target.files[0].type)
+  //   ) {
+  //     //Supported
+  //     this.setState({
+  //       file: event.target.files[0],
+  //       isValidFile: true,
+  //     });
+  //   } else {
+  //     //Unsupported
+  //     setErrors({
+  //       file: "Only files with the following extensions are allowed: png jpg jpeg",
+  //     }); //Not working- So Added validation in "yup"
+  //     this.setState({
+  //       file: "",
+  //       isValidFile: false,
+  //     });
+  //   }
+  // };
 
-  setCurrentOfferImage = (refObj) => (cell, row) => {
-    if (row.offer_image !== null) {
-      return (
-        <img
-          src={row.offer_image}
-          alt="Current Offers Image"
-          height="100"
-          onClick={(e) => refObj.imageModalShowHandler(row.offer_image)}
-        ></img>
-      );
-    } else {
-      return null;
-    }
-  };
+  // setCurrentOfferImage = (refObj) => (cell, row) => {
+  //   if (row.offer_image !== null) {
+  //     return (
+  //       <img
+  //         src={row.offer_image}
+  //         alt="Current Offers Image"
+  //         height="100"
+  //         onClick={(e) => refObj.imageModalShowHandler(row.offer_image)}
+  //       ></img>
+  //     );
+  //   } else {
+  //     return null;
+  //   }
+  // };
 
   AboutUsSearch = (e) => {
     e.preventDefault();
@@ -574,11 +506,6 @@ class AboutUsPartnerPage extends Component {
         .test("labId", "Please select a Lab Id", () => {
           return selectedLabIdValue && selectedLabIdValue !== "";
         }),
-        // .test(
-        //   "pro",
-        //   "Only packages are allowed for selected product type",
-        //   () => this.state.validProduct
-        // ),
       status: Yup.string()
         .trim()
         .required("Please select status")
@@ -586,26 +513,6 @@ class AboutUsPartnerPage extends Component {
       title: Yup.string().required("Please enter the title"),
       content: Yup.string().required("Please enter the content"),
     });
-
-    // const validateStopFlagUpdate = Yup.object().shape({
-    //   file: Yup.string()
-    //     .notRequired()
-    //     .test(
-    //       "image",
-    //       "Only files with the following extensions are allowed: png jpg jpeg",
-    //       (file) => {
-    //         if (file) {
-    //           return this.state.isValidFile;
-    //         } else {
-    //           return true;
-    //         }
-    //       }
-    //     ),
-    //   status: Yup.string()
-    //     .trim()
-    //     .required("Please select status")
-    //     .matches(/^[0|1]$/, "Invalid status selected"),
-    // });
 
     return (
       <Layout {...this.props}>
@@ -633,11 +540,11 @@ class AboutUsPartnerPage extends Component {
                 <form className="form">
                   <div className="">
                         <select
-                            name="status"
+                            name="status" 
                             id="status"
                             className="form-control"
                         >
-                            <option value="">Select Offer Status</option>
+                            <option value="">Select About Us Status</option>
                             {this.state.selectStatus.map((val) => {
                                 return (
                                     <option key={val.value} value={val.value}>{val.label}</option>
@@ -733,7 +640,7 @@ class AboutUsPartnerPage extends Component {
                     initialValues={newInitialValues}
                     validationSchema={validateStopFlag}
                     onSubmit={
-                      this.state.offerEditType > 0
+                      this.state.abousUsEditType > 0
                         ? this.handleSubmitEventUpdate
                         : this.handleSubmitEventAdd
                     }
@@ -763,7 +670,7 @@ class AboutUsPartnerPage extends Component {
                           )}
                           <Modal.Header closeButton>
                             <Modal.Title>
-                              {this.state.offerEditType > 0
+                              {this.state.abousUsEditType > 0
                                 ? "Edit About Us"
                                 : "Add About Us"}
                             </Modal.Title>
@@ -903,36 +810,37 @@ class AboutUsPartnerPage extends Component {
                                     <span className="impField">*</span>
                                     </label>
                                     <Editor
-                                        initialValue={values.content}
+                                        value={values.content}
                                         init={{
                                             height: 500,
                                             menubar: false,
+                                            resize:false,
                                             plugins: [
                                                 'advlist autolink lists link image charmap print preview anchor',
                                                 'searchreplace visualblocks code fullscreen',
                                                 'insertdatetime media table paste code help wordcount'
                                             ],
-                                            toolbar: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ',
+                                            toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent  ',
                                             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-                                            file_browser_callback_types: 'image',
-                                            file_picker_callback: function (callback, value, meta) {
-                                                if (meta.filetype == 'image') {
-                                                    var input = document.getElementById('my-file');
-                                                    input.click();
-                                                    input.onchange = function () {
-                                                        var file = input.files[0];
-                                                        var reader = new FileReader();
-                                                        reader.onload = function (e) {
-                                                            console.log('name', e.target.result);
-                                                            callback(e.target.result, {
-                                                                alt: file.name
-                                                            });
-                                                        };
-                                                        reader.readAsDataURL(file);
-                                                    };
-                                                }
-                                            },
-                                            paste_data_images: true
+                                            // file_browser_callback_types: 'image',
+                                            // file_picker_callback: function (callback, value, meta) {
+                                            //     if (meta.filetype == 'image') {
+                                            //         var input = document.getElementById('my-file');
+                                            //         input.click();
+                                            //         input.onchange = function () {
+                                            //             var file = input.files[0];
+                                            //             var reader = new FileReader();
+                                            //             reader.onload = function (e) {
+                                            //                 console.log('name', e.target.result);
+                                            //                 callback(e.target.result, {
+                                            //                     alt: file.name
+                                            //                 });
+                                            //             };
+                                            //             reader.readAsDataURL(file);
+                                            //         };
+                                            //     }
+                                            // },
+                                            // paste_data_images: true
                                         }}
                                         onEditorChange={(value) =>
                                             setFieldValue(
@@ -992,7 +900,7 @@ class AboutUsPartnerPage extends Component {
                                 isValid ? (isSubmitting ? true : false) : true
                               }
                             >
-                              {this.state.offerEditType > 0
+                              {this.state.abousUsEditType > 0
                                 ? isSubmitting
                                   ? "Updating..."
                                   : "Update"
