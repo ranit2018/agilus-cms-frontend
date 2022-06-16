@@ -34,7 +34,7 @@ import {
 import Autosuggest from "react-autosuggest";
 const initialValues = {
   status:"",
-  offer_image:"",
+  file:"",
   labId:"",
   content:"",
   heading:"",
@@ -147,7 +147,7 @@ class AmenitiesPartnerPage extends Component {
 
   getAmenitiesList = (page = 1) => {
     API.get(
-      `/api/center/offers?page=${page}`
+      `/api/center/aminities?page=${page}`
     )
       .then((res) => {
         this.setState({
@@ -182,7 +182,7 @@ class AmenitiesPartnerPage extends Component {
   };
 
   deleteAmenity = (id) => {
-    API.post(`api/center/offers/${id}`)
+    API.post(`api/center/aminities/${id}`)
       .then((res) => {
         swal({
           closeOnClickOutside: false,
@@ -201,8 +201,8 @@ class AmenitiesPartnerPage extends Component {
       });
   };
 
-  getCurrentOffersDetails(id) {
-    API.get(`/api/center/offers/${id}`)
+  getAmenitiesDetails(id) {
+    API.get(`/api/center/aminities/${id}`)
       .then((res) => {
         this.setState({
           showModal: true,
@@ -216,7 +216,7 @@ class AmenitiesPartnerPage extends Component {
   }
 
   changeStatus = (cell, status) => {
-    API.put(`/api/center/offers/change_status/${cell}`, {
+    API.put(`/api/center/aminities/change_status/${cell}`, {
       status: status == 1 ? String(0) : String(1),
     })
       .then((res) => {
@@ -239,10 +239,10 @@ class AmenitiesPartnerPage extends Component {
 
   handleSubmitEventAdd = (values, actions) => {
     let formData = new FormData();
-    // formData.append("title", values.title);
-    // formData.append("content", values.content);
+    formData.append("heading", values.heading);
+    formData.append("content", values.content);
     formData.append("status", values.status);
-    let url = `api/center/offers/`;
+    let url = `api/center/aminities`;
     let method = "POST";
 
     if (this.state.file.size > FILE_SIZE) {
@@ -251,13 +251,13 @@ class AmenitiesPartnerPage extends Component {
     } else {
       getHeightWidth(this.state.file).then((dimension) => {
         const { height, width } = dimension;
-        const offerDimension = getResolution("center-current-offers");
+        const offerDimension = getResolution("partner-amenities");
         if (height != offerDimension.height || width != offerDimension.width) {
           //    actions.setErrors({ file: "The file is not of desired height and width" });
           actions.setErrors({ file: FILE_VALIDATION_TYPE_ERROR_MASSAGE });
           actions.setSubmitting(false);
         } else {
-          formData.append("center_offers", this.state.file);
+          formData.append("aminities_image", this.state.file);
           API({
             method: method,
             url: url,
@@ -295,10 +295,12 @@ class AmenitiesPartnerPage extends Component {
 
   handleSubmitEventUpdate = (values, actions) => {
     let formData = new FormData();
+    console.log(values)
     formData.append("status", values.status);
-    let url = `/api/center/offers/${this.state.amenitiesEditType}`;
+    formData.append("heading", values.heading);
+    formData.append("content", values.content);
+    let url = `/api/center/aminities/${this.state.amenitiesEditType}`;
     let method = "PUT";
-
     if (this.state.file) {
       if (this.state.file.size > FILE_SIZE) {
         actions.setErrors({ file: FILE_VALIDATION_SIZE_ERROR_MASSAGE });
@@ -306,7 +308,7 @@ class AmenitiesPartnerPage extends Component {
       } else {
         getHeightWidth(this.state.file).then((dimension) => {
           const { height, width } = dimension;
-          const offerDimension = getResolution("center-current-offers");
+          const offerDimension = getResolution("partner-amenities");
           if (
             height != offerDimension.height ||
             width != offerDimension.width
@@ -315,7 +317,7 @@ class AmenitiesPartnerPage extends Component {
             actions.setErrors({ file: FILE_VALIDATION_TYPE_ERROR_MASSAGE });
             actions.setSubmitting(false);
           } else {
-            formData.append("center_offers", this.state.file);
+            formData.append("aminities_image", this.state.file);
             API({
               method: method,
               url: url,
@@ -387,7 +389,7 @@ class AmenitiesPartnerPage extends Component {
   modalShowHandler = (event, id) => {
     event.preventDefault();
     if (id) {
-      this.getCurrentOffersDetails(id);
+      this.getAmenitiesDetails(id);
     } else {
       this.setState({ amenityDetail: {}, amenitiesEditType: 0, showModal: true,suggestion:[] });
     }
@@ -397,13 +399,16 @@ class AmenitiesPartnerPage extends Component {
     console.log(url);
     this.setState({ thumbNailModal: true, banner_url: url });
   };
+
   imageModalCloseHandler = () => {
     this.setState({ thumbNailModal: false, banner_url: "" });
   };
+
   handlePageChange = (pageNumber) => {
     this.setState({ activePage: pageNumber });
     this.getAmenitiesList(pageNumber > 0 ? pageNumber : 1);
   };
+
   fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
     //console.log(event.target.files);
     setFieldTouched("file");
@@ -438,12 +443,12 @@ class AmenitiesPartnerPage extends Component {
     }
   };
 
-  setCurrentOfferImage = (refObj) => (cell, row) => {
+  setAmenityImage = (refObj) => (cell, row) => {
     if (row.offer_image !== null) {
       return (
         <img
           src={row.offer_image}
-          alt="Current Offers Image"
+          alt="Amenity Image"
           height="100"
           onClick={(e) => refObj.imageModalShowHandler(row.offer_image)}
         ></img>
@@ -457,14 +462,14 @@ class AmenitiesPartnerPage extends Component {
     e.preventDefault();
 
     const search_by_status = document.getElementById("status").value;
-    const search_lab_code = document.getElementById("search_lab_code").value;
-    const search_by_title = document.getElementById("search_amenity_title").value;
+    // const search_lab_code = document.getElementById("search_lab_code").value;
+    const search_by_heading = document.getElementById("search_amenity_heading").value;
 
-    if (search_by_status === "" && search_lab_code === "") {
+    if (search_by_status === "" && search_by_heading === "") {
       return false;
     }
     API.get(
-      `/api/center/offers?page=1&status=${search_by_status}&lab_id=${encodeURIComponent(search_lab_code)}`
+      `/api/center/aminities?page=1&status=${search_by_status}&heading=${encodeURIComponent(search_by_heading)}`
     )
       .then((res) => {
         this.setState({
@@ -498,68 +503,68 @@ class AmenitiesPartnerPage extends Component {
     );
   };
 
-  onSuggestionsFetchRequested = ({ value }) => {
-    if (value && value.length >= 3) {
-      let payload = {
-        //  city_id:location.value,
-        search_name: value.toUpperCase(),
-      };
+  // onSuggestionsFetchRequested = ({ value }) => {
+  //   if (value && value.length >= 3) {
+  //     let payload = {
+  //       //  city_id:location.value,
+  //       search_name: value.toUpperCase(),
+  //     };
 
-      API.post(`/feed/code-search-autocomplete`, payload)
-        .then((res) => {
-          const suggestion_list = res.data.data;
-          this.setState({
-            suggestions: suggestion_list.length > 0 ? suggestion_list : [],
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-          this.setState({ suggestions: [] });
-        });
-    } else {
-      this.setState({ suggestions: [] });
-    }
-  };
+  //     API.post(`/feed/code-search-autocomplete`, payload)
+  //       .then((res) => {
+  //         const suggestion_list = res.data.data;
+  //         this.setState({
+  //           suggestions: suggestion_list.length > 0 ? suggestion_list : [],
+  //         });
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //         this.setState({ suggestions: [] });
+  //       });
+  //   } else {
+  //     this.setState({ suggestions: [] });
+  //   }
+  // };
 
-  onSuggestionsClearRequested = () => {};
+  // onSuggestionsClearRequested = () => {};
 
-  getSuggestionValue = (suggestion) => suggestion.label;
+  // getSuggestionValue = (suggestion) => suggestion.label;
 
-  renderSuggestion = (suggestion) => <span>{suggestion.label}</span>;
+  // renderSuggestion = (suggestion) => <span>{suggestion.label}</span>;
 
-  onChangeAutoSuggest = (event, { newValue }) => {
-    this.setState({ labIdValue: newValue });
-  };
+  // onChangeAutoSuggest = (event, { newValue }) => {
+  //   this.setState({ labIdValue: newValue });
+  // };
 
-  handleSearchLab = (event) => {
-    if (event.key === "Enter") {
-      event.target.blur();
-      // history.push(`/health-packages/search/${stringToSlug(location.city_name)}/${encodeURIComponent(value)}`);
-    }
-  };
+  // handleSearchLab = (event) => {
+  //   if (event.key === "Enter") {
+  //     event.target.blur();
+  //     // history.push(`/health-packages/search/${stringToSlug(location.city_name)}/${encodeURIComponent(value)}`);
+  //   }
+  // };
 
-  onSuggestionSelected = (event, { suggestion, method }, setFieldTouched) => {
-    if (method === "click" || method === "enter") {
-      let payload = {
-        search_name: suggestion.value.toUpperCase(),
-      };
-      API.post(`/feed/code-search`, payload)
-        .then((res) => {
-          if (res.data && res.data.data && res.data.data.length > 0) {
-            const searchDetails = res.data.data[0];
-            this.setState({ selectedLabIdValue: searchDetails }, () => {
-              setFieldTouched("labId");
-            });
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          this.setState({ selectedLabIdValue: "" }, () => {
-            setFieldTouched("labId");
-          });
-        });
-    }
-  };
+  // onSuggestionSelected = (event, { suggestion, method }, setFieldTouched) => {
+  //   if (method === "click" || method === "enter") {
+  //     let payload = {
+  //       search_name: suggestion.value.toUpperCase(),
+  //     };
+  //     API.post(`/feed/code-search`, payload)
+  //       .then((res) => {
+  //         if (res.data && res.data.data && res.data.data.length > 0) {
+  //           const searchDetails = res.data.data[0];
+  //           this.setState({ selectedLabIdValue: searchDetails }, () => {
+  //             setFieldTouched("labId");
+  //           });
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //         this.setState({ selectedLabIdValue: "" }, () => {
+  //           setFieldTouched("labId");
+  //         });
+  //       });
+  //   }
+  // };
 
   render() {
     const { amenityDetail,selectedLabIdValue } = this.state;
@@ -568,6 +573,8 @@ class AmenitiesPartnerPage extends Component {
         amenityDetail.status || +amenityDetail.status === 0
           ? amenityDetail.status.toString()
           : "",
+      heading: amenityDetail.heading ? amenityDetail.heading : "",
+      content: amenityDetail.content ? amenityDetail.content : "",
     });
 
     const validateStopFlag = Yup.object().shape({
@@ -578,10 +585,10 @@ class AmenitiesPartnerPage extends Component {
           "Only files with the following extensions are allowed: png jpg jpeg",
           () => this.state.isValidFile
         ),
-      labId: Yup.string()
-        .test("labId", "Please select a Lab Id", () => {
-          return selectedLabIdValue && selectedLabIdValue !== "";
-        }),
+      // labId: Yup.string()
+      //   .test("labId", "Please select a Lab Id", () => {
+      //     return selectedLabIdValue && selectedLabIdValue !== "";
+      //   }),
         // .test(
         //   "pro",
         //   "Only packages are allowed for selected product type",
@@ -591,29 +598,31 @@ class AmenitiesPartnerPage extends Component {
         .trim()
         .required("Please select status")
         .matches(/^[0|1]$/, "Invalid status selected"),
-      title: Yup.string().required("Please enter the title"),
+      heading: Yup.string().required("Please enter the heading"),
       content: Yup.string().required("Please enter the content"),
     });
 
-    // const validateStopFlagUpdate = Yup.object().shape({
-    //   file: Yup.string()
-    //     .notRequired()
-    //     .test(
-    //       "image",
-    //       "Only files with the following extensions are allowed: png jpg jpeg",
-    //       (file) => {
-    //         if (file) {
-    //           return this.state.isValidFile;
-    //         } else {
-    //           return true;
-    //         }
-    //       }
-    //     ),
-    //   status: Yup.string()
-    //     .trim()
-    //     .required("Please select status")
-    //     .matches(/^[0|1]$/, "Invalid status selected"),
-    // });
+    const validateStopFlagUpdate = Yup.object().shape({
+      file: Yup.string()
+        .notRequired()
+        .test(
+          "image",
+          "Only files with the following extensions are allowed: png jpg jpeg",
+          (file) => {
+            if (file) {
+              return this.state.isValidFile;
+            } else {
+              return true;
+            }
+          }
+        ),
+        status: Yup.string()
+        .trim()
+        .required("Please select status")
+        .matches(/^[0|1]$/, "Invalid status selected"),
+        heading: Yup.string().required("Please enter the heading"),
+        content: Yup.string().required("Please enter the content"),
+    });
 
     return (
       <Layout {...this.props}>
@@ -645,7 +654,7 @@ class AmenitiesPartnerPage extends Component {
                             id="status"
                             className="form-control"
                         >
-                            <option value="">Select Offer Status</option>
+                            <option value="">Select Amenity Status</option>
                             {this.state.selectStatus.map((val) => {
                                 return (
                                     <option key={val.value} value={val.value}>{val.label}</option>
@@ -653,18 +662,18 @@ class AmenitiesPartnerPage extends Component {
                             })}
                         </select>
                   </div>
-                  <div className="">
+                  {/* <div className="">
                   <input
                       className="form-control"
                       id="search_lab_code"
                       placeholder="Filter by Lab Id"
                     />
-                  </div>
+                  </div> */}
                   <div className="">
                   <input
                       className="form-control"
-                      id="search_amenity_title"
-                      placeholder="Filter by Amenity Title"
+                      id="search_amenity_heading"
+                      placeholder="Filter by Amenity Heading"
                     />
                   </div>
                   <div className="">
@@ -696,32 +705,32 @@ class AmenitiesPartnerPage extends Component {
                 <BootstrapTable data={this.state.AmenitiesList} keyField="id">
                   <TableHeaderColumn
                     dataField="content"
-                    dataFormat={this.setCurrentOfferImage(this)}
+                    dataFormat={this.setAmenityImage(this)}
                   >
                     Image
                   </TableHeaderColumn>
-                  <TableHeaderColumn
+                  {/* <TableHeaderColumn
                     dataField="labId"
                   >
                     Lab Id
-                  </TableHeaderColumn>
+                  </TableHeaderColumn> */}
                   <TableHeaderColumn
-                    dataField="status"
-                    dataFormat={custStatus(this)}
-                  >
-                    Status
-                  </TableHeaderColumn>
-                  <TableHeaderColumn
-                    dataField="title"
+                    dataField="heading"
                     dataFormat={__htmlDecode(this)}
                   >
-                    Title
+                    Heading
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="content"
                     dataFormat={__htmlDecode(this)}
                   >
                     Content
+                  </TableHeaderColumn>
+                  <TableHeaderColumn
+                    dataField="status"
+                    dataFormat={custStatus(this)}
+                  >
+                    Status
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="id"
@@ -758,7 +767,11 @@ class AmenitiesPartnerPage extends Component {
                 >
                   <Formik
                     initialValues={newInitialValues}
-                    validationSchema={validateStopFlag}
+                    validationSchema={
+                      this.state.amenitiesEditType > 0
+                        ? validateStopFlagUpdate
+                        : validateStopFlag
+                    }
                     onSubmit={
                       this.state.amenitiesEditType > 0
                         ? this.handleSubmitEventUpdate
@@ -791,35 +804,13 @@ class AmenitiesPartnerPage extends Component {
                           <Modal.Header closeButton>
                             <Modal.Title>
                               {this.state.amenitiesEditType > 0
-                                ? "Edit Amenities"
-                                : "Add Amenities"}
+                                ? "Edit Amenity"
+                                : "Add Amenity"}
                             </Modal.Title>
                           </Modal.Header>
                           <Modal.Body>
                             <div className="contBox">
-                              {/* <Row>
-                                <Col xs={12} sm={12} md={12}>
-                                  <div className="form-group">
-                                    <label>
-                                      Title
-                                      <span className="impField">*</span>
-                                    </label>
-                                    <Field
-                                      name="title"
-                                      type="text"
-                                      className={`form-control`}
-                                      placeholder="Enter Title"
-                                      autoComplete="off"
-                                      value={values.title}
-                                    />
-                                    {errors.title && touched.title ? (
-                                      <span className="errorMsg">
-                                        {errors.title}
-                                      </span>
-                                    ) : null}
-                                  </div>
-                                </Col>
-                              </Row>
+                              {/*
                               <Row>
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
@@ -845,10 +836,10 @@ class AmenitiesPartnerPage extends Component {
                               </Row> */}
 
                               <Row>
-                              <Col xs={12} sm={12} md={12}>
+                              {/* <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
                                 <label>
-                                  Search Product
+                                  Search Amentity
                                   <span className="impField">*</span>
                                 </label>
                                 <div className="position-relative">
@@ -919,7 +910,7 @@ class AmenitiesPartnerPage extends Component {
                                   </span>
                                 ) : null}
                               </div>
-                            </Col>
+                            </Col> */}
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
@@ -964,16 +955,16 @@ class AmenitiesPartnerPage extends Component {
                                         <span className="impField">*</span>
                                         </label>
                                         <Field
-                                            name="title"
+                                            name="heading"
                                             type="text"
                                             className={`form-control`}
                                             placeholder="Enter Title"
                                             autoComplete="off"
-                                            value={values.title}
+                                            value={values.heading}
                                         />
-                                        {errors.title && touched.title ? (
+                                        {errors.heading && touched.heading ? (
                                             <span className="errorMsg">
-                                                {errors.title}
+                                                {errors.heading}
                                             </span>
                                         ) : null}
                                     </div>
@@ -993,7 +984,7 @@ class AmenitiesPartnerPage extends Component {
                                             className={`form-control`}
                                             placeholder="Enter Content"
                                             autoComplete="off"
-                                            value={values.title}
+                                            value={values.content}
                                         />
                                         {errors.content && touched.content ? (
                                             <span className="errorMsg">
@@ -1076,14 +1067,14 @@ class AmenitiesPartnerPage extends Component {
                   backdrop="static"
                 >
                   <Modal.Header closeButton>
-                    Current Offers Image
+                    Amenity Image
                   </Modal.Header>
                   <Modal.Body>
                     <center>
                       <div className="imgUi">
                         <img
                           src={this.state.banner_url}
-                          alt="Banner Image"
+                          alt="Amenity Image"
                         ></img>
                       </div>
                     </center>

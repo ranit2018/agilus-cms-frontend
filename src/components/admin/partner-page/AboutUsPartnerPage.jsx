@@ -677,186 +677,139 @@ class AboutUsPartnerPage extends Component {
                           </Modal.Header>
                           <Modal.Body>
                             <div className="contBox">
-                              {/* <Row>
+                              <Row>
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
-                                      Title
+                                      Search Lab Id
                                       <span className="impField">*</span>
                                     </label>
-                                    <Field
-                                      name="title"
-                                      type="text"
-                                      className={`form-control`}
-                                      placeholder="Enter Title"
-                                      autoComplete="off"
-                                      value={values.title}
-                                    />
-                                    {errors.title && touched.title ? (
+                                    <div className="position-relative">
+                                      <Autosuggest
+                                        suggestions={this.state.suggestions}
+                                        onSuggestionsFetchRequested={(req) => {
+                                          this.onSuggestionsFetchRequested(req);
+                                          setFieldTouched("labId");
+                                        }}
+                                        onSuggestionsClearRequested={() => {
+                                          this.onSuggestionsClearRequested();
+                                          this.setState({
+                                            selectedValue: "",
+                                          });
+                                        }}
+                                        getSuggestionValue={this.getSuggestionValue}
+                                        renderSuggestion={this.renderSuggestion}
+                                        focusInputOnSuggestionClick={false}
+                                        inputProps={{
+                                          style: {
+                                            width: "100%",
+                                            textTransform: "uppercase",
+                                            display: "block",
+                                            width: "100%",
+                                            height: "34px",
+                                            padding: "6px 12px",
+                                            fontSize: "14px",
+                                            lineHeight: "1.42857143",
+                                            color: "#555555",
+                                            backgroundColor: "#fff",
+                                            backgroundImage: "none",
+                                            border: "1px solid #d2d6de",
+                                          },
+                                          placeholder: "Enter Product Code",
+
+                                          value: this.state.labIdValue,
+                                          onChange: this.onChangeAutoSuggest,
+                                          onKeyDown: this.handleSearchLab,
+                                          onBlur: () => setFieldTouched("labId"),
+                                          disabled: this.state.selectedLabIdValue != "",
+                                        }}
+                                        onSuggestionSelected={(event, req) => {
+                                          this.onSuggestionSelected(
+                                            event,
+                                            req,
+                                            setFieldTouched
+                                          );
+                                          // setTimeout(() => {
+                                          //   setFieldTouched("labId", true)
+                                          // }, 230);
+                                        }}
+                                        container="form-control"
+                                      />
+                                      {this.state.selectedLabIdValue !== "" ? (
+                                        <button
+                                          className="crossBtn btn btn-danger pull-right"
+                                          onClick={() =>
+                                            this.handleAutoSuggestClick()
+                                          }
+                                        >
+                                          X
+                                        </button>
+                                      ) : null}
+                                    </div>
+                                    {errors.labId && touched.labId ? (
                                       <span className="errorMsg">
-                                        {errors.title}
+                                        {errors.labId}
                                       </span>
                                     ) : null}
                                   </div>
                                 </Col>
                               </Row>
-                              <Row>
-                                <Col xs={12} sm={12} md={12}>
-                                  <div className="form-group">
-                                    <label>
-                                      Content
-                                    </label>
-                                    <Field
-                                      name="content"
-                                      as="textarea"
-                                      className={`form-control`}
-                                      placeholder="Enter Content"
-                                      autoComplete="off"
-                                      value={values.content}
-                                    
-                                    />
-                                    {errors.content && touched.content ? (
-                                      <span className="errorMsg">
-                                        {errors.content}
-                                      </span>
-                                    ) : null}
-                                  </div>
-                                </Col>
-                              </Row> */}
 
-                              <Row>
+                            <Row>
                               <Col xs={12} sm={12} md={12}>
-                              <div className="form-group">
-                                <label>
-                                  Search Lab Id
-                                  <span className="impField">*</span>
-                                </label>
-                                <div className="position-relative">
-                                  <Autosuggest
-                                    suggestions={this.state.suggestions}
-                                    onSuggestionsFetchRequested={(req) => {
-                                      this.onSuggestionsFetchRequested(req);
-                                      setFieldTouched("labId");
-                                    }}
-                                    onSuggestionsClearRequested={() => {
-                                      this.onSuggestionsClearRequested();
-                                      this.setState({
-                                        selectedValue: "",
-                                      });
-                                    }}
-                                    getSuggestionValue={this.getSuggestionValue}
-                                    renderSuggestion={this.renderSuggestion}
-                                    focusInputOnSuggestionClick={false}
-                                    inputProps={{
-                                      style: {
-                                        width: "100%",
-                                        textTransform: "uppercase",
-                                        display: "block",
-                                        width: "100%",
-                                        height: "34px",
-                                        padding: "6px 12px",
-                                        fontSize: "14px",
-                                        lineHeight: "1.42857143",
-                                        color: "#555555",
-                                        backgroundColor: "#fff",
-                                        backgroundImage: "none",
-                                        border: "1px solid #d2d6de",
-                                      },
-                                      placeholder: "Enter Product Code",
-
-                                      value: this.state.labIdValue,
-                                      onChange: this.onChangeAutoSuggest,
-                                      onKeyDown: this.handleSearchLab,
-                                      onBlur: () => setFieldTouched("labId"),
-                                      disabled: this.state.selectedLabIdValue != "",
-                                    }}
-                                    onSuggestionSelected={(event, req) => {
-                                      this.onSuggestionSelected(
-                                        event,
-                                        req,
-                                        setFieldTouched
-                                      );
-                                      // setTimeout(() => {
-                                      //   setFieldTouched("labId", true)
-                                      // }, 230);
-                                    }}
-                                    container="form-control"
-                                  />
-                                  {this.state.selectedLabIdValue !== "" ? (
-                                    <button
-                                      className="crossBtn btn btn-danger pull-right"
-                                      onClick={() =>
-                                        this.handleAutoSuggestClick()
-                                      }
-                                    >
-                                      X
-                                    </button>
-                                  ) : null}
-                                </div>
-                                {errors.labId && touched.labId ? (
-                                  <span className="errorMsg">
-                                    {errors.labId}
-                                  </span>
-                                ) : null}
-                              </div>
-                            </Col>
-                        </Row>
-
-                        <Row>
-                            <Col xs={12} sm={12} md={12}>
-                                <div className="form-group">
-                                    <label>
-                                        Content
-                                    <span className="impField">*</span>
-                                    </label>
-                                    <Editor
-                                        value={values.content}
-                                        init={{
-                                            height: 500,
-                                            menubar: false,
-                                            resize:false,
-                                            plugins: [
-                                                'advlist autolink lists link image charmap print preview anchor',
-                                                'searchreplace visualblocks code fullscreen',
-                                                'insertdatetime media table paste code help wordcount'
-                                            ],
-                                            toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent  ',
-                                            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-                                            // file_browser_callback_types: 'image',
-                                            // file_picker_callback: function (callback, value, meta) {
-                                            //     if (meta.filetype == 'image') {
-                                            //         var input = document.getElementById('my-file');
-                                            //         input.click();
-                                            //         input.onchange = function () {
-                                            //             var file = input.files[0];
-                                            //             var reader = new FileReader();
-                                            //             reader.onload = function (e) {
-                                            //                 console.log('name', e.target.result);
-                                            //                 callback(e.target.result, {
-                                            //                     alt: file.name
-                                            //                 });
-                                            //             };
-                                            //             reader.readAsDataURL(file);
-                                            //         };
-                                            //     }
-                                            // },
-                                            // paste_data_images: true
-                                        }}
-                                        onEditorChange={(value) =>
-                                            setFieldValue(
-                                                "content",
-                                                value
-                                            )
-                                        }
-                                    />
-                                    {errors.content && touched.content ? (
-                                        <span className="errorMsg">
-                                            {errors.content}
-                                        </span>
-                                    ) : null}
-                                </div>
-                            </Col>
-                        </Row>
+                                  <div className="form-group">
+                                      <label>
+                                          Content
+                                      <span className="impField">*</span>
+                                      </label>
+                                      <Editor
+                                          value={values.content}
+                                          init={{
+                                              height: 500,
+                                              menubar: false,
+                                              resize:false,
+                                              plugins: [
+                                                  'advlist autolink lists link image charmap print preview anchor',
+                                                  'searchreplace visualblocks code fullscreen',
+                                                  'insertdatetime media table paste code help wordcount'
+                                              ],
+                                              toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent  ',
+                                              content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+                                              // file_browser_callback_types: 'image',
+                                              // file_picker_callback: function (callback, value, meta) {
+                                              //     if (meta.filetype == 'image') {
+                                              //         var input = document.getElementById('my-file');
+                                              //         input.click();
+                                              //         input.onchange = function () {
+                                              //             var file = input.files[0];
+                                              //             var reader = new FileReader();
+                                              //             reader.onload = function (e) {
+                                              //                 console.log('name', e.target.result);
+                                              //                 callback(e.target.result, {
+                                              //                     alt: file.name
+                                              //                 });
+                                              //             };
+                                              //             reader.readAsDataURL(file);
+                                              //         };
+                                              //     }
+                                              // },
+                                              // paste_data_images: true
+                                          }}
+                                          onEditorChange={(value) =>
+                                              setFieldValue(
+                                                  "content",
+                                                  value
+                                              )
+                                          }
+                                      />
+                                      {errors.content && touched.content ? (
+                                          <span className="errorMsg">
+                                              {errors.content}
+                                          </span>
+                                      ) : null}
+                                  </div>
+                              </Col>
+                          </Row>
                         <Row>
                         <Col xs={12} sm={12} md={12}>
                             <div className="form-group">
