@@ -34,11 +34,11 @@ import {
 import Autosuggest from "react-autosuggest";
 const initialValues = {
   status:"",
-  offer_image:"",
   labId:"",
   content:"",
 };
 const __htmlDecode = (refObj) => (cell) => {
+  console.log({cell})
   return ReactHtmlParser(htmlDecode(cell));
 };
 
@@ -146,7 +146,7 @@ class AboutUsPartnerPage extends Component {
 
   getAboutUsList = (page = 1) => {
     API.get(
-      `/api/center/offers?page=${page}`
+      `/api/center/about?page=${page}`
     )
       .then((res) => {
         this.setState({
@@ -181,7 +181,7 @@ class AboutUsPartnerPage extends Component {
   };
 
   deleteAboutUs = (id) => {
-    API.post(`api/center/offers/${id}`)
+    API.post(`api/center/about/${id}`)
       .then((res) => {
         swal({
           closeOnClickOutside: false,
@@ -201,7 +201,7 @@ class AboutUsPartnerPage extends Component {
   };
 
   getAboutUsDetails(id) {
-    API.get(`/api/center/offers/${id}`)
+    API.get(`/api/center/about/${id}`)
       .then((res) => {
         this.setState({
           showModal: true,
@@ -215,7 +215,7 @@ class AboutUsPartnerPage extends Component {
   }
 
   changeStatus = (cell, status) => {
-    API.put(`/api/center/offers/change_status/${cell}`, {
+    API.put(`/api/center/about/change_status/${cell}`, {
       status: status == 1 ? String(0) : String(1),
     })
       .then((res) => {
@@ -237,11 +237,17 @@ class AboutUsPartnerPage extends Component {
   };
 
   handleSubmitEventAdd = (values, actions) => {
-    let formData = new FormData();
+    // let formData = new FormData();
+    // console.log({values})
     // formData.append("title", values.title);
-    formData.append("content", values.content);
-    formData.append("status", values.status);
-    let url = `api/center/offers/`;
+    // formData.append("content", values.content);
+    // formData.append("status", values.status);
+    let formData = {
+      status:values.status,
+      heading:"", // Need to remove this
+      content:values.content,
+    }
+    let url = `api/center/about/`;
     let method = "POST";
    API({
     method: method,
@@ -276,9 +282,14 @@ class AboutUsPartnerPage extends Component {
   };
 
   handleSubmitEventUpdate = (values, actions) => {
-    let formData = new FormData();
-    formData.append("status", values.status);
-    let url = `/api/center/offers/${this.state.abousUsEditType}`;
+    // let formData = new FormData();
+    // formData.append("status", values.status);
+    // formData.append("content", values.content);
+    let formData = {
+      status:values.status,
+      content:values.content,
+    }
+    let url = `/api/center/about/${this.state.abousUsEditType}`;
     let method = "PUT";
     API({
       method: method,
@@ -286,7 +297,7 @@ class AboutUsPartnerPage extends Component {
       data: formData,
     })
     .then((res) => {
-      this.setState({ showModal: false,suggestions:[] });
+      this.setState({ showModal: false,file:"",suggestions:[] });
       swal({
         closeOnClickOutside: false,
         title: "Success",
@@ -384,113 +395,112 @@ class AboutUsPartnerPage extends Component {
   //   }
   // };
 
-  AboutUsSearch = (e) => {
-    e.preventDefault();
+  // AboutUsSearch = (e) => {
+  //   e.preventDefault();
 
-    const search_by_status = document.getElementById("status").value;
-    const search_lab_code = document.getElementById("search_lab_code").value;
-    const search_by_title = document.getElementById("search_service_title").value
+  //   const search_by_status = document.getElementById("status").value;
+  //   // const search_lab_code = document.getElementById("search_lab_code").value;
 
-    if (search_by_status === "" && search_lab_code === "" && search_by_title) {
-      return false;
-    }
-    API.get(
-      `/api/center/offers?page=1&status=${search_by_status}&lab_id=${encodeURIComponent(search_lab_code)}`
-    )
-      .then((res) => {
-        this.setState({
-          AboutUsList: res.data.data,
-          totalCount: res.data.count,
-          isLoading: false,
-          activePage: 1,
-          search_by_status: search_by_status,
-          remove_search: true,
-        });
-      })
-      .catch((err) => {
-        this.setState({
-          isLoading: false,
-        });
-        showErrorMessage(err, this.props);
-      });
-  };
+  //   if (search_by_status === "") {
+  //     return false;
+  //   }
+  //   API.get(
+  //     `/api/center/offers?page=1&status=${search_by_status}`
+  //   )
+  //     .then((res) => {
+  //       this.setState({
+  //         AboutUsList: res.data.data,
+  //         totalCount: res.data.count,
+  //         isLoading: false,
+  //         activePage: 1,
+  //         search_by_status: search_by_status,
+  //         remove_search: true,
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       this.setState({
+  //         isLoading: false,
+  //       });
+  //       showErrorMessage(err, this.props);
+  //     });
+  // };
 
-  clearSearch = () => {
-    document.getElementById("status").value = "";
-    this.setState(
-      {
-        search_by_status: "",
-        remove_search: false,
-      },
-      () => {
-        // this.setState({ activePage: 1 });
-        this.getAboutUsList();
-      }
-    );
-  };
+  // clearSearch = () => {
+  //   document.getElementById("status").value = "";
+  //   this.setState(
+  //     {
+  //       search_by_status: "",
+  //       remove_search: false,
+  //     },
+  //     () => {
+  //       // this.setState({ activePage: 1 });
+  //       this.getAboutUsList();
+  //     }
+  //   );
+  // };
 
-  onSuggestionsFetchRequested = ({ value }) => {
-    if (value && value.length >= 3) {
-      let payload = {
-        //  city_id:location.value,
-        search_name: value.toUpperCase(),
-      };
+  // onSuggestionsFetchRequested = ({ value }) => {
+  //   if (value && value.length >= 3) {
+  //     let payload = {
+  //       //  city_id:location.value,
+  //       search_name: value.toUpperCase(),
+  //     };
 
-      API.post(`/feed/code-search-autocomplete`, payload)
-        .then((res) => {
-          const suggestion_list = res.data.data;
-          this.setState({
-            suggestions: suggestion_list.length > 0 ? suggestion_list : [],
-          });
-        })
-        .catch((error) => {
-          console.log(error);
-          this.setState({ suggestions: [] });
-        });
-    } else {
-      this.setState({ suggestions: [] });
-    }
-  };
+  //     API.post(`/feed/code-search-autocomplete`, payload)
+  //       .then((res) => {
+  //         const suggestion_list = res.data.data;
+  //         this.setState({
+  //           suggestions: suggestion_list.length > 0 ? suggestion_list : [],
+  //         });
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //         this.setState({ suggestions: [] });
+  //       });
+  //   } else {
+  //     this.setState({ suggestions: [] });
+  //   }
+  // };
 
-  onSuggestionsClearRequested = () => {};
+  // onSuggestionsClearRequested = () => {};
 
-  getSuggestionValue = (suggestion) => suggestion.label;
+  // getSuggestionValue = (suggestion) => suggestion.label;
 
-  renderSuggestion = (suggestion) => <span>{suggestion.label}</span>;
+  // renderSuggestion = (suggestion) => <span>{suggestion.label}</span>;
 
-  onChangeAutoSuggest = (event, { newValue }) => {
-    this.setState({ labIdValue: newValue });
-  };
+  // onChangeAutoSuggest = (event, { newValue }) => {
+  //   this.setState({ labIdValue: newValue });
+  // };
 
-  handleSearchLab = (event) => {
-    if (event.key === "Enter") {
-      event.target.blur();
-      // history.push(`/health-packages/search/${stringToSlug(location.city_name)}/${encodeURIComponent(value)}`);
-    }
-  };
+  // handleSearchLab = (event) => {
+  //   if (event.key === "Enter") {
+  //     event.target.blur();
+  //     // history.push(`/health-packages/search/${stringToSlug(location.city_name)}/${encodeURIComponent(value)}`);
+  //   }
+  // };
 
-  onSuggestionSelected = (event, { suggestion, method }, setFieldTouched) => {
-    if (method === "click" || method === "enter") {
-      let payload = {
-        search_name: suggestion.value.toUpperCase(),
-      };
-      API.post(`/feed/code-search`, payload)
-        .then((res) => {
-          if (res.data && res.data.data && res.data.data.length > 0) {
-            const searchDetails = res.data.data[0];
-            this.setState({ selectedLabIdValue: searchDetails }, () => {
-              setFieldTouched("labId");
-            });
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          this.setState({ selectedLabIdValue: "" }, () => {
-            setFieldTouched("labId");
-          });
-        });
-    }
-  };
+  // onSuggestionSelected = (event, { suggestion, method }, setFieldTouched) => {
+  //   if (method === "click" || method === "enter") {
+  //     let payload = {
+  //       search_name: suggestion.value.toUpperCase(),
+  //     };
+  //     API.post(`/feed/code-search`, payload)
+  //       .then((res) => {
+  //         if (res.data && res.data.data && res.data.data.length > 0) {
+  //           const searchDetails = res.data.data[0];
+  //           this.setState({ selectedLabIdValue: searchDetails }, () => {
+  //             setFieldTouched("labId");
+  //           });
+  //         }
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //         this.setState({ selectedLabIdValue: "" }, () => {
+  //           setFieldTouched("labId");
+  //         });
+  //       });
+  //   }
+  // };
 
   render() {
     const { AboutUsDetail,selectedLabIdValue } = this.state;
@@ -499,18 +509,18 @@ class AboutUsPartnerPage extends Component {
         AboutUsDetail.status || +AboutUsDetail.status === 0
           ? AboutUsDetail.status.toString()
           : "",
+      content: AboutUsDetail.content ? AboutUsDetail.content : "",
     });
 
     const validateStopFlag = Yup.object().shape({
-      labId: Yup.string()
-        .test("labId", "Please select a Lab Id", () => {
-          return selectedLabIdValue && selectedLabIdValue !== "";
-        }),
+      // labId: Yup.string()
+      //   .test("labId", "Please select a Lab Id", () => {
+      //     return selectedLabIdValue && selectedLabIdValue !== "";
+      //   }),
       status: Yup.string()
         .trim()
         .required("Please select status")
         .matches(/^[0|1]$/, "Invalid status selected"),
-      title: Yup.string().required("Please enter the title"),
       content: Yup.string().required("Please enter the content"),
     });
 
@@ -528,16 +538,23 @@ class AboutUsPartnerPage extends Component {
 
               <div className="col-lg-12 col-sm-12 col-xs-12  topSearchSection">
                 <div className="">
-                  <button
+                  {/* <button
                     type="button"
                     className="btn btn-info btn-sm"
                     onClick={(e) => this.modalShowHandler(e, "")}
                   >
                     <i className="fas fa-plus m-r-5" /> Add About Us
+                  </button> */}
+                  <button
+                    type="button"
+                    className="btn btn-info btn-sm"
+                    onClick={(e) => this.modalShowHandler(e, 7)}
+                  >
+                    <i className="fas fa-plus m-r-5" /> Edit About Us
                   </button>
                 </div>
 
-                <form className="form">
+                {/* <form className="form">
                   <div className="">
                         <select
                             name="status" 
@@ -578,7 +595,7 @@ class AboutUsPartnerPage extends Component {
                     ) : null}
                   </div>
                   <div className="clearfix"></div>
-                </form>
+                </form> */}
               </div>
             </div>
           </section>
@@ -586,30 +603,31 @@ class AboutUsPartnerPage extends Component {
             <div className="box">
               <div className="box-body">
                 <BootstrapTable data={this.state.AboutUsList} keyField="id">
-                  <TableHeaderColumn
+                  {/* <TableHeaderColumn
                     dataField="labId"
                   >
                     Lab Id
-                  </TableHeaderColumn>
+                  </TableHeaderColumn> */}
                   <TableHeaderColumn
+                  width="200"
+                    dataField="content"
+                    dataFormat={__htmlDecode(this)}
+                  >
+                    Content
+                  </TableHeaderColumn>
+                  {/* <TableHeaderColumn
                     dataField="status"
                     dataFormat={custStatus(this)}
                   >
                     Status
-                  </TableHeaderColumn>
-                  <TableHeaderColumn
-                    dataField="content"
-                    dataFormat={__htmlDecode(this)}
-                  >
-                    Description
-                  </TableHeaderColumn>
-                  <TableHeaderColumn
+                  </TableHeaderColumn> */}
+                  {/* <TableHeaderColumn
                     dataField="id"
                     dataFormat={actionFormatter(this)}
                     dataAlign=""
                   >
                     Action
-                  </TableHeaderColumn>
+                  </TableHeaderColumn> */}
                 </BootstrapTable>
 
                 {this.state.totalCount > 10 ? (
@@ -677,7 +695,7 @@ class AboutUsPartnerPage extends Component {
                           </Modal.Header>
                           <Modal.Body>
                             <div className="contBox">
-                              <Row>
+                              {/* <Row>
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
@@ -753,7 +771,7 @@ class AboutUsPartnerPage extends Component {
                                     ) : null}
                                   </div>
                                 </Col>
-                              </Row>
+                              </Row> */}
 
                             <Row>
                               <Col xs={12} sm={12} md={12}>
@@ -762,7 +780,16 @@ class AboutUsPartnerPage extends Component {
                                           Content
                                       <span className="impField">*</span>
                                       </label>
-                                      <Editor
+                                      <Field
+                                        name="content"
+                                        as="textarea"
+                                        className={`form-control`}
+                                        placeholder="Enter Content"
+                                        rows="10"
+                                        autoComplete="off"
+                                        value={values.content}
+                                      />
+                                  {/* <Editor
                                           value={values.content}
                                           init={{
                                               height: 500,
@@ -801,7 +828,7 @@ class AboutUsPartnerPage extends Component {
                                                   value
                                               )
                                           }
-                                      />
+                                      /> */}
                                       {errors.content && touched.content ? (
                                           <span className="errorMsg">
                                               {errors.content}
@@ -810,7 +837,7 @@ class AboutUsPartnerPage extends Component {
                                   </div>
                               </Col>
                           </Row>
-                        <Row>
+                        {/* <Row>
                         <Col xs={12} sm={12} md={12}>
                             <div className="form-group">
                             <label>
@@ -840,7 +867,7 @@ class AboutUsPartnerPage extends Component {
                             ) : null}
                             </div>
                         </Col>
-                        </Row>
+                        </Row> */}
                     </div>
                           </Modal.Body>
                           <Modal.Footer>
@@ -876,7 +903,7 @@ class AboutUsPartnerPage extends Component {
                 </Modal>
 
                 {/* MODAL FOR IMAGE*/}
-                <Modal
+                {/* <Modal
                   show={this.state.thumbNailModal}
                   onHide={() => this.imageModalCloseHandler()}
                   backdrop="static"
@@ -894,7 +921,7 @@ class AboutUsPartnerPage extends Component {
                       </div>
                     </center>
                   </Modal.Body>
-                </Modal>
+                </Modal> */}
               </div>
             </div>
           </section>

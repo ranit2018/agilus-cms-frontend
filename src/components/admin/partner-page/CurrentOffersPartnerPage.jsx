@@ -34,8 +34,8 @@ import {
 import Autosuggest from "react-autosuggest";
 const initialValues = {
   status:"",
-  offer_image:"",
-  labId:"",
+  file:"",
+  // labId:"",
 };
 const __htmlDecode = (refObj) => (cell) => {
   return ReactHtmlParser(htmlDecode(cell));
@@ -249,7 +249,7 @@ class CenterCurrentOffers extends Component {
     } else {
       getHeightWidth(this.state.file).then((dimension) => {
         const { height, width } = dimension;
-        const offerDimension = getResolution("center-current-offers");
+        const offerDimension = getResolution("partner-current-offers");
         if (height != offerDimension.height || width != offerDimension.width) {
           //    actions.setErrors({ file: "The file is not of desired height and width" });
           actions.setErrors({ file: FILE_VALIDATION_TYPE_ERROR_MASSAGE });
@@ -304,7 +304,7 @@ class CenterCurrentOffers extends Component {
       } else {
         getHeightWidth(this.state.file).then((dimension) => {
           const { height, width } = dimension;
-          const offerDimension = getResolution("center-current-offers");
+          const offerDimension = getResolution("partner-current-offers");
           if (
             height != offerDimension.height ||
             width != offerDimension.width
@@ -373,7 +373,7 @@ class CenterCurrentOffers extends Component {
   componentDidMount() {
     this.getCurrentOffersList();
     this.setState({
-      validationMessage: generateResolutionText("center-current-offers"),
+      validationMessage: generateResolutionText("partner-current-offers"),
       fileValidationMessage: FILE_VALIDATION_MASSAGE,
     });
   }
@@ -455,15 +455,15 @@ class CenterCurrentOffers extends Component {
     e.preventDefault();
 
     const search_by_status = document.getElementById("status").value;
-    const search_lab_code = document.getElementById(
-      "search_lab_code"
-    ).value;
+    // const search_lab_code = document.getElementById(
+    //   "search_lab_code"
+    // ).value;
 
-    if (search_by_status === "" && search_lab_code === "") {
+    if (search_by_status === "" ) {
       return false;
     }
     API.get(
-      `/api/center/offers?page=1&status=${search_by_status}&lab_id=${encodeURIComponent(search_lab_code)}`
+      `/api/center/offers?page=1&status=${search_by_status}`
     )
       .then((res) => {
         this.setState({
@@ -641,11 +641,13 @@ class CenterCurrentOffers extends Component {
                             })}
                         </select>
                   </div>
-                  <input
-                      className="form-control"
-                      id="search_lab_code"
-                      placeholder="Filter by Lab Id"
-                    />
+                  {/* <div className="">
+                    <input
+                        className="form-control"
+                        id="search_lab_code"
+                        placeholder="Filter by Lab Id"
+                      />
+                  </div> */}
 
                   <div className="">
                     <input
@@ -680,11 +682,11 @@ class CenterCurrentOffers extends Component {
                   >
                     Image
                   </TableHeaderColumn>
-                  <TableHeaderColumn
+                  {/* <TableHeaderColumn
                     dataField="labId"
                   >
                     Lab Id
-                  </TableHeaderColumn>
+                  </TableHeaderColumn> */}
                   <TableHeaderColumn
                     dataField="status"
                     dataFormat={custStatus(this)}
@@ -817,7 +819,7 @@ class CenterCurrentOffers extends Component {
                               </Row> */}
 
                               <Row>
-                              <Col xs={12} sm={12} md={12}>
+                              {/* <Col xs={12} sm={12} md={12}>
                               <div className="form-group">
                                 <label>
                                   Search Product
@@ -891,7 +893,7 @@ class CenterCurrentOffers extends Component {
                                   </span>
                                 ) : null}
                               </div>
-                            </Col>
+                            </Col> */}
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>

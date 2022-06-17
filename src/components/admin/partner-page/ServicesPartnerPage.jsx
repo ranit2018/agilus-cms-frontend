@@ -488,6 +488,7 @@ class ServicesPartnerPage extends Component {
 
   clearSearch = () => {
     document.getElementById("status").value = "";
+    document.getElementById("search_by_heading").value = "";
     this.setState(
       {
         search_by_status: "",
