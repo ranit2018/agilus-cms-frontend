@@ -508,7 +508,7 @@ class AboutUsPartnerPage extends Component {
         AboutUsDetail.status || +AboutUsDetail.status === 0
           ? AboutUsDetail.status.toString()
           : "",
-      content: AboutUsDetail.content ? AboutUsDetail.content : "",
+      content: AboutUsDetail.content ? htmlDecode(AboutUsDetail.content) : "",
     });
 
     const validateStopFlag = Yup.object().shape({
@@ -520,7 +520,7 @@ class AboutUsPartnerPage extends Component {
         .trim()
         .required("Please select status")
         .matches(/^[0|1]$/, "Invalid status selected"),
-      content: Yup.string().required("Please enter the content"),
+      content: Yup.string().trim().required("Please enter the content"),
     });
 
     return (
@@ -601,12 +601,17 @@ class AboutUsPartnerPage extends Component {
           <section className="content">
             <div className="box">
               <div className="box-body">
-                <BootstrapTable data={this.state.AboutUsList} keyField="id">
-                  {/* <TableHeaderColumn
+                <center>
+                  <h1>{this.state.page_name}</h1>
+                </center>
+                {console.log(this.state.AboutUsList[0])}
+                 {this.state.AboutUsList.length>0 && ReactHtmlParser(htmlDecode(this.state.AboutUsList[0].content))}
+                {/* <BootstrapTable data={this.state.AboutUsList} keyField="id">
+                  <TableHeaderColumn
                     dataField="labId"
                   >
                     Lab Id
-                  </TableHeaderColumn> */}
+                  </TableHeaderColumn>
                   <TableHeaderColumn
                   width="200"
                     dataField="content"
@@ -614,19 +619,19 @@ class AboutUsPartnerPage extends Component {
                   >
                     Content
                   </TableHeaderColumn>
-                  {/* <TableHeaderColumn
+                  <TableHeaderColumn
                     dataField="status"
                     dataFormat={custStatus(this)}
                   >
                     Status
-                  </TableHeaderColumn> */}
-                  {/* <TableHeaderColumn
+                  </TableHeaderColumn>
+                  <TableHeaderColumn
                     dataField="id"
                     dataFormat={actionFormatter(this)}
                     dataAlign=""
                   >
                     Action
-                  </TableHeaderColumn> */}
+                  </TableHeaderColumn>
                 </BootstrapTable>
 
                 {this.state.totalCount > 10 ? (
@@ -645,7 +650,7 @@ class AboutUsPartnerPage extends Component {
                       </div>
                     </Col>
                   </Row>
-                ) : null}
+                ) : null} */}
 
                 {/* ======= Add Current Offers Modal ======== */}
                 <Modal
@@ -779,7 +784,7 @@ class AboutUsPartnerPage extends Component {
                                           Content
                                       <span className="impField">*</span>
                                       </label>
-                                      <Field
+                                      {/* <Field
                                         name="content"
                                         as="textarea"
                                         className={`form-control`}
@@ -787,8 +792,8 @@ class AboutUsPartnerPage extends Component {
                                         rows="10"
                                         autoComplete="off"
                                         value={values.content}
-                                      />
-                                  {/* <Editor
+                                      /> */}
+                                      <Editor
                                           value={values.content}
                                           init={{
                                               height: 500,
@@ -827,7 +832,7 @@ class AboutUsPartnerPage extends Component {
                                                   value
                                               )
                                           }
-                                      /> */}
+                                      />
                                       {errors.content && touched.content ? (
                                           <span className="errorMsg">
                                               {errors.content}

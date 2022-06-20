@@ -27,7 +27,7 @@ import {
   generateResolutionText,
   FILE_VALIDATION_TYPE_ERROR_MASSAGE,
   getResolution,
-  FILE_VALIDATION_MASSAGE,
+  ICON_VALIDATION_MASSAGE,
   FILE_SIZE,
   FILE_VALIDATION_SIZE_ERROR_MASSAGE,
 } from "../../../shared/helper";
@@ -377,8 +377,8 @@ class AmenitiesPartnerPage extends Component {
   componentDidMount() {
     this.getAmenitiesList();
     this.setState({
-      validationMessage: generateResolutionText("partner-amenities"),
-      fileValidationMessage: FILE_VALIDATION_MASSAGE,
+      validationMessage: generateResolutionText("partner-amenities","icon"),
+      fileValidationMessage: ICON_VALIDATION_MASSAGE,
     });
   }
 
@@ -447,10 +447,10 @@ class AmenitiesPartnerPage extends Component {
     if (row.offer_image !== null) {
       return (
         <img
-          src={row.offer_image}
-          alt="Amenity Image"
+          src={row.aminities_image}
+          alt="Amenity Icon"
           height="100"
-          onClick={(e) => refObj.imageModalShowHandler(row.offer_image)}
+          onClick={(e) => refObj.imageModalShowHandler(row.aminities_image)}
         ></img>
       );
     } else {
@@ -598,8 +598,8 @@ class AmenitiesPartnerPage extends Component {
         .trim()
         .required("Please select status")
         .matches(/^[0|1]$/, "Invalid status selected"),
-      heading: Yup.string().required("Please enter the heading"),
-      content: Yup.string().required("Please enter the content"),
+      heading: Yup.string().trim().required("Please enter the heading"),
+      content: Yup.string().trim().strict().required("Please enter the content"),
     });
 
     const validateStopFlagUpdate = Yup.object().shape({
@@ -707,7 +707,7 @@ class AmenitiesPartnerPage extends Component {
                     dataField="content"
                     dataFormat={this.setAmenityImage(this)}
                   >
-                    Image
+                    Icon
                   </TableHeaderColumn>
                   {/* <TableHeaderColumn
                     dataField="labId"
@@ -914,7 +914,7 @@ class AmenitiesPartnerPage extends Component {
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
-                                      Upload Image
+                                      Upload Icon
                                       {this.state.amenitiesEditType > 0 ? null : (
                                         <span className="impField">*</span>
                                       )}
@@ -927,7 +927,7 @@ class AmenitiesPartnerPage extends Component {
                                       name="file"
                                       type="file"
                                       className={`form-control`}
-                                      placeholder="Select Image"
+                                      placeholder="Select Icon"
                                       autoComplete="off"
                                       onChange={(e) => {
                                         this.fileChangedHandler(
@@ -961,6 +961,9 @@ class AmenitiesPartnerPage extends Component {
                                             placeholder="Enter Title"
                                             autoComplete="off"
                                             value={values.heading}
+                                            onChange={(e) => {
+                                              setFieldValue("heading",e.target.value.trim() === '' ? e.target.value.trim():e.target.value)
+                                            }}  
                                         />
                                         {errors.heading && touched.heading ? (
                                             <span className="errorMsg">
@@ -985,6 +988,9 @@ class AmenitiesPartnerPage extends Component {
                                             placeholder="Enter Content"
                                             autoComplete="off"
                                             value={values.content}
+                                            onChange={(e) => {
+                                              setFieldValue("heading",e.target.value.trim() === '' ? e.target.value.trim():e.target.value)
+                                            }}  
                                         />
                                         {errors.content && touched.content ? (
                                             <span className="errorMsg">

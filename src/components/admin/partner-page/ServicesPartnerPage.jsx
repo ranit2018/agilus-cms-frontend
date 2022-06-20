@@ -27,7 +27,7 @@ import {
   generateResolutionText,
   FILE_VALIDATION_TYPE_ERROR_MASSAGE,
   getResolution,
-  FILE_VALIDATION_MASSAGE,
+  ICON_VALIDATION_MASSAGE,
   FILE_SIZE,
   FILE_VALIDATION_SIZE_ERROR_MASSAGE,
 } from "../../../shared/helper";
@@ -377,8 +377,8 @@ class ServicesPartnerPage extends Component {
   componentDidMount() {
     this.getServicesList();
     this.setState({
-      validationMessage: generateResolutionText("partner-services"),
-      fileValidationMessage: FILE_VALIDATION_MASSAGE,
+      validationMessage: generateResolutionText("partner-services","icon"),
+      fileValidationMessage: ICON_VALIDATION_MASSAGE,
     });
   }
 
@@ -445,7 +445,7 @@ class ServicesPartnerPage extends Component {
       return (
         <img
           src={row.service_image}
-          alt="Service Image"
+          alt="Service Icon"
           height="100"
           onClick={(e) => refObj.imageModalShowHandler(row.service_image)}
         ></img>
@@ -596,8 +596,8 @@ class ServicesPartnerPage extends Component {
         .trim()
         .required("Please select status")
         .matches(/^[0|1]$/, "Invalid status selected"),
-      heading: Yup.string().required("Please enter the heading"),
-      content: Yup.string().required("Please enter the content"),
+      heading: Yup.string().trim().required("Please enter the heading"),
+      content: Yup.string().trim().required("Please enter the content"),
     });
 
     const validateStopFlagUpdate = Yup.object().shape({
@@ -705,7 +705,7 @@ class ServicesPartnerPage extends Component {
                     dataField="content"
                     dataFormat={this.setServiceImage(this)}
                   >
-                    Image
+                    Icon      
                   </TableHeaderColumn>
                   {/* <TableHeaderColumn
                     dataField="labId"
@@ -934,7 +934,7 @@ class ServicesPartnerPage extends Component {
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
-                                      Upload Image
+                                      Upload Icon
                                       {this.state.serviceEditType > 0 ? null : (
                                         <span className="impField">*</span>
                                       )}
@@ -947,7 +947,7 @@ class ServicesPartnerPage extends Component {
                                       name="file"
                                       type="file"
                                       className={`form-control`}
-                                      placeholder="Select Image"
+                                      placeholder="Select Icon"
                                       autoComplete="off"
                                       onChange={(e) => {
                                         this.fileChangedHandler(
@@ -981,6 +981,9 @@ class ServicesPartnerPage extends Component {
                                             placeholder="Enter Title"
                                             autoComplete="off"
                                             value={values.heading}
+                                            onChange={(e) => {
+                                              setFieldValue("heading",e.target.value.trim() === '' ? e.target.value.trim():e.target.value)
+                                            }}  
                                         />
                                         {errors.heading && touched.heading ? (
                                             <span className="errorMsg">
@@ -1005,6 +1008,9 @@ class ServicesPartnerPage extends Component {
                                             placeholder="Enter Content"
                                             autoComplete="off"
                                             value={values.content}
+                                            onChange={(e) => {
+                                              setFieldValue("heading",e.target.value.trim() === '' ? e.target.value.trim():e.target.value)
+                                            }}  
                                         />
                                         {errors.content && touched.content ? (
                                             <span className="errorMsg">

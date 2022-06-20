@@ -594,7 +594,7 @@ class CenterImagePartnerPage extends Component {
         .trim()
         .required("Please select status")
         .matches(/^[0|1]$/, "Invalid status selected"),
-      heading: Yup.string().required("Please enter the heading"),
+      heading: Yup.string().trim().required("Please enter the heading"),
     });
 
     const validateStopFlagUpdate = Yup.object().shape({
@@ -969,6 +969,9 @@ class CenterImagePartnerPage extends Component {
                                             placeholder="Enter Heading"
                                             autoComplete="off"
                                             value={values.heading}
+                                            onChange={(e) => {
+                                              setFieldValue("heading",e.target.value.trim() === '' ? e.target.value.trim():e.target.value)
+                                            }}  
                                         />
                                         {errors.heading && touched.heading ? (
                                             <span className="errorMsg">
