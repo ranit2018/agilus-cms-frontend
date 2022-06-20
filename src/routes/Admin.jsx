@@ -68,15 +68,16 @@ import HealthandBenefits from "../components/admin/lead-landing-page/HealthwithB
 import Accordian from "../components/admin/product-details/Accordion";
 import AddAccordian from "../components/admin/product-details/AddAccordion";
 import EditAccordion from "../components/admin/product-details/EditAccordion";
-import "../assets/css/all.css";
-import "../assets/css/admin-style.css";
-import "../assets/css/admin-skin-blue.css";
-import "react-bootstrap-table/dist/react-bootstrap-table.min.css";
 import CurrentOffersPartnerPage from "../components/admin/partner-page/CurrentOffersPartnerPage";
 import AboutUsPartnerPage from '../components/admin/partner-page/AboutUsPartnerPage';
 import CenterImagePartnerPage from '../components/admin/partner-page/CenterImagePartnerPage';
 import AmenitiesPartnerPage from '../components/admin/partner-page/AmenitiesPartnerPage';
 import ServicesPartnerPage from '../components/admin/partner-page/ServicesPartnerPage';
+import "../assets/css/all.css";
+import "../assets/css/admin-style.css";
+import "../assets/css/admin-skin-blue.css";
+import "react-bootstrap-table/dist/react-bootstrap-table.min.css";
+
 
 // Private Route for inner component
 const PrivateRoute = ({ component: RefComponent, ...rest }) => (

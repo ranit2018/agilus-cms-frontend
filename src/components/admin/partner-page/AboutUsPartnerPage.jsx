@@ -38,7 +38,6 @@ const initialValues = {
   content:"",
 };
 const __htmlDecode = (refObj) => (cell) => {
-  console.log({cell})
   return ReactHtmlParser(htmlDecode(cell));
 };
 
