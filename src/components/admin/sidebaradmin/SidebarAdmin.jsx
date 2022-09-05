@@ -59,6 +59,13 @@ class SidebarAdmin extends Component {
     }
 
     if (
+      path === "/rnd/categories" ||
+      path === "/rnd/documents" 
+    ) {
+      this.setState({ shown: "1", innerShown: "45" });
+    }
+
+    if (
       path === "/about-us/about-srl" ||
       path === "/about-us/why-us" ||
       path === "/about-us/values" ||
@@ -757,6 +764,74 @@ class SidebarAdmin extends Component {
                   )}
                 </ul>
               </li>
+              {/* R & D PAGE MENU */}
+              <li
+                className={innerRotate == "45" ? "treeview active" : "treeview"}
+              >
+                <Link to="#" inner-data-id="45" onClick={this.innerHandlePlus}>
+                  <i
+                    className="fas fa-coins sub-menu"
+                    inner-data-id="45"
+                    onClick={this.innerHandlePlus}
+                  ></i>{" "}
+                  <span inner-data-id="45" onClick={this.innerHandlePlus}>
+                    R &amp; D Page{" "}
+                  </span>
+                  <span className="pull-right-container">
+                    <i
+                      inner-data-id="45"
+                      onClick={this.innerHandlePlus}
+                      className={
+                        innerRotate == "45"
+                          ? "fa pull-right fa-minus"
+                          : "fa pull-right fa-plus"
+                      }
+                    ></i>
+                  </span>
+                </Link>
+                <ul className="treeview-menu">
+                  {this.props.path_name === "/rnd/categories" ? (
+                    <li className="active">
+                      {" "}
+                      <Link to="/rnd/categories">
+                        {" "}
+                        <i className="fas fa-chalkboard-teacher"></i>{" "}
+                        <span>Categories</span>
+                      </Link>{" "}
+                    </li>
+                  ) : (
+                    <li>
+                      {" "}
+                      <Link to="/rnd/categories">
+                        {" "}
+                        <i className="fas fa-chalkboard-teacher"></i>{" "}
+                        <span>Categories</span>
+                      </Link>{" "}
+                    </li>
+                  )}
+                  {this.props.path_name === "/rnd/documents" ? (
+                    <li className="active">
+                      {" "}
+                      <Link to="/rnd/documents">
+                        {" "}
+                        <i className="fas fa-portrait"></i>{" "}
+                        <span>Documents</span>
+                      </Link>{" "}
+                    </li>
+                  ) : (
+                    <li>
+                      {" "}
+                      <Link to="/rnd/documents">
+                        {" "}
+                        <i className="fas fa-portrait"></i>{" "}
+                        <span>Documents</span>
+                      </Link>{" "}
+                    </li>
+                  )}
+                </ul>
+
+              </li>
+              {/* R & D PAGE MENU END */}
 
               <li
                 className={innerRotate == "4" ? "treeview active" : "treeview"}
