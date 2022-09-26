@@ -56,6 +56,7 @@ import EBookUpload from "../components/admin/covid19/EBookUpload";
 import TestCenters from "../components/admin/covid19/TestCenters";
 import RnDCategories from "../components/admin/r-and-d/Categories"
 import RnDocuments from "../components/admin/r-and-d/Documents"
+import Partners from "../components/admin/r-and-d/Partners"
 
 import Members from "../components/admin/investors/Members";
 import CodeOfConduct from "../components/admin/investors/CodeOfConduct";
@@ -198,6 +199,7 @@ class Admin extends Component {
         <PrivateRoute path="/covid19/testing-center" component={TestCenters} />
         <PrivateRoute path="/rnd/categories" component={RnDCategories} />
         <PrivateRoute path="/rnd/documents" component={RnDocuments} />
+        <PrivateRoute path="/rnd/partners" component={Partners} />
         <PrivateRoute path="/investors/members" component={Members} />
         <PrivateRoute
           path="/investors/code-of-conduct"

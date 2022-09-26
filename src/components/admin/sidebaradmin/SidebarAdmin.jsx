@@ -60,7 +60,8 @@ class SidebarAdmin extends Component {
 
     if (
       path === "/rnd/categories" ||
-      path === "/rnd/documents" 
+      path === "/rnd/documents" ||
+      path==="/rnd/partners"
     ) {
       this.setState({ shown: "1", innerShown: "45" });
     }
@@ -825,6 +826,25 @@ class SidebarAdmin extends Component {
                         {" "}
                         <i className="fas fa-portrait"></i>{" "}
                         <span>Documents</span>
+                      </Link>{" "}
+                    </li>
+                  )}
+                  {this.props.path_name === "/rnd/partners" ? (
+                    <li className="active">
+                      {" "}
+                      <Link to="/rnd/partners">
+                        {" "}
+                        <i className="fas fa-portrait"></i>{" "}
+                        <span>Partners</span>
+                      </Link>{" "}
+                    </li>
+                  ) : (
+                    <li>
+                      {" "}
+                      <Link to="/rnd/partners">
+                        {" "}
+                        <i className="fas fa-portrait"></i>{" "}
+                        <span>Partners</span>
                       </Link>{" "}
                     </li>
                   )}
