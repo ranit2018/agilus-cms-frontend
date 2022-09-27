@@ -57,6 +57,7 @@ import TestCenters from "../components/admin/covid19/TestCenters";
 import RnDCategories from "../components/admin/r-and-d/Categories"
 import RnDocuments from "../components/admin/r-and-d/Documents"
 import Partners from "../components/admin/r-and-d/Partners"
+import ContentTab from "../components/admin/r-and-d/ContentTab"
 
 import Members from "../components/admin/investors/Members";
 import CodeOfConduct from "../components/admin/investors/CodeOfConduct";
@@ -71,6 +72,8 @@ import ProductDetails from "../components/admin/lead-landing-page/ProductDetails
 import HealthandBenefits from "../components/admin/lead-landing-page/HealthwithBenefits";
 import Accordian from "../components/admin/product-details/Accordion";
 import AddAccordian from "../components/admin/product-details/AddAccordion";
+import AddContentAccordian from "../components/admin/r-and-d/AddContentAccordion";
+import EditContentAccordion from "../components/admin/r-and-d/EditContentAccordion";
 import EditAccordion from "../components/admin/product-details/EditAccordion";
 import "../assets/css/all.css";
 import "../assets/css/admin-style.css";
@@ -133,7 +136,15 @@ class Admin extends Component {
           path="/product-details/add-accordion"
           component={AddAccordian}
         />
+        <PrivateRoute
+          path="/rnd_content_tab/add-accordion"
+          component={AddContentAccordian}
+        />
 
+        <PrivateRoute
+          path="/rnd_content_tab/edit-accordion/:id"
+          component={EditContentAccordion}
+        />
         <PrivateRoute
           path="/product-details/edit-accordion/:id"
           component={EditAccordion}
@@ -200,6 +211,7 @@ class Admin extends Component {
         <PrivateRoute path="/rnd/categories" component={RnDCategories} />
         <PrivateRoute path="/rnd/documents" component={RnDocuments} />
         <PrivateRoute path="/rnd/partners" component={Partners} />
+        <PrivateRoute path="/rnd/rnd_content_tab" component={ContentTab} />
         <PrivateRoute path="/investors/members" component={Members} />
         <PrivateRoute
           path="/investors/code-of-conduct"

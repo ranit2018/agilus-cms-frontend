@@ -61,7 +61,8 @@ class SidebarAdmin extends Component {
     if (
       path === "/rnd/categories" ||
       path === "/rnd/documents" ||
-      path==="/rnd/partners"
+      path === "/rnd/partners" ||
+      path === "/rnd/rnd_content_tab"
     ) {
       this.setState({ shown: "1", innerShown: "45" });
     }
@@ -848,8 +849,26 @@ class SidebarAdmin extends Component {
                       </Link>{" "}
                     </li>
                   )}
+                  {this.props.path_name === "/rnd/rnd_content_tab" ? (
+                    <li className="active">
+                      {" "}
+                      <Link to="/rnd/rnd_content_tab">
+                        {" "}
+                        <i className="fas fa-portrait"></i>{" "}
+                        <span>Content Tab</span>
+                      </Link>{" "}
+                    </li>
+                  ) : (
+                    <li>
+                      {" "}
+                      <Link to="/rnd/rnd_content_tab">
+                        {" "}
+                        <i className="fas fa-portrait"></i>{" "}
+                        <span>Content Tab</span>
+                      </Link>{" "}
+                    </li>
+                  )}
                 </ul>
-
               </li>
               {/* R & D PAGE MENU END */}
 
