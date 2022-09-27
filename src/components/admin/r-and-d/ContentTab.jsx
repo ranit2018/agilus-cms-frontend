@@ -360,8 +360,8 @@ class Accordion extends Component {
     if (row.health_image !== null) {
       return (
         <img
-          src={row.rnd_content_image}
-          alt="rnd_content_image"
+          src={row.rnd_content_tab_image}
+          alt="rnd_content_tab_image"
           height="100"
           //   onClick={(e) => refObj.imageModalShowHandler(row.health_image)}
         ></img>
