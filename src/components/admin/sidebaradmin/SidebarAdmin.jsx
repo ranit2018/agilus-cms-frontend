@@ -97,6 +97,15 @@ class SidebarAdmin extends Component {
     ) {
       this.setState({ shown: "5" });
     }
+    if (
+      path === "/partner-page/aboutus" ||
+      path === "/partner-page/amenities" ||
+      path === "/partner-page/services" ||
+      path === "/partner-page/center-images" ||
+      path === "/partner-page/current-offers"
+    ) {
+      this.setState({ shown: "6" });
+    }
 
     if (this.props.isLoggedIn === true) {
       const superAdmin = getSuperAdmin(localStorage.admin_token);
@@ -217,6 +226,7 @@ class SidebarAdmin extends Component {
               </Link>{" "}
             </li>
           )}
+
           <li className={rotate == "6" ? "treeview active" : "treeview"}>
             <Link to="#" data-id="6" onClick={this.handlePlus}>
               <i
@@ -303,7 +313,8 @@ class SidebarAdmin extends Component {
                   {" "}
                   <Link to="/partner-page/center-images">
                     {" "}
-                    <i className="fas fa-compress"></i> <span> Center Images </span>
+                    <i className="fas fa-compress"></i>{" "}
+                    <span> Center Images </span>
                   </Link>{" "}
                 </li>
               ) : (
@@ -311,7 +322,8 @@ class SidebarAdmin extends Component {
                   {" "}
                   <Link to="/partner-page/center-images">
                     {" "}
-                    <i className="fas fa-compress"></i> <span> Center Images </span>
+                    <i className="fas fa-compress"></i>{" "}
+                    <span> Center Images </span>
                   </Link>{" "}
                 </li>
               )}
@@ -322,7 +334,8 @@ class SidebarAdmin extends Component {
                   {" "}
                   <Link to="/partner-page/current-offers">
                     {" "}
-                    <i className="fas fa-compress"></i> <span> Current Offers </span>
+                    <i className="fas fa-compress"></i>{" "}
+                    <span> Current Offers </span>
                   </Link>{" "}
                 </li>
               ) : (
@@ -330,14 +343,14 @@ class SidebarAdmin extends Component {
                   {" "}
                   <Link to="/partner-page/current-offers">
                     {" "}
-                    <i className="fas fa-compress"></i> <span> Current Offers </span>
+                    <i className="fas fa-compress"></i>{" "}
+                    <span> Current Offers </span>
                   </Link>{" "}
                 </li>
               )}
             </ul>
-            
           </li>
-    
+
           {this.props.path_name === "/events" ? (
             <li className="active">
               {" "}
