@@ -129,7 +129,7 @@ class EditOffer extends Component {
             text: "Record updated successfully.",
             icon: "success",
           }).then(() => {
-            this.props.history.push("/offers");
+            this.props.history.push("/rnd/rnd_content_tab");
           });
         })
         .catch((err) => {
