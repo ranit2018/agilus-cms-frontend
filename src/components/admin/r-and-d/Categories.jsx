@@ -289,7 +289,7 @@ export default class RnDCategories extends Component {
           src={row.category_image}
           alt="Category Image"
           height="100"
-        //   onClick={(e) => refObj.imageModalShowHandler(row.health_image)}
+          //   onClick={(e) => refObj.imageModalShowHandler(row.health_image)}
         ></img>
       );
     } else {
@@ -375,14 +375,14 @@ export default class RnDCategories extends Component {
     let validateStopFlag = {};
     if (this.state.categoryId > 0) {
       validateStopFlag = Yup.object().shape({
-        name: Yup.string().required("Please enter the name"),
-        description: Yup.string().required("Please enter the description"),
+        name: Yup.string().notRequired(),
+        description: Yup.string().notRequired(),
         status: Yup.string()
           .trim()
-          .required("Please select status")
+          .notRequired()
           .matches(/^[0|1]$/, "Invalid status selected"),
         category_image: Yup.string()
-          .required("Please select the image")
+          .notRequired()
           .test(
             "file",
             "Only files with the following extensions are allowed: jpg/jpeg/png",
@@ -538,7 +538,9 @@ export default class RnDCategories extends Component {
                             <div className="form-group">
                               <label>
                                 Name
-                                <span className="impField">*</span>
+                                {this.state.categoryId == 0 ? (
+                                  <span className="impField">*</span>
+                                ) : null}
                               </label>
                               <Field
                                 name="name"
@@ -559,7 +561,9 @@ export default class RnDCategories extends Component {
                             <div className="form-group">
                               <label>
                                 Descriptions
-                                <span className="impField">*</span>
+                                {this.state.categoryId == 0 ? (
+                                  <span className="impField">*</span>
+                                ) : null}
                               </label>
                               <Field
                                 name="description"
@@ -617,7 +621,9 @@ export default class RnDCategories extends Component {
                             <div className="form-group">
                               <label>
                                 Status
-                                <span className="impField">*</span>
+                                {this.state.categoryId == 0 ? (
+                                  <span className="impField">*</span>
+                                ) : null}
                               </label>
                               <Field
                                 name="status"

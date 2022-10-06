@@ -303,7 +303,6 @@ export default class RnDCategories extends Component {
     formData.append("status", values.status);
     formData.append("rnd_partner_image", this.state.rnd_partner_image);
 
-
     if (this.state.categoryId > 0) {
       url = `/api/rnd/rnd_partner/${this.state.categoryId}`;
       method = "PUT";
@@ -362,13 +361,12 @@ export default class RnDCategories extends Component {
     let validateStopFlag = {};
     if (this.state.categoryId > 0) {
       validateStopFlag = Yup.object().shape({
-      
         status: Yup.string()
           .trim()
-          .required("Please select status")
+          // .required("Please select status")
           .matches(/^[0|1]$/, "Invalid status selected"),
         rnd_partner_image: Yup.string()
-          .required("Please select the image")
+          // .required("Please select the image")
           .test(
             "file",
             "Only files with the following extensions are allowed: jpg/jpeg/png",
@@ -399,7 +397,7 @@ export default class RnDCategories extends Component {
               <div className="col-lg-12 col-sm-12 col-xs-12">
                 <h1>Manage Partners</h1>
               </div>
-          
+
               <div className="col-lg-12 col-sm-12 col-xs-12  topSearchSection">
                 <div className="">
                   <button
@@ -499,8 +497,8 @@ export default class RnDCategories extends Component {
                     <Modal.Header closeButton>
                       <Modal.Title>
                         {this.state.categoryId > 0
-                          ? "Edit Category"
-                          : "Add Category"}
+                          ? "Edit Partner"
+                          : "Add Partner"}
                       </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
@@ -544,7 +542,9 @@ export default class RnDCategories extends Component {
                             <div className="form-group">
                               <label>
                                 Status
-                                <span className="impField">*</span>
+                                {this.state.documentId == 0 ? (
+                                  <span className="impField">*</span>
+                                ) : null}
                               </label>
                               <Field
                                 name="status"

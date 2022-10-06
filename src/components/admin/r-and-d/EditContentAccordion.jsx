@@ -238,7 +238,7 @@ class EditOffer extends Component {
               <div className="box-body">
                 <Formik
                   initialValues={newInitialValues}
-                  validationSchema={validateStopFlag}
+                  // validationSchema={validateStopFlag}
                   onSubmit={this.handleSubmitEvent}
                 >
                   {({
@@ -269,7 +269,7 @@ class EditOffer extends Component {
                               <div className="form-group">
                                 <label>
                                   Title
-                                  <span className="impField">*</span>
+                                  {/* <span className="impField">*</span> */}
                                 </label>
                                 <Field
                                   name="title"
@@ -293,7 +293,7 @@ class EditOffer extends Component {
                               <div className="form-group">
                                 <label>
                                   Content
-                                  <span className="impField">*</span>
+                                  {/* <span className="impField">*</span> */}
                                 </label>
 
                                 <input
@@ -407,7 +407,7 @@ class EditOffer extends Component {
                               <div className="form-group">
                                 <label>
                                   Status
-                                  <span className="impField">*</span>
+                                  {/* <span className="impField">*</span> */}
                                 </label>
                                 <Field
                                   name="status"
