@@ -496,9 +496,9 @@ class RnDocuments extends Component {
       validateStopFlag = Yup.object().shape({
         type: Yup.string().notRequired(),
         name: Yup.string().notRequired(),
-        file: Yup.string()
-          .notRequired()
-          .test(
+        file: Yup.string().when(`${this.state.file != ""}`, {
+          is: (value) => value != "",
+          then: Yup.string().test(
             "file",
             "Only files with the following extensions are allowed: pdf",
             (file) => {
@@ -509,6 +509,31 @@ class RnDocuments extends Component {
               }
             }
           ),
+        }),
+        //   .test(
+        //     "file",
+        //     "Only files with the following extensions are allowed: pdf",
+        //     (file) => {
+        //       if (file) {
+        //         return this.state.isValidFile;
+        //       } else {
+        //         return true;
+        //       }
+        //     }
+        //   ),
+        // file: Yup.string()
+        //   .notRequired()
+        //   .test(
+        //     "file",
+        //     "Only files with the following extensions are allowed: pdf",
+        //     (file) => {
+        //       if (file) {
+        //         return this.state.isValidFile;
+        //       } else {
+        //         return true;
+        //       }
+        //     }
+        //   ),
         status: Yup.string()
           .trim()
           .notRequired()

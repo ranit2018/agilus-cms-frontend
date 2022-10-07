@@ -31,7 +31,7 @@ import Layout from "../layout/Layout";
 
 const initialValues = {
   name: "",
-  description: "",
+  category_description: "",
   file: "",
   status: "",
 };
@@ -128,7 +128,7 @@ export default class RnDCategories extends Component {
       designation: "",
       status: "",
       category_image: "",
-      description: "",
+      category_description: "",
     };
   }
 
@@ -303,7 +303,7 @@ export default class RnDCategories extends Component {
     const formData = new FormData();
     formData.append("category_name", values.name);
     formData.append("status", values.status);
-    formData.append("category_description", values.description);
+    formData.append("category_description", values.category_description);
     formData.append("category_image", this.state.category_image);
 
     // let postData = {};
@@ -357,6 +357,7 @@ export default class RnDCategories extends Component {
 
   render() {
     const { categoryDetails } = this.state;
+    console.log('categoryDetails:', categoryDetails)
 
     const newInitialValues = Object.assign(initialValues, {
       name: categoryDetails.category_name
@@ -376,7 +377,7 @@ export default class RnDCategories extends Component {
     if (this.state.categoryId > 0) {
       validateStopFlag = Yup.object().shape({
         name: Yup.string().notRequired(),
-        description: Yup.string().notRequired(),
+        category_description: Yup.string().notRequired(),
         status: Yup.string()
           .trim()
           .notRequired()
@@ -385,14 +386,33 @@ export default class RnDCategories extends Component {
           .notRequired()
           .test(
             "file",
-            "Only files with the following extensions are allowed: jpg/jpeg/png",
-            () => this.state.isValidFile
+            "Only files with the following extensions are allowed: jpeg/jpg/png",
+            (file) => {
+              if (file) {
+                return this.state.isValidFile;
+              } else {
+                return true;
+              }
+            }
           ),
+        // category_image: Yup.string().when(
+        //   `${this.state.category_image != ""}`,
+        //   {
+        //     is: (value) => value != "",
+        //     then: Yup.string().test(
+        //       "file",
+        //       "Only files with the following extensions are allowed: jpeg/jpg/png",
+        //       () => this.state.isValidFile
+        //     ),
+        //   }
+        // ),
       });
     } else {
       validateStopFlag = Yup.object().shape({
         name: Yup.string().required("Please enter the name"),
-        description: Yup.string().required("Please enter the description"),
+        category_description: Yup.string().required(
+          "Please enter the description"
+        ),
         status: Yup.string()
           .trim()
           .required("Please select status")
@@ -415,7 +435,7 @@ export default class RnDCategories extends Component {
               <div className="col-lg-12 col-sm-12 col-xs-12">
                 <h1>Manage Categories</h1>
               </div>
-              {console.log(">>>>>>>>>", this.state.file)}
+              {/* {console.log(">>>>>>>>>", this.state.file)} */}
               <div className="col-lg-12 col-sm-12 col-xs-12  topSearchSection">
                 <div className="">
                   <button
@@ -566,16 +586,19 @@ export default class RnDCategories extends Component {
                                 ) : null}
                               </label>
                               <Field
-                                name="description"
+                                name="category_description"
                                 type="text"
+                                as="textarea"
+                                rows={3}
                                 className={`form-control`}
                                 placeholder="Enter The Description"
                                 autoComplete="off"
-                                value={values.description}
+                                value={values.category_description}
                               />
-                              {errors.description && touched.description ? (
+                              {errors.category_description &&
+                              touched.category_description ? (
                                 <span className="errorMsg">
-                                  {errors.description}
+                                  {errors.category_description}
                                 </span>
                               ) : null}
                             </div>
@@ -607,6 +630,7 @@ export default class RnDCategories extends Component {
                                   );
                                 }}
                               />
+
                               {errors.category_image &&
                               touched.category_image ? (
                                 <span className="errorMsg">

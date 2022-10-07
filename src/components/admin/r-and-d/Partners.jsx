@@ -363,14 +363,33 @@ export default class RnDCategories extends Component {
       validateStopFlag = Yup.object().shape({
         status: Yup.string()
           .trim()
-          // .required("Please select status")
+
+          .required("Please select status")
           .matches(/^[0|1]$/, "Invalid status selected"),
+        // rnd_partner_image: Yup.string()
+        //   // .required("Please select the image")
+
+        //   .when(`${this.state.category_image != ""}`, {
+        //     is: (value) => value != "",
+        //     then: Yup.string().test(
+        //       "file",
+        //       "Only files with the following extensions are allowed: jpg/jpeg/png",
+        //       () => this.state.isValidFile
+        //     ),
+        //   }),
         rnd_partner_image: Yup.string()
-          // .required("Please select the image")
+          .notRequired()
           .test(
             "file",
-            "Only files with the following extensions are allowed: jpg/jpeg/png",
-            () => this.state.isValidFile
+            "Only files with the following extensions are allowed: jpeg/jpg/png",
+            // () => this.state.isValidFile
+            (file) => {
+              if (file) {
+                return this.state.isValidFile;
+              } else {
+                return true;
+              }
+            }
           ),
       });
     } else {

@@ -194,21 +194,25 @@ class EditOffer extends Component {
     });
 
     const validateStopFlag = Yup.object().shape({
-      title: Yup.string().required("Please enter the title"),
-      content: Yup.string().required("Enter some Content"),
+      title: Yup.string().notRequired(),
+      content: Yup.string().notRequired(),
       content_tab_image: Yup.string()
         .notRequired()
-        .test(
-          "image",
-          "Only files with the following extensions are allowed: png jpg jpeg",
-          (content_tab_image) => {
-            if (content_tab_image) {
-              return this.state.isValidFile;
-            } else {
-              return true;
+        .when(`${this.state.content_tab_image != ""}`, {
+          is: (value) => value != "",
+          then: Yup.string().test(
+            "image",
+            "Only files with the following extensions are allowed: png jpg jpeg",
+            (content_tab_image) => {
+              if (content_tab_image) {
+                return this.state.isValidFile;
+              } else {
+                return true;
+              }
             }
-          }
-        ),
+          ),
+        }),
+
       status: Yup.string()
         .trim()
         .required("Please select status")
@@ -238,7 +242,7 @@ class EditOffer extends Component {
               <div className="box-body">
                 <Formik
                   initialValues={newInitialValues}
-                  // validationSchema={validateStopFlag}
+                  validationSchema={validateStopFlag}
                   onSubmit={this.handleSubmitEvent}
                 >
                   {({
