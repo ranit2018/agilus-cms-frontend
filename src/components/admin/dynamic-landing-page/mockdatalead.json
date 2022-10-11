@@ -1,0 +1,89 @@
+[
+  {
+    "id": 1,
+    "name": "Zelig",
+    "city": "Santa Justina",
+    "email": "zpersich0@cnbc.com",
+    "mobile_number": "44781-160",
+    "status": 1
+  },
+  {
+    "id": 2,
+    "name": "Elke",
+    "city": "Pandan",
+    "email": "efenix1@who.int",
+    "mobile_number": "57344-162",
+    "status": 1
+  },
+  {
+    "id": 3,
+    "name": "Elsinore",
+    "city": "Dolní Cerekev",
+    "email": "ebinge2@bloomberg.com",
+    "mobile_number": "33261-969",
+    "status": 1
+  },
+  {
+    "id": 4,
+    "name": "Durand",
+    "city": "Mshinskaya",
+    "email": "dronchetti3@163.com",
+    "mobile_number": "54458-883",
+    "status": 0
+  },
+  {
+    "id": 5,
+    "name": "Gui",
+    "city": "Anopog",
+    "email": "gkaley4@state.gov",
+    "mobile_number": "0093-1063",
+    "status": 1
+  },
+  {
+    "id": 6,
+    "name": "Gretchen",
+    "city": "Kraslice",
+    "email": "geamer5@google.cn",
+    "mobile_number": "0280-1440",
+    "status": 1
+  },
+  {
+    "id": 7,
+    "name": "Ole",
+    "city": "Dunaivtsi",
+    "email": "omariaud6@imdb.com",
+    "mobile_number": "50436-6590",
+    "status": 1
+  },
+  {
+    "id": 8,
+    "name": "Wernher",
+    "city": "Cikiruh",
+    "email": "wlyptratt7@mayoclinic.com",
+    "mobile_number": "41268-532",
+    "status": 1
+  },
+  {
+    "id": 9,
+    "name": "Gianina",
+    "city": "Mporokoso",
+    "email": "ghabgood8@scribd.com",
+    "mobile_number": "48951-1053",
+    "status": 0
+  },
+  {
+    "id": 10,
+    "name": "Bernete",
+    "city": "Diaoling",
+    "email": "brosterne9@devhub.com",
+    "mobile_number": "16252-542",
+    "status": 1
+  },{
+    "id": 11,
+    "name": "Bernete",
+    "city": "Diaoling",
+    "email": "brosterne9@devhub.com",
+    "mobile_number": "16252-542",
+    "status": 1
+  }
+]

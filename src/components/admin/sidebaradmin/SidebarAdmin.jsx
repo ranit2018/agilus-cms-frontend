@@ -97,6 +97,13 @@ class SidebarAdmin extends Component {
     ) {
       this.setState({ shown: "5" });
     }
+   if (
+     path === "/dynamic_landing_page/page" ||
+     path === "/dynamic_landing_page/lead"
+   ) {
+     this.setState({ shown: "6" });
+   }
+
 
     if (this.props.isLoggedIn === true) {
       const superAdmin = getSuperAdmin(localStorage.admin_token);
@@ -331,6 +338,72 @@ class SidebarAdmin extends Component {
                     {" "}
                     <i className="fas fa-file-medical"></i>{" "}
                     <span> Health with Benefits </span>
+                  </Link>{" "}
+                </li>
+              )}
+            </ul>
+          </li>
+
+          {/* =================================================== */}
+          <li className={rotate == "6" ? "treeview active" : "treeview"}>
+            <Link to="#" data-id="6" onClick={this.handlePlus}>
+              <i
+                className="fas fa-certificate sub-menu"
+                data-id="6"
+                onClick={this.handlePlus}
+              ></i>{" "}
+              <span data-id="6" onClick={this.handlePlus}>
+                Dynamic Landing Page{" "}
+              </span>
+              <span className="pull-right-container">
+                <i
+                  data-id="6"
+                  onClick={this.handlePlus}
+                  className={
+                    rotate == "6"
+                      ? "fa pull-right fa-minus"
+                      : "fa pull-right fa-plus"
+                  }
+                ></i>
+              </span>
+            </Link>
+
+            <ul className="treeview-menu">
+              {this.props.path_name === "/dynamic_landing_page/page" ? (
+                <li className="active">
+                  {" "}
+                  <Link to="/dynamic_landing_page/page">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> Pages </span>
+                  </Link>{" "}
+                </li>
+              ) : (
+                <li>
+                  {" "}
+                  <Link to="/dynamic_landing_page/page">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> Pages </span>
+                  </Link>{" "}
+                </li>
+              )}
+            </ul>
+            <ul className="treeview-menu">
+              {this.props.path_name === "/dynamic_landing_page/lead" ? (
+                <li className="active">
+                  {" "}
+                  <Link to="/dynamic_landing_page/lead">
+                    {" "}
+                    <i className="fas fa-file-medical"></i>{" "}
+                    <span> Leads </span>
+                  </Link>{" "}
+                </li>
+              ) : (
+                <li>
+                  {" "}
+                  <Link to="/dynamic_landing_page/lead">
+                    {" "}
+                    <i className="fas fa-file-medical"></i>{" "}
+                    <span> Leads </span>
                   </Link>{" "}
                 </li>
               )}

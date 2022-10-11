@@ -65,6 +65,10 @@ import MembersType from "../components/admin/memberstype/MermbersType";
 
 import ProductDetails from "../components/admin/lead-landing-page/ProductDetails";
 import HealthandBenefits from "../components/admin/lead-landing-page/HealthwithBenefits";
+
+import Pages from "../components/admin/dynamic-landing-page/Pages"
+import Lead from "../components/admin/dynamic-landing-page/Leads"
+
 import Accordian from "../components/admin/product-details/Accordion";
 import AddAccordian from "../components/admin/product-details/AddAccordion";
 import EditAccordion from "../components/admin/product-details/EditAccordion";
@@ -123,6 +127,9 @@ class Admin extends Component {
           path="/lead_landing_page/health&benefits"
           component={HealthandBenefits}
         />
+
+        <PrivateRoute path="/dynamic_landing_page/page" component={Pages} />
+        <PrivateRoute path="/dynamic_landing_page/lead" component={Lead} />
 
         <PrivateRoute path="/product-details/accordion" component={Accordian} />
         <PrivateRoute
