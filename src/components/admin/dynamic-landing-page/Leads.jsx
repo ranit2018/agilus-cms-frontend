@@ -134,27 +134,6 @@ const generateHTML = (data) => {
   return ret;
 };
 
-const setType = (refObj) => (cell) => {
-  //return cell === 1 ? "Active" : "Inactive";
-  if (cell === 1) {
-    return " Request A Callback";
-  } else if (cell === 2) {
-    return "Home Collection";
-  } else if (cell === 3) {
-    return " Covid19 Enquiry";
-  } else if (cell === 9) {
-    return " Contact Us";
-  } else if (cell === 10) {
-    return " Feedback";
-  } else if (cell === 8) {
-    return " Become A Vendor";
-  } else if (cell === 7) {
-    return " Become A Partner";
-  } else if (cell === 11) {
-    return " Prescription Upload";
-  }
-};
-
 const generateCheckbox = (refObj) => (cell, row) => {
   let defaultChecked = false;
 
@@ -181,24 +160,6 @@ const generateCheckbox = (refObj) => (cell, row) => {
   );
 };
 
-const custStatus = (refObj) => (cell) => {
-  //return cell === 1 ? "Active" : "Inactive";
-  if (cell === 1) {
-    return "Request A Callback";
-  } else if (cell === 0) {
-    return "Inactive";
-  }
-};
-
-const setDate = (refOBj) => (cell) => {
-  if (cell && cell != "") {
-    var mydate = new Date(cell);
-    return dateFormat(mydate, "dd-mm-yyyy");
-  } else {
-    return "---";
-  }
-};
-
 const actionFormatter = (refObj) => (cell, row) => {
   if (row.post_data === null) {
     return null;
@@ -218,27 +179,7 @@ const actionFormatter = (refObj) => (cell, row) => {
   }
 };
 
-const bannerStatus = (refObj) => (cell) => {
-  //return cell === 1 ? "Active" : "Inactive";
-  if (cell === 1) {
-    return "Active";
-  } else if (cell === 0) {
-    return "Inactive";
-  }
-};
-
-const options = [
-  { value: "1", label: "Request A Callback" },
-  { value: "2", label: "Home Collection" },
-  { value: "3", label: "Covid19 Enquiry" },
-  { value: "7", label: "Become A Partner" },
-  { value: "8", label: "Become A Vendor" },
-  { value: "9", label: "Contact Us" },
-  { value: "10", label: "Feedback" },
-  { value: "11", label: "Prescription Upload" },
-];
-
-class Leads extends Component {
+class LeadForms extends Component {
   constructor(props) {
     super(props);
 
@@ -260,6 +201,10 @@ class Leads extends Component {
       showModal: false,
       selectedDay: "",
       post_data: null,
+      status_banners: [
+        { value: "1", label: "Active" },
+        { value: "0", label: "Inactive" },
+      ],
     };
   }
 
@@ -285,7 +230,18 @@ class Leads extends Component {
       to = dateFormat(to, "yyyy-mm-dd");
     }
 
-    API.get(`/api//llp/lead_landing_form?otp_status=&page=`)
+
+    API.get(
+      `/api//llp/lead_landing_form?page=${page}&name=${encodeURIComponent(
+        name
+      )}&email=${encodeURIComponent(email)}&number=${encodeURIComponent(
+        mobile_no
+      )}&city_name=${encodeURIComponent(city)}&otp_status=${encodeURIComponent(
+        type
+      )}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(
+        to
+      )}`
+    )
       .then((res) => {
         this.setState({
           leadForms: res.data.data,
@@ -323,15 +279,16 @@ class Leads extends Component {
     const email = document.getElementById("email").value;
     const mobile_no = document.getElementById("mobile_no").value;
     const city = document.getElementById("city").value;
+    var banner_status = document.getElementById("banner_status").value;
 
-    let type = "";
-    if (this.state.selectedOption.length > 0) {
-      type = this.state.selectedOption
-        .map((val) => {
-          return val.value;
-        })
-        .join(",");
-    }
+    // let type = "";
+    // if (this.state.selectedOption.length > 0) {
+    //   type = this.state.selectedOption
+    //     .map((val) => {
+    //       return val.value;
+    //     })
+    //     .join(",");
+    // }
 
     let from = this.state.from;
     let to = this.state.to;
@@ -340,9 +297,9 @@ class Leads extends Component {
       email === "" &&
       mobile_no === "" &&
       city === "" &&
-      type === "" &&
       this.state.from === "" &&
-      this.state.to === ""
+      this.state.to === "" &&
+      banner_status === ""
     ) {
       return false;
     }
@@ -355,12 +312,12 @@ class Leads extends Component {
     }
 
     API.get(
-      `/api/feed/lead_data?page=1&name=${encodeURIComponent(
+      `/api//llp/lead_landing_form?page=1&name=${encodeURIComponent(
         name
-      )}&email=${encodeURIComponent(email)}&mobile_no=${encodeURIComponent(
+      )}&email=${encodeURIComponent(email)}&number=${encodeURIComponent(
         mobile_no
-      )}&city=${encodeURIComponent(city)}&type=${encodeURIComponent(
-        type
+      )}&city_name=${encodeURIComponent(city)}&otp_status=${encodeURIComponent(
+        banner_status
       )}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(
         to
       )}`
@@ -374,7 +331,8 @@ class Leads extends Component {
           email: email,
           mobile_no: mobile_no,
           city: city,
-          type: type,
+          // type: type,
+          banner_status: banner_status,
           activePage: 1,
           remove_search: true,
         });
@@ -505,7 +463,7 @@ class Leads extends Component {
             <div className="row">
               <div className="col-lg-12 col-sm-12 col-xs-12 m-b-15">
                 <h1>
-                  Manage Lead Form Responses
+                  Manage Lead Responses
                   <small />
                 </h1>
               </div>
@@ -545,64 +503,12 @@ class Leads extends Component {
                         placeholder="Filter by City"
                       />
                     </div>
-                    <div>
-                      <DayPickerInput
-                        value={from}
-                        placeholder="Date From"
-                        format="LL"
-                        formatDate={formatDate}
-                        parseDate={parseDate}
-                        dayPickerProps={{
-                          selectedDays: [from, { from, to }],
-                          disabledDays: { after: to },
-                          toMonth: to,
-                          modifiers,
-                          numberOfMonths: 1,
-                          disabledDays: {
-                            before: new Date(2021, 5, 1),
-                          },
-                          onDayClick: () => this.to.getInput().focus(),
-                        }}
-                        onDayChange={this.handleFromChange}
-                      />{" "}
-                      {/* <DayPicker
-                                            initialMonth={new Date(2017, 3)}
-                                            selectedDays={this.state.selectedDay}
-                                            onDayClick={this.handleDayClick}
-                                        // selectedDays={[
-                                        //     new Date(2017, 3, 12),
-                                        //     new Date(2017, 3, 2),
-                                        //     {
-                                        //         after: new Date(2017, 3, 20),
-                                        //         before: new Date(2017, 3, 25),
-                                        //     },
-                                        // ]}
-                                        /> */}
-                    </div>
-                    <div>
-                      <DayPickerInput
-                        ref={(el) => (this.to = el)}
-                        value={to}
-                        placeholder="Date To"
-                        format="LL"
-                        formatDate={formatDate}
-                        parseDate={parseDate}
-                        dayPickerProps={{
-                          selectedDays: [from, { from, to }],
-                          disabledDays: { before: from },
-                          modifiers,
-                          month: from,
-                          fromMonth: from,
-                          numberOfMonths: 1,
-                        }}
-                        onDayChange={this.handleToChange}
-                      />
-                    </div>
-                    <div>
+
+                    {/* <div>
                       <Select
-                        placeholder="Select Type"
+                        placeholder="Select Status"
                         width={250}
-                        isMulti
+                        // isMulti
                         isClearable={true}
                         isSearchable={true}
                         value={this.state.selectedOption}
@@ -615,6 +521,22 @@ class Leads extends Component {
                         }}
                         options={options}
                       />
+                    </div> */}
+                    <div className="">
+                      <select
+                        name="banner_status"
+                        id="banner_status"
+                        className="form-control"
+                      >
+                        <option value="">Select Lead Page Status</option>
+                        {this.state.status_banners.map((val) => {
+                          return (
+                            <option key={val.value} value={val.value}>
+                              {val.label}
+                            </option>
+                          );
+                        })}
+                      </select>
                     </div>
                     <div>
                       <div>
@@ -667,16 +589,7 @@ class Leads extends Component {
                     dataField="type"
                     dataFormat={generateCheckbox(this)}
                     width="5%"
-                  >
-                    {/* <input type="checkbox" onChange={(e)=>{
-                                            let checkboxes = document.getElementsByClassName('genCheck');
-
-                                            for (var i = 0; i < checkboxes.length; i++) {
-                                                checkboxes[i].checked = e.target.checked;
-                                            }
-
-                                        }} /> */}
-                  </TableHeaderColumn>
+                  ></TableHeaderColumn>
 
                   <TableHeaderColumn
                     isKey
@@ -705,10 +618,11 @@ class Leads extends Component {
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="otp_status"
-                    dataFormat={bannerStatus(this)}
+                    // dataFormat={htmlDecode(this)}
                   >
                     Status
                   </TableHeaderColumn>
+
                   <TableHeaderColumn
                     dataField="id"
                     dataFormat={actionFormatter(this)}
@@ -767,4 +681,4 @@ class Leads extends Component {
     );
   }
 }
-export default Leads;
+export default LeadForms;

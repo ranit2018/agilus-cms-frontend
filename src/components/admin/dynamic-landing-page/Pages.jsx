@@ -465,7 +465,7 @@ class Pages extends Component {
     let validateStopFlag = {};
 
     if (this.state.dynamic_landing_page_id > 0) {
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.",this.state.isValidFile);
+      
       validateStopFlag = Yup.object().shape({
         page_name: Yup.string().required("Please enter the name"),
         page_slug: Yup.string().required("Please enter the page slug"),
