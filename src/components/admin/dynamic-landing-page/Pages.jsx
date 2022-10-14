@@ -169,8 +169,14 @@ class Pages extends Component {
       // thumbNailModal: false,
 
       status: "",
+      avalible_slug: [],
     };
   }
+
+  slugValidation = (value) => {
+    const regex = new RegExp("^[^0-9._]*[a-zA-Z0-9_]*[^0-9._]$");
+    return regex.test(value);
+  };
 
   componentDidMount() {
     this.getDynamicLandingPageList();
@@ -194,6 +200,12 @@ class Pages extends Component {
           dynamicLandingPage: res.data.data,
           totalCount: res.data.count,
           isLoading: false,
+          // avalible_slug:res.data.data
+        });
+        res.data.data.map((item) => {
+          this.setState({
+            avalible_slug: [...this.state.avalible_slug, item.slug],
+          });
         });
       })
       .catch((err) => {
@@ -273,7 +285,6 @@ class Pages extends Component {
 
   modalShowHandler = (event, id) => {
     this.setState({
-      
       fileValidationMessage: FILE_VALIDATION_MASSAGE,
     });
     if (id) {
@@ -295,10 +306,20 @@ class Pages extends Component {
     let url = "";
     let method = "";
 
-    var formData = new FormData();
+    let formData = new FormData();
     formData.append("page_name", values.page_name);
-    formData.append("page_slug", values.page_slug);
     formData.append("status", values.status);
+
+    if (!this.state.avalible_slug.includes(values.page_slug)) {
+      formData.append("page_slug", values.page_slug);
+    } else {
+      actions.setErrors({
+        page_slug:
+          "Page Slug is already in use, please use different slug name.",
+      });
+      actions.setSubmitting(false);
+    }
+
     if (this.state.image) {
       if (this.state.image.size > FILE_SIZE) {
         actions.setErrors({ image: "The file exceeds maximum size." });
@@ -402,7 +423,6 @@ class Pages extends Component {
   };
 
   fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
-    //console.log(event.target.files);
     setFieldTouched("image");
     setFieldValue("image", event.target.value);
 
@@ -457,7 +477,8 @@ class Pages extends Component {
         : "",
 
       status:
-        dynamicLandingPageDetails.status || +dynamicLandingPageDetails.status === 0
+        dynamicLandingPageDetails.status ||
+        +dynamicLandingPageDetails.status === 0
           ? dynamicLandingPageDetails.status.toString()
           : "",
     });
@@ -465,10 +486,14 @@ class Pages extends Component {
     let validateStopFlag = {};
 
     if (this.state.dynamic_landing_page_id > 0) {
-      
       validateStopFlag = Yup.object().shape({
         page_name: Yup.string().required("Please enter the name"),
-        page_slug: Yup.string().required("Please enter the page slug"),
+        page_slug: Yup.string()
+          .matches(
+            /^[a-zA-Z-]+$/,
+            "Please enter the page slug without any special character"
+          )
+          .required("Please enter the page slug"),
 
         image: Yup.string()
           .notRequired()
@@ -491,7 +516,12 @@ class Pages extends Component {
     } else {
       validateStopFlag = Yup.object().shape({
         page_name: Yup.string().required("Please enter the name"),
-        page_slug: Yup.string().required("Please enter the page slug"),
+        page_slug: Yup.string()
+          .matches(
+            /^[a-zA-Z-]+$/,
+            "Please enter the page slug without any apecial chracter"
+          )
+          .required("Please enter the page slug"),
 
         image: Yup.string()
           .required("Please select the image")
@@ -532,7 +562,9 @@ class Pages extends Component {
                 <form className="form">
                   <div className="">
                     <select name="status" id="status" className="form-control">
-                      <option value="">Select Dynamic Landing Page Status</option>
+                      <option value="">
+                        Select Dynamic Landing Page Status
+                      </option>
                       {this.state.selectStatus.map((val) => {
                         return (
                           <option key={val.value} value={val.value}>
@@ -717,7 +749,8 @@ class Pages extends Component {
                                   <div className="form-group">
                                     <label>
                                       Upload Image
-                                      {this.state.dynamic_landing_page_id == 0 ? (
+                                      {this.state.dynamic_landing_page_id ==
+                                      0 ? (
                                         <span className="impField">*</span>
                                       ) : null}
                                       <br />{" "}

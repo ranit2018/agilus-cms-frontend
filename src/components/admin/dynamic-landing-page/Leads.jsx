@@ -45,6 +45,7 @@ function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
 }
 
 const generateHTML = (data) => {
+  console.log("data:", data);
   let ret = [];
 
   for (const key in data) {
@@ -179,6 +180,16 @@ const actionFormatter = (refObj) => (cell, row) => {
   }
 };
 
+const bannerStatus = (refObj) => (cell) => {
+  console.log("cell:", cell);
+  //return cell === 1 ? "Active" : "Inactive";
+  if (cell === 1) {
+    return "Verified";
+  } else if (cell === 0) {
+    return "Not Verified";
+  }
+};
+
 class LeadForms extends Component {
   constructor(props) {
     super(props);
@@ -229,7 +240,6 @@ class LeadForms extends Component {
       from = dateFormat(from, "yyyy-mm-dd");
       to = dateFormat(to, "yyyy-mm-dd");
     }
-
 
     API.get(
       `/api//llp/lead_landing_form?page=${page}&name=${encodeURIComponent(
@@ -370,15 +380,13 @@ class LeadForms extends Component {
     }
 
     API.get(
-      `/api/feed/download_lead_data?page=1&name=${encodeURIComponent(
+      `/api/llp/download_lead_landing_form_data?page=1&name=${encodeURIComponent(
         name
-      )}&email=${encodeURIComponent(email)}&mobile_no=${encodeURIComponent(
+      )}&email=${encodeURIComponent(email)}&number=${encodeURIComponent(
         mobile_no
-      )}&city=${encodeURIComponent(city)}&type=${encodeURIComponent(
+      )}&city_name=${encodeURIComponent(city)}&otp_status=${encodeURIComponent(
         type
-      )}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(
-        to
-      )}&lead_id=${encodeURIComponent(lead_id)}`,
+      )}&lead_form_id=${encodeURIComponent(lead_id)}`,
       { responseType: "blob" }
     )
       .then((res) => {
@@ -619,6 +627,7 @@ class LeadForms extends Component {
                   <TableHeaderColumn
                     dataField="otp_status"
                     // dataFormat={htmlDecode(this)}
+                    dataFormat={bannerStatus(this)}
                   >
                     Status
                   </TableHeaderColumn>
