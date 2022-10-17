@@ -167,6 +167,7 @@ class Pages extends Component {
         { value: "1", label: "Active" },
       ],
       // thumbNailModal: false,
+      apiAfterValidation: true,
 
       status: "",
       avalible_slug: [],
@@ -200,7 +201,6 @@ class Pages extends Component {
           dynamicLandingPage: res.data.data,
           totalCount: res.data.count,
           isLoading: false,
-          // avalible_slug:res.data.data
         });
         res.data.data.map((item) => {
           this.setState({
@@ -318,6 +318,9 @@ class Pages extends Component {
           "Page Slug is already in use, please use different slug name.",
       });
       actions.setSubmitting(false);
+      this.setState({
+        apiAfterValidation: false,
+      });
     }
 
     if (this.state.image) {
@@ -336,32 +339,35 @@ class Pages extends Component {
       url = `/api/llp/lead_landing_page`;
       method = "POST";
     }
-    API({
-      url: url,
-      method: method,
-      data: formData,
-    })
-      .then((res) => {
-        this.setState({ showModal: false, image: "" });
-        swal({
-          closeOnClickOutside: false,
-          title: "Success",
-          text:
-            method === "PUT" ? "Updated Successfully" : "Added Successfully",
-          icon: "success",
-        }).then(() => {
-          this.getDynamicLandingPageList();
-        });
+
+    if (this.state.apiAfterValidation == true) {
+      API({
+        url: url,
+        method: method,
+        data: formData,
       })
-      .catch((err) => {
-        this.setState({ closeModal: true, showModalLoader: false });
-        if (err.data.status === 3) {
-          showErrorMessage(err, this.props);
-        } else {
-          actions.setErrors(err.data.errors);
-          actions.setSubmitting(false);
-        }
-      });
+        .then((res) => {
+          this.setState({ showModal: false, image: "" });
+          swal({
+            closeOnClickOutside: false,
+            title: "Success",
+            text:
+              method === "PUT" ? "Updated Successfully" : "Added Successfully",
+            icon: "success",
+          }).then(() => {
+            this.getDynamicLandingPageList();
+          });
+        })
+        .catch((err) => {
+          this.setState({ closeModal: true, showModalLoader: false });
+          if (err.data.status === 3) {
+            showErrorMessage(err, this.props);
+          } else {
+            actions.setErrors(err.data.errors);
+            actions.setSubmitting(false);
+          }
+        });
+    }
   };
 
   confirmDelete = (event, id) => {
