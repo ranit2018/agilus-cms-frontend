@@ -1,0 +1,60 @@
+.chipinput {
+  width: 200px;
+  margin-left: 15px;
+    margin-right: 13px;
+
+  /* margin-top: 30px; */
+}
+
+.dragDrop {
+  background: #efefef;
+  padding: 30px;
+  text-align: center;
+}
+.dragDrop:focus {
+  outline: none;
+}
+
+.bannerPic {
+  width: 200px;
+  height: 150px;
+  position: relative;
+  margin-right: 25px;
+  margin-bottom: 25px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px;
+}
+.bannerClose {
+  position: absolute;
+  right: -10px;
+  top: -10px;
+  text-align: center;
+  line-height: 30px;
+  color: white;
+  background: #ed1c24;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+.bannerPic i {
+  font-size: 12px;
+  line-height: 30px;
+}
+.bannerPic img {
+  max-width: 100%;
+  max-height: 100%;
+}
+.dNone {
+  display: none;
+}
+.diBlock {
+  display: inline-block;
+}
+.vTop {
+  vertical-align: top;
+}
+.mR {
+  margin-right: 10px !important;
+}
