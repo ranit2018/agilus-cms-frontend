@@ -45,7 +45,6 @@ function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
 }
 
 const generateHTML = (data) => {
-  console.log("data:", data);
   let ret = [];
 
   for (const key in data) {
@@ -181,7 +180,6 @@ const actionFormatter = (refObj) => (cell, row) => {
 };
 
 const bannerStatus = (refObj) => (cell) => {
-  console.log("cell:", cell);
   //return cell === 1 ? "Active" : "Inactive";
   if (cell === 1) {
     return "Verified";
@@ -487,14 +485,14 @@ class LeadForms extends Component {
                         placeholder="Filter by Name"
                       />
                     </div>
-                    <div>
+                    {/* <div>
                       <input
                         className="form-control"
                         name="email"
                         id="email"
                         placeholder="Filter by Email"
                       />
-                    </div>
+                    </div> */}
                     <div>
                       <input
                         className="form-control"
@@ -503,14 +501,14 @@ class LeadForms extends Component {
                         placeholder="Filter by Mobile Number"
                       />
                     </div>
-                    <div>
+                    {/* <div>
                       <input
                         className="form-control"
                         name="city"
                         id="city"
                         placeholder="Filter by City"
                       />
-                    </div>
+                    </div> */}
 
                     {/* <div>
                       <Select
@@ -606,24 +604,24 @@ class LeadForms extends Component {
                   >
                     Name
                   </TableHeaderColumn>
-                  <TableHeaderColumn
+                  {/* <TableHeaderColumn
                     dataField="email"
                     // dataFormat={htmlDecode(this)}
                   >
                     Email
-                  </TableHeaderColumn>
+                  </TableHeaderColumn> */}
                   <TableHeaderColumn
                     dataField="mobile_no"
                     // dataFormat={htmlDecode(this)}
                   >
                     Mobile Number
                   </TableHeaderColumn>
-                  <TableHeaderColumn
+                  {/* <TableHeaderColumn
                     dataField="city"
                     // dataFormat={htmlDecode(this)}
                   >
                     City
-                  </TableHeaderColumn>
+                  </TableHeaderColumn> */}
                   <TableHeaderColumn
                     dataField="otp_status"
                     // dataFormat={htmlDecode(this)}

@@ -97,13 +97,12 @@ class SidebarAdmin extends Component {
     ) {
       this.setState({ shown: "5" });
     }
-   if (
-     path === "/dynamic_landing_page/page" ||
-     path === "/dynamic_landing_page/lead"
-   ) {
-     this.setState({ shown: "6" });
-   }
-
+    if (
+      path === "/dynamic_landing_page/page" ||
+      path === "/dynamic_landing_page/lead"
+    ) {
+      this.setState({ shown: "6" });
+    }
 
     if (this.props.isLoggedIn === true) {
       const superAdmin = getSuperAdmin(localStorage.admin_token);
@@ -241,6 +240,25 @@ class SidebarAdmin extends Component {
               </Link>{" "}
             </li>
           )}
+
+          {this.props.path_name === "/email" ? (
+            <li className="active">
+              {" "}
+              <Link to="/email">
+                {" "}
+                <i className="fa fa-calendar"></i> <span> Add Email</span>
+              </Link>{" "}
+            </li>
+          ) : (
+            <li>
+              {" "}
+              <Link to="/email">
+                {" "}
+                <i className="fa fa-calendar"></i> <span> Add Email </span>
+              </Link>{" "}
+            </li>
+          )}
+
           {this.props.path_name === "/offers" ||
           this.props.path_name === "/add-offer" ? (
             <li className="active">
@@ -393,8 +411,7 @@ class SidebarAdmin extends Component {
                   {" "}
                   <Link to="/dynamic_landing_page/lead">
                     {" "}
-                    <i className="fas fa-file-medical"></i>{" "}
-                    <span> Leads </span>
+                    <i className="fas fa-file-medical"></i> <span> Leads </span>
                   </Link>{" "}
                 </li>
               ) : (
@@ -402,8 +419,7 @@ class SidebarAdmin extends Component {
                   {" "}
                   <Link to="/dynamic_landing_page/lead">
                     {" "}
-                    <i className="fas fa-file-medical"></i>{" "}
-                    <span> Leads </span>
+                    <i className="fas fa-file-medical"></i> <span> Leads </span>
                   </Link>{" "}
                 </li>
               )}

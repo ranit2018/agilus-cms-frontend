@@ -27,6 +27,9 @@ import SplashScreen from "../components/admin/app/SplashScreen";
 import HelpTour from "../components/admin/app/HelpTour";
 import ApplicationBanner from "../components/admin/app/ApplicationBanner";
 
+import Email from "../components/admin/add-email/Email";
+import AddEmail from "../components/admin/add-email/AddEmail"
+
 import PrivacyPolicy from "../components/admin/pages/privacy-policy/PrivacyPolicy";
 import Disclaimer from "../components/admin/pages/disclaimer/Disclaimer";
 import TermsConditions from "../components/admin/pages/terms-conditions/TermsConditions";
@@ -66,8 +69,8 @@ import MembersType from "../components/admin/memberstype/MermbersType";
 import ProductDetails from "../components/admin/lead-landing-page/ProductDetails";
 import HealthandBenefits from "../components/admin/lead-landing-page/HealthwithBenefits";
 
-import Pages from "../components/admin/dynamic-landing-page/Pages"
-import Lead from "../components/admin/dynamic-landing-page/Leads"
+import Pages from "../components/admin/dynamic-landing-page/Pages";
+import Lead from "../components/admin/dynamic-landing-page/Leads";
 
 import Accordian from "../components/admin/product-details/Accordion";
 import AddAccordian from "../components/admin/product-details/AddAccordion";
@@ -117,6 +120,9 @@ class Admin extends Component {
         <PrivateRoute path="/edit-offer/:id" component={EditOffer} />
         <PrivateRoute path="/sociallink" component={SocialLink} />
         <PrivateRoute path="/message" component={Message} />
+
+        <PrivateRoute path="/email" component={Email} />
+        <PrivateRoute path="/add-email" component={AddEmail} />
 
         <PrivateRoute
           path="/lead_landing_page/product"
