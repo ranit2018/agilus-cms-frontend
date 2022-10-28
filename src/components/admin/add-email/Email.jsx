@@ -93,78 +93,13 @@ const dropzoneStyle = {
   borderRadius: 5,
 };
 const initialValues = {
-  // featured_image: "",
-  // title: "",
-  // content: "",
-  // status: "",
-  // event_date: "",
-  // event_time: "",
-  // event_location: "",
   region: "",
   state: "",
   email: "",
 };
 
-const setDate = (refOBj) => (cell) => {
-  if (cell && cell != "") {
-    var mydate = new Date(cell);
-    return dateFormat(mydate, "dd-mm-yyyy");
-  } else {
-    return "---";
-  }
-};
-const setType = (refOBj) => (cell) => {
-  if (cell == 2) {
-    return "Event";
-  } else if (cell == 3) {
-    return "Camp";
-  } else {
-    return "";
-  }
-};
-const setTime = (refOBj) => (date) => {
-  date = new Date("1970-01-01 " + date);
-  var hours = date.getHours();
-  var minutes = date.getMinutes();
-  var ampm = hours >= 12 ? "pm" : "am";
-  hours = hours % 12;
-  hours = hours ? hours : 12; // the hour '0' should be '12'
-  minutes = minutes < 10 ? "0" + minutes : minutes;
-  var strTime = hours + ":" + minutes + " " + ampm;
-  return strTime;
-  return date.toLocaleString("en-US", { hour: "numeric", hour12: true });
-};
 const __htmlDecode = (refObj) => (cell) => {
   return htmlDecode(cell);
-};
-
-const setBannerImage = (refObj) => (cell, row) => {
-  return (
-    <div
-      style={{
-        width: "100px",
-        height: "100px",
-        overflow: "hidden",
-      }}
-    >
-      <img
-        src={cell}
-        alt="Featured Image"
-        width="60"
-        height="60"
-        onClick={(e) => refObj.imageModalShowHandler(row.featured_image)}
-      ></img>
-    </div>
-  );
-};
-
-const custStatus = (refObj) => (cell) => {
-  //return cell === 1 ? "Active" : "Inactive";
-  if (cell === 1) {
-    return "Active";
-  } else if (cell === 0) {
-    return "Inactive";
-  }
 };
 
 function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
@@ -242,13 +177,18 @@ class Events extends Component {
       handleRegion: "",
       handleState: [],
       emailErr: false,
+      selectType: [
+        { value: "0", label: "Region" },
+        { value: "1", label: "State" },
+      ],
+      isState: false,
     };
   }
 
   componentDidMount() {
     // this.getEventsList();
     this.getAllState();
-    this.getAllRegion();
+    // this.getAllRegion();
     this.emailRegion();
   }
 
@@ -276,13 +216,14 @@ class Events extends Component {
       ? newValue.map((item) => item.value.toString())
       : [];
     this.setState({ handleState: newValuesArr });
+
     // this.emailState();
   };
 
   emailRegion = (e) => {
     API.get(`/api/feed/all-region`)
       .then((res) => {
-        this.setState({ region: res.data.data });
+        this.setState({ region: res.data.data, selectRegion: res.data.data });
       })
       .catch((err) => {
         this.setState({
@@ -323,22 +264,6 @@ class Events extends Component {
       });
   };
 
-  getAllRegion = (page = 1) => {
-    API.get(`/api/feed/all-region`)
-      .then((res) => {
-        this.setState({
-          selectRegion: res.data.data,
-          isLoading: false,
-        });
-      })
-      .catch((err) => {
-        this.setState({
-          isLoading: false,
-        });
-        showErrorMessage(err, this.props);
-      });
-  };
-
   // getEventsList = (page = 1) => {
   //   let event_title = this.state.event_title;
   //   let event_location = this.state.event_location;
@@ -364,46 +289,38 @@ class Events extends Component {
 
   eventSearch = (e) => {
     e.preventDefault();
+    let url = "";
+    let method = "GET";
 
-    const event_title = document.getElementById("event_title").value;
-    const event_location = document.getElementById("event_location").value;
-    const event_type = document.getElementById("event_type").value;
     const status = document.getElementById("status").value;
-    const region = document.getElementById("region").value;
+    // const region = document.getElementById("region").value;
+    // const state = document.getElementById("state").value;
 
-    if (
-      event_title === "" &&
-      event_location === "" &&
-      event_type === "" &&
-      status === "" &&
-      region === ""
-    ) {
+    if (status === "") {
       return false;
     }
 
-    // https://srlcmsbackend.indusnettechnologies.com/api/feed/all-email?page=1&region=
+    if (status == 0) {
+      url = `/api/feed/email-Address?region=1`;
+      this.setState({ isState: false });
+    } else if (status == 1) {
+      url = `/api/feed/email-Address?state=1`;
+      this.setState({ isState: true });
+    }
 
-    // &event_location=${encodeURIComponent(
-    //     event_location
-    //   )}&event_type=${encodeURIComponent(
-    //     event_type
-    //   )}&status=${encodeURIComponent(status)}
-
-    API.get(
-      `/api/feed/all-email?page=1&email=${encodeURIComponent(
-        event_title
-      )}&region=${encodeURIComponent(region)}&state=${encodeURIComponent(
-        status
-      )}`
+    API(
+      // `/api/feed/all-email?page=1&status=${encodeURIComponent(
+      //   status
+      // )}&region=${encodeURIComponent(region)}&state=${encodeURIComponent(
+      //   state
+      // )}`
+      { method: method, url: url }
     )
       .then((res) => {
         this.setState({
           events: res.data.data,
           totalCount: res.data.count,
           isLoading: false,
-          event_title: event_title,
-          event_location: event_location,
-          event_type: event_type,
           status: status,
           activePage: 1,
           remove_search: true,
@@ -417,51 +334,47 @@ class Events extends Component {
       });
   };
 
-  editEvent(e, id) {
-    e.preventDefault();
-    API.get(`/api/events/${id}`)
-      .then((res) => {
-        const image_details = [];
+  // editEvent(e, id) {
+  //   e.preventDefault();
+  //   API.get(`/api/events/${id}`)
+  //     .then((res) => {
+  //       const image_details = [];
 
-        for (let i in res.data.data.image_details) {
-          image_details.push({
-            name: res.data.data.image_details[i].featured_image,
-            image_id: res.data.data.image_details[i].id,
-          });
-        }
-        // console.log("details image",image_details);
-        res.data.data.eventDetails["featured_image"] = image_details;
+  //       for (let i in res.data.data.image_details) {
+  //         image_details.push({
+  //           name: res.data.data.image_details[i].featured_image,
+  //           image_id: res.data.data.image_details[i].id,
+  //         });
+  //       }
+  //       // console.log("details image",image_details);
+  //       res.data.data.eventDetails["featured_image"] = image_details;
 
-        this.props.history.push({
-          pathname: "/edit-event/" + id,
-          state: {
-            eventDetails: res.data.data.eventDetails,
-            //  image_details: image_details
-          },
-        });
-      })
-      .catch((err) => {
-        showErrorMessage(err, this.props);
-      });
-  }
+  //       this.props.history.push({
+  //         pathname: "/edit-event/" + id,
+  //         state: {
+  //           eventDetails: res.data.data.eventDetails,
+  //           //  image_details: image_details
+  //         },
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       showErrorMessage(err, this.props);
+  //     });
+  // }
 
   clearSearch = () => {
-    document.getElementById("event_title").value = "";
-    document.getElementById("event_location").value = "";
-    document.getElementById("event_type").value = "";
     document.getElementById("status").value = "";
+    // document.getElementById("state").value = "";
 
     this.setState(
       {
-        event_title: "",
-        event_location: "",
-        event_type: "",
         status: "",
+        // state: "",
         remove_search: false,
       },
       () => {
-        this.setState({ activePage: 1 });
-        this.getEventsList();
+        this.setState({ activePage: 1, events: [] });
+        // this.getEventsList();
       }
     );
   };
@@ -495,28 +408,6 @@ class Events extends Component {
           closeOnClickOutside: false,
           title: "Success",
           text: "Record deleted successfully.",
-          icon: "success",
-        }).then(() => {
-          this.getEventsList(this.state.activePage);
-        });
-      })
-      .catch((err) => {
-        if (err.data.status === 3) {
-          this.setState({ closeModal: true });
-          showErrorMessage(err, this.props);
-        }
-      });
-  };
-
-  chageStatus = (cell, status) => {
-    API.put(`/api/events/change_status/${cell}`, {
-      status: status == 1 ? String(0) : String(1),
-    })
-      .then((res) => {
-        swal({
-          closeOnClickOutside: false,
-          title: "Success",
-          text: "Record updated successfully.",
           icon: "success",
         }).then(() => {
           this.getEventsList(this.state.activePage);
@@ -576,7 +467,6 @@ class Events extends Component {
   render() {
     const validateStopFlag = Yup.object().shape({
       region: Yup.string().required("Please enter the Region"),
-      // state: Yup.string().required("Please enter the State"),
     });
     return (
       <Layout {...this.props}>
@@ -589,30 +479,12 @@ class Events extends Component {
                   <small />
                 </h1>
               </div>
+              <br />
 
               <div>
                 {/* <Layout> */}
                 <div>
-                  <section className="content-header">
-                    <h1 style={{ textAlign: "center" }}>
-                      Add Email
-                      <small />
-                    </h1>
-                    {/* <input
-                        type="button"
-                        value="Go Back"
-                        className="btn btn-warning btn-sm"
-                        onClick={() => {
-                          window.history.go(-1);
-                          return false;
-                        }}
-                        style={{
-                          right: "9px",
-                          position: "absolute",
-                          top: "13px",
-                        }} */}
-                    {/* /> */}
-                  </section>
+                  <section className="content-header"></section>
                   <section className="content">
                     <div className="box">
                       <div className="box-body">
@@ -634,15 +506,6 @@ class Events extends Component {
                           }) => {
                             return (
                               <Form>
-                                {/* {this.state.showModalLoader === true ? (
-                                  <div className="loading_reddy_outer">
-                                    <div className="loading_reddy">
-                                      <img src={whitelogo} alt="loader" />
-                                    </div>
-                                  </div>
-                                ) : (
-                                  ""
-                                )} */}
                                 <div className="contBox">
                                   <Row>
                                     <Row>
@@ -666,7 +529,7 @@ class Events extends Component {
                                             }}
                                           >
                                             <option key="-1" value="">
-                                              Select Type
+                                              Select Region
                                             </option>
                                             {this.state.region.map(
                                               (region, i) => (
@@ -693,7 +556,7 @@ class Events extends Component {
                                         <div className="form-group">
                                           <label>
                                             State
-                                            <span className="impField">*</span>
+                                            {/* <span className="impField">*</span> */}
                                           </label>
                                           <Select
                                             name="state"
@@ -702,11 +565,6 @@ class Events extends Component {
                                             // value={values.state}
                                             onChange={this.changeHandler}
                                           ></Select>
-                                          {errors.state && touched.state ? (
-                                            <span className="errorMsg">
-                                              {errors.state}
-                                            </span>
-                                          ) : null}
                                         </div>
                                       </Col>
                                     </Row>
@@ -738,6 +596,7 @@ class Events extends Component {
                                     </Row>
                                   </Row>
                                 </div>
+
                                 <button
                                   className={`btn btn-success btn-sm ${
                                     isValid ? "btn-custom-green" : "btn-disable"
@@ -771,72 +630,46 @@ class Events extends Component {
               </div>
 
               <div className="col-lg-12 col-sm-12 col-xs-12  topSearchSection">
+                <div className="">
+                  <select name="status" id="status" className="form-control">
+                    <option value="">Select Event Status</option>
+                    {this.state.selectType.map((val) => {
+                      return (
+                        <option key={val.value} value={val.value}>
+                          {val.label}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+
                 {/* <div className="">
-                  <button
-                    type="button"
-                    className="btn btn-info btn-sm"
-                    onClick={(e) =>
-                      this.props.history.push({
-                        pathname: "/add-email",
-                        state: { categoryList: this.state.categoryList },
-                      })
-                    }
-                  >
-                    <i className="fas fa-plus m-r-5" /> Add Email
-                  </button>
+                  <select name="region" id="region" className="form-control">
+                    <option value="">Search Email by Region</option>
+                    {this.state.selectRegion.map((val) => {
+                      return (
+                        <option key={val.value} value={val.value}>
+                          {val.label}
+                        </option>
+                      );
+                    })}
+                  </select>
                 </div> */}
+
+                {/* <div className="">
+                  <select name="state" id="state" className="form-control">
+                    <option value="">Search Email by State</option>
+                    {this.state.selectState.map((val) => {
+                      return (
+                        <option key={val.value} value={val.value}>
+                          {val.label}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div> */}
+
                 <form className="form">
-                  <div className="">
-                    <input
-                      className="form-control"
-                      name="event_title"
-                      id="event_title"
-                      placeholder="Filter by Email"
-                    />
-                  </div>
-
-                  <div className="">
-                    <input
-                      className="form-control"
-                      name="event_location"
-                      id="event_location"
-                      placeholder="Filter by Region"
-                    />
-                  </div>
-
-                  <div className="">
-                    <input
-                      className="form-control"
-                      name="event_type"
-                      id="event_type"
-                      placeholder="Filter by State"
-                    />
-                  </div>
-                  <div className="">
-                    <select name="region" id="region" className="form-control">
-                      <option value="">Search Email by Region</option>
-                      {this.state.selectRegion.map((val) => {
-                        return (
-                          <option key={val.value} value={val.value}>
-                            {val.label}
-                          </option>
-                        );
-                      })}
-                    </select>
-                  </div>
-
-                  <div className="">
-                    <select name="status" id="status" className="form-control">
-                      <option value="">Search Email by State</option>
-                      {this.state.selectState.map((val) => {
-                        return (
-                          <option key={val.value} value={val.value}>
-                            {val.label}
-                          </option>
-                        );
-                      })}
-                    </select>
-                  </div>
                   <div className="">
                     <input
                       type="submit"
@@ -864,34 +697,29 @@ class Events extends Component {
               <div className="box-body">
                 <div className="table-responsive"></div>
                 <BootstrapTable data={this.state.events}>
+                  <TableHeaderColumn isKey dataField="region">
+                    {this.state.isState ? "State" : "Region"}
+                  </TableHeaderColumn>
+                  {/* <TableHeaderColumn
+                    dataField="state"
+                  >
+                    State
+                  </TableHeaderColumn> */}
+
                   <TableHeaderColumn
-                    isKey
-                    dataField="email"
-                    dataFormat={__htmlDecode(this)}
+                    dataField="emails"
+                    // dataFormat={__htmlDecode(this)}
                   >
                     Email
                   </TableHeaderColumn>
-                  <TableHeaderColumn
-                    dataField="region_name"
-                    dataFormat={__htmlDecode(this)}
-                  >
-                    Region
-                  </TableHeaderColumn>
-
-                  <TableHeaderColumn
-                    dataField="state"
-                    dataFormat={__htmlDecode(this)}
-                  >
-                    State
-                  </TableHeaderColumn>
-
+                  {/* 
                   <TableHeaderColumn
                     dataField="id"
                     dataFormat={actionFormatter(this)}
                     dataAlign=""
                   >
                     Action
-                  </TableHeaderColumn>
+                  </TableHeaderColumn> */}
                 </BootstrapTable>
 
                 {this.state.totalCount > 10 ? (
