@@ -632,7 +632,7 @@ class Events extends Component {
               <div className="col-lg-12 col-sm-12 col-xs-12  topSearchSection">
                 <div className="">
                   <select name="status" id="status" className="form-control">
-                    <option value="">Select Event Status</option>
+                    <option value="">Select Email/Region for Listing</option>
                     {this.state.selectType.map((val) => {
                       return (
                         <option key={val.value} value={val.value}>
