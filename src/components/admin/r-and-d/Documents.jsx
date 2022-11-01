@@ -171,7 +171,6 @@ class RnDocuments extends Component {
       `/api/rnd/rnd_category?page=${page}&status=${encodeURIComponent(status)}`
     )
       .then((res) => {
-        console.log(res.data.data);
         this.setState({
           categoryType: res.data.data,
           isLoading: false,
@@ -196,7 +195,7 @@ class RnDocuments extends Component {
       )}`
     )
       .then((res) => {
-        console.log(res.data.data);
+        // console.log(res.data.data);
         this.setState({
           documentList: res.data.data,
           totalCount: res.data.count,
@@ -308,7 +307,6 @@ class RnDocuments extends Component {
   getDocumentDetails(id) {
     API.get(`/api/rnd/rnd_category_file/${Number(id)}`)
       .then((res) => {
-        console.log(res.data.data[0]);
         this.setState({
           showModal: true,
           documentDetails: res.data.data[0],
@@ -374,6 +372,11 @@ class RnDocuments extends Component {
               showModal: false,
             });
             showErrorMessage(err, this.props);
+          } else if (err.status === 500) {
+            this.setState({
+              showModal: false,
+            });
+            showErrorMessage(err, this.props);
           } else {
             actions.setErrors(err.data.errors);
             actions.setSubmitting(false);
@@ -418,7 +421,6 @@ class RnDocuments extends Component {
     //console.log(event.target.files);
     setFieldTouched("file");
     setFieldValue("file", event.target.value);
-    console.log(event.target.files[0]);
 
     const SUPPORTED_FORMATS = ["application/pdf"];
     if (!event.target.files[0]) {
