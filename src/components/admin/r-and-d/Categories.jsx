@@ -128,6 +128,7 @@ export default class RnDCategories extends Component {
       designation: "",
       status: "",
       category_image: "",
+      category_pdf: "",
       category_description: "",
     };
   }
@@ -246,10 +247,8 @@ export default class RnDCategories extends Component {
   };
 
   fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
-    //console.log(event.target.files);
     setFieldTouched("category_image");
     setFieldValue("category_image", event.target.value);
-    console.log(event.target.files[0]);
 
     const SUPPORTED_FORMATS = ["image/png", "image/jpeg", "image/jpg"];
     if (!event.target.files[0]) {
@@ -282,6 +281,46 @@ export default class RnDCategories extends Component {
     }
   };
 
+  fileChangedHandlerpdf = (
+    event,
+    setFieldTouched,
+    setFieldValue,
+    setErrors
+  ) => {
+    setFieldTouched("category_pdf");
+    setFieldValue("category_pdf", event.target.value);
+
+    const SUPPORTED_FORMATS = ["application/pdf"];
+    if (!event.target.files[0]) {
+      //Supported
+      this.setState({
+        category_pdf: "",
+        isValidFile: true,
+      });
+      return;
+    }
+    if (
+      event.target.files[0] &&
+      SUPPORTED_FORMATS.includes(event.target.files[0].type)
+    ) {
+      //Supported
+      this.setState({
+        category_pdf: event.target.files[0],
+        isValidFile: true,
+      });
+    } else {
+      //Unsupported
+      setErrors({
+        category_image:
+          "Only files with the following extensions are allowed: pdf",
+      }); //Not working- So Added validation in "yup"
+      this.setState({
+        category_pdf: "",
+        isValidFile: false,
+      });
+    }
+  };
+
   setHealthBenefitImage = (refObj) => (cell, row) => {
     if (row.health_image !== null) {
       return (
@@ -305,6 +344,7 @@ export default class RnDCategories extends Component {
     formData.append("status", values.status);
     formData.append("category_description", values.category_description);
     formData.append("category_image", this.state.category_image);
+    formData.append("category_pdf", this.state.category_pdf);
 
     // let postData = {};
     // postData.category_name = values.name;
@@ -357,8 +397,6 @@ export default class RnDCategories extends Component {
 
   render() {
     const { categoryDetails } = this.state;
-    console.log('categoryDetails:', categoryDetails)
-
     const newInitialValues = Object.assign(initialValues, {
       name: categoryDetails.category_name
         ? htmlDecode(categoryDetails.category_name)
@@ -371,6 +409,7 @@ export default class RnDCategories extends Component {
           ? categoryDetails.status.toString()
           : "",
       category_image: "",
+      category_pdf: "",
     });
 
     let validateStopFlag = {};
@@ -387,6 +426,19 @@ export default class RnDCategories extends Component {
           .test(
             "file",
             "Only files with the following extensions are allowed: jpeg/jpg/png",
+            (file) => {
+              if (file) {
+                return this.state.isValidFile;
+              } else {
+                return true;
+              }
+            }
+          ),
+        category_pdf: Yup.string()
+          .notRequired()
+          .test(
+            "file",
+            "Only files with the following extensions are allowed: pdf",
             (file) => {
               if (file) {
                 return this.state.isValidFile;
@@ -422,6 +474,13 @@ export default class RnDCategories extends Component {
           .test(
             "file",
             "Only files with the following extensions are allowed: jpeg/jpg/png",
+            () => this.state.isValidFile
+          ),
+        category_pdf: Yup.string()
+          .required("Please select the file")
+          .test(
+            "file",
+            "Only files with the following extensions are allowed: pdf",
             () => this.state.isValidFile
           ),
       });
@@ -473,6 +532,12 @@ export default class RnDCategories extends Component {
                   >
                     Image
                   </TableHeaderColumn>
+                  {/* <TableHeaderColumn
+                    dataField="content"
+                    dataFormat={this.setHealthBenefitImage(this)}
+                  >
+                    Image
+                  </TableHeaderColumn> */}
 
                   <TableHeaderColumn
                     dataField="status"
@@ -635,6 +700,41 @@ export default class RnDCategories extends Component {
                               touched.category_image ? (
                                 <span className="errorMsg">
                                   {errors.category_image}
+                                </span>
+                              ) : null}
+                            </div>
+                          </Col>
+                        </Row>
+
+                        <Row>
+                          <Col xs={12} sm={12} md={12}>
+                            <div className="form-group">
+                              <label>
+                                Choose File (pdf)
+                                <br />{" "}
+                                {this.state.documentId == 0 ? (
+                                  <span className="impField">*</span>
+                                ) : null}
+                              </label>
+                              <Field
+                                name="category_pdf"
+                                type="file"
+                                className={`form-control`}
+                                autoComplete="off"
+                                // accept="application/pdf"
+                                onChange={(e) => {
+                                  this.fileChangedHandlerpdf(
+                                    e,
+                                    setFieldTouched,
+                                    setFieldValue,
+                                    setErrors
+                                  );
+                                }}
+                              />
+
+                              {errors.category_pdf && touched.category_pdf ? (
+                                <span className="errorMsg">
+                                  {errors.category_pdf}
                                 </span>
                               ) : null}
                             </div>
