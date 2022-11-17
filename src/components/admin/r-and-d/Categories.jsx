@@ -130,18 +130,18 @@ export default class RnDCategories extends Component {
       category_image: "",
       category_pdf: "",
       category_description: "",
+      isValidFilepdf: false,
+      isValidFile: false,
     };
   }
 
   getCategories = (page = 1) => {
     const status = this.state.status;
-    //https://srlcmsbackend.indusnettechnologies.com/api/rnd/rnd_category?page=1&category_name=cat&status=0
 
     API.get(
       `/api/rnd/rnd_category?page=${page}&status=${encodeURIComponent(status)}`
     )
       .then((res) => {
-        console.log(res.data.data);
         this.setState({
           categoriesList: res.data.data,
           totalCount: res.data.count,
@@ -159,6 +159,8 @@ export default class RnDCategories extends Component {
     event.preventDefault();
 
     if (id) {
+      this.setState({ category_image: "", category_pdf: "" });
+
       this.getCategorydetails(id);
     } else {
       this.setState({ showModal: true });
@@ -192,7 +194,6 @@ export default class RnDCategories extends Component {
   getCategorydetails(id) {
     API.get(`/api/rnd/rnd_category/${Number(id)}`)
       .then((res) => {
-        console.log(res.data.data[0]);
         this.setState({
           showModal: true,
           categoryDetails: res.data.data[0],
@@ -289,13 +290,14 @@ export default class RnDCategories extends Component {
   ) => {
     setFieldTouched("category_pdf");
     setFieldValue("category_pdf", event.target.value);
+    // console.log(">>>>>>>>>>>>", event.target.files[0]);
 
     const SUPPORTED_FORMATS = ["application/pdf"];
     if (!event.target.files[0]) {
       //Supported
       this.setState({
         category_pdf: "",
-        isValidFile: true,
+        isValidFilepdf: true,
       });
       return;
     }
@@ -306,17 +308,17 @@ export default class RnDCategories extends Component {
       //Supported
       this.setState({
         category_pdf: event.target.files[0],
-        isValidFile: true,
+        isValidFilepdf: true,
       });
     } else {
       //Unsupported
       setErrors({
-        category_image:
+        category_pdf:
           "Only files with the following extensions are allowed: pdf",
       }); //Not working- So Added validation in "yup"
       this.setState({
         category_pdf: "",
-        isValidFile: false,
+        isValidFilepdf: false,
       });
     }
   };
@@ -345,11 +347,6 @@ export default class RnDCategories extends Component {
     formData.append("category_description", values.category_description);
     formData.append("category_image", this.state.category_image);
     formData.append("category_pdf", this.state.category_pdf);
-
-    // let postData = {};
-    // postData.category_name = values.name;
-    // postData.status = values.status;
-    // postData.category_image = values.category_image;
 
     if (this.state.categoryId > 0) {
       url = `/api/rnd/rnd_category/${this.state.categoryId}`;
@@ -388,6 +385,7 @@ export default class RnDCategories extends Component {
         } else {
           actions.setErrors(err.data.errors);
           actions.setSubmitting(false);
+          showErrorMessage(err, this.props);
         }
       });
   };
@@ -441,7 +439,7 @@ export default class RnDCategories extends Component {
             "Only files with the following extensions are allowed: pdf",
             (file) => {
               if (file) {
-                return this.state.isValidFile;
+                return this.state.isValidFilepdf;
               } else {
                 return true;
               }
@@ -481,7 +479,7 @@ export default class RnDCategories extends Component {
           .test(
             "file",
             "Only files with the following extensions are allowed: pdf",
-            () => this.state.isValidFile
+            () => this.state.isValidFilepdf
           ),
       });
     }
@@ -494,7 +492,6 @@ export default class RnDCategories extends Component {
               <div className="col-lg-12 col-sm-12 col-xs-12">
                 <h1>Manage Categories</h1>
               </div>
-              {/* {console.log(">>>>>>>>>", this.state.file)} */}
               <div className="col-lg-12 col-sm-12 col-xs-12  topSearchSection">
                 <div className="">
                   <button
@@ -674,7 +671,7 @@ export default class RnDCategories extends Component {
                           <Col xs={12} sm={12} md={12}>
                             <div className="form-group">
                               <label>
-                                Choose File
+                                Choose Image
                                 <br />{" "}
                                 <i>(Image maximum file size is 20 mb.)</i>
                                 {this.state.documentId == 0 ? (
@@ -710,7 +707,7 @@ export default class RnDCategories extends Component {
                           <Col xs={12} sm={12} md={12}>
                             <div className="form-group">
                               <label>
-                                Choose File (pdf)
+                                Choose File
                                 <br />{" "}
                                 {this.state.documentId == 0 ? (
                                   <span className="impField">*</span>
