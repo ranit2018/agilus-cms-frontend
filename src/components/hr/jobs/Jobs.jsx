@@ -1058,6 +1058,31 @@ class Jobs extends Component {
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
+                                      Unique Job ID
+                                      <span className="impField">*</span>
+                                    </label>
+                                    <Field
+                                      name="unique_job_id"
+                                      id="unique_job_id"
+                                      type="text"
+                                      className={`form-control`}
+                                      placeholder="Enter Job ID"
+                                      autoComplete="off"
+                                      value={values.unique_job_id}
+                                    />
+                                    {errors.unique_job_id &&
+                                    touched.unique_job_id ? (
+                                      <span className="errorMsg">
+                                        {errors.unique_job_id}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                </Col>
+                              </Row>
+                              <Row>
+                                <Col xs={12} sm={12} md={6}>
+                                  <div className="form-group">
+                                    <label>
                                       Employment Type
                                       <span className="impField">*</span>
                                     </label>
@@ -1099,9 +1124,7 @@ class Jobs extends Component {
                                     ) : null}
                                   </div>
                                 </Col>
-                              </Row>
-                              <Row>
-                                <Col xs={12} sm={12} md={12}>
+                                <Col xs={12} sm={12} md={6}>
                                   <div className="form-group">
                                     <label>
                                       Job Title
@@ -1124,8 +1147,9 @@ class Jobs extends Component {
                                   </div>
                                 </Col>
                               </Row>
+
                               <Row>
-                                <Col xs={12} sm={12} md={12}>
+                                <Col xs={12} sm={12} md={6}>
                                   <div className="form-group">
                                     <label>
                                       Department
@@ -1159,9 +1183,7 @@ class Jobs extends Component {
                                     ) : null}
                                   </div>
                                 </Col>
-                              </Row>
-                              <Row>
-                                <Col xs={12} sm={12} md={12}>
+                                <Col xs={12} sm={12} md={6}>
                                   <div className="form-group">
                                     <label>
                                       Job Roles
@@ -1192,8 +1214,9 @@ class Jobs extends Component {
                                   </div>
                                 </Col>
                               </Row>
+
                               <Row>
-                                <Col xs={12} sm={12} md={12}>
+                                <Col xs={12} sm={12} md={6}>
                                   <div className="form-group">
                                     <label>
                                       Job Category
@@ -1229,10 +1252,7 @@ class Jobs extends Component {
                                     ) : null}
                                   </div>
                                 </Col>
-                              </Row>
-
-                              <Row>
-                                <Col xs={12} sm={12} md={12}>
+                                <Col xs={12} sm={12} md={6}>
                                   <div className="form-group">
                                     <label>
                                       Job Skill
@@ -1265,8 +1285,9 @@ class Jobs extends Component {
                                   </div>
                                 </Col>
                               </Row>
+
                               <Row>
-                                <Col xs={12} sm={12} md={12}>
+                                <Col xs={12} sm={12} md={6}>
                                   <div className="form-group">
                                     <label>
                                       Job Location
@@ -1299,9 +1320,7 @@ class Jobs extends Component {
                                     ) : null}
                                   </div>
                                 </Col>
-                              </Row>
-                              <Row>
-                                <Col xs={12} sm={12} md={12}>
+                                <Col xs={12} sm={12} md={6}>
                                   <div className="form-group">
                                     <label>
                                       Travel Needed
@@ -1337,8 +1356,9 @@ class Jobs extends Component {
                                   </div>
                                 </Col>
                               </Row>
+
                               <Row>
-                                <Col xs={12} sm={12} md={12}>
+                                <Col xs={12} sm={12} md={6}>
                                   <div className="form-group">
                                     <label>
                                       Region
@@ -1378,10 +1398,7 @@ class Jobs extends Component {
                                     ) : null}
                                   </div>
                                 </Col>
-                              </Row>
-
-                              <Row>
-                                <Col xs={12} sm={12} md={12}>
+                                <Col xs={12} sm={12} md={6}>
                                   <div className="form-group">
                                     <label>
                                       Experience
@@ -1422,6 +1439,7 @@ class Jobs extends Component {
                                   </div>
                                 </Col>
                               </Row>
+
                               <Row>
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
@@ -1464,7 +1482,7 @@ class Jobs extends Component {
                               </Row>
 
                               <Row>
-                                <Col xs={12} sm={12} md={12}>
+                                <Col xs={12} sm={12} md={6}>
                                   <div className="form-group">
                                     <label>
                                       Job Description
@@ -1487,7 +1505,37 @@ class Jobs extends Component {
                                     ) : null}
                                   </div>
                                 </Col>
+                                <Col xs={12} sm={12} md={6}>
+                                  <div className="form-group">
+                                    <label>
+                                      Status
+                                      <span className="impField">*</span>
+                                    </label>
+                                    <Field
+                                      name="status"
+                                      component="select"
+                                      className={`selectArowGray form-control`}
+                                      autoComplete="off"
+                                      value={values.status}
+                                    >
+                                      <option key="-1" value="">
+                                        Select
+                                      </option>
+                                      {this.state.selectStatus.map((val, i) => (
+                                        <option key={i} value={val.value}>
+                                          {val.label}
+                                        </option>
+                                      ))}
+                                    </Field>
+                                    {errors.status && touched.status ? (
+                                      <span className="errorMsg">
+                                        {errors.status}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                </Col>
                               </Row>
+
                               <Row>
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
@@ -1519,37 +1567,6 @@ class Jobs extends Component {
                                     touched.feature_image ? (
                                       <span className="errorMsg">
                                         {errors.feature_image}
-                                      </span>
-                                    ) : null}
-                                  </div>
-                                </Col>
-                              </Row>
-                              <Row>
-                                <Col xs={12} sm={12} md={12}>
-                                  <div className="form-group">
-                                    <label>
-                                      Status
-                                      <span className="impField">*</span>
-                                    </label>
-                                    <Field
-                                      name="status"
-                                      component="select"
-                                      className={`selectArowGray form-control`}
-                                      autoComplete="off"
-                                      value={values.status}
-                                    >
-                                      <option key="-1" value="">
-                                        Select
-                                      </option>
-                                      {this.state.selectStatus.map((val, i) => (
-                                        <option key={i} value={val.value}>
-                                          {val.label}
-                                        </option>
-                                      ))}
-                                    </Field>
-                                    {errors.status && touched.status ? (
-                                      <span className="errorMsg">
-                                        {errors.status}
                                       </span>
                                     ) : null}
                                   </div>

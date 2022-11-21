@@ -58,7 +58,6 @@ const setDate = (refOBj) => (cell) => {
 };
 
 const actionFormatter = (refObj) => (cell, row) => {
-
   return (
     <div className="actionStyle">
       <LinkWithTooltip
@@ -90,6 +89,7 @@ const initialValues = {
   city: '',
   job_title: '',
   application_status: '',
+  department: '',
 };
 class AppliedJobs extends Component {
   constructor(props) {
@@ -117,18 +117,19 @@ class AppliedJobs extends Component {
       showModalUpdate: false,
       selectedDay: '',
       application_status_arr: [],
+      department: '',
     };
-    console.log('this.state.activePage',this.state.activePage )
+    console.log('this.state.activePage', this.state.activePage);
   }
-  
 
   getPatientList = (page = 1) => {
-    console.log('this.state.activePage',this.state.activePage )
+    console.log('this.state.activePage', this.state.activePage);
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
     const job_title = document.getElementById('job_title').value;
     const application_status =
       document.getElementById('application_status').value;
+    const department = document.getElementById('department').value;
 
     let from = this.state.from;
     let to = this.state.to;
@@ -150,7 +151,6 @@ class AppliedJobs extends Component {
       )}&application_status=${encodeURIComponent(application_status)}`
     )
       .then((res) => {
-      
         this.setState({
           appliedjobForms: res.data.data,
           totalCount: Number(res.data.count),
@@ -158,7 +158,6 @@ class AppliedJobs extends Component {
         });
       })
       .catch((err) => {
-
         this.setState({
           isLoading: false,
         });
@@ -169,7 +168,6 @@ class AppliedJobs extends Component {
   getApplicationStatusArr = () => {
     API.get(`api/job_portal/job/application_status`)
       .then((res) => {
-      
         let dataArr = [];
         for (var i = 0; i < res.data.data.length; i++) {
           dataArr.push({
@@ -177,7 +175,7 @@ class AppliedJobs extends Component {
             label: res.data.data[i].application_status,
           });
         }
-      
+
         this.setState({
           application_status_arr: dataArr,
         });
@@ -192,7 +190,6 @@ class AppliedJobs extends Component {
       selectedDay: selected ? undefined : day,
     });
   };
-
 
   applicationSearch = (e) => {
     e.preventDefault();
@@ -245,7 +242,6 @@ class AppliedJobs extends Component {
         )}&application_status=${encodeURIComponent(application_status)}`
       )
         .then((res) => {
-
           this.setState({
             appliedjobForms: res.data.data,
             totalCount: Number(res.data.count),
@@ -278,6 +274,8 @@ class AppliedJobs extends Component {
     document.getElementById('email').value = '';
     document.getElementById('job_title').value = '';
     document.getElementById('application_status').value = '';
+    document.getElementById('department').value = '';
+
     let pageNumber = 1;
     this.setState(
       {
@@ -287,6 +285,7 @@ class AppliedJobs extends Component {
         application_status: '',
         from: '',
         to: '',
+        department: '',
 
         remove_search: false,
       },
@@ -300,7 +299,6 @@ class AppliedJobs extends Component {
   getappliedJobDetailsbyId = (id) => {
     API.get(`api/job_portal/job/user/apply/${id}`)
       .then((res) => {
-
         this.setState({
           appliedJobDetails: res.data.data[0],
           showModal: true,
@@ -389,6 +387,7 @@ class AppliedJobs extends Component {
       city: '',
       job_title: '',
       application_status: '',
+      department: '',
     });
   };
 
@@ -407,6 +406,7 @@ class AppliedJobs extends Component {
   handleEditSubmit = (values, actions) => {
     let postdata = {
       application_status: String(values.application_status),
+      department: String(values.department),
     };
 
     let method = 'PUT';
@@ -444,7 +444,7 @@ class AppliedJobs extends Component {
 
   render() {
     const { from, to } = this.state;
-    const {  appliedJobDetails } = this.state;
+    const { appliedJobDetails } = this.state;
     const modifiers = { start: from, end: to };
 
     const newInitialValues = Object.assign(initialValues, {
@@ -452,13 +452,17 @@ class AppliedJobs extends Component {
       email: appliedJobDetails.email,
       phone_no: appliedJobDetails.phone_no,
       job_title: appliedJobDetails.job_title,
-      date_applied: moment(appliedJobDetails.date_applied).format("DD-MM-YYYY"),
+      date_applied: moment(appliedJobDetails.date_applied).format('DD-MM-YYYY'),
       application_status: appliedJobDetails.application_status_id,
+      department: appliedJobDetails.department,
+
       //you have to pass id for dropdown values
     });
 
     const validateStopFlagUpdate = Yup.object().shape({
-      application_status: Yup.number().required('Please select application status'),
+      application_status: Yup.number().required(
+        'Please select application status'
+      ),
     });
 
     return (
@@ -505,7 +509,7 @@ class AppliedJobs extends Component {
                         name="application_status"
                         id="application_status"
                         className="form-control"
-                      > 
+                      >
                         <option value="">Select Application Status</option>
                         {this.state.application_status_arr.map((val, i) => {
                           return (
@@ -514,6 +518,102 @@ class AppliedJobs extends Component {
                             </option>
                           );
                         })}
+                      </select>
+                    </div>
+                    <div className="">
+                      <select
+                        name="department"
+                        id="department"
+                        className="form-control"
+                      >
+                        <option value="">Select Department</option>
+                        <option key="" value="ent">
+                          ENT
+                        </option>
+                        <option key="" value="orthopedic">
+                          Orthopedic
+                        </option>
+                        <option key="" value="neurologist">
+                          Neurologist
+                        </option>
+                      </select>
+                    </div>
+                    <div className="">
+                      <select
+                        name="department"
+                        id="department"
+                        className="form-control"
+                      >
+                        <option key="-1" value="">
+                          Select experience
+                        </option>
+                        <option key="" value="0-2">
+                          0-2
+                        </option>
+                        <option key="" value="2-4">
+                          2-4
+                        </option>
+                        <option key="" value="4-7">
+                          4-7
+                        </option>
+                        <option key="" value="7-10">
+                          7-10
+                        </option>
+                        <option key="" value="10+">
+                          10+
+                        </option>
+                      </select>
+                    </div>
+                    <div className="">
+                      <select
+                        name="department"
+                        id="department"
+                        className="form-control"
+                      >
+                        <option key="-1" value="">
+                          Select region
+                        </option>
+                        <option key="" value="north">
+                          North
+                        </option>
+                        <option key="" value="south">
+                          South
+                        </option>
+                        <option key="" value="east">
+                          East
+                        </option>
+                        <option key="" value="west">
+                          West
+                        </option>
+                        <option key="" value="central">
+                          Central
+                        </option>
+                      </select>
+                    </div>
+                    <div className="">
+                      <select
+                        name="department"
+                        id="department"
+                        className="form-control"
+                      >
+                        <option key="-1" value="">
+                          Select Salary Bracket
+                        </option>
+                        <option key="" value="3lpa">
+                          3.00 LPA
+                        </option>
+                        <option key="" value="4lpa">
+                          4.00 LPA
+                        </option>
+                        <option key="" value="5lpa">
+                          5.00 LAP
+                        </option>
+                        <option key="" value="7lpa">
+                          7.00 LPA
+                        </option>
+                        <option key="" value="10lpa">
+                          10.00 LPA
+                        </option>
                       </select>
                     </div>
                     <div>
@@ -568,7 +668,6 @@ class AppliedJobs extends Component {
                           <a
                             onClick={() => this.clearSearch()}
                             className="btn btn-danger btn-sm"
-                            
                           >
                             {' '}
                             Remove{' '}
@@ -627,7 +726,6 @@ class AppliedJobs extends Component {
                     dataField="id"
                     dataFormat={actionFormatter(this)}
                     dataAlign=""
-                   
                   >
                     Action
                   </TableHeaderColumn>
@@ -695,7 +793,6 @@ class AppliedJobs extends Component {
                                       name="name"
                                       type="text"
                                       className={`form-control`}
-                        
                                       value={values.name || ''}
                                       disabled
                                     />
@@ -713,7 +810,6 @@ class AppliedJobs extends Component {
                                       name="email"
                                       type="text"
                                       className={`form-control`}
-                              
                                       value={values.email || ''}
                                       disabled
                                     />
@@ -731,7 +827,6 @@ class AppliedJobs extends Component {
                                       name="phone_no"
                                       type="text"
                                       className={`form-control`}
-                                 
                                       value={values.phone_no || ''}
                                       disabled
                                     />
@@ -749,7 +844,6 @@ class AppliedJobs extends Component {
                                       name="job_title"
                                       type="text"
                                       className={`form-control`}
-                                  
                                       value={values.job_title || ''}
                                       disabled
                                     />
@@ -767,7 +861,6 @@ class AppliedJobs extends Component {
                                       name="date_applied"
                                       type="text"
                                       className={`form-control`}
-                                
                                       value={values.date_applied || ''}
                                       disabled
                                     />
