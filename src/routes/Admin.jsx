@@ -75,10 +75,16 @@ import AddAccordian from "../components/admin/product-details/AddAccordion";
 import AddContentAccordian from "../components/admin/r-and-d/AddContentAccordion";
 import EditContentAccordion from "../components/admin/r-and-d/EditContentAccordion";
 import EditAccordion from "../components/admin/product-details/EditAccordion";
+import CurrentOffersPartnerPage from "../components/admin/partner-page/CurrentOffersPartnerPage";
+import AboutUsPartnerPage from '../components/admin/partner-page/AboutUsPartnerPage';
+import CenterImagePartnerPage from '../components/admin/partner-page/CenterImagePartnerPage';
+import AmenitiesPartnerPage from '../components/admin/partner-page/AmenitiesPartnerPage';
+import ServicesPartnerPage from '../components/admin/partner-page/ServicesPartnerPage';
 import "../assets/css/all.css";
 import "../assets/css/admin-style.css";
 import "../assets/css/admin-skin-blue.css";
 import "react-bootstrap-table/dist/react-bootstrap-table.min.css";
+
 
 // Private Route for inner component
 const PrivateRoute = ({ component: RefComponent, ...rest }) => (
@@ -121,6 +127,7 @@ class Admin extends Component {
         <PrivateRoute path="/sociallink" component={SocialLink} />
         <PrivateRoute path="/message" component={Message} />
 
+
         <PrivateRoute
           path="/lead_landing_page/product"
           component={ProductDetails}
@@ -149,6 +156,28 @@ class Admin extends Component {
           path="/product-details/edit-accordion/:id"
           component={EditAccordion}
         />
+
+        <PrivateRoute
+          path="/partner-page/aboutus"
+          component={AboutUsPartnerPage}
+        />
+        <PrivateRoute
+          path="/partner-page/services"
+          component={ServicesPartnerPage}
+        />
+        <PrivateRoute
+          path="/partner-page/amenities"
+          component={AmenitiesPartnerPage}
+        />
+        <PrivateRoute
+          path="/partner-page/current-offers"
+          component={CurrentOffersPartnerPage}
+        />
+        <PrivateRoute
+          path="/partner-page/center-images"
+          component={CenterImagePartnerPage}
+        />
+
 
         <PrivateRoute path="/pages/privacy-policy" component={PrivacyPolicy} />
         <PrivateRoute path="/pages/disclaimer" component={Disclaimer} />

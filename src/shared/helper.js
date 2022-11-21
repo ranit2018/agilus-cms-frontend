@@ -258,12 +258,35 @@ const resolution_arr = [
     width: `360`,
     height: `183`,
   },
+  {
+    tag: `partner-current-offers`,
+    width: `360`,
+    height: `183`,
+  },
+  {
+    tag: `partner-center-images`,
+    width: `360`,
+    height: `183`,
+  },
+  {
+    tag: `partner-services`,
+    width: `360`,
+    height: `183`,
+  },
+  {
+    tag: `partner-amenities`,
+    width: `360`,
+    height: `183`,
+  }
 
 ]
 
-export const generateResolutionText = (tag) => {
+export const generateResolutionText = (tag,type) => {
   for (let i in resolution_arr) {
     if (resolution_arr[i].tag === tag) {
+      if(type === "icon"){
+        return `(The Icon resolution should be of width '${resolution_arr[i].width}px' and height '${resolution_arr[i].height}px')`
+      }
       return `(The image resolution should be of width '${resolution_arr[i].width}px' and height '${resolution_arr[i].height}px')`
     }
   }
@@ -279,6 +302,7 @@ export const getResolution = (tag) => {
 export const FILE_SIZE = 2097152;
 export const MB = 2;
 export const FILE_VALIDATION_MASSAGE = `(Image type should be .png,.jpeg,.jpg and maximum file size is ${MB} mb.)`
+export const ICON_VALIDATION_MASSAGE = `(Icon type should be .png,.jpeg,.jpg and maximum file size is ${MB} mb.)`
 export const FILE_VALIDATION_MASSAGE_SVG = `(Image type should be .png,.jpeg,.jpg,.svg and maximum file size is ${MB} mb.)`
 export const FILE_VALIDATION_TYPE_ERROR_MASSAGE = `The file does not match height and width validations.`
 export const FILE_VALIDATION_SIZE_ERROR_MASSAGE = `The file exceeds maximum size.`
