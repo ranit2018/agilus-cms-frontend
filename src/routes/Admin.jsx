@@ -80,6 +80,14 @@ import AboutUsPartnerPage from '../components/admin/partner-page/AboutUsPartnerP
 import CenterImagePartnerPage from '../components/admin/partner-page/CenterImagePartnerPage';
 import AmenitiesPartnerPage from '../components/admin/partner-page/AmenitiesPartnerPage';
 import ServicesPartnerPage from '../components/admin/partner-page/ServicesPartnerPage';
+
+import InsideSrl from "../components/admin/carrer-page/InsideSrl";
+import LifeAtSrl from "../components/admin/carrer-page/LifeAtSrl";
+import FactAboutSrl from "../components/admin/carrer-page/FactAboutSrl";
+
+
+
+
 import "../assets/css/all.css";
 import "../assets/css/admin-style.css";
 import "../assets/css/admin-skin-blue.css";
@@ -126,7 +134,6 @@ class Admin extends Component {
         <PrivateRoute path="/edit-offer/:id" component={EditOffer} />
         <PrivateRoute path="/sociallink" component={SocialLink} />
         <PrivateRoute path="/message" component={Message} />
-
 
         <PrivateRoute
           path="/lead_landing_page/product"
@@ -177,7 +184,6 @@ class Admin extends Component {
           path="/partner-page/center-images"
           component={CenterImagePartnerPage}
         />
-
 
         <PrivateRoute path="/pages/privacy-policy" component={PrivacyPolicy} />
         <PrivateRoute path="/pages/disclaimer" component={Disclaimer} />
@@ -230,6 +236,14 @@ class Admin extends Component {
           path="/contact-us/office-addresses"
           component={OfficeAddresses}
         />
+
+        <PrivateRoute path="/carrer-page/inside-srl" component={InsideSrl} />
+        <PrivateRoute path="/carrer-page/life-at-srl" component={LifeAtSrl} />
+        <PrivateRoute
+          path="/carrer-page/fact-about-srl"
+          component={FactAboutSrl}
+        />
+
         <PrivateRoute path="/lead-forms" component={LeadForms} />
         <PrivateRoute path="/home/know-who-we-are" component={KnowWho} />
         <PrivateRoute path="/home/sample-journey" component={SampleJourneny} />
