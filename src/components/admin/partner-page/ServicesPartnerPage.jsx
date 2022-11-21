@@ -1009,7 +1009,12 @@ class ServicesPartnerPage extends Component {
                                             autoComplete="off"
                                             value={values.content}
                                             onChange={(e) => {
-                                              setFieldValue("heading",e.target.value.trim() === '' ? e.target.value.trim():e.target.value)
+                                              setFieldValue(
+                                                "content",
+                                                e.target.value.trim() === ""
+                                                  ? e.target.value.trim()
+                                                  : e.target.value
+                                              );
                                             }}  
                                         />
                                         {errors.content && touched.content ? (

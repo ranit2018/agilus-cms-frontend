@@ -648,7 +648,7 @@ class CenterImagePartnerPage extends Component {
                             id="status"
                             className="form-control"
                         >
-                            <option value="">Select Offer Status</option>
+                            <option value="">Select Center Image Status</option>
                             {this.state.selectStatus.map((val) => {
                                 return (
                                     <option key={val.value} value={val.value}>{val.label}</option>
