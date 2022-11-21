@@ -2,15 +2,9 @@
 import React, { Component } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Link } from 'react-router-dom';
-import {
-  Row,
-  Col,
-  Modal,
-  Tooltip,
-  OverlayTrigger,
-} from 'react-bootstrap';
+import { Row, Col, Modal, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { Formik, Field, Form } from 'formik';
-import API from "../../../shared/hrAxios"
+import API from '../../../shared/hrAxios';
 import * as Yup from 'yup';
 import swal from 'sweetalert';
 import { showErrorMessage } from '../../../shared/handle_error';
@@ -191,7 +185,6 @@ class Jobs extends Component {
   }
 
   getJobsList = (page = 1) => {
-
     const search_job_title = document.getElementById('search_job_title').value;
     const search_job_role = document.getElementById('search_job_role').value;
     const search_category_name = document.getElementById(
@@ -203,7 +196,8 @@ class Jobs extends Component {
     ).value;
     const search_status = document.getElementById('search_status').value;
 
-    API.get(`/api/job_portal/job?page=${page}&job_title=${encodeURIComponent(
+    API.get(
+      `/api/job_portal/job?page=${page}&job_title=${encodeURIComponent(
         search_job_title
       )}&job_role=${encodeURIComponent(
         search_job_role
@@ -213,7 +207,8 @@ class Jobs extends Component {
         search_job_skill
       )}&job_location=${encodeURIComponent(
         search_job_location
-      )}&status=${encodeURIComponent(search_status)}`)
+      )}&status=${encodeURIComponent(search_status)}`
+    )
       .then((res) => {
         this.setState({
           jobs: res.data.data,
@@ -500,7 +495,7 @@ class Jobs extends Component {
     }
   };
 
-  handleSubmitEventAdd = (values, actions) => { 
+  handleSubmitEventAdd = (values, actions) => {
     let formData = new FormData();
 
     // formData.append('job_id',this.state.jobDetails.job_id)
@@ -564,7 +559,6 @@ class Jobs extends Component {
   };
 
   handleSubmitEventUpdate = async (values, actions) => {
-
     let formData = new FormData();
 
     formData.append('job_title', values.job_title);
@@ -746,6 +740,14 @@ class Jobs extends Component {
       job_description: Yup.string().required('Please enter job description'),
       job_skill: Yup.string().required('Please select job skill'),
       status: Yup.number().required('Please select status'),
+      employment_type: Yup.string().required('Please enter employment type'),
+      department: Yup.string().required('Please enter department'),
+      travel_needed: Yup.string().required('Please enter travel_needed'),
+      region: Yup.string().required('Please enter region'),
+      experience: Yup.string().required('Please enter experience'),
+      company_information: Yup.string().required(
+        'Please enter company_information'
+      ),
     });
 
     const validateStopFlag = Yup.object().shape({
@@ -763,6 +765,14 @@ class Jobs extends Component {
       job_description: Yup.string().required('Please enter job description'),
       job_skill: Yup.string().required('Please enter job skill '),
       status: Yup.number().required('Please select status'),
+      employment_type: Yup.string().required('Please enter employment type'),
+      department: Yup.string().required('Please enter department'),
+      travel_needed: Yup.string().required('Please enter travel_needed'),
+      region: Yup.string().required('Please enter region'),
+      experience: Yup.string().required('Please enter experience'),
+      company_information: Yup.string().required(
+        'Please enter company_information'
+      ),
     });
 
     return (
@@ -778,17 +788,17 @@ class Jobs extends Component {
               </div>
 
               <div className="col-lg-12 col-sm-12 col-xs-12">
-                
                 <form className="leadForm">
-                <div className="">
-                  <button
-                    type="button"
-                    className="btn btn-info btn-sm"
-                    onClick={(e) => this.modalShowHandler(e, '')}
-                  >
-                    <i className="fas fa-plus m-r-5" /> Add Jobs
-                  </button>
-                </div>
+                  <div className="">
+                    <button
+                      type="button"
+                      className="btn btn-info btn-sm"
+                      onClick={(e) => this.modalShowHandler(e, '')}
+                    >
+                      <i className="fas fa-plus m-r-5" /> Add Jobs
+                    </button>
+                  </div>
+
                   <div className="">
                     <input
                       className="form-control"
@@ -803,7 +813,7 @@ class Jobs extends Component {
                       name="status"
                       id="search_job_role"
                     >
-                      <option value="">  Select Job Role  </option>
+                      <option value=""> Select Job Role </option>
                       {this.state.job_role_arr.map((val, i) => {
                         return (
                           <option key={i} value={val.value}>
@@ -851,7 +861,7 @@ class Jobs extends Component {
                       name="status"
                       id="search_job_skill"
                     >
-                      <option value="">  Select Job Skill  </option>
+                      <option value=""> Select Job Skill </option>
                       {this.state.job_skill_arr.map((val, i) => {
                         return (
                           <option key={i} value={val.value}>
@@ -1005,7 +1015,7 @@ class Jobs extends Component {
                 </Modal>
 
                 {/* ======= Add/Edit Jobs Modal ======== */}
-                 
+
                 <Modal
                   show={this.state.showModal}
                   onHide={() => this.modalCloseHandler()}
@@ -1048,6 +1058,52 @@ class Jobs extends Component {
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
+                                      Employment Type
+                                      <span className="impField">*</span>
+                                    </label>
+                                    <Field
+                                      name="employment_type"
+                                      id="employment_type"
+                                      component="select"
+                                      className={`selectArowGray form-control`}
+                                      autoComplete="off"
+                                      value={values.employment_type}
+                                    >
+                                      <option key="-1" value="">
+                                        Select Job Role
+                                      </option>
+                                      <option
+                                        key=""
+                                        value="permanent_full_time"
+                                      >
+                                        Permanent-Full Time
+                                      </option>
+                                      <option
+                                        key=""
+                                        value="contractual_full_time"
+                                      >
+                                        Contractual-Full Time
+                                      </option>
+                                      <option
+                                        key=""
+                                        value="contractual_part_time"
+                                      >
+                                        Contractual-Part Time
+                                      </option>
+                                    </Field>
+                                    {errors.employment_type &&
+                                    touched.employment_type ? (
+                                      <span className="errorMsg">
+                                        {errors.employment_type}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                </Col>
+                              </Row>
+                              <Row>
+                                <Col xs={12} sm={12} md={12}>
+                                  <div className="form-group">
+                                    <label>
                                       Job Title
                                       <span className="impField">*</span>
                                     </label>
@@ -1063,6 +1119,42 @@ class Jobs extends Component {
                                     {errors.job_title && touched.job_title ? (
                                       <span className="errorMsg">
                                         {errors.job_title}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                </Col>
+                              </Row>
+                              <Row>
+                                <Col xs={12} sm={12} md={12}>
+                                  <div className="form-group">
+                                    <label>
+                                      Department
+                                      <span className="impField">*</span>
+                                    </label>
+                                    <Field
+                                      name="department"
+                                      id="department"
+                                      component="select"
+                                      className={`selectArowGray form-control`}
+                                      autoComplete="off"
+                                      value={values.department}
+                                    >
+                                      <option key="-1" value="">
+                                        Select Department
+                                      </option>
+                                      <option key="" value="ent">
+                                        ENT
+                                      </option>
+                                      <option key="" value="orthopedic">
+                                        Orthopedic
+                                      </option>
+                                      <option key="" value="neurologist">
+                                        Neurologist
+                                      </option>
+                                    </Field>
+                                    {errors.department && touched.department ? (
+                                      <span className="errorMsg">
+                                        {errors.department}
                                       </span>
                                     ) : null}
                                   </div>
@@ -1095,6 +1187,79 @@ class Jobs extends Component {
                                     {errors.job_role && touched.job_role ? (
                                       <span className="errorMsg">
                                         {errors.job_role}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                </Col>
+                              </Row>
+                              <Row>
+                                <Col xs={12} sm={12} md={12}>
+                                  <div className="form-group">
+                                    <label>
+                                      Job Category
+                                      <span className="impField">*</span>
+                                    </label>
+                                    <Field
+                                      name="category_name"
+                                      id="category_name"
+                                      component="select"
+                                      className={`selectArowGray form-control`}
+                                      autoComplete="off"
+                                      value={values.category_name}
+                                    >
+                                      <option key="-1" value="">
+                                        Select Job Category
+                                      </option>
+                                      {this.state.job_category_arr.map(
+                                        (val, i) => (
+                                          <option
+                                            key={val.id}
+                                            value={val.value}
+                                          >
+                                            {val.label}
+                                          </option>
+                                        )
+                                      )}
+                                    </Field>
+                                    {errors.category_name &&
+                                    touched.category_name ? (
+                                      <span className="errorMsg">
+                                        {errors.category_name}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                </Col>
+                              </Row>
+
+                              <Row>
+                                <Col xs={12} sm={12} md={12}>
+                                  <div className="form-group">
+                                    <label>
+                                      Job Skill
+                                      <span className="impField">*</span>
+                                    </label>
+                                    <Field
+                                      name="job_skill"
+                                      id="job_skill"
+                                      component="select"
+                                      className={`selectArowGray form-control`}
+                                      autoComplete="off"
+                                      value={values.job_skill}
+                                    >
+                                      <option key="-1" value="">
+                                        Select Job Skill
+                                      </option>
+                                      {this.state.job_skill_arr.map(
+                                        (val, i) => (
+                                          <option key={i} value={val.value}>
+                                            {val.label}
+                                          </option>
+                                        )
+                                      )}
+                                    </Field>
+                                    {errors.job_skill && touched.job_skill ? (
+                                      <span className="errorMsg">
+                                        {errors.job_skill}
                                       </span>
                                     ) : null}
                                   </div>
@@ -1139,35 +1304,34 @@ class Jobs extends Component {
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
-                                      Job Category
+                                      Travel Needed
                                       <span className="impField">*</span>
                                     </label>
                                     <Field
-                                      name="category_name"
-                                      id="category_name"
+                                      name="travel_needed"
+                                      id="travel_needed"
                                       component="select"
                                       className={`selectArowGray form-control`}
                                       autoComplete="off"
-                                      value={values.category_name}
+                                      value={values.travel_needed}
                                     >
                                       <option key="-1" value="">
-                                        Select Job Category
+                                        Select Travel Needed
                                       </option>
-                                      {this.state.job_category_arr.map(
-                                        (val, i) => (
-                                          <option
-                                            key={val.id}
-                                            value={val.value}
-                                          >
-                                            {val.label}
-                                          </option>
-                                        )
-                                      )}
+                                      <option key="" value="extensive">
+                                        Extensive
+                                      </option>
+                                      <option key="" value="minimal">
+                                        Minimal
+                                      </option>
+                                      <option key="" value="no_travel">
+                                        No Travel
+                                      </option>
                                     </Field>
-                                    {errors.category_name &&
-                                    touched.category_name ? (
+                                    {errors.travel_needed &&
+                                    touched.travel_needed ? (
                                       <span className="errorMsg">
-                                        {errors.category_name}
+                                        {errors.travel_needed}
                                       </span>
                                     ) : null}
                                   </div>
@@ -1177,36 +1341,128 @@ class Jobs extends Component {
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
-                                      Job Skill
+                                      Region
                                       <span className="impField">*</span>
                                     </label>
                                     <Field
-                                      name="job_skill"
-                                      id="job_skill"
+                                      name="region"
+                                      id="region"
                                       component="select"
                                       className={`selectArowGray form-control`}
                                       autoComplete="off"
-                                      value={values.job_skill}
+                                      value={values.region}
                                     >
                                       <option key="-1" value="">
-                                        Select Job Skill
+                                        Select region
                                       </option>
-                                      {this.state.job_skill_arr.map(
-                                        (val, i) => (
-                                          <option key={i} value={val.value}>
-                                            {val.label}
-                                          </option>
-                                        )
-                                      )}
+                                      <option key="" value="north">
+                                        North
+                                      </option>
+                                      <option key="" value="south">
+                                        South
+                                      </option>
+                                      <option key="" value="east">
+                                        East
+                                      </option>
+                                      <option key="" value="west">
+                                        West
+                                      </option>
+                                      <option key="" value="central">
+                                        Central
+                                      </option>
                                     </Field>
-                                    {errors.job_skill && touched.job_skill ? (
+                                    {errors.region && touched.region ? (
                                       <span className="errorMsg">
-                                        {errors.job_skill}
+                                        {errors.region}
                                       </span>
                                     ) : null}
                                   </div>
                                 </Col>
                               </Row>
+
+                              <Row>
+                                <Col xs={12} sm={12} md={12}>
+                                  <div className="form-group">
+                                    <label>
+                                      Experience
+                                      <span className="impField">*</span>
+                                    </label>
+                                    <Field
+                                      name="experience"
+                                      id="experience"
+                                      component="select"
+                                      className={`selectArowGray form-control`}
+                                      autoComplete="off"
+                                      value={values.experience}
+                                    >
+                                      <option key="-1" value="">
+                                        Select experience
+                                      </option>
+                                      <option key="" value="0-2">
+                                        0-2
+                                      </option>
+                                      <option key="" value="2-4">
+                                        2-4
+                                      </option>
+                                      <option key="" value="4-7">
+                                        4-7
+                                      </option>
+                                      <option key="" value="7-10">
+                                        7-10
+                                      </option>
+                                      <option key="" value="10+">
+                                        10+
+                                      </option>
+                                    </Field>
+                                    {errors.experience && touched.experience ? (
+                                      <span className="errorMsg">
+                                        {errors.experience}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                </Col>
+                              </Row>
+                              <Row>
+                                <Col xs={12} sm={12} md={12}>
+                                  <div className="form-group">
+                                    <label>
+                                      Company Information
+                                      <span className="impField">*</span>
+                                    </label>
+                                    <Field
+                                      name="company_information"
+                                      id="company_information"
+                                      component="textarea"
+                                      className={`selectArowGray form-control`}
+                                      autoComplete="off"
+                                      value={values.company_information}
+                                    >
+                                      We are the veritable pioneer of medical
+                                      diagnostics in India. Established in 1995,
+                                      imbued with the vision of providing
+                                      accurate diagnostics solutions, with
+                                      ethical standards and care as its core
+                                      values. Spreading from Srinagar to
+                                      Kanyakumari, and from Imphal to Rajkot, we
+                                      have presence across the length and
+                                      breadth of India. Currently, we have more
+                                      than 7000 collection points, 400+
+                                      state-of-the- art laboratories, including
+                                      10+Reference Labs and around 18 radiology
+                                      centres. With simple to high- end tests,
+                                      we serve 12 million customers and are
+                                      trusted by 1 million doctors
+                                    </Field>
+                                    {errors.company_information &&
+                                    touched.company_information ? (
+                                      <span className="errorMsg">
+                                        {errors.company_information}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                </Col>
+                              </Row>
+
                               <Row>
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
