@@ -455,10 +455,10 @@ class SidebarAdmin extends Component {
               )}
             </ul>
             <ul className="treeview-menu">
-              {this.props.path_name === "/partner-page/center-images" ? (
+              {this.props.path_name === "/carrer-page/benefits" ? (
                 <li className="active">
                   {" "}
-                  <Link to="/partner-page/center-images">
+                  <Link to="/carrer-page/benefits">
                     {" "}
                     <i className="fas fa-compress"></i> <span> Benefits </span>
                   </Link>{" "}
@@ -466,7 +466,7 @@ class SidebarAdmin extends Component {
               ) : (
                 <li>
                   {" "}
-                  <Link to="/partner-page/center-images">
+                  <Link to="/carrer-page/benefits">
                     {" "}
                     <i className="fas fa-compress"></i> <span> Benefits </span>
                   </Link>{" "}
