@@ -28,6 +28,7 @@ import {
 import Select from "react-select";
 import Switch from "react-switch";
 import Layout from "../layout/Layout";
+import ReactPlayer from "react-player";
 
 const initialValues = {
   name: "",
@@ -105,7 +106,7 @@ const actionFormatter = (refObj) => (cell, row) => {
   );
 };
 
-export default class RnDCategories extends Component {
+export default class LifeAtSrl extends Component {
   constructor(props) {
     super(props);
 
@@ -127,20 +128,18 @@ export default class RnDCategories extends Component {
       name: "",
       designation: "",
       status: "",
-      category_image: "",
-      category_pdf: "",
+      inside_srl_file: "",
+      video_url: "",
       category_description: "",
       isValidFilepdf: false,
       isValidFile: false,
+      youtube_video_code: "",
+      showPreview: false,
     };
   }
 
   getCategories = (page = 1) => {
-    const status = this.state.status;
-
-    API.get(
-      `/api/rnd/rnd_category?page=${page}&status=${encodeURIComponent(status)}`
-    )
+    API.get(`/api/home/life_at`)
       .then((res) => {
         this.setState({
           categoriesList: res.data.data,
@@ -159,7 +158,7 @@ export default class RnDCategories extends Component {
     event.preventDefault();
 
     if (id) {
-      this.setState({ category_image: "", category_pdf: "" });
+      this.setState({ inside_srl_file: "", video_url: "" });
 
       this.getCategorydetails(id);
     } else {
@@ -192,7 +191,7 @@ export default class RnDCategories extends Component {
   };
 
   getCategorydetails(id) {
-    API.get(`/api/rnd/rnd_category/${Number(id)}`)
+    API.get(`/api/home/inside_us/${Number(id)}`)
       .then((res) => {
         this.setState({
           showModal: true,
@@ -206,7 +205,7 @@ export default class RnDCategories extends Component {
   }
 
   deleteCategory = (id) => {
-    API.post(`/api/rnd/rnd_category/${id}`)
+    API.post(`/api/home/life_at/${id}`)
       .then((res) => {
         swal({
           closeOnClickOutside: false,
@@ -226,7 +225,7 @@ export default class RnDCategories extends Component {
   };
 
   chageStatus = (cell, status) => {
-    API.put(`/api/rnd/rnd_category/change_status/${cell}`, {
+    API.put(`/api/home/life_at/change_status/${cell}`, {
       status: status == 1 ? String(0) : String(1),
     })
       .then((res) => {
@@ -248,14 +247,14 @@ export default class RnDCategories extends Component {
   };
 
   fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
-    setFieldTouched("category_image");
-    setFieldValue("category_image", event.target.value);
+    setFieldTouched("inside_srl_file");
+    setFieldValue("inside_srl_file", event.target.value);
 
     const SUPPORTED_FORMATS = ["image/png", "image/jpeg", "image/jpg"];
     if (!event.target.files[0]) {
       //Supported
       this.setState({
-        category_image: "",
+        inside_srl_file: "",
         isValidFile: true,
       });
       return;
@@ -266,72 +265,64 @@ export default class RnDCategories extends Component {
     ) {
       //Supported
       this.setState({
-        category_image: event.target.files[0],
+        inside_srl_file: event.target.files[0],
         isValidFile: true,
       });
     } else {
       //Unsupported
       setErrors({
-        category_image:
+        inside_srl_file:
           "Only files with the following extensions are allowed: jpg/png/jpeg",
       }); //Not working- So Added validation in "yup"
       this.setState({
-        category_image: "",
+        inside_srl_file: "",
         isValidFile: false,
       });
     }
   };
 
-  fileChangedHandlerpdf = (
-    event,
-    setFieldTouched,
-    setFieldValue,
-    setErrors
-  ) => {
-    setFieldTouched("category_pdf");
-    setFieldValue("category_pdf", event.target.value);
-    // console.log(">>>>>>>>>>>>", event.target.files[0]);
-
-    const SUPPORTED_FORMATS = ["application/pdf"];
-    if (!event.target.files[0]) {
-      //Supported
+  handleVideoPreview = (id) => {
+    // console.log("id:", id);
+    if (id == "") {
       this.setState({
-        category_pdf: "",
-        isValidFilepdf: true,
-      });
-      return;
-    }
-    if (
-      event.target.files[0] &&
-      SUPPORTED_FORMATS.includes(event.target.files[0].type)
-    ) {
-      //Supported
-      this.setState({
-        category_pdf: event.target.files[0],
-        isValidFilepdf: true,
-      });
-    } else {
-      //Unsupported
-      setErrors({
-        category_pdf:
-          "Only files with the following extensions are allowed: pdf",
-      }); //Not working- So Added validation in "yup"
-      this.setState({
-        category_pdf: "",
-        isValidFilepdf: false,
+        showPreview: false,
       });
     }
+    this.setState({
+      youtube_video_code: id,
+    });
   };
 
   setHealthBenefitImage = (refObj) => (cell, row) => {
-    if (row.health_image !== null) {
+    if (row.life_at_file !== null) {
       return (
-        <img
-          src={row.category_image}
-          alt="Category Image"
-          height="100"
-          //   onClick={(e) => refObj.imageModalShowHandler(row.health_image)}
-        ></img>
+        <>
+          <img
+            src={row.life_at_file}
+            alt="Inside SRL Image"
+            height="100"
+            //   onClick={(e) => refObj.imageModalShowHandler(row.health_image)}
+          ></img>
+        </>
+      );
+    } else {
+      return null;
+    }
+  };
+  setInsideSrlVideo = (refObj) => (cell, row) => {
+    if (row.youtube_url !== "") {
+      return (
+        <>
+          <ReactPlayer
+            url={row.youtube_url}
+            width="100%"
+            height="100px"
+            controls
+            // playing={true}
+            loop={false}
+            // light={i.type == 2 ? "" : i.image}
+          />
+        </>
       );
     } else {
       return null;
@@ -342,17 +333,17 @@ export default class RnDCategories extends Component {
     let url = "";
     let method = "";
     const formData = new FormData();
-    formData.append("category_name", values.name);
+    formData.append("title", values.title);
     formData.append("status", values.status);
-    formData.append("category_description", values.category_description);
-    formData.append("category_image", this.state.category_image);
-    formData.append("category_pdf", this.state.category_pdf);
+    formData.append("content", values.category_description);
+    formData.append("life_at_file", this.state.inside_srl_file);
+    formData.append("youtube_url", values.video_url);
 
     if (this.state.categoryId > 0) {
-      url = `/api/rnd/rnd_category/${this.state.categoryId}`;
+      url = `/api/home/life_at/${this.state.categoryId}`;
       method = "PUT";
     } else {
-      url = `/api/rnd/rnd_category/`;
+      url = `/api/home/life_at`;
       method = "POST";
     }
 
@@ -396,30 +387,30 @@ export default class RnDCategories extends Component {
   render() {
     const { categoryDetails } = this.state;
     const newInitialValues = Object.assign(initialValues, {
-      name: categoryDetails.category_name
-        ? htmlDecode(categoryDetails.category_name)
-        : "",
-      category_description: categoryDetails.category_description
-        ? htmlDecode(categoryDetails.category_description)
+      title: categoryDetails.title ? htmlDecode(categoryDetails.title) : "",
+      category_description: categoryDetails.content
+        ? htmlDecode(categoryDetails.content)
         : "",
       status:
         categoryDetails.status || +categoryDetails.status === 0
           ? categoryDetails.status.toString()
           : "",
-      category_image: "",
-      category_pdf: "",
+      inside_srl_file: "",
+      video_url: categoryDetails.youtube_url
+        ? htmlDecode(categoryDetails.youtube_url)
+        : "",
     });
 
     let validateStopFlag = {};
     if (this.state.categoryId > 0) {
       validateStopFlag = Yup.object().shape({
-        name: Yup.string().notRequired(),
+        title: Yup.string().notRequired(),
         category_description: Yup.string().notRequired(),
         status: Yup.string()
           .trim()
           .notRequired()
           .matches(/^[0|1]$/, "Invalid status selected"),
-        category_image: Yup.string()
+        inside_srl_file: Yup.string()
           .notRequired()
           .test(
             "file",
@@ -432,34 +423,15 @@ export default class RnDCategories extends Component {
               }
             }
           ),
-        category_pdf: Yup.string()
-          .notRequired()
-          .test(
-            "file",
-            "Only files with the following extensions are allowed: pdf",
-            (file) => {
-              if (file) {
-                return this.state.isValidFilepdf;
-              } else {
-                return true;
-              }
-            }
-          ),
-        // category_image: Yup.string().when(
-        //   `${this.state.category_image != ""}`,
-        //   {
-        //     is: (value) => value != "",
-        //     then: Yup.string().test(
-        //       "file",
-        //       "Only files with the following extensions are allowed: jpeg/jpg/png",
-        //       () => this.state.isValidFile
-        //     ),
-        //   }
+        video_url: Yup.string().notRequired(),
+        // .matches(
+        //   /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
+        //   "Please Enter correct URL"
         // ),
       });
     } else {
       validateStopFlag = Yup.object().shape({
-        name: Yup.string().required("Please enter the name"),
+        title: Yup.string().required("Please enter the title"),
         category_description: Yup.string().required(
           "Please enter the description"
         ),
@@ -467,20 +439,19 @@ export default class RnDCategories extends Component {
           .trim()
           .required("Please select status")
           .matches(/^[0|1]$/, "Invalid status selected"),
-        category_image: Yup.string()
-          .required("Please select the file")
+        inside_srl_file: Yup.string()
+          // .required("Please select the file")
           .test(
             "file",
             "Only files with the following extensions are allowed: jpeg/jpg/png",
             () => this.state.isValidFile
           ),
-        category_pdf: Yup.string()
-          .required("Please select the file")
-          .test(
-            "file",
-            "Only files with the following extensions are allowed: pdf",
-            () => this.state.isValidFilepdf
-          ),
+        video_url: Yup.string(),
+        // .matches(
+        //   /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
+        //   "Please Enter correct URL"
+        // )
+        // .required("Please enter Video URL"),
       });
     }
 
@@ -490,7 +461,7 @@ export default class RnDCategories extends Component {
           <section className="content-header">
             <div className="row">
               <div className="col-lg-12 col-sm-12 col-xs-12">
-                <h1>Manage Life at SRL</h1>
+                <h1>Manage Life At SRL</h1>
               </div>
               <div className="col-lg-12 col-sm-12 col-xs-12  topSearchSection">
                 <div className="">
@@ -499,7 +470,7 @@ export default class RnDCategories extends Component {
                     className="btn btn-info btn-sm"
                     onClick={(e) => this.modalShowHandler(e, "")}
                   >
-                    <i className="fas fa-plus m-r-5" /> Add Category
+                    <i className="fas fa-plus m-r-5" /> Add Life at Srl
                   </button>
                 </div>
 
@@ -512,29 +483,23 @@ export default class RnDCategories extends Component {
               <div className="box-body">
                 <BootstrapTable data={this.state.categoriesList}>
                   <TableHeaderColumn
-                    dataField="category_name"
+                    dataField="title"
                     dataFormat={__htmlDecode(this)}
                   >
-                    Name
+                    Title
                   </TableHeaderColumn>
                   <TableHeaderColumn
-                    dataField="category_description"
+                    dataField="content"
                     dataFormat={__htmlDecode(this)}
                   >
                     Description
                   </TableHeaderColumn>
                   <TableHeaderColumn
-                    dataField="content"
+                    dataField="life_at_file"
                     dataFormat={this.setHealthBenefitImage(this)}
                   >
                     Image
                   </TableHeaderColumn>
-                  {/* <TableHeaderColumn
-                    dataField="content"
-                    dataFormat={this.setHealthBenefitImage(this)}
-                  >
-                    Image
-                  </TableHeaderColumn> */}
 
                   <TableHeaderColumn
                     dataField="status"
@@ -573,7 +538,7 @@ export default class RnDCategories extends Component {
               </div>
             </div>
           </section>
-          {/* ======= Add Banner Modal ======== */}
+          {/* ======= Add Inside SRL Modal ======== */}
           <Modal
             show={this.state.showModal}
             onHide={() => this.modalCloseHandler()}
@@ -609,8 +574,8 @@ export default class RnDCategories extends Component {
                     <Modal.Header closeButton>
                       <Modal.Title>
                         {this.state.categoryId > 0
-                          ? "Edit Category"
-                          : "Add Category"}
+                          ? "Edit Life at Srl"
+                          : "Add Life at Srl"}
                       </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
@@ -619,21 +584,21 @@ export default class RnDCategories extends Component {
                           <Col xs={12} sm={12} md={12}>
                             <div className="form-group">
                               <label>
-                                Name
+                                Title
                                 {this.state.categoryId == 0 ? (
                                   <span className="impField">*</span>
                                 ) : null}
                               </label>
                               <Field
-                                name="name"
+                                name="title"
                                 type="text"
                                 className={`form-control`}
-                                placeholder="Enter The Name"
+                                placeholder="Enter The Title"
                                 autoComplete="off"
-                                value={values.name}
+                                value={values.title}
                               />
-                              {errors.name && touched.name ? (
-                                <span className="errorMsg">{errors.name}</span>
+                              {errors.title && touched.title ? (
+                                <span className="errorMsg">{errors.title}</span>
                               ) : null}
                             </div>
                           </Col>
@@ -679,7 +644,7 @@ export default class RnDCategories extends Component {
                                 ) : null}
                               </label>
                               <Field
-                                name="category_image"
+                                name="inside_srl_file"
                                 type="file"
                                 className={`form-control`}
                                 autoComplete="off"
@@ -693,10 +658,10 @@ export default class RnDCategories extends Component {
                                 }}
                               />
 
-                              {errors.category_image &&
-                              touched.category_image ? (
+                              {errors.inside_srl_file &&
+                              touched.inside_srl_file ? (
                                 <span className="errorMsg">
-                                  {errors.category_image}
+                                  {errors.inside_srl_file}
                                 </span>
                               ) : null}
                             </div>
@@ -707,36 +672,69 @@ export default class RnDCategories extends Component {
                           <Col xs={12} sm={12} md={12}>
                             <div className="form-group">
                               <label>
-                                Choose File
+                                Youtube Video ID{" "}
+                                {values.video_url != "" ? (
+                                  <a
+                                    onClick={() => {
+                                      this.setState({
+                                        showPreview: !this.state.showPreview,
+                                      });
+                                    }}
+                                  >
+                                    {this.state.showPreview == false ? (
+                                      <>(Preview)</>
+                                    ) : (
+                                      <>(Close Preview)</>
+                                    )}
+                                  </a>
+                                ) : null}
                                 <br />{" "}
                                 {this.state.documentId == 0 ? (
                                   <span className="impField">*</span>
                                 ) : null}
                               </label>
+
                               <Field
-                                name="category_pdf"
-                                type="file"
+                                name="video_url"
+                                type="text"
                                 className={`form-control`}
+                                placeholder="Enter The Video URL"
                                 autoComplete="off"
-                                // accept="application/pdf"
+                                value={values.video_url}
                                 onChange={(e) => {
-                                  this.fileChangedHandlerpdf(
-                                    e,
-                                    setFieldTouched,
-                                    setFieldValue,
-                                    setErrors
-                                  );
+                                  this.handleVideoPreview(e.target.value);
+                                  setFieldValue("video_url", e.target.value);
                                 }}
                               />
 
-                              {errors.category_pdf && touched.category_pdf ? (
+                              {errors.video_url && touched.video_url ? (
                                 <span className="errorMsg">
-                                  {errors.category_pdf}
+                                  {errors.video_url}
                                 </span>
                               ) : null}
                             </div>
                           </Col>
                         </Row>
+                        {this.state.showPreview == true ? (
+                          <>
+                            <Row>
+                              <Col xs={12} sm={12} md={12}>
+                                <div className="form-group">
+                                  <iframe
+                                    width="560"
+                                    height="255"
+                                    src={`https://www.youtube.com/embed/${this.state.youtube_video_code}`}
+                                    title="YouTube video player"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen
+                                  ></iframe>
+                                </div>
+                              </Col>
+                            </Row>
+                          </>
+                        ) : null}
+
                         <Row>
                           <Col xs={12} sm={12} md={12}>
                             <div className="form-group">
