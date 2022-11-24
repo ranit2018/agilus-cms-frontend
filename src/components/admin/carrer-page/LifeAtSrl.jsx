@@ -191,7 +191,7 @@ export default class LifeAtSrl extends Component {
   };
 
   getCategorydetails(id) {
-    API.get(`/api/home/inside_us/${Number(id)}`)
+    API.get(`/api/home/life_at/${Number(id)}`)
       .then((res) => {
         this.setState({
           showModal: true,
