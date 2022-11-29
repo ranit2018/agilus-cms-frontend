@@ -41,6 +41,7 @@ function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
 
 const custStatus = (refObj) => (cell) => {
   //return cell === 1 ? "Active" : "Inactive";
+
   if (cell === 1) {
     return 'Request A Callback';
   } else if (cell === 0) {
@@ -110,46 +111,25 @@ class AppliedJobs extends Component {
       city: '',
       job_title: '',
       application_status_id: '',
-      application_status: '',
+      status: '',
       from: '',
       to: '',
       showModal: false,
       showModalUpdate: false,
       selectedDay: '',
       application_status_arr: [],
-      department: '',
+      job_department: '',
+      department_arr: [],
+      experince: '',
+      experince_arr: [],
+      job_location: '',
+      job_location_arr: [],
     };
     console.log('this.state.activePage', this.state.activePage);
   }
 
   getPatientList = (page = 1) => {
-    console.log('this.state.activePage', this.state.activePage);
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const job_title = document.getElementById('job_title').value;
-    const application_status =
-      document.getElementById('application_status').value;
-    const department = document.getElementById('department').value;
-
-    let from = this.state.from;
-    let to = this.state.to;
-
-    if (this.state.from !== '' && this.state.to !== '') {
-      from = new Date(from);
-      to = new Date(to);
-      from = dateFormat(from, 'yyyy-mm-dd');
-      to = dateFormat(to, 'yyyy-mm-dd');
-    }
-
-    API.get(
-      `/api/job_portal/job/user/apply?page=${page}&name=${encodeURIComponent(
-        name
-      )}&email=${encodeURIComponent(email)}&job_title=${encodeURIComponent(
-        job_title
-      )}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(
-        to
-      )}&application_status=${encodeURIComponent(application_status)}`
-    )
+    API.get(`/api/job_portal/job/user/apply`)
       .then((res) => {
         this.setState({
           appliedjobForms: res.data.data,
@@ -195,9 +175,11 @@ class AppliedJobs extends Component {
     e.preventDefault();
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
-    const job_title = document.getElementById('job_title').value;
     const application_status =
       document.getElementById('application_status').value;
+    const job_department = document.getElementById('job_department').value;
+    const experince = document.getElementById('experince').value;
+    const region = document.getElementById('region_location').value;
 
     let from = this.state.from;
     let to = this.state.to;
@@ -205,7 +187,9 @@ class AppliedJobs extends Component {
       name === '' &&
       email === '' &&
       application_status === '' &&
-      job_title === '' &&
+      job_department === '' &&
+      experince === '' &&
+      region === '' &&
       this.state.from === '' &&
       this.state.to === ''
     ) {
@@ -235,11 +219,15 @@ class AppliedJobs extends Component {
       API.get(
         `/api/job_portal/job/user/apply?page=1&name=${encodeURIComponent(
           name
-        )}&email=${encodeURIComponent(email)}&job_title=${encodeURIComponent(
-          job_title
-        )}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(
-          to
-        )}&application_status=${encodeURIComponent(application_status)}`
+        )}&email=${encodeURIComponent(
+          email
+        )}&job_department=${encodeURIComponent(
+          job_department
+        )}&experience=${encodeURIComponent(
+          experince
+        )}&region=${encodeURIComponent(region)}&status=${encodeURIComponent(
+          application_status
+        )}`
       )
         .then((res) => {
           this.setState({
@@ -248,8 +236,10 @@ class AppliedJobs extends Component {
             isLoading: false,
             name: name,
             email: email,
-            job_title: job_title,
-            application_status: application_status,
+            department: job_department,
+            status: application_status,
+            experince: experince,
+            job_location: region,
             activePage: 1,
             remove_search: true,
           });
@@ -272,9 +262,11 @@ class AppliedJobs extends Component {
   clearSearch = () => {
     document.getElementById('name').value = '';
     document.getElementById('email').value = '';
-    document.getElementById('job_title').value = '';
+    // document.getElementById('job_title').value = '';
     document.getElementById('application_status').value = '';
-    document.getElementById('department').value = '';
+    document.getElementById('job_department').value = '';
+    document.getElementById('experince').value = '';
+    document.getElementById('region_location').value = '';
 
     let pageNumber = 1;
     this.setState(
@@ -282,10 +274,12 @@ class AppliedJobs extends Component {
         name: '',
         email: '',
         job_title: '',
-        application_status: '',
+        status: '',
         from: '',
         to: '',
-        department: '',
+        job_department: '',
+        experince: '',
+        job_location: '',
 
         remove_search: false,
       },
@@ -308,10 +302,67 @@ class AppliedJobs extends Component {
         showErrorMessage(err, this.props);
       });
   };
+  getJobDepartment = () => {
+    API.get(`api/job_portal/job/department`)
+      .then((res) => {
+        let options = [];
+        for (var i = 0; i < res.data.data.length; i++) {
+          options.push({
+            value: res.data.data[i].id,
+            label: res.data.data[i].job_department,
+          });
+        }
+        this.setState({
+          department_arr: options,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  };
+  getExperinceData = () => {
+    API.get(`api/job_portal/experience`)
+      .then((res) => {
+        let options = [];
+        for (var i = 0; i < res.data.data.length; i++) {
+          options.push({
+            value: res.data.data[i].id,
+            label: res.data.data[i].value,
+          });
+        }
+        this.setState({
+          experince_arr: options,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  };
+  getlocationArr = () => {
+    API.get(`api/job_portal/job/location?page=1`)
+      .then((res) => {
+        let options = [];
+        for (var i = 0; i < res.data.data.length; i++) {
+          options.push({
+            value: res.data.data[i].id,
+            label: res.data.data[i].job_location,
+          });
+        }
+        this.setState({
+          job_location_arr: options,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  };
 
   componentDidMount() {
     this.getPatientList(this.state.activePage);
     this.getApplicationStatusArr();
+    this.getJobDepartment();
+    this.getExperinceData();
+    this.getlocationArr();
   }
 
   handlePageChange = (pageNumber) => {
@@ -386,8 +437,8 @@ class AppliedJobs extends Component {
       phone_no: '',
       city: '',
       job_title: '',
-      application_status: '',
-      department: '',
+      status: '',
+      job_department: '',
     });
   };
 
@@ -403,44 +454,44 @@ class AppliedJobs extends Component {
   };
 
   //for edit part
-  handleEditSubmit = (values, actions) => {
-    let postdata = {
-      application_status: String(values.application_status),
-      department: String(values.department),
-    };
+  // handleEditSubmit = (values, actions) => {
+  //   let postdata = {
+  //     application_status: String(values.application_status),
+  //     department: String(values.department),
+  //   };
 
-    let method = 'PUT';
-    let url = `/api/job_portal/job/user/apply/change_application_status/${this.state.appliedJobDetails.id}`;
+  //   let method = 'PUT';
+  //   let url = `/api/job_portal/job/user/apply/change_application_status/${this.state.appliedJobDetails.id}`;
 
-    API({
-      method: method,
-      url: url,
-      data: postdata,
-    })
-      .then((res) => {
-        this.setState({ showModal: false });
-        swal({
-          closeOnClickOutside: false,
-          title: 'Success',
-          text: 'Record updated successfully.',
-          icon: 'success',
-        }).then(() => {
-          this.props.history.push('/hr/appliedjobs');
-        });
-      })
-      .catch((err) => {
-        this.setState({ showModalLoader: false });
-        if (err.data.status === 3) {
-          this.setState({
-            showModal: false,
-          });
-          showErrorMessage(err, this.props);
-        } else {
-          actions.setErrors(err.data.errors);
-          actions.setSubmitting(false);
-        }
-      });
-  };
+  //   API({
+  //     method: method,
+  //     url: url,
+  //     data: postdata,
+  //   })
+  //     .then((res) => {
+  //       this.setState({ showModal: false });
+  //       swal({
+  //         closeOnClickOutside: false,
+  //         title: 'Success',
+  //         text: 'Record updated successfully.',
+  //         icon: 'success',
+  //       }).then(() => {
+  //         this.props.history.push('/hr/appliedjobs');
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       this.setState({ showModalLoader: false });
+  //       if (err.data.status === 3) {
+  //         this.setState({
+  //           showModal: false,
+  //         });
+  //         showErrorMessage(err, this.props);
+  //       } else {
+  //         actions.setErrors(err.data.errors);
+  //         actions.setSubmitting(false);
+  //       }
+  //     });
+  // };
 
   render() {
     const { from, to } = this.state;
@@ -496,14 +547,7 @@ class AppliedJobs extends Component {
                         placeholder="Filter by Email"
                       />
                     </div>
-                    <div>
-                      <input
-                        className="form-control"
-                        name="job_title"
-                        id="job_title"
-                        placeholder="Filter by Job Title"
-                      />
-                    </div>
+
                     <div className="">
                       <select
                         name="application_status"
@@ -523,99 +567,56 @@ class AppliedJobs extends Component {
                     <div className="">
                       <select
                         name="department"
-                        id="department"
+                        id="job_department"
                         className="form-control"
                       >
                         <option value="">Select Department</option>
-                        <option key="" value="ent">
-                          ENT
-                        </option>
-                        <option key="" value="orthopedic">
-                          Orthopedic
-                        </option>
-                        <option key="" value="neurologist">
-                          Neurologist
-                        </option>
+                        {this.state.department_arr.map((val, i) => {
+                          return (
+                            <option key={i} value={val.value}>
+                              {val.label}
+                            </option>
+                          );
+                        })}
                       </select>
                     </div>
                     <div className="">
                       <select
-                        name="department"
-                        id="department"
+                        name="experince"
+                        id="experince"
                         className="form-control"
                       >
                         <option key="-1" value="">
                           Select experience
                         </option>
-                        <option key="" value="0-2">
-                          0-2
-                        </option>
-                        <option key="" value="2-4">
-                          2-4
-                        </option>
-                        <option key="" value="4-7">
-                          4-7
-                        </option>
-                        <option key="" value="7-10">
-                          7-10
-                        </option>
-                        <option key="" value="10+">
-                          10+
-                        </option>
+                        {this.state.experince_arr.map((val, i) => {
+                          return (
+                            <option key={i} value={val.value}>
+                              {val.label}
+                            </option>
+                          );
+                        })}
                       </select>
                     </div>
                     <div className="">
                       <select
-                        name="department"
-                        id="department"
+                        name="region_location"
+                        id="region_location"
                         className="form-control"
                       >
                         <option key="-1" value="">
                           Select region
                         </option>
-                        <option key="" value="north">
-                          North
-                        </option>
-                        <option key="" value="south">
-                          South
-                        </option>
-                        <option key="" value="east">
-                          East
-                        </option>
-                        <option key="" value="west">
-                          West
-                        </option>
-                        <option key="" value="central">
-                          Central
-                        </option>
+                        {this.state.job_location_arr.map((val, i) => {
+                          return (
+                            <option key={i} value={val.value}>
+                              {val.label}
+                            </option>
+                          );
+                        })}
                       </select>
                     </div>
-                    <div className="">
-                      <select
-                        name="department"
-                        id="department"
-                        className="form-control"
-                      >
-                        <option key="-1" value="">
-                          Select Salary Bracket
-                        </option>
-                        <option key="" value="3lpa">
-                          3.00 LPA
-                        </option>
-                        <option key="" value="4lpa">
-                          4.00 LPA
-                        </option>
-                        <option key="" value="5lpa">
-                          5.00 LAP
-                        </option>
-                        <option key="" value="7lpa">
-                          7.00 LPA
-                        </option>
-                        <option key="" value="10lpa">
-                          10.00 LPA
-                        </option>
-                      </select>
-                    </div>
+
                     <div>
                       <DayPickerInput
                         value={from}
@@ -703,20 +704,27 @@ class AppliedJobs extends Component {
                   >
                     Phone Number
                   </TableHeaderColumn>
+
                   <TableHeaderColumn
-                    dataField="job_title"
+                    dataField="job_department"
                     // dataFormat={htmlDecode(this)}
                   >
-                    Job Title
+                    Job Department
                   </TableHeaderColumn>
                   <TableHeaderColumn
-                    dataField="application_status"
+                    dataField="preferred_location"
                     // dataFormat={htmlDecode(this)}
+                  >
+                    Preferred Location
+                  </TableHeaderColumn>
+                  <TableHeaderColumn
+                    dataField="status"
+                    dataFormat={custStatus(this)}
                   >
                     Application Status
                   </TableHeaderColumn>
                   <TableHeaderColumn
-                    dataField="date_applied"
+                    dataField="date_posted"
                     dataFormat={setDate(this)}
                   >
                     Post Date

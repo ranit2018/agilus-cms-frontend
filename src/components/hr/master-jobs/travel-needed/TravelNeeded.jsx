@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import { Link } from 'react-router-dom';
 import { Row, Col, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
-import API from "../../../../shared/hrAxios"
+import API from '../../../../shared/hrAxios';
 import swal from 'sweetalert';
 import { showErrorMessage } from '../../../../shared/handle_error';
 import Pagination from 'react-js-pagination';
@@ -54,7 +54,7 @@ const actionFormatter = (refObj) => (cell, row) => {
       >
         <i className="far fa-edit" />
       </LinkWithTooltip>
-      <LinkWithTooltip
+      {/* <LinkWithTooltip
         tooltip={'Click to change status'}
         // clicked={(e) => refObj.changeStatus(e, cell, row.status)}
         href="#"
@@ -67,7 +67,7 @@ const actionFormatter = (refObj) => (cell, row) => {
           height={20}
           width={45}
         />
-      </LinkWithTooltip>
+      </LinkWithTooltip> */}
       <LinkWithTooltip
         tooltip="Click to Delete"
         href="#"
@@ -110,17 +110,12 @@ class JobCategories extends Component {
       search_category_name: '',
       search_status: '',
     };
-
   }
 
   getCategoryList = (page = 1) => {
     let { search_category_name, search_status } = this.state;
 
-    API.get(
-      `api/job_portal/job/employment?page=${page}&category_name=${encodeURIComponent(
-        search_category_name
-      )}&status=${encodeURIComponent(search_status)}`
-    )
+    API.get(`/api/job_portal/travel_needed`)
       .then((res) => {
         this.setState({
           categoryList: res.data.data,
@@ -153,7 +148,7 @@ class JobCategories extends Component {
   };
 
   deleteCategory = (id, row) => {
-    API.post(`api/job_portal/job/employment/${row.id}`)
+    API.post(`api/job_portal/job/category/${row.id}`)
       .then((res) => {
         swal({
           closeOnClickOutside: false,
@@ -173,7 +168,7 @@ class JobCategories extends Component {
   };
 
   getcategoryDetails(id) {
-    API.get(`api/job_portal/job/employment/${id}`)
+    API.get(`/api/job_portal/travel_needed/${id}`)
       .then((res) => {
         this.setState({
           showModalUpdate: true,
@@ -316,8 +311,6 @@ class JobCategories extends Component {
       });
   };
 
-
-
   handlePageChange = (pageNumber) => {
     this.setState({ activePage: pageNumber });
     this.getCategoryList(pageNumber > 0 ? pageNumber : 1);
@@ -328,19 +321,13 @@ class JobCategories extends Component {
     const search_category_name = document.getElementById(
       'search_category_name'
     ).value;
-    const search_status = document.getElementById(
-      'search_status'
-    ).value;
+    const search_status = document.getElementById('search_status').value;
 
     if (search_category_name === '' && search_status === '') {
       return false;
     }
 
-    API.get(
-      `api/job_portal/job/employment?page=1&category_name=${encodeURIComponent(
-        search_category_name
-      )}&status=${encodeURIComponent(search_status)}`
-    )
+    API.get(`/api/job_portal/travel_needed`)
       .then((res) => {
         this.setState({
           categoryList: res.data.data,
@@ -364,7 +351,6 @@ class JobCategories extends Component {
   clearSearch = () => {
     document.getElementById('search_category_name').value = '';
     document.getElementById('search_status').value = '';
-
 
     this.setState(
       {
@@ -413,7 +399,7 @@ class JobCategories extends Component {
             <div className="row">
               <div className="col-lg-12 col-sm-12 col-xs-12">
                 <h1>
-                  Manage Categories
+                  Manage Travel Needed
                   <small />
                 </h1>
               </div>
@@ -436,7 +422,7 @@ class JobCategories extends Component {
                     className="btn btn-info btn-sm"
                     onClick={(e) => this.modalShowHandler(e, '')}
                   >
-                    <i className="fas fa-plus m-r-5" /> Add Job Category
+                    <i className="fas fa-plus m-r-5" /> Add Job Travel Needed
                   </button>
                 </div>
                 <form className="form">
@@ -444,7 +430,7 @@ class JobCategories extends Component {
                     <input
                       className="form-control"
                       id="search_category_name"
-                      placeholder="Filter by Job Category"
+                      placeholder="Filter by Job Trvel Needed"
                     />
                   </div>
 
@@ -492,17 +478,10 @@ class JobCategories extends Component {
                 <BootstrapTable data={this.state.categoryList}>
                   <TableHeaderColumn
                     isKey
-                    dataField="employment_name"
+                    dataField="value"
                     dataFormat={__htmlDecode(this)}
                   >
-                    Employment Type
-                  </TableHeaderColumn>
-
-                  <TableHeaderColumn
-                    dataField="status"
-                    dataFormat={custStatus(this)}
-                  >
-                    Status
+                    Job Travel Needed
                   </TableHeaderColumn>
 
                   <TableHeaderColumn

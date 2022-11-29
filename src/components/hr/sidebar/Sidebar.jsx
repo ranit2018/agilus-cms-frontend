@@ -17,27 +17,28 @@ class Sidebar extends Component {
     this.setState({ shown: !this.state.shown });
   }
 
-  componentDidMount = () => {
-    var path = this.props.path_name; // console.log(path);
+  // componentDidMount = () => {
+  //   var path = this.props.path_name; // console.log(path);
 
-    if (
-      path === '/hr/master-jobs/job-categories' ||
-      path === '/hr/master-jobs/job-roles' ||
-      path === '/hr/master-jobs/job-skills' ||
-      path === '/hr/master-jobs/job-location'
-    ) {
-      this.setState({ shown: '5' });
-    }
+  //   if (
+  //     path === '/hr/master-jobs/job-categories' ||
+  //     path === '/hr/master-jobs/job-roles' ||
+  //     path === '/hr/master-jobs/job-skills' ||
+  //     path === '/hr/master-jobs/job-location' ||
+  //     path === '/hr/master-jobs/job-experience'
+  //   ) {
+  //     this.setState({ shown: '5' });
+  //   }
 
-    // if (this.props.isLoggedIn === true) {
-    //   const superAdmin = getSuperAdmin(localStorage.hr_token);
-    //   if (superAdmin) {
-    //     this.setState({ super_admin: 1 });
-    //   } else {
-    //     return null;
-    //   }
-    // }
-  };
+  //   // if (this.props.isLoggedIn === true) {
+  //   //   const superAdmin = getSuperAdmin(localStorage.hr_token);
+  //   //   if (superAdmin) {
+  //   //     this.setState({ super_admin: 1 });
+  //   //   } else {
+  //   //     return null;
+  //   //   }
+  //   // }
+  // };
 
   handlePlus = (event) => {
     event.preventDefault();
@@ -98,7 +99,7 @@ class Sidebar extends Component {
             </li>
           )}
           {/* ===================================== */}
-          <li className={rotate == '5' ? 'treeview active' : 'treeview'}>
+          {/* <li className={rotate == '5' ? 'treeview active' : 'treeview'}>
             <Link to="#" data-id="5" onClick={this.handlePlus}>
               <i
                 className="fas fa-certificate sub-menu"
@@ -145,7 +146,7 @@ class Sidebar extends Component {
                   {' '}
                   <Link to="/hr/master-jobs/job-roles">
                     {' '}
-                    <i className="fas fa-compress"></i> <span> Job  Roles </span>
+                    <i className="fas fa-compress"></i> <span> Job Roles </span>
                   </Link>{' '}
                 </li>
               ) : (
@@ -195,8 +196,46 @@ class Sidebar extends Component {
                   </Link>{' '}
                 </li>
               )}
+              {this.props.path_name === '/hr/master-jobs/job-experience' ? (
+                <li className="active">
+                  {' '}
+                  <Link to="/hr/master-jobs/job-experience">
+                    {' '}
+                    <i className="fas fa-compress"></i>{' '}
+                    <span> Job Experience </span>
+                  </Link>{' '}
+                </li>
+              ) : (
+                <li>
+                  {' '}
+                  <Link to="/hr/master-jobs/job-experience">
+                    {' '}
+                    <i className="fas fa-compress"></i>{' '}
+                    <span> Job Experience </span>
+                  </Link>{' '}
+                </li>
+              )}
+              {this.props.path_name === '/hr/master-jobs/job-travel-needed' ? (
+                <li className="active">
+                  {' '}
+                  <Link to="/hr/master-jobs/job-travel-needed">
+                    {' '}
+                    <i className="fas fa-compress"></i>{' '}
+                    <span> Job Travel Needed </span>
+                  </Link>{' '}
+                </li>
+              ) : (
+                <li>
+                  {' '}
+                  <Link to="/hr/master-jobs/job-travel-needed">
+                    {' '}
+                    <i className="fas fa-compress"></i>{' '}
+                    <span> Job Travel Needed </span>
+                  </Link>{' '}
+                </li>
+              )}
             </ul>
-          </li>
+          </li> */}
           {/*====applied jobs======*/}
           {this.props.path_name === '/hr/appliedjobs' ? (
             <li className="active">
@@ -216,7 +255,7 @@ class Sidebar extends Component {
             </li>
           )}
           {/*====registers users======*/}
-          {this.props.path_name === '/hr/registered-users' ? (
+          {/* {this.props.path_name === '/hr/registered-users' ? (
             <li className="active">
               {' '}
               <Link to="/hr/registered-users">
@@ -232,7 +271,7 @@ class Sidebar extends Component {
                 <i className="fa fa-users"></i> <span> Registered Users </span>
               </Link>{' '}
             </li>
-          )}
+          )} */}
         </ul>
       </section>
     );

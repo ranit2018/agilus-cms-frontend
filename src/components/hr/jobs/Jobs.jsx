@@ -73,7 +73,7 @@ const actionFormatter = (refObj) => (cell, row) => {
         <Switch
           checked={row.status == 1 ? true : false}
           uncheckedIcon={false}
-          onChange={() => refObj.chageStatus(row.job_id, row.status)}
+          onChange={() => refObj.chageStatus(row.id, row.status)}
           height={20}
           width={45}
         />
@@ -81,7 +81,7 @@ const actionFormatter = (refObj) => (cell, row) => {
       <LinkWithTooltip
         tooltip="Click to Delete"
         href="#"
-        clicked={(e) => refObj.confirmDelete(e, cell, row.job_id)}
+        clicked={(e) => refObj.confirmDelete(e, cell, row.id)}
         id="tooltip-1"
       >
         <i className="far fa-trash-alt" />
@@ -170,12 +170,19 @@ class Jobs extends Component {
       search_job_location: '',
       search_category_name: '',
       search_job_skill: '',
+      travel_needed_arr: [],
+      experince_arr: [],
+      employment_arr: [],
+      infor: 'hello',
     };
   }
   componentDidMount() {
     this.getJobsList();
     this.getRoleArr();
     this.getlocationArr();
+    this.getTravelNeeded();
+    this.getExperinceData();
+    this.getJobEmployment();
     this.getcategoryArr();
     this.getskillArr();
     this.setState({
@@ -185,30 +192,18 @@ class Jobs extends Component {
   }
 
   getJobsList = (page = 1) => {
-    const search_job_title = document.getElementById('search_job_title').value;
-    const search_job_role = document.getElementById('search_job_role').value;
-    const search_category_name = document.getElementById(
-      'search_category_name'
-    ).value;
-    const search_job_skill = document.getElementById('search_job_skill').value;
-    const search_job_location = document.getElementById(
-      'search_job_location'
-    ).value;
-    const search_status = document.getElementById('search_status').value;
+    // const search_job_title = document.getElementById('search_job_title').value;
+    // const search_job_role = document.getElementById('search_job_role').value;
+    // const search_category_name = document.getElementById(
+    //   'search_category_name'
+    // ).value;
+    // const search_job_skill = document.getElementById('search_job_skill').value;
+    // const search_job_location = document.getElementById(
+    //   'search_job_location'
+    // ).value;
+    // const search_status = document.getElementById('search_status').value;
 
-    API.get(
-      `/api/job_portal/job?page=${page}&job_title=${encodeURIComponent(
-        search_job_title
-      )}&job_role=${encodeURIComponent(
-        search_job_role
-      )}&job_category=${encodeURIComponent(
-        search_category_name
-      )}&job_desired_skill_set=${encodeURIComponent(
-        search_job_skill
-      )}&job_location=${encodeURIComponent(
-        search_job_location
-      )}&status=${encodeURIComponent(search_status)}`
-    )
+    API.get(`api/job_portal/job`)
       .then((res) => {
         this.setState({
           jobs: res.data.data,
@@ -226,13 +221,13 @@ class Jobs extends Component {
   };
 
   getRoleArr = () => {
-    API.get(`api/job_portal/job/role?page=1`)
+    API.get(`api/job_portal/job/department?page=1`)
       .then((res) => {
         let options = [];
         for (var i = 0; i < res.data.data.length; i++) {
           options.push({
             value: res.data.data[i].id,
-            label: res.data.data[i].job_role,
+            label: res.data.data[i].job_department,
           });
         }
         this.setState({
@@ -261,14 +256,70 @@ class Jobs extends Component {
         showErrorMessage(err, this.props);
       });
   };
-  getcategoryArr = () => {
-    API.get(`api/job_portal/job/category?page=1`)
+  getTravelNeeded = () => {
+    API.get(`api/job_portal/travel_needed`)
       .then((res) => {
         let options = [];
         for (var i = 0; i < res.data.data.length; i++) {
           options.push({
             value: res.data.data[i].id,
-            label: res.data.data[i].category_name,
+            label: res.data.data[i].value,
+          });
+        }
+        this.setState({
+          travel_needed_arr: options,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  };
+
+  getExperinceData = () => {
+    API.get(`api/job_portal/experience`)
+      .then((res) => {
+        let options = [];
+        for (var i = 0; i < res.data.data.length; i++) {
+          options.push({
+            value: res.data.data[i].id,
+            label: res.data.data[i].value,
+          });
+        }
+        this.setState({
+          experince_arr: options,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  };
+
+  getJobEmployment = () => {
+    API.get(`api/job_portal/job/employment`)
+      .then((res) => {
+        let options = [];
+        for (var i = 0; i < res.data.data.length; i++) {
+          options.push({
+            value: res.data.data[i].id,
+            label: res.data.data[i].employment_name,
+          });
+        }
+        this.setState({
+          employment_arr: options,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  };
+  getcategoryArr = () => {
+    API.get(`api/job_portal/job/employment?page=1`)
+      .then((res) => {
+        let options = [];
+        for (var i = 0; i < res.data.data.length; i++) {
+          options.push({
+            value: res.data.data[i].id,
+            label: res.data.data[i].employment_name,
           });
         }
         this.setState({
@@ -303,7 +354,7 @@ class Jobs extends Component {
       .then((res) => {
         this.setState({
           jobDetails: res.data.data[0],
-          jobId: res.data.data[0].job_id,
+          jobId: res.data.data[0].id,
           isLoading: false,
           showModal: true,
           showModalLoader: true,
@@ -316,39 +367,35 @@ class Jobs extends Component {
 
   jobSearch = (e) => {
     e.preventDefault();
-
-    const search_job_title = document.getElementById('search_job_title').value;
+    const search_title = document.getElementById('search_job_title').value;
     const search_job_role = document.getElementById('search_job_role').value;
-    const search_category_name = document.getElementById(
-      'search_category_name'
-    ).value;
-    const search_job_skill = document.getElementById('search_job_skill').value;
-    const search_job_location = document.getElementById(
-      'search_job_location'
-    ).value;
-    const search_status = document.getElementById('search_status').value;
-    if (
-      search_job_title === '' &&
-      search_job_role === '' &&
-      search_category_name === '' &&
-      search_job_skill === '' &&
-      search_job_location === '' &&
-      search_status === ''
-    ) {
-      return false;
-    }
+    const job_location = document.getElementById('search_job_location').value;
+    const travel_needed = document.getElementById('search_category_name').value;
+    const experience = document.getElementById('search_job_skill').value;
 
+    const search_status = document.getElementById('search_status').value;
+    let from = this.state.from;
+    let to = this.state.to;
+
+    if (this.state.from !== '' && this.state.to !== '') {
+      from = new Date(from);
+      to = new Date(to);
+      from = dateFormat(from, 'yyyy-mm-dd');
+      to = dateFormat(to, 'yyyy-mm-dd');
+    }
     API.get(
-      `/api/job_portal/job?page=1&job_title=${encodeURIComponent(
-        search_job_title
-      )}&job_role=${encodeURIComponent(
+      `/api/job_portal/job?page=1&job_id=${encodeURIComponent(
+        search_title
+      )}&job_department=${encodeURIComponent(
         search_job_role
-      )}&job_category=${encodeURIComponent(
-        search_category_name
-      )}&job_desired_skill_set=${encodeURIComponent(
-        search_job_skill
       )}&job_location=${encodeURIComponent(
-        search_job_location
+        job_location
+      )}&travel_needed=${encodeURIComponent(
+        travel_needed
+      )}&experience=${encodeURIComponent(
+        experience
+      )}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(
+        to
       )}&status=${encodeURIComponent(search_status)}`
     )
       .then((res) => {
@@ -356,10 +403,12 @@ class Jobs extends Component {
           jobs: res.data.data,
           totalCount: Number(res.data.count),
           isLoading: false,
-          search_job_title: search_job_title,
+          search_job_title: search_title,
           search_job_role: search_job_role,
-          search_category_name: search_category_name,
-          search_job_location: search_job_location,
+          search_job_location: job_location,
+          search_category_name: travel_needed,
+          search_job_skill: experience,
+
           activePage: 1,
           remove_search: true,
         });
@@ -487,6 +536,7 @@ class Jobs extends Component {
 
   //for edit/add part
   modalShowHandler = (event, id) => {
+    console.log('id:', id);
     if (id) {
       event.preventDefault();
       this.getjobDetailsbyId(id);
@@ -496,159 +546,96 @@ class Jobs extends Component {
   };
 
   handleSubmitEventAdd = (values, actions) => {
-    let formData = new FormData();
-
-    // formData.append('job_id',this.state.jobDetails.job_id)
-    formData.append('job_title', values.job_title);
-    formData.append('job_role', values.job_role);
-    formData.append('job_location', values.job_location);
-    formData.append('job_category', values.category_name);
-    formData.append('job_description', values.job_description);
-    formData.append('desired_skill_set', values.job_skill);
-    formData.append('status', String(values.status));
+    let postdata = {
+      job_id: values.job_id,
+      job_employment: values.job_employment,
+      job_department: values.job_department,
+      job_location: values.job_location,
+      travel_needed: values.travel_type,
+      region: values.region,
+      experience: values.experience,
+      company_information: values.company_information,
+      status: String(values.status),
+      job_description: values.job_description,
+    };
 
     let url = `api/job_portal/job`;
     let method = 'POST';
-    if (this.state.feature_image.size > FILE_SIZE) {
-      actions.setErrors({ feature_image: FILE_VALIDATION_SIZE_ERROR_MASSAGE });
-      actions.setSubmitting(false);
-    } else {
-      getHeightWidth(this.state.feature_image).then((dimension) => {
-        const { height, width } = dimension;
-        const offerDimension = getResolution('jobs');
-        if (height != offerDimension.height || width != offerDimension.width) {
-          actions.setErrors({
-            feature_image: FILE_VALIDATION_TYPE_ERROR_MASSAGE,
-          });
-          actions.setSubmitting(false);
-        } else {
-          formData.append('feature_image', this.state.feature_image);
 
-          API({
-            method: method,
-            url: url,
-            data: formData,
-          })
-            .then((res) => {
-              this.setState({ showModal: false, feature_image: '' });
-              swal({
-                closeOnClickOutside: false,
-                title: 'Success',
-                text: 'Added Successfully',
-                icon: 'success',
-              }).then(() => {
-                this.getJobsList();
-              });
-            })
-            .catch((err) => {
-              this.setState({
-                closeModal: true,
-                showModalLoader: false,
-                feature_image: '',
-              });
-              if (err.data.status === 3) {
-                showErrorMessage(err, this.props);
-              } else {
-                actions.setErrors(err.data.errors);
-                actions.setSubmitting(false);
-              }
-            });
+    API({
+      method: method,
+      url: url,
+      data: postdata,
+    })
+      .then((res) => {
+        this.setState({ showModal: false, feature_image: '' });
+        swal({
+          closeOnClickOutside: false,
+          title: 'Success',
+          text: 'Added Successfully',
+          icon: 'success',
+        }).then(() => {
+          this.getJobsList();
+        });
+      })
+      .catch((err) => {
+        this.setState({
+          closeModal: true,
+          showModalLoader: false,
+          feature_image: '',
+        });
+        if (err.data.status === 3) {
+          showErrorMessage(err, this.props);
+        } else {
+          actions.setErrors(err.data.errors);
+          actions.setSubmitting(false);
         }
       });
-    }
   };
 
   handleSubmitEventUpdate = async (values, actions) => {
-    let formData = new FormData();
-
-    formData.append('job_title', values.job_title);
-    formData.append('job_role', values.job_role);
-    formData.append('job_location', values.job_location);
-    formData.append('job_category', values.category_name);
-    formData.append('job_description', values.job_description);
-    formData.append('desired_skill_set', values.job_skill);
-    formData.append('status', String(values.status));
+    console.log('abhi1');
+    let postdata = {
+      job_id: values.job_id,
+      job_employment: values.job_employment,
+      job_department: values.job_department,
+      job_location: values.job_location,
+      travel_needed: values.travel_type,
+      region: values.region,
+      experience: values.experience,
+      company_information: values.company_information,
+      status: String(values.status),
+      job_description: values.job_description,
+    };
 
     let url = `/api/job_portal/job/${this.state.jobId}`;
     let method = 'PUT';
 
-    if (this.state.feature_image) {
-      if (this.state.feature_image.size > FILE_SIZE) {
-        actions.setErrors({
-          feature_image: FILE_VALIDATION_SIZE_ERROR_MASSAGE,
+    API({
+      method: method,
+      url: url,
+      data: postdata,
+    })
+      .then((res) => {
+        this.setState({ showModal: false });
+        swal({
+          closeOnClickOutside: false,
+          title: 'Success',
+          text: 'Updated Successfully',
+          icon: 'success',
+        }).then(() => {
+          this.getJobsList();
         });
-        actions.setSubmitting(false);
-      } else {
-        getHeightWidth(this.state.feature_image).then((dimension) => {
-          const { height, width } = dimension;
-          const offerDimension = getResolution('jobs');
-
-          if (
-            height != offerDimension.height ||
-            width != offerDimension.width
-          ) {
-            //    actions.setErrors({ file: "The file is not of desired height and width" });
-            actions.setErrors({
-              feature_image: FILE_VALIDATION_TYPE_ERROR_MASSAGE,
-            });
-            actions.setSubmitting(false);
-          } else {
-            formData.append('feature_image', this.state.feature_image);
-            API({
-              method: method,
-              url: url,
-              data: formData,
-            })
-              .then((res) => {
-                this.setState({ showModal: false });
-                swal({
-                  closeOnClickOutside: false,
-                  title: 'Success',
-                  text: 'Updated Successfully',
-                  icon: 'success',
-                }).then(() => {
-                  this.getJobsList();
-                });
-              })
-              .catch((err) => {
-                this.setState({ closeModal: true, showModalLoader: false });
-                if (err.data.status === 3) {
-                  showErrorMessage(err, this.props);
-                } else {
-                  actions.setErrors(err.data.errors);
-                  actions.setSubmitting(false);
-                }
-              });
-          }
-        });
-      }
-    } else {
-      API({
-        method: method,
-        url: url,
-        data: formData,
       })
-        .then((res) => {
-          this.setState({ showModal: false });
-          swal({
-            closeOnClickOutside: false,
-            title: 'Success',
-            text: 'Updated Successfully',
-            icon: 'success',
-          }).then(() => {
-            this.getJobsList();
-          });
-        })
-        .catch((err) => {
-          this.setState({ closeModal: true, showModalLoader: false });
-          if (err.data.status === 3) {
-            showErrorMessage(err, this.props);
-          } else {
-            actions.setErrors(err.data.errors);
-            actions.setSubmitting(false);
-          }
-        });
-    }
+      .catch((err) => {
+        this.setState({ closeModal: true, showModalLoader: false });
+        if (err.data.status === 3) {
+          showErrorMessage(err, this.props);
+        } else {
+          actions.setErrors(err.data.errors);
+          actions.setSubmitting(false);
+        }
+      });
   };
 
   fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
@@ -691,28 +678,36 @@ class Jobs extends Component {
 
     const newInitialValues = Object.assign(initialValues, {
       job_id: jobDetails.job_id ? jobDetails.job_id : '',
-      feature_image: '',
-      job_title: jobDetails.job_title ? jobDetails.job_title : '',
+
+      job_employment:
+        jobDetails.employment_id || jobDetails.employment_id === 0
+          ? jobDetails.employment_id.toString()
+          : '',
+      job_department:
+        jobDetails.department_id || jobDetails.department_id === 0
+          ? jobDetails.department_id.toString()
+          : '',
       job_role:
         jobDetails.role_id || jobDetails.role_id === 0
           ? jobDetails.role_id.toString()
           : '',
-      job_location:
-        jobDetails.location_id || jobDetails.location_id === 0
-          ? jobDetails.location_id.toString()
+      job_location: jobDetails.job_location ? jobDetails.job_location : '',
+      travel_type:
+        jobDetails.travel_type_id || jobDetails.travel_type_id === 0
+          ? jobDetails.travel_type_id.toString()
+          : '',
+      region:
+        jobDetails.region_id || jobDetails.region_id === 0
+          ? jobDetails.region_id.toString()
+          : '',
+      experience:
+        jobDetails.experience_id || jobDetails.experience_id === 0
+          ? jobDetails.experience_id.toString()
           : '',
       job_description: jobDetails.job_description
         ? jobDetails.job_description
         : '',
-      category_name:
-        jobDetails.category_id || jobDetails.category_id === 0
-          ? jobDetails.category_id.toString()
-          : '',
-      job_skill:
-        jobDetails.skill_id || jobDetails.skill_id === 0
-          ? jobDetails.skill_id.toString()
-          : '',
-      date_posted: jobDetails.date_posted ? jobDetails.date_posted : '',
+
       status:
         jobDetails.status || jobDetails.status === 0
           ? jobDetails.status.toString()
@@ -720,59 +715,31 @@ class Jobs extends Component {
     });
 
     const validateStopFlagUpdate = Yup.object().shape({
-      feature_image: Yup.string()
-        .notRequired()
-        .test(
-          'jobimage',
-          'Only files with the following extensions are allowed: png jpg jpeg',
-          (feature_image) => {
-            if (feature_image) {
-              return this.state.isValidFile;
-            } else {
-              return true;
-            }
-          }
-        ),
-      job_title: Yup.string().required('Please enter job title'),
-      job_role: Yup.string().required('Please select job role'),
+      job_employment: Yup.string().required('Please enter employment type'),
+      job_department: Yup.string().required('Please enter department'),
       job_location: Yup.string().required('Please select job location'),
-      category_name: Yup.string().required('Please select job category'),
-      job_description: Yup.string().required('Please enter job description'),
-      job_skill: Yup.string().required('Please select job skill'),
-      status: Yup.number().required('Please select status'),
-      employment_type: Yup.string().required('Please enter employment type'),
-      department: Yup.string().required('Please enter department'),
-      travel_needed: Yup.string().required('Please enter travel_needed'),
+      travel_type: Yup.string().required('Please enter travel_needed'),
       region: Yup.string().required('Please enter region'),
       experience: Yup.string().required('Please enter experience'),
-      company_information: Yup.string().required(
-        'Please enter company_information'
-      ),
+      company_information: Yup.string().notRequired(),
+      job_description: Yup.string().required('Please enter job description'),
+
+      status: Yup.number().required('Please select status'),
     });
 
     const validateStopFlag = Yup.object().shape({
-      feature_image: Yup.mixed()
-        .required('Please select image')
-        .test(
-          'jobimage',
-          'Only files with the following extensions are allowed: png jpg jpeg',
-          () => this.state.isValidFile
-        ),
-      job_title: Yup.string().required('Please enter job title'),
-      job_role: Yup.string().required('Please select job role'),
+      job_employment: Yup.string().required('Please enter employment type'),
+      job_department: Yup.string().required('Please enter department'),
       job_location: Yup.string().required('Please select job location'),
-      category_name: Yup.string().required('Please select job category'),
-      job_description: Yup.string().required('Please enter job description'),
-      job_skill: Yup.string().required('Please enter job skill '),
-      status: Yup.number().required('Please select status'),
-      employment_type: Yup.string().required('Please enter employment type'),
-      department: Yup.string().required('Please enter department'),
-      travel_needed: Yup.string().required('Please enter travel_needed'),
+      travel_type: Yup.string().required('Please enter travel_needed'),
       region: Yup.string().required('Please enter region'),
       experience: Yup.string().required('Please enter experience'),
       company_information: Yup.string().required(
         'Please enter company_information'
       ),
+      job_description: Yup.string().required('Please enter job description'),
+
+      status: Yup.number().required('Please select status'),
     });
 
     return (
@@ -804,13 +771,13 @@ class Jobs extends Component {
                       className="form-control"
                       name="job_title"
                       id="search_job_title"
-                      placeholder="Filter by Job Title"
+                      placeholder="Filter by Job Id"
                     />
                   </div>
                   <div className="">
                     <select
                       className="form-control"
-                      name="status"
+                      name="search_job_role"
                       id="search_job_role"
                     >
                       <option value=""> Select Job Role </option>
@@ -845,8 +812,8 @@ class Jobs extends Component {
                       name="status"
                       id="search_category_name"
                     >
-                      <option value="">Select Job Category</option>
-                      {this.state.job_category_arr.map((val, i) => {
+                      <option value="">Select Job Travel Needed</option>
+                      {this.state.travel_needed_arr.map((val, i) => {
                         return (
                           <option key={i} value={val.value}>
                             {val.label}
@@ -861,8 +828,8 @@ class Jobs extends Component {
                       name="status"
                       id="search_job_skill"
                     >
-                      <option value=""> Select Job Skill </option>
-                      {this.state.job_skill_arr.map((val, i) => {
+                      <option value=""> Select Job Experience </option>
+                      {this.state.experince_arr.map((val, i) => {
                         return (
                           <option key={i} value={val.value}>
                             {val.label}
@@ -916,35 +883,25 @@ class Jobs extends Component {
                 <BootstrapTable data={this.state.jobs}>
                   <TableHeaderColumn
                     isKey
-                    dataField="job_title"
+                    dataField="job_id"
                     dataFormat={__htmlDecode(this)}
                   >
-                    Title
+                    Job ID
                   </TableHeaderColumn>
+
                   <TableHeaderColumn
-                    dataField="feature_image"
-                    dataFormat={setJobImage(this)}
-                  >
-                    Image
-                  </TableHeaderColumn>
-                  <TableHeaderColumn
-                    dataField="category_name"
+                    dataField="job_department"
                     dataFormat={__htmlDecode(this)}
                   >
-                    Job Category
+                    Job Department
                   </TableHeaderColumn>
                   <TableHeaderColumn
-                    dataField="job_description"
+                    dataField="job_employment"
                     dataFormat={__htmlDecode(this)}
                   >
-                    Job Description
+                    Job Employment
                   </TableHeaderColumn>
-                  <TableHeaderColumn
-                    dataField="job_role"
-                    dataFormat={__htmlDecode(this)}
-                  >
-                    Job Role
-                  </TableHeaderColumn>
+
                   <TableHeaderColumn
                     dataField="job_location"
                     dataFormat={__htmlDecode(this)}
@@ -952,16 +909,16 @@ class Jobs extends Component {
                     Job Location
                   </TableHeaderColumn>
                   <TableHeaderColumn
-                    dataField="job_skill"
+                    dataField="travel_type"
                     dataFormat={__htmlDecode(this)}
                   >
-                    Job Skill
+                    Travel Type
                   </TableHeaderColumn>
                   <TableHeaderColumn
-                    dataField="date_posted"
-                    dataFormat={setDate(this)}
+                    dataField="experience"
+                    dataFormat={__htmlDecode(this)}
                   >
-                    Post Date
+                    Experience
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="status"
@@ -971,7 +928,7 @@ class Jobs extends Component {
                   </TableHeaderColumn>
 
                   <TableHeaderColumn
-                    dataField="job_id"
+                    dataField="id"
                     dataFormat={actionFormatter(this)}
                     dataAlign=""
                   >
@@ -1062,18 +1019,17 @@ class Jobs extends Component {
                                       <span className="impField">*</span>
                                     </label>
                                     <Field
-                                      name="unique_job_id"
-                                      id="unique_job_id"
+                                      name="job_id"
+                                      id="job_id"
                                       type="text"
                                       className={`form-control`}
                                       placeholder="Enter Job ID"
                                       autoComplete="off"
-                                      value={values.unique_job_id}
+                                      value={values.job_id}
                                     />
-                                    {errors.unique_job_id &&
-                                    touched.unique_job_id ? (
+                                    {errors.job_id && touched.job_id ? (
                                       <span className="errorMsg">
-                                        {errors.unique_job_id}
+                                        {errors.job_id}
                                       </span>
                                     ) : null}
                                   </div>
@@ -1087,43 +1043,67 @@ class Jobs extends Component {
                                       <span className="impField">*</span>
                                     </label>
                                     <Field
-                                      name="employment_type"
-                                      id="employment_type"
+                                      name="job_employment"
+                                      id="job_employment"
                                       component="select"
                                       className={`selectArowGray form-control`}
                                       autoComplete="off"
-                                      value={values.employment_type}
+                                      value={values.job_employment}
                                     >
                                       <option key="-1" value="">
                                         Select Job Role
                                       </option>
-                                      <option
-                                        key=""
-                                        value="permanent_full_time"
-                                      >
-                                        Permanent-Full Time
-                                      </option>
-                                      <option
-                                        key=""
-                                        value="contractual_full_time"
-                                      >
-                                        Contractual-Full Time
-                                      </option>
-                                      <option
-                                        key=""
-                                        value="contractual_part_time"
-                                      >
-                                        Contractual-Part Time
-                                      </option>
+                                      {this.state.employment_arr.map(
+                                        (val, i) => (
+                                          <option key={i} value={val.value}>
+                                            {val.label}
+                                          </option>
+                                        )
+                                      )}
                                     </Field>
-                                    {errors.employment_type &&
-                                    touched.employment_type ? (
+                                    {errors.job_employment &&
+                                    touched.job_employment ? (
                                       <span className="errorMsg">
-                                        {errors.employment_type}
+                                        {errors.job_employment}
                                       </span>
                                     ) : null}
                                   </div>
                                 </Col>
+
+                                <Col xs={12} sm={12} md={6}>
+                                  <div className="form-group">
+                                    <label>
+                                      Department
+                                      <span className="impField">*</span>
+                                    </label>
+                                    <Field
+                                      name="job_department"
+                                      id="job_department"
+                                      component="select"
+                                      className={`selectArowGray form-control`}
+                                      autoComplete="off"
+                                      value={values.job_department}
+                                    >
+                                      <option key="-1" value="">
+                                        Select Department
+                                      </option>
+                                      {this.state.job_role_arr.map((val, i) => (
+                                        <option key={i} value={val.value}>
+                                          {val.label}
+                                        </option>
+                                      ))}
+                                    </Field>
+                                    {errors.job_department &&
+                                    touched.job_department ? (
+                                      <span className="errorMsg">
+                                        {errors.job_department}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                </Col>
+                              </Row>
+
+                              {/* <Row>
                                 <Col xs={12} sm={12} md={6}>
                                   <div className="form-group">
                                     <label>
@@ -1142,43 +1122,6 @@ class Jobs extends Component {
                                     {errors.job_title && touched.job_title ? (
                                       <span className="errorMsg">
                                         {errors.job_title}
-                                      </span>
-                                    ) : null}
-                                  </div>
-                                </Col>
-                              </Row>
-
-                              <Row>
-                                <Col xs={12} sm={12} md={6}>
-                                  <div className="form-group">
-                                    <label>
-                                      Department
-                                      <span className="impField">*</span>
-                                    </label>
-                                    <Field
-                                      name="department"
-                                      id="department"
-                                      component="select"
-                                      className={`selectArowGray form-control`}
-                                      autoComplete="off"
-                                      value={values.department}
-                                    >
-                                      <option key="-1" value="">
-                                        Select Department
-                                      </option>
-                                      <option key="" value="ent">
-                                        ENT
-                                      </option>
-                                      <option key="" value="orthopedic">
-                                        Orthopedic
-                                      </option>
-                                      <option key="" value="neurologist">
-                                        Neurologist
-                                      </option>
-                                    </Field>
-                                    {errors.department && touched.department ? (
-                                      <span className="errorMsg">
-                                        {errors.department}
                                       </span>
                                     ) : null}
                                   </div>
@@ -1213,9 +1156,9 @@ class Jobs extends Component {
                                     ) : null}
                                   </div>
                                 </Col>
-                              </Row>
+                              </Row> */}
 
-                              <Row>
+                              {/* <Row>
                                 <Col xs={12} sm={12} md={6}>
                                   <div className="form-group">
                                     <label>
@@ -1284,7 +1227,7 @@ class Jobs extends Component {
                                     ) : null}
                                   </div>
                                 </Col>
-                              </Row>
+                              </Row> */}
 
                               <Row>
                                 <Col xs={12} sm={12} md={6}>
@@ -1296,22 +1239,11 @@ class Jobs extends Component {
                                     <Field
                                       name="job_location"
                                       id="job_location"
-                                      component="select"
-                                      className={`selectArowGray form-control`}
+                                      type="text"
+                                      className={`form-control`}
                                       autoComplete="off"
                                       value={values.job_location}
-                                    >
-                                      <option key="-1" value="">
-                                        Select Job Location
-                                      </option>
-                                      {this.state.job_location_arr.map(
-                                        (val, i) => (
-                                          <option key={i} value={val.value}>
-                                            {val.label}
-                                          </option>
-                                        )
-                                      )}
-                                    </Field>
+                                    ></Field>
                                     {errors.job_location &&
                                     touched.job_location ? (
                                       <span className="errorMsg">
@@ -1327,30 +1259,28 @@ class Jobs extends Component {
                                       <span className="impField">*</span>
                                     </label>
                                     <Field
-                                      name="travel_needed"
-                                      id="travel_needed"
+                                      name="travel_type"
+                                      id="travel_type"
                                       component="select"
                                       className={`selectArowGray form-control`}
                                       autoComplete="off"
-                                      value={values.travel_needed}
+                                      value={values.travel_type}
                                     >
                                       <option key="-1" value="">
                                         Select Travel Needed
                                       </option>
-                                      <option key="" value="extensive">
-                                        Extensive
-                                      </option>
-                                      <option key="" value="minimal">
-                                        Minimal
-                                      </option>
-                                      <option key="" value="no_travel">
-                                        No Travel
-                                      </option>
+                                      {this.state.travel_needed_arr.map(
+                                        (val, i) => (
+                                          <option key={i} value={val.value}>
+                                            {val.label}
+                                          </option>
+                                        )
+                                      )}
                                     </Field>
-                                    {errors.travel_needed &&
-                                    touched.travel_needed ? (
+                                    {errors.travel_type &&
+                                    touched.travel_type ? (
                                       <span className="errorMsg">
-                                        {errors.travel_needed}
+                                        {errors.travel_type}
                                       </span>
                                     ) : null}
                                   </div>
@@ -1375,21 +1305,13 @@ class Jobs extends Component {
                                       <option key="-1" value="">
                                         Select region
                                       </option>
-                                      <option key="" value="north">
-                                        North
-                                      </option>
-                                      <option key="" value="south">
-                                        South
-                                      </option>
-                                      <option key="" value="east">
-                                        East
-                                      </option>
-                                      <option key="" value="west">
-                                        West
-                                      </option>
-                                      <option key="" value="central">
-                                        Central
-                                      </option>
+                                      {this.state.job_location_arr.map(
+                                        (val, i) => (
+                                          <option key={i} value={val.value}>
+                                            {val.label}
+                                          </option>
+                                        )
+                                      )}
                                     </Field>
                                     {errors.region && touched.region ? (
                                       <span className="errorMsg">
@@ -1415,21 +1337,13 @@ class Jobs extends Component {
                                       <option key="-1" value="">
                                         Select experience
                                       </option>
-                                      <option key="" value="0-2">
-                                        0-2
-                                      </option>
-                                      <option key="" value="2-4">
-                                        2-4
-                                      </option>
-                                      <option key="" value="4-7">
-                                        4-7
-                                      </option>
-                                      <option key="" value="7-10">
-                                        7-10
-                                      </option>
-                                      <option key="" value="10+">
-                                        10+
-                                      </option>
+                                      {this.state.experince_arr.map(
+                                        (val, i) => (
+                                          <option key={i} value={val.value}>
+                                            {val.label}
+                                          </option>
+                                        )
+                                      )}
                                     </Field>
                                     {errors.experience && touched.experience ? (
                                       <span className="errorMsg">
@@ -1535,7 +1449,7 @@ class Jobs extends Component {
                                   </div>
                                 </Col>
                               </Row>
-
+                              {/* 
                               <Row>
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
@@ -1571,7 +1485,7 @@ class Jobs extends Component {
                                     ) : null}
                                   </div>
                                 </Col>
-                              </Row>
+                              </Row> */}
                             </div>
                           </Modal.Body>
                           <Modal.Footer>
@@ -1580,9 +1494,9 @@ class Jobs extends Component {
                                 isValid ? 'btn-custom-green' : 'btn-disable'
                               } m-r-10`}
                               type="submit"
-                              disabled={
-                                isValid ? (isSubmitting ? true : false) : true
-                              }
+                              // disabled={
+                              //   isValid ? (isSubmitting ? true : false) : true
+                              // }
                             >
                               {this.state.jobId > 0
                                 ? isSubmitting

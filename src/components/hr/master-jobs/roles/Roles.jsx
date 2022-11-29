@@ -113,7 +113,7 @@ class Roles extends Component {
   getJobRoleList = (page = 1) => {
     let { search_job_role, search_status } = this.state;
     API.get(
-      `api/job_portal/job/role?page=${page}&job_role=${encodeURIComponent(
+      `api/job_portal/job/department?page=${page}&job_role=${encodeURIComponent(
         search_job_role
       )}&status=${encodeURIComponent(search_status)}`
     )
@@ -149,7 +149,7 @@ class Roles extends Component {
   };
 
   deleteJobRole = (id, row) => {
-    API.post(`api/job_portal/job/role/${row.id}`)
+    API.post(`api/job_portal/job/department/${row.id}`)
       .then((res) => {
         swal({
           closeOnClickOutside: false,
@@ -169,7 +169,7 @@ class Roles extends Component {
   };
 
   getjobRoleDetails(id) {
-    API.get(`api/job_portal/job/role/${id}`)
+    API.get(`api/job_portal/job/department/${id}`)
       .then((res) => {
         this.setState({
           showModalUpdate: true,
@@ -185,7 +185,7 @@ class Roles extends Component {
   }
 
   changeStatus = (cell, status, row) => {
-    API.put(`api/job_portal/job/role/change_status/${row.id}`, {
+    API.put(`api/job_portal/job/department/change_status/${row.id}`, {
       status: status == 1 ? String(0) : String(1),
     })
       .then((res) => {
@@ -232,7 +232,7 @@ class Roles extends Component {
     };
 
     let method = 'PUT';
-    let url = `api/job_portal/job/role/${this.state.roleDetails.id}`;
+    let url = `api/job_portal/job/department/${this.state.roleDetails.id}`;
 
     API({
       method: method,
@@ -271,7 +271,7 @@ class Roles extends Component {
       status: String(values.status),
     };
 
-    let url = `api/job_portal/job/role`;
+    let url = `api/job_portal/job/department`;
     let method = 'POST';
     API({
       method: method,
@@ -314,7 +314,7 @@ class Roles extends Component {
     }
 
     API.get(
-      `api/job_portal/job/role?page=1&job_role=${encodeURIComponent(
+      `api/job_portal/job/department?page=1&job_role=${encodeURIComponent(
         search_job_role
       )}&status=${encodeURIComponent(search_status)}`
     )
@@ -456,10 +456,10 @@ class Roles extends Component {
                 <BootstrapTable data={this.state.roleList}>
                   <TableHeaderColumn
                     isKey
-                    dataField="job_role"
+                    dataField="job_department"
                     dataFormat={__htmlDecode(this)}
                   >
-                    Job Role
+                    Job Departmet
                   </TableHeaderColumn>
 
                   <TableHeaderColumn

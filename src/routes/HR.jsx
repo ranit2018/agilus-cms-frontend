@@ -14,6 +14,8 @@ import JobLocation from '../components/hr/master-jobs/job-location/JobLocation';
 import Jobs from '../components/hr/jobs/Jobs';
 import AppliedJobs from '../components/hr/applied-jobs/AppliedJobs';
 import RegisteredUsers from '../components/hr/registered-users/RegisteredUsers';
+import JobExperience from '../components/hr/master-jobs/experience/Experience';
+import JobTravelNeeded from '../components/hr/master-jobs/travel-needed/TravelNeeded';
 
 import '../assets/css/all.css';
 import '../assets/css/admin-style.css';
@@ -69,6 +71,16 @@ class HR extends Component {
 
         {/*====registered users====*/}
         <PrivateRoute path="/hr/registered-users" component={RegisteredUsers} />
+        {/* ===job experience=== */}
+        <PrivateRoute
+          path="/hr/master-jobs/job-experience"
+          component={JobExperience}
+        />
+        {/* ===job travel needed */}
+        <PrivateRoute
+          path="/hr/master-jobs/job-travel-needed"
+          component={JobTravelNeeded}
+        />
 
         <Route from="*" component={AdminPageNotFound} />
       </Switch>
