@@ -162,6 +162,7 @@ const generateCheckbox = (refObj) => (cell, row) => {
 };
 
 const actionFormatter = (refObj) => (cell, row) => {
+  console.log('row:', row)
   if (row.post_data === null) {
     return null;
   } else {
@@ -170,7 +171,7 @@ const actionFormatter = (refObj) => (cell, row) => {
         <LinkWithTooltip
           tooltip="Click to View"
           href="#"
-          clicked={(e) => refObj.modalShowHandler(e, row.post_data)}
+          clicked={(e) => refObj.modalShowHandler(e, row)}
           id="tooltip-1"
         >
           <i className="far fa-eye" />
@@ -274,8 +275,9 @@ class LeadForms extends Component {
   };
 
   modalShowHandler = (event, post_data) => {
+    console.log('post_data:', post_data)
     event.preventDefault();
-    this.setState({ showModal: true, post_data: JSON.parse(post_data) });
+    this.setState({ showModal: true, post_data: (post_data) });
   };
 
   modalCloseHandler = () => {
