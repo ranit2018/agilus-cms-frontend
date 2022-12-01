@@ -117,11 +117,44 @@ const generateHTML = (data) => {
             </Row>
           );
         }
+      } else if (["landing_page"].includes(key)) {
+        ret.push(
+          <Row>
+            <Col xs={6} sm={6} md={6} key={key}>
+              Landing Page
+            </Col>
+            <Col xs={6} sm={6} md={6}>
+              {element}
+            </Col>
+          </Row>
+        );
+      } else if (["mobile_no"].includes(key)) {
+        ret.push(
+          <Row>
+            <Col xs={6} sm={6} md={6} key={key}>
+              Mobile No.
+            </Col>
+            <Col xs={6} sm={6} md={6}>
+              {element}
+            </Col>
+          </Row>
+        );
+      } else if (["otp_status"].includes(key)) {
+        ret.push(
+          <Row>
+            <Col xs={6} sm={6} md={6} key={key}>
+              OTP Status
+            </Col>
+            <Col xs={6} sm={6} md={6}>
+              {element == 1 ? "Verified" : "Not Verified"}
+            </Col>
+          </Row>
+        );
       } else {
         ret.push(
           <Row>
             <Col xs={6} sm={6} md={6} key={key}>
-              {key}
+              {key.charAt(0).toUpperCase() + key.slice(1)}
             </Col>
             <Col xs={6} sm={6} md={6}>
               {element}
@@ -162,7 +195,6 @@ const generateCheckbox = (refObj) => (cell, row) => {
 };
 
 const actionFormatter = (refObj) => (cell, row) => {
-  console.log('row:', row)
   if (row.post_data === null) {
     return null;
   } else {
@@ -217,6 +249,7 @@ class LeadForms extends Component {
         { value: "1", label: "Active" },
         { value: "0", label: "Inactive" },
       ],
+      landing_page: "",
     };
   }
 
@@ -225,6 +258,7 @@ class LeadForms extends Component {
     const email = this.state.email;
     const mobile_no = this.state.email;
     const city = this.state.city;
+    const landing_page = this.state.landing_page;
     let type = "";
     if (this.state.selectedOption.length > 0) {
       type = this.state.selectedOption
@@ -247,11 +281,13 @@ class LeadForms extends Component {
         name
       )}&email=${encodeURIComponent(email)}&number=${encodeURIComponent(
         mobile_no
-      )}&city_name=${encodeURIComponent(city)}&otp_status=${encodeURIComponent(
-        type
-      )}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(
-        to
-      )}`
+      )}&city_name=${encodeURIComponent(
+        city
+      )}&landing_page=${encodeURIComponent(
+        landing_page
+      )}&otp_status=${encodeURIComponent(type)}&date_from=${encodeURIComponent(
+        from
+      )}&date_to=${encodeURIComponent(to)}`
     )
       .then((res) => {
         this.setState({
@@ -275,9 +311,9 @@ class LeadForms extends Component {
   };
 
   modalShowHandler = (event, post_data) => {
-    console.log('post_data:', post_data)
+    console.log("post_data:", post_data);
     event.preventDefault();
-    this.setState({ showModal: true, post_data: (post_data) });
+    this.setState({ showModal: true, post_data: post_data });
   };
 
   modalCloseHandler = () => {
@@ -291,6 +327,7 @@ class LeadForms extends Component {
     const email = document.getElementById("email").value;
     const mobile_no = document.getElementById("mobile_no").value;
     const city = document.getElementById("city").value;
+    const landing_page = document.getElementById("landing_page").value;
     var banner_status = document.getElementById("banner_status").value;
 
     // let type = "";
@@ -309,6 +346,7 @@ class LeadForms extends Component {
       email === "" &&
       mobile_no === "" &&
       city === "" &&
+      landing_page === "" &&
       this.state.from === "" &&
       this.state.to === "" &&
       banner_status === ""
@@ -328,7 +366,11 @@ class LeadForms extends Component {
         name
       )}&email=${encodeURIComponent(email)}&number=${encodeURIComponent(
         mobile_no
-      )}&city_name=${encodeURIComponent(city)}&otp_status=${encodeURIComponent(
+      )}&city_name=${encodeURIComponent(
+        city
+      )}&landing_page=${encodeURIComponent(
+        landing_page
+      )}&otp_status=${encodeURIComponent(
         banner_status
       )}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(
         to
@@ -343,6 +385,7 @@ class LeadForms extends Component {
           email: email,
           mobile_no: mobile_no,
           city: city,
+          landing_page: landing_page,
           // type: type,
           banner_status: banner_status,
           activePage: 1,
@@ -412,6 +455,7 @@ class LeadForms extends Component {
     document.getElementById("email").value = "";
     document.getElementById("mobile_no").value = "";
     document.getElementById("city").value = "";
+    document.getElementById("landing_page").value = "";
     //document.getElementById("type").value = '';
 
     this.setState(
@@ -420,6 +464,7 @@ class LeadForms extends Component {
         email: "",
         mobile_no: "",
         city: "",
+        landing_page: "",
         selectedOption: [],
         from: "",
         to: "",
@@ -513,6 +558,14 @@ class LeadForms extends Component {
                         placeholder="Filter by City"
                       />
                     </div>
+                    <div>
+                      <input
+                        className="form-control"
+                        name="landing_page"
+                        id="landing_page"
+                        placeholder="Filter by Landing Page"
+                      />
+                    </div>
 
                     {/* <div>
                       <Select
@@ -600,9 +653,15 @@ class LeadForms extends Component {
                     dataFormat={generateCheckbox(this)}
                     width="5%"
                   ></TableHeaderColumn>
-
                   <TableHeaderColumn
                     isKey
+                    dataField="landing_page"
+                    // dataFormat={htmlDecode(this)}
+                  >
+                    Landing Page
+                  </TableHeaderColumn>
+                  <TableHeaderColumn
+                    // isKey
                     dataField="name"
                     // dataFormat={htmlDecode(this)}
                   >
