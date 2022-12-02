@@ -13,6 +13,8 @@ import Banner from "../components/admin/banner/Banner";
 import Categories from "../components/admin/categories/Categories";
 import Blogs from "../components/admin/blogs/Blogs";
 import AddBlog from "../components/admin/blogs/AddBlog";
+import AddPage from "../components/admin/dynamic-landing-page/AddPage";
+import EditPage from "../components/admin/dynamic-landing-page/EditPage";
 import EditBlog from "../components/admin/blogs/EditBlog";
 import Events from "../components/admin/events/Events";
 import AddEvent from "../components/admin/events/AddEvent";
@@ -129,7 +131,10 @@ class Admin extends Component {
         />
 
         <PrivateRoute path="/dynamic_landing_page/page" component={Pages} />
+        <PrivateRoute path="/add-page" component={AddPage} />
+        <PrivateRoute path="/edit-page/:id" component={EditPage} />
         <PrivateRoute path="/dynamic_landing_page/lead" component={Lead} />
+
 
         <PrivateRoute path="/product-details/accordion" component={Accordian} />
         <PrivateRoute

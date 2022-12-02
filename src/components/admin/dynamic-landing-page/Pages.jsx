@@ -57,13 +57,23 @@ function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
 
 const actionFormatter = (refObj) => (cell, row) => {
   return (
+    
     <div className="actionStyle">
+      <LinkWithTooltip
+        tooltip="Click to view page"
+        href="#"
+       clicked={(e) => {
+        window.open(`http://srl.indusnettechnologies.com/landing/${row.slug}`, "_blank")
+        
+       }}
+        id="tooltip-0"
+      >
+        <i className="far fa-eye" />
+      </LinkWithTooltip>
       <LinkWithTooltip
         tooltip="Click to edit"
         href="#"
-        clicked={(e) => {
-          refObj.modalShowHandler(e, cell);
-        }}
+        clicked={(e) => refObj.editPage(e, cell)}
         id="tooltip-1"
       >
         <i className="far fa-edit" />
@@ -474,6 +484,13 @@ class Pages extends Component {
     this.setState({ thumbNailModal: false, url: "" });
   };
 
+  editPage(e, id) {
+    e.preventDefault();
+    this.props.history.push({
+      pathname: '/edit-page/' + id      
+  })
+}
+
   render() {
     const { dynamicLandingPageDetails } = this.state;
 
@@ -554,6 +571,7 @@ class Pages extends Component {
 
     return (
       <Layout {...this.props}>
+        
         <div className="content-wrapper">
           <section className="content-header">
             <div className="row">
@@ -569,7 +587,10 @@ class Pages extends Component {
                   <button
                     type="button"
                     className="btn btn-info btn-sm"
-                    onClick={(e) => this.modalShowHandler(e, "")}
+                    onClick={(e) => this.props.history.push({
+                      pathname: '/add-page',
+                      state: { categoryList: this.state.categoryList }
+                  })}
                   >
                     <i className="fas fa-plus m-r-5" /> Add Page
                   </button>
@@ -611,6 +632,7 @@ class Pages extends Component {
               </div>
             </div>
           </section>
+
           <section className="content">
             <div className="box">
               <div className="box-body">
@@ -671,6 +693,7 @@ class Pages extends Component {
                 ) : null}
 
                 {/* ======= Add Banner Modal ======== */}
+
                 <Modal
                   show={this.state.showModal}
                   onHide={() => this.modalCloseHandler()}
@@ -922,6 +945,8 @@ class Pages extends Component {
                     }}
                   </Formik>
                 </Modal>
+
+
                 <Modal
                   show={this.state.thumbNailModal}
                   onHide={() => this.imageModalCloseHandler()}
