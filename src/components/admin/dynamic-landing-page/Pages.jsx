@@ -70,7 +70,7 @@ const actionFormatter = (refObj) => (cell, row) => {
       </LinkWithTooltip>
       <LinkWithTooltip
         tooltip={"Click to change status"}
-        clicked={(e) => refObj.chageStatus(e, cell, row.status)}
+        // clicked={(e) => refObj.chageStatus(cell, row.status)}
         href="#"
         id="tooltip-1"
       >
@@ -309,19 +309,22 @@ class Pages extends Component {
     let formData = new FormData();
     formData.append("page_name", values.page_name);
     formData.append("status", values.status);
+    formData.append("content", values.content);
+    formData.append("page_slug", values.page_slug);
+    console.log(">>>>>>", this.state.dynamic_landing_page_id);
 
-    if (!this.state.avalible_slug.includes(values.page_slug)) {
-      formData.append("page_slug", values.page_slug);
-    } else {
-      actions.setErrors({
-        page_slug:
-          "Page Slug is already in use, please use different slug name.",
-      });
-      actions.setSubmitting(false);
-      this.setState({
-        apiAfterValidation: false,
-      });
-    }
+    // if (!this.state.avalible_slug.includes(values.page_slug)) {
+    //   formData.append("page_slug", values.page_slug);
+    // } else {
+    //   actions.setErrors({
+    //     page_slug:
+    //       "Page Slug is already in use, please use different slug name.",
+    //   });
+    //   actions.setSubmitting(false);
+    //   this.setState({
+    //     apiAfterValidation: false,
+    //   });
+    // }
 
     if (this.state.image) {
       if (this.state.image.size > FILE_SIZE) {
@@ -387,6 +390,7 @@ class Pages extends Component {
   };
 
   chageStatus = (cell, status) => {
+    console.log("cell:", cell);
     API.put(`/api/llp/lead_landing_page/change_status/${cell}`, {
       status: status == 1 ? String(0) : String(1),
     })
@@ -481,6 +485,9 @@ class Pages extends Component {
       page_slug: dynamicLandingPageDetails.slug
         ? htmlDecode(dynamicLandingPageDetails.slug)
         : "",
+      content: dynamicLandingPageDetails.content
+        ? htmlDecode(dynamicLandingPageDetails.content)
+        : "",
 
       status:
         dynamicLandingPageDetails.status ||
@@ -500,6 +507,7 @@ class Pages extends Component {
             "Please enter the page slug without any special character"
           )
           .required("Please enter the page slug"),
+        content: Yup.string(),
 
         image: Yup.string()
           .notRequired()
@@ -528,6 +536,7 @@ class Pages extends Component {
             "Please enter the page slug without any apecial chracter"
           )
           .required("Please enter the page slug"),
+        content: Yup.string(),
 
         image: Yup.string()
           .required("Please select the image")
@@ -708,6 +717,10 @@ class Pages extends Component {
                                   <div className="form-group">
                                     <label>
                                       Page Name
+                                      {this.state.dynamic_landing_page_id >
+                                      0 ? null : (
+                                        <span className="impField">*</span>
+                                      )}
                                       <span className="impField">*</span>
                                     </label>
                                     <Field
@@ -785,6 +798,62 @@ class Pages extends Component {
                                       </span>
                                     ) : null}
                                   </div>
+                                </Col>
+                              </Row>
+                              <Row>
+                                <Col xs={12} sm={12} md={12}>
+                                  <label>Banner Contet</label>
+                                  <Editor
+                                    value={values.content}
+                                    init={{
+                                      height: 200,
+                                      menubar: false,
+                                      plugins: [
+                                        "advlist autolink lists link image charmap print preview anchor",
+                                        "searchreplace visualblocks  code fullscreen",
+                                        "insertdatetime media table paste code help wordcount",
+                                      ],
+                                      toolbar:
+                                        "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
+                                      content_style:
+                                        "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                                      file_browser_callback_types: "image",
+                                      file_picker_callback: function (
+                                        callback,
+                                        value,
+                                        meta
+                                      ) {
+                                        if (meta.filetype == "image") {
+                                          var input =
+                                            document.getElementById("my-file");
+                                          input.click();
+                                          input.onchange = function () {
+                                            var file = input.files[0];
+                                            var reader = new FileReader();
+                                            reader.onload = function (e) {
+                                              // console.log(
+                                              //   "name",
+                                              //   e.target.result
+                                              // );
+                                              callback(e.target.result, {
+                                                alt: file.name,
+                                              });
+                                            };
+                                            reader.readAsDataURL(file);
+                                          };
+                                        }
+                                      },
+                                      paste_data_images: true,
+                                    }}
+                                    onEditorChange={(value) =>
+                                      setFieldValue("content", value)
+                                    }
+                                  />
+                                  {errors.content && touched.content ? (
+                                    <span className="errorMsg">
+                                      {errors.content}
+                                    </span>
+                                  ) : null}
                                 </Col>
                               </Row>
                               <Row>
