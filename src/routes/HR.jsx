@@ -12,6 +12,8 @@ import Roles from '../components/hr/master-jobs/roles/Roles';
 import JobSkills from '../components/hr/master-jobs/job-skills/JobSkills';
 import JobLocation from '../components/hr/master-jobs/job-location/JobLocation';
 import Jobs from '../components/hr/jobs/Jobs';
+import Addjob from '../components/hr/jobs/AddJobs';
+import EditJob from '../components/hr/jobs/EditJobs';
 import AppliedJobs from '../components/hr/applied-jobs/AppliedJobs';
 import RegisteredUsers from '../components/hr/registered-users/RegisteredUsers';
 import JobExperience from '../components/hr/master-jobs/experience/Experience';
@@ -65,6 +67,8 @@ class HR extends Component {
 
         {/* ===jobs==== */}
         <PrivateRoute path="/hr/jobs" component={Jobs} />
+        <PrivateRoute path="/hr/add-job" component={Addjob} />
+        <PrivateRoute path="/hr/edit-job/:id" component={EditJob} />
 
         {/* ====Applied jobs====*/}
         <PrivateRoute path="/hr/appliedjobs" component={AppliedJobs} />

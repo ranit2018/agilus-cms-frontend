@@ -57,8 +57,8 @@ const actionFormatter = (refObj) => (cell, row) => {
     <div className="actionStyle">
       <LinkWithTooltip
         tooltip={'Click to Edit'}
-        clicked={(e) => refObj.modalShowHandler(e, cell)}
-        // clicked={(e) => refObj.editJob(e, cell)}
+        // clicked={(e) => refObj.modalShowHandler(e, cell)}
+        clicked={(e) => refObj.editJob(e, cell)}
         href="#"
         id="tooltip-1"
       >
@@ -182,7 +182,7 @@ class Jobs extends Component {
     this.getlocationArr();
     this.getTravelNeeded();
     this.getExperinceData();
-    this.getJobEmployment();
+    // this.getJobEmployment();
     this.getcategoryArr();
     this.getskillArr();
     this.setState({
@@ -192,17 +192,6 @@ class Jobs extends Component {
   }
 
   getJobsList = (page = 1) => {
-    // const search_job_title = document.getElementById('search_job_title').value;
-    // const search_job_role = document.getElementById('search_job_role').value;
-    // const search_category_name = document.getElementById(
-    //   'search_category_name'
-    // ).value;
-    // const search_job_skill = document.getElementById('search_job_skill').value;
-    // const search_job_location = document.getElementById(
-    //   'search_job_location'
-    // ).value;
-    // const search_status = document.getElementById('search_status').value;
-
     API.get(`api/job_portal/job`)
       .then((res) => {
         this.setState({
@@ -294,24 +283,6 @@ class Jobs extends Component {
       });
   };
 
-  getJobEmployment = () => {
-    API.get(`api/job_portal/job/employment`)
-      .then((res) => {
-        let options = [];
-        for (var i = 0; i < res.data.data.length; i++) {
-          options.push({
-            value: res.data.data[i].id,
-            label: res.data.data[i].employment_name,
-          });
-        }
-        this.setState({
-          employment_arr: options,
-        });
-      })
-      .catch((err) => {
-        showErrorMessage(err, this.props);
-      });
-  };
   getcategoryArr = () => {
     API.get(`api/job_portal/job/employment?page=1`)
       .then((res) => {
@@ -364,6 +335,47 @@ class Jobs extends Component {
         showErrorMessage(err, this.props);
       });
   };
+
+  editJob(e, id) {
+    e.preventDefault();
+    var selDetailsCategory = [];
+    var selCategory = [];
+    API.get(`api/job_portal/job/${id}`)
+      .then((res) => {
+        console.log('res:', res.data.data[0]);
+        // for (
+        //   let index = 0;
+        //   index < res.data.data.blog_mapping_details.length;
+        //   index++
+        // ) {
+        //   const element = res.data.data.blog_mapping_details[index];
+        //   selDetailsCategory.push({
+        //     value: element['value'],
+        //     label: element['label'],
+        //   });
+
+        //   selCategory.push(element['id']);
+        // }
+
+        this.props.history.push({
+          pathname: '/hr/edit-job/' + id,
+          state: {
+            //   // blogDetails: res.data.data.blog_details,
+            //   // selectedCategoryList: selDetailsCategory,
+            //   // selectedCategory: selCategory,
+            //   // categoryList: this.state.categoryList,
+            jobDetails: res.data.data[0],
+            //   jobId: res.data.data[0].id,
+            //   // isLoading: false,
+            //   // showModal: true,
+            //   // showModalLoader: true,
+          },
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  }
 
   jobSearch = (e) => {
     e.preventDefault();
@@ -760,7 +772,13 @@ class Jobs extends Component {
                     <button
                       type="button"
                       className="btn btn-info btn-sm"
-                      onClick={(e) => this.modalShowHandler(e, '')}
+                      // onClick={(e) => this.modalShowHandler(e, '')}
+                      onClick={(e) =>
+                        this.props.history.push({
+                          pathname: '/hr/add-job',
+                          state: { categoryList: this.state.categoryList },
+                        })
+                      }
                     >
                       <i className="fas fa-plus m-r-5" /> Add Jobs
                     </button>
