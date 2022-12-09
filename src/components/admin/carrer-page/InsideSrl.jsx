@@ -35,6 +35,7 @@ const initialValues = {
   category_description: "",
   file: "",
   status: "",
+  tab: "",
 };
 const __htmlDecode = (refObj) => (cell) => {
   return htmlDecode(cell);
@@ -135,6 +136,8 @@ export default class RnDCategories extends Component {
       isValidFile: false,
       youtube_video_code: "",
       showPreview: false,
+      tabData: [],
+      tab: "",
     };
   }
 
@@ -146,6 +149,21 @@ export default class RnDCategories extends Component {
         this.setState({
           categoriesList: res.data.data,
           totalCount: res.data.count,
+          isLoading: false,
+        });
+      })
+      .catch((err) => {
+        this.setState({
+          isLoading: false,
+        });
+        showErrorMessage(err, this.props);
+      });
+  };
+  getTabs = (page = 1) => {
+    API.get(`/api/home/inside_us_tab`)
+      .then((res) => {
+        this.setState({
+          tabData: res.data.data,
           isLoading: false,
         });
       })
@@ -341,6 +359,7 @@ export default class RnDCategories extends Component {
     formData.append("content", values.category_description);
     formData.append("inside_file", this.state.inside_srl_file);
     formData.append("youtube_url", values.video_url);
+    formData.append("inside_tab", values.tab);
 
     if (this.state.categoryId > 0) {
       url = `/api/home/inside_us/${this.state.categoryId}`;
@@ -385,6 +404,7 @@ export default class RnDCategories extends Component {
   };
   componentDidMount() {
     this.getCategories();
+    this.getTabs();
   }
 
   render() {
@@ -398,6 +418,7 @@ export default class RnDCategories extends Component {
         categoryDetails.status || +categoryDetails.status === 0
           ? categoryDetails.status.toString()
           : "",
+      tab: categoryDetails.tab ? categoryDetails.tab : "",
       inside_srl_file: "",
       video_url: categoryDetails.youtube_url
         ? htmlDecode(categoryDetails.youtube_url)
@@ -413,6 +434,7 @@ export default class RnDCategories extends Component {
           .trim()
           .notRequired()
           .matches(/^[0|1]$/, "Invalid status selected"),
+        tab: Yup.string().trim().required("Invalid tab selected"),
         inside_srl_file: Yup.string()
           .notRequired()
           .test(
@@ -443,7 +465,7 @@ export default class RnDCategories extends Component {
           .required("Please select status")
           .matches(/^[0|1]$/, "Invalid status selected"),
         inside_srl_file: Yup.string()
-          // .required("Please select the file")
+          .required("Please select the file")
           .test(
             "file",
             "Only files with the following extensions are allowed: jpeg/jpg/png",
@@ -455,6 +477,7 @@ export default class RnDCategories extends Component {
         //   "Please Enter correct URL"
         // )
         // .required("Please enter Video URL"),
+        tab: Yup.string().required("Please Select Tab"),
       });
     }
 
@@ -481,6 +504,7 @@ export default class RnDCategories extends Component {
               </div>
             </div>
           </section>
+          {console.log(">>>>>>>>", this.state.tabData)}
           <section className="content">
             <div className="box">
               <div className="box-body">
@@ -583,6 +607,38 @@ export default class RnDCategories extends Component {
                     </Modal.Header>
                     <Modal.Body>
                       <div className="contBox">
+                        <Row>
+                          <Col xs={12} sm={12} md={12}>
+                            <div className="form-group">
+                              <label>
+                                Tab
+                                {this.state.categoryId == 0 ? (
+                                  <span className="impField">*</span>
+                                ) : null}
+                              </label>
+                              <Field
+                                name="tab"
+                                component="select"
+                                className={`selectArowGray form-control`}
+                                autoComplete="off"
+                                value={values.tab}
+                              >
+                                <option key="-1" value="">
+                                  {" "}
+                                  Select{" "}
+                                </option>
+                                {this.state.tabData.map((val, i) => (
+                                  <option key={i} value={val.value}>
+                                    {val.label}
+                                  </option>
+                                ))}
+                              </Field>
+                              {errors.tab && touched.tab ? (
+                                <span className="errorMsg">{errors.tab}</span>
+                              ) : null}
+                            </div>
+                          </Col>
+                        </Row>
                         <Row>
                           <Col xs={12} sm={12} md={12}>
                             <div className="form-group">
