@@ -191,6 +191,7 @@ export default class RnDCategories extends Component {
       categoryId: "",
       showModal: false.valueOf,
       showModal: false,
+      showPreview: false,
     });
   };
 
@@ -217,7 +218,11 @@ export default class RnDCategories extends Component {
           showModal: true,
           categoryDetails: res.data.data[0],
           categoryId: id,
+          youtube_video_code: res.data.data[0].youtube_url,
         });
+        if (res.data.data[0].youtube_url != "") {
+          this.setState({ showPreview: true });
+        }
       })
       .catch((err) => {
         showErrorMessage(err, this.props);
@@ -418,7 +423,7 @@ export default class RnDCategories extends Component {
         categoryDetails.status || +categoryDetails.status === 0
           ? categoryDetails.status.toString()
           : "",
-      tab: categoryDetails.tab ? categoryDetails.tab : "",
+      tab: categoryDetails.inside_tab_id ? categoryDetails.inside_tab_id : "",
       inside_srl_file: "",
       video_url: categoryDetails.youtube_url
         ? htmlDecode(categoryDetails.youtube_url)
@@ -504,7 +509,6 @@ export default class RnDCategories extends Component {
               </div>
             </div>
           </section>
-          {console.log(">>>>>>>>", this.state.tabData)}
           <section className="content">
             <div className="box">
               <div className="box-body">
