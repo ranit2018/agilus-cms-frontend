@@ -139,7 +139,7 @@ export default class LifeAtSrl extends Component {
   }
 
   getCategories = (page = 1) => {
-    API.get(`/api/home/life_at`)
+    API.get(`/api/home/life_at?page=${page}`)
       .then((res) => {
         this.setState({
           categoriesList: res.data.data,
@@ -383,6 +383,10 @@ export default class LifeAtSrl extends Component {
   componentDidMount() {
     this.getCategories();
   }
+  handlePageChange = (pageNumber) => {
+    this.setState({ activePage: pageNumber });
+    this.getCategories(pageNumber > 0 ? pageNumber : 1);
+  };
 
   render() {
     const { categoryDetails } = this.state;
