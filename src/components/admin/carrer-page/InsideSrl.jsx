@@ -144,7 +144,7 @@ export default class RnDCategories extends Component {
   getCategories = (page = 1) => {
     const status = this.state.status;
 
-    API.get(`/api/home/inside_us`)
+    API.get(`/api/home/inside_us?page=${page}`)
       .then((res) => {
         this.setState({
           categoriesList: res.data.data,
@@ -411,6 +411,10 @@ export default class RnDCategories extends Component {
     this.getCategories();
     this.getTabs();
   }
+  handlePageChange = (pageNumber) => {
+    this.setState({ activePage: pageNumber });
+    this.getCategories(pageNumber > 0 ? pageNumber : 1);
+  };
 
   render() {
     const { categoryDetails } = this.state;
