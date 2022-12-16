@@ -65,14 +65,14 @@ const setDate = (refOBj) => (cell) => {
 const actionFormatter = (refObj) => (cell, row) => {
   return (
     <div className="actionStyle">
-      <LinkWithTooltip
+      {/* <LinkWithTooltip
         tooltip="Click to edit"
         href="#"
         clicked={(e) => refObj.modalShowHandler(e, cell)}
         id="tooltip-1"
       >
         <i className="far fa-edit" />
-      </LinkWithTooltip>
+      </LinkWithTooltip> */}
 
       <LinkWithTooltip
         tooltip="Click to Resend email"
@@ -229,6 +229,8 @@ class AppliedJobs extends Component {
           job_department
         )}&experience=${encodeURIComponent(
           experince
+        )}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(
+          to
         )}&status=${encodeURIComponent(application_status)}`
       )
         .then((res) => {
@@ -550,7 +552,7 @@ class AppliedJobs extends Component {
                       />
                     </div>
 
-                    <div className="">
+                    {/* <div className="">
                       <select
                         name="application_status"
                         id="application_status"
@@ -565,7 +567,7 @@ class AppliedJobs extends Component {
                           );
                         })}
                       </select>
-                    </div>
+                    </div> */}
                     <div className="">
                       <select
                         name="department"
@@ -719,12 +721,12 @@ class AppliedJobs extends Component {
                   >
                     Preferred Location
                   </TableHeaderColumn>
-                  <TableHeaderColumn
+                  {/* <TableHeaderColumn
                     dataField="status"
                     dataFormat={custStatus(this)}
                   >
                     Application Status
-                  </TableHeaderColumn>
+                  </TableHeaderColumn> */}
                   <TableHeaderColumn
                     dataField="date_posted"
                     dataFormat={setDate(this)}
@@ -732,13 +734,13 @@ class AppliedJobs extends Component {
                     Post Date
                   </TableHeaderColumn>
 
-                  <TableHeaderColumn
+                  {/* <TableHeaderColumn
                     dataField="id"
                     dataFormat={actionFormatter(this)}
                     dataAlign=""
                   >
                     Action
-                  </TableHeaderColumn>
+                  </TableHeaderColumn> */}
                 </BootstrapTable>
 
                 {this.state.totalCount > 10 ? (

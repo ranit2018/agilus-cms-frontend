@@ -8,6 +8,8 @@ import API from "../../../shared/hrAxios";
 import * as Yup from "yup";
 import swal from "sweetalert";
 import { showErrorMessage } from "../../../shared/handle_error";
+import Loader from "react-loader-spinner";
+
 import {
   htmlDecode,
   getHeightWidth,
@@ -192,6 +194,7 @@ class Jobs extends Component {
   }
 
   getJobsList = (page = 1) => {
+    this.setState({ isLoading: true });
     API.get(`api/job_portal/job`)
       .then((res) => {
         this.setState({
@@ -378,9 +381,10 @@ class Jobs extends Component {
   }
 
   jobSearch = (e) => {
+    this.setState({ isLoading: true });
+
     e.preventDefault();
     const search_title = document.getElementById("search_job_title").value;
-    console.log("search_title:", search_title);
     const search_job_role = document.getElementById("search_job_role").value;
     const job_location = document.getElementById("search_job_location").value;
     const travel_needed = document.getElementById("search_category_name").value;
@@ -407,8 +411,6 @@ class Jobs extends Component {
         travel_needed
       )}&experience=${encodeURIComponent(
         experience
-      )}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(
-        to
       )}&status=${encodeURIComponent(search_status)}`
     )
       .then((res) => {
@@ -810,20 +812,12 @@ class Jobs extends Component {
                     </select>
                   </div>
                   <div className="">
-                    <select
+                    <input
                       className="form-control"
-                      name="status"
+                      name="search_job_location"
                       id="search_job_location"
-                    >
-                      <option value="">Select Job Location</option>
-                      {this.state.job_location_arr.map((val, i) => {
-                        return (
-                          <option key={i} value={val.value}>
-                            {val.label}
-                          </option>
-                        );
-                      })}
-                    </select>
+                      placeholder="Search By Job Loaction"
+                    ></input>
                   </div>
                   <div className="">
                     <select

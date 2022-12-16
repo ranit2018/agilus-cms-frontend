@@ -139,7 +139,7 @@ class Admin extends Component {
     return (
       <Switch>
         <Route exact path="/" component={Login} />
-        <Route exact path="/hr" component={HRLogin} />
+        <Route exact path="/hr/login" component={HRLogin} />
         {/* hr start */}
         <PrivateRoute1
           path="/hr/dashboard"
