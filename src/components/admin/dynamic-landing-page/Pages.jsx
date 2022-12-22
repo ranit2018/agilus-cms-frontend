@@ -57,15 +57,16 @@ function LinkWithTooltip({ id, children, href, tooltip, clicked }) {
 
 const actionFormatter = (refObj) => (cell, row) => {
   return (
-    
     <div className="actionStyle">
       <LinkWithTooltip
         tooltip="Click to view page"
         href="#"
-       clicked={(e) => {
-        window.open(`http://srl.indusnettechnologies.com/landing/${row.slug}`, "_blank")
-        
-       }}
+        clicked={(e) => {
+          window.open(
+            `http://srl.indusnettechnologies.com/landing/${row.slug}`,
+            "_blank"
+          );
+        }}
         id="tooltip-0"
       >
         <i className="far fa-eye" />
@@ -145,6 +146,31 @@ const setBannerImage = (refObj) => (cell, row) => {
         alt="dynamic landing page"
         width="100%"
         onClick={(e) => refObj.imageModalShowHandler(row.page_image)}
+      ></img>
+    </div>
+
+    // </LinkWithTooltip>
+  );
+};
+const setBannerImageMobile = (refObj) => (cell, row) => {
+  return (
+    // <LinkWithTooltip
+    //   tooltip={"View Image"}
+    //   id="tooltip-1"
+    //   clicked={(e) => refObj.imageModalShowHandler(row.banner_image)}
+    // >
+    <div
+      style={{
+        width: "100px",
+        height: "100px",
+        overflow: "hidden",
+      }}
+    >
+      <img
+        src={cell}
+        alt="dynamic landing page"
+        width="100%"
+        onClick={(e) => refObj.imageModalShowHandler(row.second_page_image)}
       ></img>
     </div>
 
@@ -487,9 +513,9 @@ class Pages extends Component {
   editPage(e, id) {
     e.preventDefault();
     this.props.history.push({
-      pathname: '/edit-page/' + id      
-  })
-}
+      pathname: "/edit-page/" + id,
+    });
+  }
 
   render() {
     const { dynamicLandingPageDetails } = this.state;
@@ -571,7 +597,6 @@ class Pages extends Component {
 
     return (
       <Layout {...this.props}>
-        
         <div className="content-wrapper">
           <section className="content-header">
             <div className="row">
@@ -587,10 +612,12 @@ class Pages extends Component {
                   <button
                     type="button"
                     className="btn btn-info btn-sm"
-                    onClick={(e) => this.props.history.push({
-                      pathname: '/add-page',
-                      state: { categoryList: this.state.categoryList }
-                  })}
+                    onClick={(e) =>
+                      this.props.history.push({
+                        pathname: "/add-page",
+                        state: { categoryList: this.state.categoryList },
+                      })
+                    }
                   >
                     <i className="fas fa-plus m-r-5" /> Add Page
                   </button>
@@ -655,7 +682,13 @@ class Pages extends Component {
                     dataField="page_image"
                     dataFormat={setBannerImage(this)}
                   >
-                    Image
+                    Image(Desktop)
+                  </TableHeaderColumn>
+                  <TableHeaderColumn
+                    dataField="second_page_image"
+                    dataFormat={setBannerImageMobile(this)}
+                  >
+                    Image(Mobile)
                   </TableHeaderColumn>
 
                   <TableHeaderColumn
@@ -945,7 +978,6 @@ class Pages extends Component {
                     }}
                   </Formik>
                 </Modal>
-
 
                 <Modal
                   show={this.state.thumbNailModal}

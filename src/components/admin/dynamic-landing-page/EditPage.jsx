@@ -36,44 +36,42 @@ const stringFormat = (str) => {
 };
 
 const initialValues = {
-    image: "",
-    page_name: "",
-    page_slug: "",
-    feedback: "",
-  };
-  
+  image: "",
+  second_lead_landing_page_image: "",
+  page_name: "",
+  page_slug: "",
+  feedback: "",
+};
 
 class AddPage extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {        
-        dynamicLandingPageDetails: {},
-        isLoading: false,
-        showModal: false,
-        page_name: "",
-        activePage: 1,
-        totalCount: 0,
-        itemPerPage: 10,
-        thumbNailModal: false,
-        selectStatus: [
-          { value: "0", label: "Inactive" },
-          { value: "1", label: "Active" },
-        ],
-        // thumbNailModal: false,
-        apiAfterValidation: true,
-        dynamic_landing_page_id: 0,
-        status: "",
-        avalible_slug: []        
-      };     
-      this.setState({ dynamic_landing_page_id: this.props.match.params.id });
-      
+    this.state = {
+      dynamicLandingPageDetails: {},
+      isLoading: false,
+      showModal: false,
+      page_name: "",
+      activePage: 1,
+      totalCount: 0,
+      itemPerPage: 10,
+      thumbNailModal: false,
+      selectStatus: [
+        { value: "0", label: "Inactive" },
+        { value: "1", label: "Active" },
+      ],
+      // thumbNailModal: false,
+      apiAfterValidation: true,
+      dynamic_landing_page_id: 0,
+      status: "",
+      avalible_slug: [],
+    };
+    this.setState({ dynamic_landing_page_id: this.props.match.params.id });
   }
 
-
   componentDidMount() {
-    let id =  this.props.match.params.id;
-    this.setState({ dynamic_landing_page_id:id });
+    let id = this.props.match.params.id;
+    this.setState({ dynamic_landing_page_id: id });
     //alert(this.props.match.params.id )
     this.getIndividualDynamicLandingPage(this.props.match.params.id);
   }
@@ -98,7 +96,6 @@ class AddPage extends Component {
     formData.append("status", values.status);
     formData.append("content", values.content);
     formData.append("page_slug", values.page_slug);
-    console.log(">>>>>>", this.state.dynamic_landing_page_id);   
 
     if (this.state.image) {
       if (this.state.image.size > FILE_SIZE) {
@@ -106,6 +103,19 @@ class AddPage extends Component {
         actions.setSubmitting(false);
       } else {
         formData.append("lead_landing_page_image", this.state.image);
+      }
+    }
+    if (this.state.second_lead_landing_page_image) {
+      if (this.state.second_lead_landing_page_image.size > FILE_SIZE) {
+        actions.setErrors({
+          second_lead_landing_page_image: "The file exceeds maximum size.",
+        });
+        actions.setSubmitting(false);
+      } else {
+        formData.append(
+          "second_lead_landing_page_image",
+          this.state.second_lead_landing_page_image
+        );
       }
     }
 
@@ -146,7 +156,7 @@ class AddPage extends Component {
         });
     }
   };
-  
+
   fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
     setFieldTouched("image");
     setFieldValue("image", event.target.value);
@@ -181,12 +191,52 @@ class AddPage extends Component {
       });
     }
   };
+  fileChangedHandlerMobile = (
+    event,
+    setFieldTouched,
+    setFieldValue,
+    setErrors
+  ) => {
+    setFieldTouched("second_lead_landing_page_image");
+    setFieldValue("second_lead_landing_page_image", event.target.value);
+
+    const SUPPORTED_FORMATS = ["image/png", "image/jpeg", "image/jpg"];
+    if (!event.target.files[0]) {
+      //Supported
+      this.setState({
+        second_lead_landing_page_image: "",
+        isValidFile: true,
+      });
+      return;
+    }
+    if (
+      event.target.files[0] &&
+      SUPPORTED_FORMATS.includes(event.target.files[0].type)
+    ) {
+      //Supported
+      this.setState({
+        second_lead_landing_page_image: event.target.files[0],
+        isValidFile: true,
+      });
+    } else {
+      //Unsupported
+      setErrors({
+        second_lead_landing_page_image:
+          "Only files with the following extensions are allowed: png jpg jpeg",
+      }); //Not working- So Added validation in "yup"
+      this.setState({
+        second_lead_landing_page_image: "",
+        isValidFile: false,
+      });
+    }
+  };
 
   render() {
     const { dynamicLandingPageDetails } = this.state;
 
     const newInitialValues = Object.assign(initialValues, {
       image: "",
+      second_lead_landing_page_image: "",
       page_name: dynamicLandingPageDetails.name
         ? htmlDecode(dynamicLandingPageDetails.name)
         : "",
@@ -206,62 +256,79 @@ class AddPage extends Component {
     let validateStopFlag = {};
 
     if (this.state.dynamic_landing_page_id > 0) {
-        validateStopFlag = Yup.object().shape({
-          page_name: Yup.string().required("Please enter the name"),
-          page_slug: Yup.string()
-            .matches(
-              /^[a-zA-Z-]+$/,
-              "Please enter the page slug without any special character"
-            )
-            .required("Please enter the page slug"),
-          content: Yup.string(),
-  
-          image: Yup.string()
-            .notRequired()
-            .test(
-              "image",
-              "Only files with the following extensions are allowed: png jpg jpeg",
-              (image) => {
-                if (image) {
-                  return this.state.isValidFile;
-                } else {
-                  return true;
-                }
+      validateStopFlag = Yup.object().shape({
+        page_name: Yup.string().required("Please enter the name"),
+        page_slug: Yup.string()
+          .matches(
+            /^[a-zA-Z-]+$/,
+            "Please enter the page slug without any special character"
+          )
+          .required("Please enter the page slug"),
+        content: Yup.string(),
+
+        image: Yup.string()
+          .notRequired()
+          .test(
+            "image",
+            "Only files with the following extensions are allowed: png jpg jpeg",
+            (image) => {
+              if (image) {
+                return this.state.isValidFile;
+              } else {
+                return true;
               }
-            ),
-          status: Yup.string()
-            .trim()
-            .required("Please select status")
-            .matches(/^[0|1]$/, "Invalid status selected"),
-        });
-      } else {
-        validateStopFlag = Yup.object().shape({
-          page_name: Yup.string().required("Please enter the name"),
-          page_slug: Yup.string()
-            .matches(
-              /^[a-zA-Z-]+$/,
-              "Please enter the page slug without any apecial chracter"
-            )
-            .required("Please enter the page slug"),
-          content: Yup.string(),
-  
-          image: Yup.string()
-            .required("Please select the image")
-            .test(
-              "image",
-              "Only files with the following extensions are allowed: png jpg jpeg",
-              () => this.state.isValidFile
-            ),
-          status: Yup.string()
-            .trim()
-            .required("Please select status")
-            .matches(/^[0|1]$/, "Invalid status selected"),
-        });
-      }
+            }
+          ),
+        second_lead_landing_page_image: Yup.string()
+          .notRequired()
+          .test(
+            "image",
+            "Only files with the following extensions are allowed: png jpg jpeg",
+            (image) => {
+              if (image) {
+                return this.state.isValidFile;
+              } else {
+                return true;
+              }
+            }
+          ),
+        status: Yup.string()
+          .trim()
+          .required("Please select status")
+          .matches(/^[0|1]$/, "Invalid status selected"),
+      });
+    } else {
+      validateStopFlag = Yup.object().shape({
+        page_name: Yup.string().required("Please enter the name"),
+        page_slug: Yup.string()
+          .matches(
+            /^[a-zA-Z-]+$/,
+            "Please enter the page slug without any apecial chracter"
+          )
+          .required("Please enter the page slug"),
+        content: Yup.string(),
 
+        image: Yup.string()
+          .required("Please select the image")
+          .test(
+            "image",
+            "Only files with the following extensions are allowed: png jpg jpeg",
+            () => this.state.isValidFile
+          ),
 
-    
-    
+        second_lead_landing_page_image: Yup.string()
+          .required("Please select the image")
+          .test(
+            "image",
+            "Only files with the following extensions are allowed: png jpg jpeg",
+            () => this.state.isValidFile
+          ),
+        status: Yup.string()
+          .trim()
+          .required("Please select status")
+          .matches(/^[0|1]$/, "Invalid status selected"),
+      });
+    }
 
     return (
       <Layout {...this.props}>
@@ -285,242 +352,270 @@ class AddPage extends Component {
           <section className="content">
             <div className="box">
               <div className="box-body">
-                  <Formik
-                    initialValues={newInitialValues}
-                    validationSchema={validateStopFlag}
-                    onSubmit={this.handleSubmitEvent}
-                  >
-                    {({
-                      values,
-                      errors,
-                      touched,
-                      isValid,
-                      isSubmitting,
-                      setFieldValue,
-                      setFieldTouched,
-                      handleChange,
-                      setErrors,
-                    }) => {
-                      return (
-                        <Form>
-                          {this.state.showModalLoader === true ? (
-                            <div className="loading_reddy_outer">
-                              <div className="loading_reddy">
-                                <img src={whitelogo} alt="loader" />
-                              </div>
+                <Formik
+                  initialValues={newInitialValues}
+                  validationSchema={validateStopFlag}
+                  onSubmit={this.handleSubmitEvent}
+                >
+                  {({
+                    values,
+                    errors,
+                    touched,
+                    isValid,
+                    isSubmitting,
+                    setFieldValue,
+                    setFieldTouched,
+                    handleChange,
+                    setErrors,
+                  }) => {
+                    return (
+                      <Form>
+                        {this.state.showModalLoader === true ? (
+                          <div className="loading_reddy_outer">
+                            <div className="loading_reddy">
+                              <img src={whitelogo} alt="loader" />
                             </div>
-                          ) : (
-                            ""
-                          )}
-                          
-                          
-                            <div className="contBox">
-                              <Row>
-                                <Col xs={12} sm={12} md={12}>
-                                  <div className="form-group">
-                                    <label>
-                                      Page Name
-                                      {this.state.dynamic_landing_page_id >
-                                      0 ? null : (
-                                        <span className="impField">*</span>
-                                      )}
-                                      <span className="impField">*</span>
-                                    </label>
-                                    <Field
-                                      name="page_name"
-                                      type="text"
-                                      className={`form-control`}
-                                      placeholder="Enter name"
-                                      autoComplete="off"
-                                      value={values.page_name}
-                                    />
-                                    {errors.page_name && touched.page_name ? (
-                                      <span className="errorMsg">
-                                        {errors.page_name}
-                                      </span>
-                                    ) : null}
-                                  </div>
-                                </Col>
-                              </Row>
-                              <Row>
-                                <Col xs={12} sm={12} md={12}>
-                                  <div className="form-group">
-                                    <label>
-                                      Page Slug
-                                      <span className="impField">*</span>
-                                    </label>
-                                    <Field
-                                      name="page_slug"
-                                      type="text"
-                                      className={`form-control`}
-                                      placeholder="Enter Location"
-                                      autoComplete="off"
-                                      value={values.page_slug}
-                                    />
-                                    {errors.page_slug && touched.page_slug ? (
-                                      <span className="errorMsg">
-                                        {errors.page_slug}
-                                      </span>
-                                    ) : null}
-                                  </div>
-                                </Col>
-                              </Row>
+                          </div>
+                        ) : (
+                          ""
+                        )}
 
-                              <Row>
-                                <Col xs={12} sm={12} md={12}>
-                                  <div className="form-group">
-                                    <label>
-                                      Upload Image
-                                      {this.state.dynamic_landing_page_id ==
-                                      0 ? (
-                                        <span className="impField">*</span>
-                                      ) : null}
-                                      <br />{" "}
-                                      <i> {this.state.fileValidationMessage}</i>
-                                      <br />{" "}
-                                      <i>{this.state.validationMessage}</i>
-                                    </label>
-                                    <Field
-                                      name="image"
-                                      type="file"
-                                      className={`form-control`}
-                                      placeholder="Banner File"
-                                      autoComplete="off"
-                                      onChange={(e) => {
-                                        this.fileChangedHandler(
-                                          e,
-                                          setFieldTouched,
-                                          setFieldValue,
-                                          setErrors
-                                        );
-                                      }}
-                                    />
-                                    {errors.image && touched.image ? (
-                                      <span className="errorMsg">
-                                        {errors.image}
-                                      </span>
-                                    ) : null}
-                                  </div>
-                                </Col>
-                              </Row>
-                              <Row>
-                                <Col xs={12} sm={12} md={12}>
-                                  <label>Banner Contet</label>
-                                  <Editor
-                                    value={values.content}
-                                    init={{
-                                      height: 200,
-                                      menubar: false,
-                                      extended_valid_elements: 'span',
-                                      keep_styles: true,
-                                      
-                                      plugins: [
-                                        "advlist autolink lists link image charmap print preview anchor",
-                                        "searchreplace visualblocks  code fullscreen",
-                                        "insertdatetime media table paste code help wordcount",
-                                      ],
-                                      toolbar:
-                                        "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
-                                      content_style:
-                                        "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
-                                      file_browser_callback_types: "image",
-                                      file_picker_callback: function (
-                                        callback,
-                                        value,
-                                        meta
-                                      ) {
-                                        if (meta.filetype == "image") {
-                                          var input =
-                                            document.getElementById("my-file");
-                                          input.click();
-                                          input.onchange = function () {
-                                            var file = input.files[0];
-                                            var reader = new FileReader();
-                                            reader.onload = function (e) {
-                                              // console.log(
-                                              //   "name",
-                                              //   e.target.result
-                                              // );
-                                              callback(e.target.result, {
-                                                alt: file.name,
-                                              });
-                                            };
-                                            reader.readAsDataURL(file);
-                                          };
-                                        }
-                                      },
-                                      paste_data_images: true,
-                                    }}
-                                    onEditorChange={(value) =>
-                                      setFieldValue("content", value)
-                                    }
-                                  />
-                                  {errors.content && touched.content ? (
-                                    <span className="errorMsg">
-                                      {errors.content}
-                                    </span>
+                        <div className="contBox">
+                          <Row>
+                            <Col xs={12} sm={12} md={12}>
+                              <div className="form-group">
+                                <label>
+                                  Page Name
+                                  {this.state.dynamic_landing_page_id >
+                                  0 ? null : (
+                                    <span className="impField">*</span>
+                                  )}
+                                  <span className="impField">*</span>
+                                </label>
+                                <Field
+                                  name="page_name"
+                                  type="text"
+                                  className={`form-control`}
+                                  placeholder="Enter name"
+                                  autoComplete="off"
+                                  value={values.page_name}
+                                />
+                                {errors.page_name && touched.page_name ? (
+                                  <span className="errorMsg">
+                                    {errors.page_name}
+                                  </span>
+                                ) : null}
+                              </div>
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col xs={12} sm={12} md={12}>
+                              <div className="form-group">
+                                <label>
+                                  Page Slug
+                                  <span className="impField">*</span>
+                                </label>
+                                <Field
+                                  name="page_slug"
+                                  type="text"
+                                  className={`form-control`}
+                                  placeholder="Enter Location"
+                                  autoComplete="off"
+                                  value={values.page_slug}
+                                />
+                                {errors.page_slug && touched.page_slug ? (
+                                  <span className="errorMsg">
+                                    {errors.page_slug}
+                                  </span>
+                                ) : null}
+                              </div>
+                            </Col>
+                          </Row>
+
+                          <Row>
+                            <Col xs={12} sm={12} md={12}>
+                              <div className="form-group">
+                                <label>
+                                  Upload Image(Desktop)
+                                  {this.state.dynamic_landing_page_id == 0 ? (
+                                    <span className="impField">*</span>
                                   ) : null}
-                                </Col>
-                              </Row>
-                              <Row>
-                                <Col xs={12} sm={12} md={12}>
-                                  <div className="form-group">
-                                    <label>
-                                      Status
-                                      <span className="impField">*</span>
-                                    </label>
-                                    <Field
-                                      name="status"
-                                      component="select"
-                                      className={`selectArowGray form-control`}
-                                      autoComplete="off"
-                                      value={values.status}
-                                    >
-                                      <option key="-1" value="">
-                                        Select
-                                      </option>
-                                      {this.state.selectStatus.map(
-                                        (status, i) => (
-                                          <option key={i} value={status.value}>
-                                            {status.label}
-                                          </option>
-                                        )
-                                      )}
-                                    </Field>
-                                    {errors.status && touched.status ? (
-                                      <span className="errorMsg">
-                                        {errors.status}
-                                      </span>
-                                    ) : null}
-                                  </div>
-                                </Col>
-                              </Row>
-                            </div>
-                          
-                          
-                            <button
-                              className={`btn btn-success btn-sm ${
-                                isValid ? "btn-custom-green" : "btn-disable"
-                              } m-r-10`}
-                              type="submit"
-                              disabled={
-                                isValid ? (isSubmitting ? true : false) : true
-                              }
-                            >
-                              {this.state.dynamic_landing_page_id > 0
-                                ? isSubmitting
-                                  ? "Updating..."
-                                  : "Update"
-                                : isSubmitting
-                                ? "Submitting..."
-                                : "Submit"}
-                            </button>
-                            
-                         
-                        </Form>
-                      );
-                    }}
-                  </Formik>
+                                  <br />{" "}
+                                  <i> {this.state.fileValidationMessage}</i>
+                                  <br /> <i>{this.state.validationMessage}</i>
+                                </label>
+                                <Field
+                                  name="image"
+                                  type="file"
+                                  className={`form-control`}
+                                  placeholder="Banner File"
+                                  autoComplete="off"
+                                  onChange={(e) => {
+                                    this.fileChangedHandler(
+                                      e,
+                                      setFieldTouched,
+                                      setFieldValue,
+                                      setErrors
+                                    );
+                                  }}
+                                />
+                                {errors.image && touched.image ? (
+                                  <span className="errorMsg">
+                                    {errors.image}
+                                  </span>
+                                ) : null}
+                              </div>
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col xs={12} sm={12} md={12}>
+                              <div className="form-group">
+                                <label>
+                                  Upload Image(Mobile)
+                                  {this.state.dynamic_landing_page_id == 0 ? (
+                                    <span className="impField">*</span>
+                                  ) : null}
+                                  <br />{" "}
+                                  <i> {this.state.fileValidationMessage}</i>
+                                  <br /> <i>{this.state.validationMessage}</i>
+                                </label>
+                                <Field
+                                  name="second_lead_landing_page_image"
+                                  type="file"
+                                  className={`form-control`}
+                                  placeholder="Banner File"
+                                  autoComplete="off"
+                                  onChange={(e) => {
+                                    this.fileChangedHandlerMobile(
+                                      e,
+                                      setFieldTouched,
+                                      setFieldValue,
+                                      setErrors
+                                    );
+                                  }}
+                                />
+                                {errors.second_lead_landing_page_image &&
+                                touched.second_lead_landing_page_image ? (
+                                  <span className="errorMsg">
+                                    {errors.second_lead_landing_page_image}
+                                  </span>
+                                ) : null}
+                              </div>
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col xs={12} sm={12} md={12}>
+                              <label>Banner Contet</label>
+                              <Editor
+                                value={values.content}
+                                init={{
+                                  height: 200,
+                                  menubar: false,
+                                  extended_valid_elements: "span",
+                                  keep_styles: true,
+
+                                  plugins: [
+                                    "advlist autolink lists link image charmap print preview anchor",
+                                    "searchreplace visualblocks  code fullscreen",
+                                    "insertdatetime media table paste code help wordcount",
+                                  ],
+                                  toolbar:
+                                    "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
+                                  content_style:
+                                    "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                                  file_browser_callback_types: "image",
+                                  file_picker_callback: function (
+                                    callback,
+                                    value,
+                                    meta
+                                  ) {
+                                    if (meta.filetype == "image") {
+                                      var input =
+                                        document.getElementById("my-file");
+                                      input.click();
+                                      input.onchange = function () {
+                                        var file = input.files[0];
+                                        var reader = new FileReader();
+                                        reader.onload = function (e) {
+                                          // console.log(
+                                          //   "name",
+                                          //   e.target.result
+                                          // );
+                                          callback(e.target.result, {
+                                            alt: file.name,
+                                          });
+                                        };
+                                        reader.readAsDataURL(file);
+                                      };
+                                    }
+                                  },
+                                  paste_data_images: true,
+                                }}
+                                onEditorChange={(value) =>
+                                  setFieldValue("content", value)
+                                }
+                              />
+                              {errors.content && touched.content ? (
+                                <span className="errorMsg">
+                                  {errors.content}
+                                </span>
+                              ) : null}
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col xs={12} sm={12} md={12}>
+                              <div className="form-group">
+                                <label>
+                                  Status
+                                  <span className="impField">*</span>
+                                </label>
+                                <Field
+                                  name="status"
+                                  component="select"
+                                  className={`selectArowGray form-control`}
+                                  autoComplete="off"
+                                  value={values.status}
+                                >
+                                  <option key="-1" value="">
+                                    Select
+                                  </option>
+                                  {this.state.selectStatus.map((status, i) => (
+                                    <option key={i} value={status.value}>
+                                      {status.label}
+                                    </option>
+                                  ))}
+                                </Field>
+                                {errors.status && touched.status ? (
+                                  <span className="errorMsg">
+                                    {errors.status}
+                                  </span>
+                                ) : null}
+                              </div>
+                            </Col>
+                          </Row>
+                        </div>
+
+                        <button
+                          className={`btn btn-success btn-sm ${
+                            isValid ? "btn-custom-green" : "btn-disable"
+                          } m-r-10`}
+                          type="submit"
+                          disabled={
+                            isValid ? (isSubmitting ? true : false) : true
+                          }
+                        >
+                          {this.state.dynamic_landing_page_id > 0
+                            ? isSubmitting
+                              ? "Updating..."
+                              : "Update"
+                            : isSubmitting
+                            ? "Submitting..."
+                            : "Submit"}
+                        </button>
+                      </Form>
+                    );
+                  }}
+                </Formik>
               </div>
             </div>
           </section>

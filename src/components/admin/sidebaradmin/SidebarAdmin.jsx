@@ -97,13 +97,14 @@ class SidebarAdmin extends Component {
     ) {
       this.setState({ shown: "5" });
     }
-   if (
-     path === "/dynamic_landing_page/page" ||
-     path === "/dynamic_landing_page/lead"
-   ) {
-     this.setState({ shown: "6" });
-   }
-
+    if (
+      path === "/dynamic_landing_page/page" ||
+      path === "/dynamic_landing_page/lead" ||
+      path === "/add-page" ||
+      path === "/edit-page/:id"
+    ) {
+      this.setState({ shown: "6" });
+    }
 
     if (this.props.isLoggedIn === true) {
       const superAdmin = getSuperAdmin(localStorage.admin_token);
@@ -369,7 +370,9 @@ class SidebarAdmin extends Component {
             </Link>
 
             <ul className="treeview-menu">
-              {this.props.path_name === "/dynamic_landing_page/page" ? (
+              {this.props.path_name === "/dynamic_landing_page/page" ||
+              this.props.path_name === "/add-page" ||
+              this.props.path_name === "/edit-page/:id" ? (
                 <li className="active">
                   {" "}
                   <Link to="/dynamic_landing_page/page">
@@ -393,8 +396,7 @@ class SidebarAdmin extends Component {
                   {" "}
                   <Link to="/dynamic_landing_page/lead">
                     {" "}
-                    <i className="fas fa-file-medical"></i>{" "}
-                    <span> Leads </span>
+                    <i className="fas fa-file-medical"></i> <span> Leads </span>
                   </Link>{" "}
                 </li>
               ) : (
@@ -402,8 +404,7 @@ class SidebarAdmin extends Component {
                   {" "}
                   <Link to="/dynamic_landing_page/lead">
                     {" "}
-                    <i className="fas fa-file-medical"></i>{" "}
-                    <span> Leads </span>
+                    <i className="fas fa-file-medical"></i> <span> Leads </span>
                   </Link>{" "}
                 </li>
               )}
