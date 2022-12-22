@@ -8,7 +8,6 @@ import API from "../../../shared/hrAxios";
 import * as Yup from "yup";
 import swal from "sweetalert";
 import { showErrorMessage } from "../../../shared/handle_error";
-import Loader from "react-loader-spinner";
 
 import {
   htmlDecode,
