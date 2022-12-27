@@ -63,7 +63,7 @@ const actionFormatter = (refObj) => (cell, row) => {
         href="#"
         clicked={(e) => {
           window.open(
-            `http://srl.indusnettechnologies.com/landing/${row.slug}`,
+            `https://srlworld.com/landing/${row.slug}`,
             "_blank"
           );
         }}

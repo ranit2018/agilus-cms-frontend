@@ -245,7 +245,7 @@ class SidebarAdmin extends Component {
             </li>
           )}
 
-          <li className={rotate == "6" ? "treeview active" : "treeview"}>
+          {/* <li className={rotate == "6" ? "treeview active" : "treeview"}>
             <Link to="#" data-id="6" onClick={this.handlePlus}>
               <i
                 className="fas fa-certificate sub-menu"
@@ -367,7 +367,7 @@ class SidebarAdmin extends Component {
                 </li>
               )}
             </ul>
-          </li>
+          </li> */}
 
           {this.props.path_name === "/events" ? (
             <li className="active">
