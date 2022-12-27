@@ -116,6 +116,15 @@ class SidebarAdmin extends Component {
       this.setState({ shown: "6" });
     }
 
+    if (
+      path === "/dynamic_landing_page/page" ||
+      path === "/dynamic_landing_page/lead" ||
+      path === "/add-page" ||
+      path === "/edit-page/:id"
+    ) {
+      this.setState({ shown: "7" });
+    }
+
     if (this.props.isLoggedIn === true) {
       const superAdmin = getSuperAdmin(localStorage.admin_token);
       if (superAdmin) {
@@ -481,6 +490,73 @@ class SidebarAdmin extends Component {
           </li>
 
           {/* =================================================== */}
+
+          {/* dynamic landing apge start */}
+          <li className={rotate == "7" ? "treeview active" : "treeview"}>
+            <Link to="#" data-id="7" onClick={this.handlePlus}>
+              <i
+                className="fas fa-certificate sub-menu"
+                data-id="7"
+                onClick={this.handlePlus}
+              ></i>{" "}
+              <span data-id="7" onClick={this.handlePlus}>
+                Dynamic Landing Page{" "}
+              </span>
+              <span className="pull-right-container">
+                <i
+                  data-id="7"
+                  onClick={this.handlePlus}
+                  className={
+                    rotate == "7"
+                      ? "fa pull-right fa-minus"
+                      : "fa pull-right fa-plus"
+                  }
+                ></i>
+              </span>
+            </Link>
+
+            <ul className="treeview-menu">
+              {this.props.path_name === "/dynamic_landing_page/page" ||
+              this.props.path_name === "/add-page" ||
+              this.props.path_name === "/edit-page/:id" ? (
+                <li className="active">
+                  {" "}
+                  <Link to="/dynamic_landing_page/page">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> Pages </span>
+                  </Link>{" "}
+                </li>
+              ) : (
+                <li>
+                  {" "}
+                  <Link to="/dynamic_landing_page/page">
+                    {" "}
+                    <i className="fas fa-compress"></i> <span> Pages </span>
+                  </Link>{" "}
+                </li>
+              )}
+            </ul>
+            <ul className="treeview-menu">
+              {this.props.path_name === "/dynamic_landing_page/lead" ? (
+                <li className="active">
+                  {" "}
+                  <Link to="/dynamic_landing_page/lead">
+                    {" "}
+                    <i className="fas fa-file-medical"></i> <span> Leads </span>
+                  </Link>{" "}
+                </li>
+              ) : (
+                <li>
+                  {" "}
+                  <Link to="/dynamic_landing_page/lead">
+                    {" "}
+                    <i className="fas fa-file-medical"></i> <span> Leads </span>
+                  </Link>{" "}
+                </li>
+              )}
+            </ul>
+          </li>
+          {/* dynaimc landing page end */}
           {this.props.path_name === "/sociallink" ? (
             <li className="active">
               {" "}

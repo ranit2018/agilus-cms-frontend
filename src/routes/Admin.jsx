@@ -54,10 +54,10 @@ import FAQ from "../components/admin/covid19/FAQ";
 import Speciality from "../components/admin/covid19/Speciality";
 import EBookUpload from "../components/admin/covid19/EBookUpload";
 import TestCenters from "../components/admin/covid19/TestCenters";
-import RnDCategories from "../components/admin/r-and-d/Categories"
-import RnDocuments from "../components/admin/r-and-d/Documents"
-import Partners from "../components/admin/r-and-d/Partners"
-import ContentTab from "../components/admin/r-and-d/ContentTab"
+import RnDCategories from "../components/admin/r-and-d/Categories";
+import RnDocuments from "../components/admin/r-and-d/Documents";
+import Partners from "../components/admin/r-and-d/Partners";
+import ContentTab from "../components/admin/r-and-d/ContentTab";
 
 import Members from "../components/admin/investors/Members";
 import CodeOfConduct from "../components/admin/investors/CodeOfConduct";
@@ -76,15 +76,20 @@ import AddContentAccordian from "../components/admin/r-and-d/AddContentAccordion
 import EditContentAccordion from "../components/admin/r-and-d/EditContentAccordion";
 import EditAccordion from "../components/admin/product-details/EditAccordion";
 import CurrentOffersPartnerPage from "../components/admin/partner-page/CurrentOffersPartnerPage";
-import AboutUsPartnerPage from '../components/admin/partner-page/AboutUsPartnerPage';
-import CenterImagePartnerPage from '../components/admin/partner-page/CenterImagePartnerPage';
-import AmenitiesPartnerPage from '../components/admin/partner-page/AmenitiesPartnerPage';
-import ServicesPartnerPage from '../components/admin/partner-page/ServicesPartnerPage';
+import AboutUsPartnerPage from "../components/admin/partner-page/AboutUsPartnerPage";
+import CenterImagePartnerPage from "../components/admin/partner-page/CenterImagePartnerPage";
+import AmenitiesPartnerPage from "../components/admin/partner-page/AmenitiesPartnerPage";
+import ServicesPartnerPage from "../components/admin/partner-page/ServicesPartnerPage";
+
+import Pages from "../components/admin/dynamic-landing-page/Pages";
+import Lead from "../components/admin/dynamic-landing-page/Leads";
+import AddPage from "../components/admin/dynamic-landing-page/AddPage";
+import EditPage from "../components/admin/dynamic-landing-page/EditPage";
+
 import "../assets/css/all.css";
 import "../assets/css/admin-style.css";
 import "../assets/css/admin-skin-blue.css";
 import "react-bootstrap-table/dist/react-bootstrap-table.min.css";
-
 
 // Private Route for inner component
 const PrivateRoute = ({ component: RefComponent, ...rest }) => (
@@ -126,7 +131,6 @@ class Admin extends Component {
         <PrivateRoute path="/edit-offer/:id" component={EditOffer} />
         <PrivateRoute path="/sociallink" component={SocialLink} />
         <PrivateRoute path="/message" component={Message} />
-
 
         <PrivateRoute
           path="/lead_landing_page/product"
@@ -177,7 +181,6 @@ class Admin extends Component {
           path="/partner-page/center-images"
           component={CenterImagePartnerPage}
         />
-
 
         <PrivateRoute path="/pages/privacy-policy" component={PrivacyPolicy} />
         <PrivateRoute path="/pages/disclaimer" component={Disclaimer} />
@@ -265,6 +268,11 @@ class Admin extends Component {
         />
         <PrivateRoute path="/ordering/faq" component={FaqOrdering} />
         <PrivateRoute path="/investors/memberstype" component={MembersType} />
+
+        <PrivateRoute path="/dynamic_landing_page/page" component={Pages} />
+        <PrivateRoute path="/add-page" component={AddPage} />
+        <PrivateRoute path="/edit-page/:id" component={EditPage} />
+        <PrivateRoute path="/dynamic_landing_page/lead" component={Lead} />
         <Route from="*" component={AdminPageNotFound} />
       </Switch>
     );
