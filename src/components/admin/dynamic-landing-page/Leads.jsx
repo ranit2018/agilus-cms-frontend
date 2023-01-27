@@ -362,7 +362,7 @@ class LeadForms extends Component {
     }
 
     API.get(
-      `/api//llp/lead_landing_form?page=1&name=${encodeURIComponent(
+      `/api/llp/lead_landing_form?page=1&name=${encodeURIComponent(
         name
       )}&email=${encodeURIComponent(email)}&number=${encodeURIComponent(
         mobile_no
