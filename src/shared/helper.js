@@ -315,3 +315,23 @@ export const FILE_VALIDATION_MASSAGE_SVG = `(Image type should be .png,.jpeg,.jp
 export const FILE_VALIDATION_TYPE_ERROR_MASSAGE = `The file does not match height and width validations.`;
 export const FILE_VALIDATION_SIZE_ERROR_MASSAGE = `The file exceeds maximum size.`;
 export const DEFAULT_CITY = "Mumbai";
+
+//  Hr Check
+export function isHRCheck(token) {
+  let token_data = jwt_decode(token);
+  if (token_data && token_data.hr) {
+    // logic for checking is hr
+    return true;
+  }
+  return false;
+}
+
+export function getHRName(token) {
+  try {
+    let token_data = jwt_decode(token);
+    return token_data.name;
+  } catch (error) {
+    localStorage.clear();
+    window.location.href = "";
+  }
+}

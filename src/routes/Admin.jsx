@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
 
 import Login from "../components/admin/login/Login";
+import HRLogin from "../components/hr/login/Login";
 import AdminPageNotFound from "../components/404/AdminPageNotFound";
 import Testimonials from "../components/admin/testimonials/Testimonials";
 import AutoPopup from "../components/admin/auto-popup/AutoPopup";
@@ -86,6 +87,22 @@ import Lead from "../components/admin/dynamic-landing-page/Leads";
 import AddPage from "../components/admin/dynamic-landing-page/AddPage";
 import EditPage from "../components/admin/dynamic-landing-page/EditPage";
 
+// HR start
+import HRDashboard from "../components/hr/dashboard/Dashboard";
+
+import JobCategories from "../components/hr/master-jobs/job-categories/JobCategories";
+import Roles from "../components/hr/master-jobs/roles/Roles";
+import JobSkills from "../components/hr/master-jobs/job-skills/JobSkills";
+import JobLocation from "../components/hr/master-jobs/job-location/JobLocation";
+import Jobs from "../components/hr/jobs/Jobs";
+import Addjob from "../components/hr/jobs/AddJobs";
+import EditJob from "../components/hr/jobs/EditJobs";
+import AppliedJobs from "../components/hr/applied-jobs/AppliedJobs";
+import RegisteredUsers from "../components/hr/registered-users/RegisteredUsers";
+import JobExperience from "../components/hr/master-jobs/experience/Experience";
+import JobTravelNeeded from "../components/hr/master-jobs/travel-needed/TravelNeeded";
+// HR end
+
 import "../assets/css/all.css";
 import "../assets/css/admin-style.css";
 import "../assets/css/admin-skin-blue.css";
@@ -104,12 +121,76 @@ const PrivateRoute = ({ component: RefComponent, ...rest }) => (
     }
   />
 );
+const PrivateRoute1 = ({ component: RefComponent, ...rest }) => (
+  <Route
+    {...rest}
+    render={(props) =>
+      localStorage.getItem("hr_token") ? (
+        <RefComponent {...props} />
+      ) : (
+        <Redirect to="/" />
+      )
+    }
+  />
+);
 
 class Admin extends Component {
   render() {
     return (
       <Switch>
         <Route exact path="/" component={Login} />
+        <Route exact path="/hr/login" component={HRLogin} />
+        {/* hr start */}
+        <PrivateRoute1
+          path="/hr/dashboard"
+          component={HRDashboard}
+          handler="HRDashboard"
+        />
+        <PrivateRoute1
+          path="/hr/master-jobs/job-categories"
+          component={JobCategories}
+        />
+
+        {/* ===job roles==== */}
+        <PrivateRoute1 path="/hr/master-jobs/job-roles" component={Roles} />
+
+        {/* ===job skills==== */}
+        <PrivateRoute1
+          path="/hr/master-jobs/job-skills"
+          component={JobSkills}
+        />
+
+        {/* ===job location==== */}
+        <PrivateRoute1
+          path="/hr/master-jobs/job-location"
+          component={JobLocation}
+        />
+
+        {/* ===jobs==== */}
+        <PrivateRoute1 path="/hr/jobs" component={Jobs} />
+        <PrivateRoute1 path="/hr/add-job" component={Addjob} />
+        <PrivateRoute1 path="/hr/edit-job/:id" component={EditJob} />
+
+        {/* ====Applied jobs====*/}
+        <PrivateRoute1 path="/hr/appliedjobs" component={AppliedJobs} />
+
+        {/*====registered users====*/}
+        <PrivateRoute1
+          path="/hr/registered-users"
+          component={RegisteredUsers}
+        />
+        {/* ===job experience=== */}
+        <PrivateRoute1
+          path="/hr/master-jobs/job-experience"
+          component={JobExperience}
+        />
+        {/* ===job travel needed */}
+        <PrivateRoute1
+          path="/hr/master-jobs/job-travel-needed"
+          component={JobTravelNeeded}
+        />
+
+        {/* hr end */}
         <PrivateRoute
           path="/dashboard"
           component={Dashboard}
