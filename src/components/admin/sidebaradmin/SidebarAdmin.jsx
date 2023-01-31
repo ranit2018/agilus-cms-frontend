@@ -572,18 +572,18 @@ class SidebarAdmin extends Component {
             <Link to="#" data-id="7" onClick={this.handlePlus}>
               <i
                 className="fas fa-briefcase sub-menu"
-                data-id="7"
+                data-id="8"
                 onClick={this.handlePlus}
               ></i>{" "}
-              <span data-id="7" onClick={this.handlePlus}>
+              <span data-id="8" onClick={this.handlePlus}>
                 Carrer Page{" "}
               </span>
               <span className="pull-right-container">
                 <i
-                  data-id="7"
+                  data-id="8"
                   onClick={this.handlePlus}
                   className={
-                    rotate == "7"
+                    rotate == "8"
                       ? "fa pull-right fa-minus"
                       : "fa pull-right fa-plus"
                   }
