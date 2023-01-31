@@ -101,6 +101,11 @@ import AppliedJobs from "../components/hr/applied-jobs/AppliedJobs";
 import RegisteredUsers from "../components/hr/registered-users/RegisteredUsers";
 import JobExperience from "../components/hr/master-jobs/experience/Experience";
 import JobTravelNeeded from "../components/hr/master-jobs/travel-needed/TravelNeeded";
+
+import InsideSrl from "../components/admin/carrer-page/InsideSrl";
+import LifeAtSrl from "../components/admin/carrer-page/LifeAtSrl";
+import FactAboutSrl from "../components/admin/carrer-page/FactAboutSrl";
+import Benefits from "../components/admin/carrer-page/Benefits";
 // HR end
 
 import "../assets/css/all.css";
@@ -354,6 +359,15 @@ class Admin extends Component {
         <PrivateRoute path="/add-page" component={AddPage} />
         <PrivateRoute path="/edit-page/:id" component={EditPage} />
         <PrivateRoute path="/dynamic_landing_page/lead" component={Lead} />
+
+        <PrivateRoute path="/carrer-page/inside-srl" component={InsideSrl} />
+        <PrivateRoute path="/carrer-page/life-at-srl" component={LifeAtSrl} />
+        <PrivateRoute
+          path="/carrer-page/fact-about-srl"
+          component={FactAboutSrl}
+        />
+        <PrivateRoute path="/carrer-page/benefits" component={Benefits} />
+        
         <Route from="*" component={AdminPageNotFound} />
       </Switch>
     );
