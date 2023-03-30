@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import { Row, Col, Button, Modal } from 'react-bootstrap';
-import { Formik, Field, Form } from 'formik';
-import { Editor } from '@tinymce/tinymce-react';
-import API from '../../../shared/hrAxios';
-import * as Yup from 'yup';
-import swal from 'sweetalert';
-import { showErrorMessage } from '../../../shared/handle_error';
-import Select from 'react-select';
+import React, { Component } from "react";
+import { Row, Col, Button, Modal } from "react-bootstrap";
+import { Formik, Field, Form } from "formik";
+import { Editor } from "@tinymce/tinymce-react";
+import API from "../../../shared/hrAxios";
+import * as Yup from "yup";
+import swal from "sweetalert";
+import { showErrorMessage } from "../../../shared/handle_error";
+import Select from "react-select";
 import {
   htmlDecode,
   getHeightWidth,
@@ -16,23 +16,23 @@ import {
   FILE_SIZE,
   FILE_VALIDATION_TYPE_ERROR_MASSAGE,
   FILE_VALIDATION_SIZE_ERROR_MASSAGE,
-} from '../../../shared/helper';
-import Layout from '../layout/Layout';
-import TagsInput from 'react-tagsinput';
-import 'react-tagsinput/react-tagsinput.css'; // If using WebPack and style-loader.
+} from "../../../shared/helper";
+import Layout from "../layout/Layout";
+import TagsInput from "react-tagsinput";
+import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
 
 const stringFormat = (str) => {
-  str = str.replace(/[-[\]{}@'!*+?.,/;\\^$|#\s]/g, ' ');
-  str = str.split(' ');
+  str = str.replace(/[-[\]{}@'!*+?.,/;\\^$|#\s]/g, " ");
+  str = str.split(" ");
   const strArr = [];
   console.log(str);
 
   for (let i in str) {
-    if (str[i] !== '') {
+    if (str[i] !== "") {
       strArr.push(str[i]);
     }
   }
-  const formatedString = strArr.join('-');
+  const formatedString = strArr.join("-");
   return formatedString.toLowerCase();
 };
 
@@ -42,27 +42,79 @@ class AddBlog extends Component {
 
     this.state = {
       selectStatus: [
-        { value: '0', label: 'Inactive' },
-        { value: '1', label: 'Active' },
+        { value: "0", label: "Inactive" },
+        { value: "1", label: "Active" },
       ],
       employment_arr: [],
       department_arr: [],
       travel_needed_arr: [],
       job_location_arr: [],
       experince_arr: [],
+      country: [
+        {
+          id: "IN",
+          value: "India",
+        },
+        {
+          id: "SL",
+          value: "Sri Lanka",
+        },
+        {
+          id: "NP",
+          value: "Nepal",
+        },
+      ],
+      state_list: [
+        { code: "AN", name: "Andaman and Nicobar Islands" },
+        { code: "AP", name: "Andhra Pradesh" },
+        { code: "AR", name: "Arunachal Pradesh" },
+        { code: "AS", name: "Assam" },
+        { code: "BR", name: "Bihar" },
+        { code: "CG", name: "Chandigarh" },
+        { code: "CH", name: "Chhattisgarh" },
+        { code: "DH", name: "Dadra and Nagar Haveli" },
+        { code: "DD", name: "Daman and Diu" },
+        { code: "DL", name: "Delhi" },
+        { code: "GA", name: "Goa" },
+        { code: "GJ", name: "Gujarat" },
+        { code: "HR", name: "Haryana" },
+        { code: "HP", name: "Himachal Pradesh" },
+        { code: "JK", name: "Jammu and Kashmir" },
+        { code: "JH", name: "Jharkhand" },
+        { code: "KA", name: "Karnataka" },
+        { code: "KL", name: "Kerala" },
+        { code: "LD", name: "Lakshadweep" },
+        { code: "MP", name: "Madhya Pradesh" },
+        { code: "MH", name: "Maharashtra" },
+        { code: "MN", name: "Manipur" },
+        { code: "ML", name: "Meghalaya" },
+        { code: "MZ", name: "Mizoram" },
+        { code: "NL", name: "Nagaland" },
+        { code: "OR", name: "Odisha" },
+        { code: "PY", name: "Puducherry" },
+        { code: "PB", name: "Punjab" },
+        { code: "RJ", name: "Rajasthan" },
+        { code: "SK", name: "Sikkim" },
+        { code: "TN", name: "Tamil Nadu" },
+        { code: "TS", name: "Telangana" },
+        { code: "TR", name: "Tripura" },
+        { code: "UK", name: "Uttarakhand" },
+        { code: "UP", name: "Uttar Pradesh" },
+        { code: "WB", name: "West Bengal" },
+      ],
     };
   }
 
   fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
     //console.log(event.target.files);
-    setFieldTouched('featured_image');
-    setFieldValue('featured_image', event.target.value);
+    setFieldTouched("featured_image");
+    setFieldValue("featured_image", event.target.value);
 
-    const SUPPORTED_FORMATS = ['image/png', 'image/jpeg', 'image/jpg'];
+    const SUPPORTED_FORMATS = ["image/png", "image/jpeg", "image/jpg"];
     if (!event.target.files[0]) {
       //Supported
       this.setState({
-        featured_image: '',
+        featured_image: "",
         isValidFile: true,
       });
       return;
@@ -80,10 +132,10 @@ class AddBlog extends Component {
       //Unsupported
       setErrors({
         featured_image:
-          'Only files with the following extensions are allowed: png jpg jpeg',
+          "Only files with the following extensions are allowed: png jpg jpeg",
       }); //Not working- So Added validation in "yup"
       this.setState({
-        featured_image: '',
+        featured_image: "",
         isValidFile: false,
       });
     }
@@ -181,7 +233,7 @@ class AddBlog extends Component {
   };
   componentDidMount() {
     this.setState({
-      validationMessage: generateResolutionText('blog'),
+      validationMessage: generateResolutionText("blog"),
       fileValidationMessage: FILE_VALIDATION_MASSAGE,
     });
     this.getJobEmployment();
@@ -198,16 +250,18 @@ class AddBlog extends Component {
       job_department: values.job_department,
       job_location: values.job_location,
       travel_needed: values.travel_type,
-      region: values.region,
+      // region: values.region,
       experience: values.experience,
       company_information: values.company_information,
       status: String(values.status),
       job_description: values.job_description,
       job_designation: values.job_designation,
+      country: values.country,
+      state: values.state_list,
     };
 
     let url = `api/job_portal/job`;
-    let method = 'POST';
+    let method = "POST";
 
     API({
       method: method,
@@ -215,21 +269,21 @@ class AddBlog extends Component {
       data: postdata,
     })
       .then((res) => {
-        this.setState({ showModal: false, feature_image: '' });
+        this.setState({ showModal: false, feature_image: "" });
         swal({
           closeOnClickOutside: false,
-          title: 'Success',
-          text: 'Added Successfully',
-          icon: 'success',
+          title: "Success",
+          text: "Added Successfully",
+          icon: "success",
         }).then(() => {
-          this.props.history.push('/hr/jobs');
+          this.props.history.push("/hr/jobs");
         });
       })
       .catch((err) => {
         this.setState({
           closeModal: true,
           showModalLoader: false,
-          feature_image: '',
+          feature_image: "",
         });
         if (err.data.status === 3) {
           showErrorMessage(err, this.props);
@@ -242,33 +296,37 @@ class AddBlog extends Component {
 
   render() {
     const initialValues = {
-      job_id: '',
-      job_designation: '',
-      feature_image: '',
-      job_title: '',
-      job_role: '',
-      job_location: '',
-      job_category: '',
-      job_description: '',
-      desired_skill_set: '',
-      category_name: '',
-      date_posted: '',
-      status: '',
+      job_id: "",
+      job_designation: "",
+      feature_image: "",
+      job_title: "",
+      job_role: "",
+      job_location: "",
+      job_category: "",
+      job_description: "",
+      desired_skill_set: "",
+      category_name: "",
+      date_posted: "",
+      status: "",
+      country: "",
+      state_list: "",
     };
     const validateStopFlag = Yup.object().shape({
-      job_designation: Yup.string().required('Plaese enter job  designation'),
-      job_employment: Yup.string().required('Please enter employment type'),
-      job_department: Yup.string().required('Please enter department'),
-      job_location: Yup.string().required('Please select job location'),
-      travel_type: Yup.string().required('Please enter travel_needed'),
-      region: Yup.string().required('Please enter region'),
-      experience: Yup.string().required('Please enter experience'),
+      job_designation: Yup.string().required("Plaese enter job  designation"),
+      job_employment: Yup.string().required("Please enter employment type"),
+      job_department: Yup.string().required("Please enter department"),
+      job_location: Yup.string().required("Please select job location"),
+      country: Yup.string().required("Please select posting country"),
+      state_list: Yup.string().required("Please select posting state"),
+      travel_type: Yup.string().required("Please enter travel_needed"),
+      // region: Yup.string().required("Please enter region"),
+      experience: Yup.string().required("Please enter experience"),
       company_information: Yup.string().required(
-        'Please enter company_information'
+        "Please enter company_information"
       ),
-      job_description: Yup.string().required('Please enter job description'),
+      job_description: Yup.string().required("Please enter job description"),
 
-      status: Yup.number().required('Please select status'),
+      status: Yup.number().required("Please select status"),
     });
 
     return (
@@ -287,7 +345,7 @@ class AddBlog extends Component {
                 window.history.go(-1);
                 return false;
               }}
-              style={{ right: '9px', position: 'absolute', top: '13px' }}
+              style={{ right: "9px", position: "absolute", top: "13px" }}
             />
           </section>
           <section className="content">
@@ -551,7 +609,68 @@ class AddBlog extends Component {
                                   </div>
                                 </Col>
                               </Row> */}
-
+                            <Row>
+                              <Col xs={12} sm={12} md={6}>
+                                <div className="form-group">
+                                  <label>
+                                    Posting Country
+                                    <span className="impField">*</span>
+                                  </label>
+                                  <Field
+                                    name="country"
+                                    id="country"
+                                    component="select"
+                                    className={`selectArowGray form-control`}
+                                    autoComplete="off"
+                                    value={values.country}
+                                  >
+                                    <option key="-1" value="">
+                                      Select Country
+                                    </option>
+                                    {this.state.country.map((val, i) => (
+                                      <option key={i} value={val.value}>
+                                        {val.value}
+                                      </option>
+                                    ))}
+                                  </Field>
+                                  {errors.country && touched.country ? (
+                                    <span className="errorMsg">
+                                      {errors.country}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </Col>
+                              <Col xs={12} sm={12} md={6}>
+                                <div className="form-group">
+                                  <label>
+                                    Posting State
+                                    <span className="impField">*</span>
+                                  </label>
+                                  <Field
+                                    name="state_list"
+                                    id="state_list"
+                                    component="select"
+                                    className={`selectArowGray form-control`}
+                                    autoComplete="off"
+                                    value={values.state_list}
+                                  >
+                                    <option key="-1" value="">
+                                      Select Posting List
+                                    </option>
+                                    {this.state.state_list.map((val, i) => (
+                                      <option key={i} value={val.name}>
+                                        {val.name}
+                                      </option>
+                                    ))}
+                                  </Field>
+                                  {errors.state_list && touched.state_list ? (
+                                    <span className="errorMsg">
+                                      {errors.state_list}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </Col>
+                            </Row>
                             <Row>
                               <Col xs={12} sm={12} md={6}>
                                 <div className="form-group">
@@ -610,7 +729,7 @@ class AddBlog extends Component {
                             </Row>
 
                             <Row>
-                              <Col xs={12} sm={12} md={6}>
+                              {/* <Col xs={12} sm={12} md={6}>
                                 <div className="form-group">
                                   <label>
                                     Region
@@ -641,7 +760,7 @@ class AddBlog extends Component {
                                     </span>
                                   ) : null}
                                 </div>
-                              </Col>
+                              </Col> */}
                               <Col xs={12} sm={12} md={6}>
                                 <div className="form-group">
                                   <label>
@@ -700,30 +819,30 @@ class AddBlog extends Component {
                                       height: 300,
                                       menubar: false,
                                       plugins: [
-                                        'advlist autolink lists link image charmap print preview anchor',
-                                        'searchreplace visualblocks code fullscreen',
-                                        'insertdatetime media table paste code help wordcount',
+                                        "advlist autolink lists link image charmap print preview anchor",
+                                        "searchreplace visualblocks code fullscreen",
+                                        "insertdatetime media table paste code help wordcount",
                                       ],
                                       toolbar:
-                                        'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ',
+                                        "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
                                       content_style:
-                                        'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-                                      file_browser_callback_types: 'image',
+                                        "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                                      file_browser_callback_types: "image",
                                       file_picker_callback: function (
                                         callback,
                                         value,
                                         meta
                                       ) {
-                                        if (meta.filetype == 'image') {
+                                        if (meta.filetype == "image") {
                                           var input =
-                                            document.getElementById('my-file');
+                                            document.getElementById("my-file");
                                           input.click();
                                           input.onchange = function () {
                                             var file = input.files[0];
                                             var reader = new FileReader();
                                             reader.onload = function (e) {
                                               console.log(
-                                                'name',
+                                                "name",
                                                 e.target.result
                                               );
                                               callback(e.target.result, {
@@ -738,7 +857,7 @@ class AddBlog extends Component {
                                     }}
                                     onEditorChange={(value) =>
                                       setFieldValue(
-                                        'company_information',
+                                        "company_information",
                                         value
                                       )
                                     }
@@ -777,30 +896,30 @@ class AddBlog extends Component {
                                       height: 350,
                                       menubar: false,
                                       plugins: [
-                                        'advlist autolink lists link image charmap print preview anchor',
-                                        'searchreplace visualblocks code fullscreen',
-                                        'insertdatetime media table paste code help wordcount',
+                                        "advlist autolink lists link image charmap print preview anchor",
+                                        "searchreplace visualblocks code fullscreen",
+                                        "insertdatetime media table paste code help wordcount",
                                       ],
                                       toolbar:
-                                        'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ',
+                                        "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
                                       content_style:
-                                        'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-                                      file_browser_callback_types: 'image',
+                                        "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                                      file_browser_callback_types: "image",
                                       file_picker_callback: function (
                                         callback,
                                         value,
                                         meta
                                       ) {
-                                        if (meta.filetype == 'image') {
+                                        if (meta.filetype == "image") {
                                           var input =
-                                            document.getElementById('my-file');
+                                            document.getElementById("my-file");
                                           input.click();
                                           input.onchange = function () {
                                             var file = input.files[0];
                                             var reader = new FileReader();
                                             reader.onload = function (e) {
                                               console.log(
-                                                'name',
+                                                "name",
                                                 e.target.result
                                               );
                                               callback(e.target.result, {
@@ -814,7 +933,7 @@ class AddBlog extends Component {
                                       paste_data_images: true,
                                     }}
                                     onEditorChange={(value) =>
-                                      setFieldValue('job_description', value)
+                                      setFieldValue("job_description", value)
                                     }
                                   />
                                   {errors.job_description &&
@@ -862,7 +981,7 @@ class AddBlog extends Component {
                         <Modal.Footer>
                           <button
                             className={`btn btn-success btn-sm ${
-                              isValid ? 'btn-custom-green' : 'btn-disable'
+                              isValid ? "btn-custom-green" : "btn-disable"
                             } m-r-10`}
                             type="submit"
                             // disabled={
@@ -871,11 +990,11 @@ class AddBlog extends Component {
                           >
                             {this.state.jobId > 0
                               ? isSubmitting
-                                ? 'Updating...'
-                                : 'Update'
+                                ? "Updating..."
+                                : "Update"
                               : isSubmitting
-                              ? 'Submitting...'
-                              : 'Submit'}
+                              ? "Submitting..."
+                              : "Submit"}
                           </button>
                           <button
                             onClick={(e) => this.modalCloseHandler()}

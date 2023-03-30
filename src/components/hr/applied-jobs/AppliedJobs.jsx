@@ -710,6 +710,12 @@ class AppliedJobs extends Component {
                   </TableHeaderColumn>
 
                   <TableHeaderColumn
+                    dataField="job_id"
+                    // dataFormat={htmlDecode(this)}
+                  >
+                    Job ID
+                  </TableHeaderColumn>
+                  <TableHeaderColumn
                     dataField="job_department"
                     // dataFormat={htmlDecode(this)}
                   >
@@ -731,7 +737,7 @@ class AppliedJobs extends Component {
                     dataField="date_posted"
                     dataFormat={setDate(this)}
                   >
-                    Post Date
+                    Application Received Date
                   </TableHeaderColumn>
 
                   {/* <TableHeaderColumn

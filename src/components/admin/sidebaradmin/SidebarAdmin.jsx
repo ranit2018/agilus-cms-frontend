@@ -128,8 +128,9 @@ class SidebarAdmin extends Component {
       path === "/carrer-page/inside-srl" ||
       path === "/carrer-page/life-at-srl" ||
       path === "/carrer-page/fact-about-srl" ||
-      path === "/partner-page/center-images" ||
-      path === "/partner-page/current-offers"
+      path === "/carrer-page/benefits"
+      //  || path === "/partner-page/center-images"
+      // || path === "/partner-page/current-offers"
     ) {
       this.setState({ shown: "8" });
     }
@@ -254,10 +255,10 @@ class SidebarAdmin extends Component {
             </li>
           )}
 
-          {/* <li className={rotate == "6" ? "treeview active" : "treeview"}>
+          <li className={rotate == "6" ? "treeview active" : "treeview"}>
             <Link to="#" data-id="6" onClick={this.handlePlus}>
               <i
-                className="fas fa-certificate sub-menu"
+                className="fas fa-handshake sub-menu"
                 data-id="6"
                 onClick={this.handlePlus}
               ></i>{" "}
@@ -376,7 +377,7 @@ class SidebarAdmin extends Component {
                 </li>
               )}
             </ul>
-          </li> */}
+          </li>
 
           {this.props.path_name === "/events" ? (
             <li className="active">
