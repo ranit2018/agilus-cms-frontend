@@ -179,8 +179,8 @@ class AppliedJobs extends Component {
     e.preventDefault();
     const name = document.getElementById("name").value;
     const email = document.getElementById("email").value;
-    const application_status =
-      document.getElementById("application_status").value;
+    // const application_status =
+    //   document.getElementById("application_status").value;
     const job_department = document.getElementById("job_department").value;
     const experince = document.getElementById("experince").value;
     // const region = document.getElementById('region_location').value;
@@ -190,7 +190,7 @@ class AppliedJobs extends Component {
     if (
       name === "" &&
       email === "" &&
-      application_status === "" &&
+      // application_status === "" &&
       job_department === "" &&
       experince === "" &&
       // region === '' &&
@@ -231,7 +231,7 @@ class AppliedJobs extends Component {
           experince
         )}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(
           to
-        )}&status=${encodeURIComponent(application_status)}`
+        )}`
       )
         .then((res) => {
           this.setState({
@@ -241,7 +241,7 @@ class AppliedJobs extends Component {
             name: name,
             email: email,
             department: job_department,
-            status: application_status,
+            // status: application_status,
             experince: experince,
             // job_location: region,
             activePage: 1,
@@ -602,7 +602,7 @@ class AppliedJobs extends Component {
                         })}
                       </select>
                     </div>
-                    <div className="">
+                    {/* <div className="">
                       <select
                         name="region_location"
                         id="region_location"
@@ -619,7 +619,7 @@ class AppliedJobs extends Component {
                           );
                         })}
                       </select>
-                    </div>
+                    </div> */}
 
                     <div>
                       <DayPickerInput
