@@ -64,44 +64,7 @@ class AddBlog extends Component {
           value: "Nepal",
         },
       ],
-      state_list: [
-        { code: "AN", name: "Andaman and Nicobar Islands" },
-        { code: "AP", name: "Andhra Pradesh" },
-        { code: "AR", name: "Arunachal Pradesh" },
-        { code: "AS", name: "Assam" },
-        { code: "BR", name: "Bihar" },
-        { code: "CG", name: "Chandigarh" },
-        { code: "CH", name: "Chhattisgarh" },
-        { code: "DH", name: "Dadra and Nagar Haveli" },
-        { code: "DD", name: "Daman and Diu" },
-        { code: "DL", name: "Delhi" },
-        { code: "GA", name: "Goa" },
-        { code: "GJ", name: "Gujarat" },
-        { code: "HR", name: "Haryana" },
-        { code: "HP", name: "Himachal Pradesh" },
-        { code: "JK", name: "Jammu and Kashmir" },
-        { code: "JH", name: "Jharkhand" },
-        { code: "KA", name: "Karnataka" },
-        { code: "KL", name: "Kerala" },
-        { code: "LD", name: "Lakshadweep" },
-        { code: "MP", name: "Madhya Pradesh" },
-        { code: "MH", name: "Maharashtra" },
-        { code: "MN", name: "Manipur" },
-        { code: "ML", name: "Meghalaya" },
-        { code: "MZ", name: "Mizoram" },
-        { code: "NL", name: "Nagaland" },
-        { code: "OR", name: "Odisha" },
-        { code: "PY", name: "Puducherry" },
-        { code: "PB", name: "Punjab" },
-        { code: "RJ", name: "Rajasthan" },
-        { code: "SK", name: "Sikkim" },
-        { code: "TN", name: "Tamil Nadu" },
-        { code: "TS", name: "Telangana" },
-        { code: "TR", name: "Tripura" },
-        { code: "UK", name: "Uttarakhand" },
-        { code: "UP", name: "Uttar Pradesh" },
-        { code: "WB", name: "West Bengal" },
-      ],
+      state_list: [],
     };
   }
 
@@ -153,6 +116,24 @@ class AddBlog extends Component {
         }
         this.setState({
           employment_arr: options,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  };
+  getAllState = () => {
+    API.get(`api/feed/get-all-states`)
+      .then((res) => {
+        let options = [];
+        for (var i = 0; i < res.data.data.length; i++) {
+          options.push({
+            value: res.data.data[i].value,
+            label: res.data.data[i].label,
+          });
+        }
+        this.setState({
+          state_list: options,
         });
       })
       .catch((err) => {
@@ -241,9 +222,14 @@ class AddBlog extends Component {
     this.getTravelNeeded();
     this.getlocationArr();
     this.getExperinceData();
+    this.getAllState();
   }
 
   handleSubmitEventAdd = (values, actions) => {
+    let state = this.state.state_list.find(
+      (item) => item.value == values.state_list
+    );
+    let state_label = state ? state.label : "";
     let postdata = {
       job_id: values.job_id,
       job_employment: values.job_employment,
@@ -257,7 +243,8 @@ class AddBlog extends Component {
       job_description: values.job_description,
       job_designation: values.job_designation,
       country: values.country,
-      state: values.state_list,
+      state: state_label,
+      state_id: values.state_list,
     };
 
     let url = `api/job_portal/job`;
@@ -658,8 +645,8 @@ class AddBlog extends Component {
                                       Select Posting List
                                     </option>
                                     {this.state.state_list.map((val, i) => (
-                                      <option key={i} value={val.name}>
-                                        {val.name}
+                                      <option key={i} value={val.value}>
+                                        {val.label}
                                       </option>
                                     ))}
                                   </Field>

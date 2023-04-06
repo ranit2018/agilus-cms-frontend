@@ -95,6 +95,7 @@ const initialValues = {
   job_title: "",
   application_status: "",
   department: "",
+  job_id: "",
 };
 class AppliedJobs extends Component {
   constructor(props) {
@@ -128,8 +129,9 @@ class AppliedJobs extends Component {
       experince_arr: [],
       job_location: "",
       job_location_arr: [],
+      job_id: "",
     };
-    console.log("this.state.activePage", this.state.activePage);
+    // console.log("this.state.activePage", this.state.activePage);
   }
 
   getPatientList = (page = 1) => {
@@ -184,6 +186,7 @@ class AppliedJobs extends Component {
     const job_department = document.getElementById("job_department").value;
     const experince = document.getElementById("experince").value;
     // const region = document.getElementById('region_location').value;
+    const job_id = document.getElementById("job_id").value;
 
     let from = this.state.from;
     let to = this.state.to;
@@ -193,6 +196,7 @@ class AppliedJobs extends Component {
       // application_status === "" &&
       job_department === "" &&
       experince === "" &&
+      job_id === "" &&
       // region === '' &&
       this.state.from === "" &&
       this.state.to === ""
@@ -229,9 +233,9 @@ class AppliedJobs extends Component {
           job_department
         )}&experience=${encodeURIComponent(
           experince
-        )}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(
-          to
-        )}`
+        )}&job_id=${encodeURIComponent(job_id)}&date_from=${encodeURIComponent(
+          from
+        )}&date_to=${encodeURIComponent(to)}`
       )
         .then((res) => {
           this.setState({
@@ -245,6 +249,7 @@ class AppliedJobs extends Component {
             experince: experince,
             // job_location: region,
             activePage: 1,
+            job_id: job_id,
             remove_search: true,
           });
         })
@@ -267,10 +272,11 @@ class AppliedJobs extends Component {
     document.getElementById("name").value = "";
     document.getElementById("email").value = "";
     // document.getElementById('job_title').value = '';
-    document.getElementById("application_status").value = "";
+    // document.getElementById("application_status").value = "";
     document.getElementById("job_department").value = "";
     document.getElementById("experince").value = "";
-    document.getElementById("region_location").value = "";
+    // document.getElementById("region_location").value = "";
+    document.getElementById("job_id").value = "";
 
     let pageNumber = 1;
     this.setState(
@@ -284,7 +290,7 @@ class AppliedJobs extends Component {
         job_department: "",
         experince: "",
         job_location: "",
-
+        job_id: "",
         remove_search: false,
       },
       () => {
@@ -443,6 +449,7 @@ class AppliedJobs extends Component {
       job_title: "",
       status: "",
       job_department: "",
+      job_id: "",
     });
   };
 
@@ -549,6 +556,14 @@ class AppliedJobs extends Component {
                         name="email"
                         id="email"
                         placeholder="Filter by Email"
+                      />
+                    </div>
+                    <div>
+                      <input
+                        className="form-control"
+                        name="job_id"
+                        id="job_id"
+                        placeholder="Filter by Job ID"
                       />
                     </div>
 
@@ -722,7 +737,7 @@ class AppliedJobs extends Component {
                     Job Department
                   </TableHeaderColumn>
                   <TableHeaderColumn
-                    dataField="preferred_location"
+                    dataField="preferred_location_name"
                     // dataFormat={htmlDecode(this)}
                   >
                     Preferred Location

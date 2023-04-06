@@ -175,6 +175,7 @@ class Jobs extends Component {
       experince_arr: [],
       employment_arr: [],
       infor: "hello",
+      state_arr: [],
     };
   }
   componentDidMount() {
@@ -190,6 +191,7 @@ class Jobs extends Component {
       validationMessage: generateResolutionText("jobs"),
       fileValidationMessage: FILE_VALIDATION_MASSAGE,
     });
+    this.getAllState();
   }
 
   getJobsList = (page = 1) => {
@@ -265,7 +267,24 @@ class Jobs extends Component {
         showErrorMessage(err, this.props);
       });
   };
-
+  getAllState = () => {
+    API.get(`api/feed/get-all-states`)
+      .then((res) => {
+        let options = [];
+        for (var i = 0; i < res.data.data.length; i++) {
+          options.push({
+            value: res.data.data[i].value,
+            label: res.data.data[i].label,
+          });
+        }
+        this.setState({
+          state_arr: options,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  };
   getExperinceData = () => {
     API.get(`api/job_portal/experience`)
       .then((res) => {
@@ -390,6 +409,7 @@ class Jobs extends Component {
     const experience = document.getElementById("search_job_skill").value;
 
     const search_status = document.getElementById("search_status").value;
+    const state = document.getElementById("search_state").value;
     let from = this.state.from;
     let to = this.state.to;
 
@@ -410,7 +430,9 @@ class Jobs extends Component {
         travel_needed
       )}&experience=${encodeURIComponent(
         experience
-      )}&status=${encodeURIComponent(search_status)}`
+      )}&status=${encodeURIComponent(
+        search_status
+      )}&state_id=${encodeURIComponent(state)}`
     )
       .then((res) => {
         this.setState({
@@ -442,6 +464,7 @@ class Jobs extends Component {
     document.getElementById("search_job_skill").value = "";
     document.getElementById("search_job_location").value = "";
     document.getElementById("search_status").value = "";
+    document.getElementById("search_state").value = "";
 
     this.setState(
       {
@@ -608,7 +631,6 @@ class Jobs extends Component {
   };
 
   handleSubmitEventUpdate = async (values, actions) => {
-    console.log("abhi1");
     let postdata = {
       job_id: values.job_id,
       job_employment: values.job_employment,
@@ -815,8 +837,24 @@ class Jobs extends Component {
                       className="form-control"
                       name="search_job_location"
                       id="search_job_location"
-                      placeholder="Search By Job Loaction"
+                      placeholder="Search By Job Location"
                     ></input>
+                  </div>
+                  <div className="">
+                    <select
+                      className="form-control"
+                      name="status"
+                      id="search_state"
+                    >
+                      <option value="">Select Job Location State</option>
+                      {this.state.state_arr.map((val, i) => {
+                        return (
+                          <option key={i} value={val.value}>
+                            {val.label}
+                          </option>
+                        );
+                      })}
+                    </select>
                   </div>
                   <div className="">
                     <select
