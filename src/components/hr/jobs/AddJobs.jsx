@@ -373,6 +373,13 @@ class AddBlog extends Component {
                                     placeholder="Enter Job ID"
                                     autoComplete="off"
                                     value={values.job_id}
+                                    onChange={(e) => {
+                                      // console.log(e.target.value.toUpperCase());
+                                      setFieldValue(
+                                        "job_id",
+                                        e.target.value.toUpperCase()
+                                      );
+                                    }}
                                   />
                                   {errors.job_id && touched.job_id ? (
                                     <span className="errorMsg">

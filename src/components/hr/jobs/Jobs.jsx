@@ -968,7 +968,7 @@ class Jobs extends Component {
                     dataField="experience"
                     dataFormat={__htmlDecode(this)}
                   >
-                    Experience
+                    Experience (years)
                   </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="status"
