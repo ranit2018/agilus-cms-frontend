@@ -21,6 +21,8 @@ import Select from "react-select";
 import Switch from "react-switch";
 import Layout from "../layout/Layout";
 import ReactHtmlParser from "react-html-parser";
+import SRL_API from "../../../shared/srl-axios";
+
 import {
   htmlDecode,
   getHeightWidth,
@@ -33,11 +35,11 @@ import {
 } from "../../../shared/helper";
 import Autosuggest from "react-autosuggest";
 const initialValues = {
-  status:"",
-  file:"",
-  labId:"",
-  content:"",
-  heading:"",
+  status: "",
+  file: "",
+  labId: "",
+  content: "",
+  heading: "",
 };
 const __htmlDecode = (refObj) => (cell) => {
   return ReactHtmlParser(htmlDecode(cell));
@@ -139,16 +141,19 @@ class AmenitiesPartnerPage extends Component {
         { value: "0", label: "Inactive" },
         { value: "1", label: "Active" },
       ],
-      suggestions:[],
-      labIdValue:"",
-      selectedLabIdValue:"",
+      suggestions: [],
+      labIdValue: "",
+      selectedLabIdValue: "",
+
+      // new
+      city_state_list: [],
+      add_city: "",
+      labs: "",
     };
   }
 
   getAmenitiesList = (page = 1) => {
-    API.get(
-      `/api/center/aminities?page=${page}`
-    )
+    API.get(`/api/center/aminities?page=${page}`)
       .then((res) => {
         this.setState({
           AmenitiesList: res.data.data,
@@ -214,6 +219,15 @@ class AmenitiesPartnerPage extends Component {
         showErrorMessage(err, this.props);
       });
   }
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.add_city !== prevState.add_city) {
+      this.clearAutoSuggest();
+    }
+  }
+
+  clearAutoSuggest() {
+    this.setState({ labs: "", value: "" });
+  }
 
   changeStatus = (cell, status) => {
     API.put(`/api/center/aminities/change_status/${cell}`, {
@@ -236,12 +250,19 @@ class AmenitiesPartnerPage extends Component {
         }
       });
   };
-
+  //  lab_name: this.state.labs.LCTN_NM,
+  //       lab_id: String(this.state.labs.LAB_ID),
+  //       lab_url_key: this.state.labs.URL_KEY,
   handleSubmitEventAdd = (values, actions) => {
     let formData = new FormData();
     formData.append("heading", values.heading);
     formData.append("content", values.content);
     formData.append("status", values.status);
+    formData.append("lab_name", this.state.labs.LCTN_NM);
+    formData.append("lab_id", String(this.state.labs.LAB_ID));
+    formData.append("lab_url_key", this.state.labs.URL_KEY);
+    formData.append("city", this.state.add_city);
+
     let url = `api/center/aminities`;
     let method = "POST";
 
@@ -264,7 +285,7 @@ class AmenitiesPartnerPage extends Component {
             data: formData,
           })
             .then((res) => {
-              this.setState({ showModal: false, file: "",suggestions:[] });
+              this.setState({ showModal: false, file: "", suggestions: [] });
               swal({
                 closeOnClickOutside: false,
                 title: "Success",
@@ -279,7 +300,7 @@ class AmenitiesPartnerPage extends Component {
                 closeModal: true,
                 showModalLoader: false,
                 file: "",
-                suggestions:[]
+                suggestions: [],
               });
               if (err.data.status === 3) {
                 showErrorMessage(err, this.props);
@@ -295,7 +316,7 @@ class AmenitiesPartnerPage extends Component {
 
   handleSubmitEventUpdate = (values, actions) => {
     let formData = new FormData();
-    console.log(values)
+    console.log(values);
     formData.append("status", values.status);
     formData.append("heading", values.heading);
     formData.append("content", values.content);
@@ -324,7 +345,7 @@ class AmenitiesPartnerPage extends Component {
               data: formData,
             })
               .then((res) => {
-                this.setState({ showModal: false,suggestions:[] });
+                this.setState({ showModal: false, suggestions: [] });
                 swal({
                   closeOnClickOutside: false,
                   title: "Success",
@@ -335,7 +356,11 @@ class AmenitiesPartnerPage extends Component {
                 });
               })
               .catch((err) => {
-                this.setState({ closeModal: true, showModalLoader: false,suggestions:[] });
+                this.setState({
+                  closeModal: true,
+                  showModalLoader: false,
+                  suggestions: [],
+                });
                 if (err.data.status === 3) {
                   showErrorMessage(err, this.props);
                 } else {
@@ -353,7 +378,7 @@ class AmenitiesPartnerPage extends Component {
         data: formData,
       })
         .then((res) => {
-          this.setState({ showModal: false,suggestions:[] });
+          this.setState({ showModal: false, suggestions: [] });
           swal({
             closeOnClickOutside: false,
             title: "Success",
@@ -364,7 +389,11 @@ class AmenitiesPartnerPage extends Component {
           });
         })
         .catch((err) => {
-          this.setState({ closeModal: true, showModalLoader: false,suggestions:[] });
+          this.setState({
+            closeModal: true,
+            showModalLoader: false,
+            suggestions: [],
+          });
           if (err.data.status === 3) {
             showErrorMessage(err, this.props);
           } else {
@@ -374,16 +403,36 @@ class AmenitiesPartnerPage extends Component {
         });
     }
   };
+
+  getCityStateList = () => {
+    SRL_API.get(`/feed/get-city-state-list`)
+      .then((res) => {
+        this.setState({
+          city_state_list: res.data.data,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  };
   componentDidMount() {
     this.getAmenitiesList();
+    this.getCityStateList();
     this.setState({
-      validationMessage: generateResolutionText("partner-amenities","icon"),
+      validationMessage: generateResolutionText("partner-amenities", "icon"),
       fileValidationMessage: ICON_VALIDATION_MASSAGE,
     });
   }
 
   modalCloseHandler = () => {
-    this.setState({ amenityDetail: {}, amenitiesEditType: 0, showModal: false,suggestion:[] });
+    this.setState({
+      amenityDetail: {},
+      amenitiesEditType: 0,
+      showModal: false,
+      suggestion: [],
+      labs: "",
+      labIdValue: "",
+    });
   };
 
   modalShowHandler = (event, id) => {
@@ -391,7 +440,12 @@ class AmenitiesPartnerPage extends Component {
     if (id) {
       this.getAmenitiesDetails(id);
     } else {
-      this.setState({ amenityDetail: {}, amenitiesEditType: 0, showModal: true,suggestion:[] });
+      this.setState({
+        amenityDetail: {},
+        amenitiesEditType: 0,
+        showModal: true,
+        suggestion: [],
+      });
     }
   };
 
@@ -462,14 +516,22 @@ class AmenitiesPartnerPage extends Component {
     e.preventDefault();
 
     const search_by_status = document.getElementById("status").value;
-    // const search_lab_code = document.getElementById("search_lab_code").value;
-    const search_by_heading = document.getElementById("search_amenity_heading").value;
+    const search_lab_code = document.getElementById("search_lab_code").value;
+    const search_by_heading = document.getElementById(
+      "search_amenity_heading"
+    ).value;
 
-    if (search_by_status === "" && search_by_heading === "") {
+    if (
+      search_by_status === "" &&
+      search_by_heading === "" &&
+      search_lab_code === ""
+    ) {
       return false;
     }
     API.get(
-      `/api/center/aminities?page=1&status=${search_by_status}&heading=${encodeURIComponent(search_by_heading)}`
+      `/api/center/aminities?page=1&status=${search_by_status}&heading=${encodeURIComponent(
+        search_by_heading
+      )}&lab_name=${search_lab_code}`
     )
       .then((res) => {
         this.setState({
@@ -491,6 +553,7 @@ class AmenitiesPartnerPage extends Component {
 
   clearSearch = () => {
     document.getElementById("status").value = "";
+    document.getElementById("search_lab_code").value = "";
     this.setState(
       {
         search_by_status: "",
@@ -503,71 +566,54 @@ class AmenitiesPartnerPage extends Component {
     );
   };
 
-  // onSuggestionsFetchRequested = ({ value }) => {
-  //   if (value && value.length >= 3) {
-  //     let payload = {
-  //       //  city_id:location.value,
-  //       search_name: value.toUpperCase(),
-  //     };
+  onSuggestionsFetchRequested = ({ value }) => {
+    if (value && value.length >= 3) {
+      let payload = {
+        city_name: this.state.add_city,
+        search_name: value,
+      };
 
-  //     API.post(`/feed/code-search-autocomplete`, payload)
-  //       .then((res) => {
-  //         const suggestion_list = res.data.data;
-  //         this.setState({
-  //           suggestions: suggestion_list.length > 0 ? suggestion_list : [],
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //         this.setState({ suggestions: [] });
-  //       });
-  //   } else {
-  //     this.setState({ suggestions: [] });
-  //   }
-  // };
+      SRL_API.post(`/feed/get-lab-by-name`, payload)
+        .then((res) => {
+          const suggestion_list = res.data.data.data.LAB_LIST;
+          console.log("suggestion_list:", suggestion_list);
+          this.setState({
+            suggestions: suggestion_list.length > 0 ? suggestion_list : [],
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+          this.setState({ suggestions: [] });
+        });
+    } else {
+      this.setState({ suggestions: [] });
+    }
+  };
 
-  // onSuggestionsClearRequested = () => {};
+  onSuggestionsClearRequested = () => {};
 
-  // getSuggestionValue = (suggestion) => suggestion.label;
+  getSuggestionValue = (suggestion) => suggestion.LCTN_NM;
 
-  // renderSuggestion = (suggestion) => <span>{suggestion.label}</span>;
+  renderSuggestion = (suggestion) => <span>{suggestion.LCTN_NM}</span>;
 
-  // onChangeAutoSuggest = (event, { newValue }) => {
-  //   this.setState({ labIdValue: newValue });
-  // };
+  onChangeAutoSuggest = (event, { newValue }) => {
+    this.setState({ labIdValue: newValue });
+  };
 
-  // handleSearchLab = (event) => {
-  //   if (event.key === "Enter") {
-  //     event.target.blur();
-  //     // history.push(`/health-packages/search/${stringToSlug(location.city_name)}/${encodeURIComponent(value)}`);
-  //   }
-  // };
+  handleSearchLab = (event) => {
+    if (event.key === "Enter") {
+      event.target.blur();
+    }
+  };
 
-  // onSuggestionSelected = (event, { suggestion, method }, setFieldTouched) => {
-  //   if (method === "click" || method === "enter") {
-  //     let payload = {
-  //       search_name: suggestion.value.toUpperCase(),
-  //     };
-  //     API.post(`/feed/code-search`, payload)
-  //       .then((res) => {
-  //         if (res.data && res.data.data && res.data.data.length > 0) {
-  //           const searchDetails = res.data.data[0];
-  //           this.setState({ selectedLabIdValue: searchDetails }, () => {
-  //             setFieldTouched("labId");
-  //           });
-  //         }
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //         this.setState({ selectedLabIdValue: "" }, () => {
-  //           setFieldTouched("labId");
-  //         });
-  //       });
-  //   }
-  // };
+  onSuggestionSelected = (event, { suggestion, method }, setFieldTouched) => {
+    if (method === "click" || method === "enter") {
+      this.setState({ labs: suggestion });
+    }
+  };
 
   render() {
-    const { amenityDetail,selectedLabIdValue } = this.state;
+    const { amenityDetail, selectedLabIdValue } = this.state;
     const newInitialValues = Object.assign(initialValues, {
       status:
         amenityDetail.status || +amenityDetail.status === 0
@@ -575,6 +621,8 @@ class AmenitiesPartnerPage extends Component {
           : "",
       heading: amenityDetail.heading ? amenityDetail.heading : "",
       content: amenityDetail.content ? amenityDetail.content : "",
+      cities: this.state.amenityDetail.city,
+      labs: this.state.amenityDetail.lab_name,
     });
 
     const validateStopFlag = Yup.object().shape({
@@ -589,17 +637,20 @@ class AmenitiesPartnerPage extends Component {
       //   .test("labId", "Please select a Lab Id", () => {
       //     return selectedLabIdValue && selectedLabIdValue !== "";
       //   }),
-        // .test(
-        //   "pro",
-        //   "Only packages are allowed for selected product type",
-        //   () => this.state.validProduct
-        // ),
+      // .test(
+      //   "pro",
+      //   "Only packages are allowed for selected product type",
+      //   () => this.state.validProduct
+      // ),
       status: Yup.string()
         .trim()
         .required("Please select status")
         .matches(/^[0|1]$/, "Invalid status selected"),
       heading: Yup.string().trim().required("Please enter the heading"),
-      content: Yup.string().trim().strict().required("Please enter the content"),
+      content: Yup.string()
+        .trim()
+        .strict()
+        .required("Please enter the content"),
     });
 
     const validateStopFlagUpdate = Yup.object().shape({
@@ -616,12 +667,12 @@ class AmenitiesPartnerPage extends Component {
             }
           }
         ),
-        status: Yup.string()
+      status: Yup.string()
         .trim()
         .required("Please select status")
         .matches(/^[0|1]$/, "Invalid status selected"),
-        heading: Yup.string().required("Please enter the heading"),
-        content: Yup.string().required("Please enter the content"),
+      heading: Yup.string().required("Please enter the heading"),
+      content: Yup.string().required("Please enter the content"),
     });
 
     return (
@@ -649,28 +700,26 @@ class AmenitiesPartnerPage extends Component {
 
                 <form className="form">
                   <div className="">
-                        <select
-                            name="status"
-                            id="status"
-                            className="form-control"
-                        >
-                            <option value="">Select Amenity Status</option>
-                            {this.state.selectStatus.map((val) => {
-                                return (
-                                    <option key={val.value} value={val.value}>{val.label}</option>
-                                );
-                            })}
-                        </select>
+                    <select name="status" id="status" className="form-control">
+                      <option value="">Select Amenity Status</option>
+                      {this.state.selectStatus.map((val) => {
+                        return (
+                          <option key={val.value} value={val.value}>
+                            {val.label}
+                          </option>
+                        );
+                      })}
+                    </select>
                   </div>
-                  {/* <div className="">
-                  <input
+                  <div className="">
+                    <input
                       className="form-control"
                       id="search_lab_code"
-                      placeholder="Filter by Lab Id"
+                      placeholder="Filter by Lab Name"
                     />
-                  </div> */}
+                  </div>
                   <div className="">
-                  <input
+                    <input
                       className="form-control"
                       id="search_amenity_heading"
                       placeholder="Filter by Amenity Heading"
@@ -683,7 +732,7 @@ class AmenitiesPartnerPage extends Component {
                       className="btn btn-warning btn-sm"
                       onClick={(e) => this.AmenitiesSearch(e)}
                     />
-                    
+
                     {this.state.remove_search ? (
                       <a
                         onClick={() => this.clearSearch()}
@@ -791,7 +840,6 @@ class AmenitiesPartnerPage extends Component {
                     }) => {
                       return (
                         <Form>
-                        
                           {this.state.showModalLoader === true ? (
                             <div className="loading_reddy_outer">
                               <div className="loading_reddy">
@@ -810,112 +858,160 @@ class AmenitiesPartnerPage extends Component {
                           </Modal.Header>
                           <Modal.Body>
                             <div className="contBox">
-                              {/*
                               <Row>
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
-                                    <label>
-                                      Content
-                                    </label>
-                                    <Field
-                                      name="content"
-                                      as="textarea"
-                                      className={`form-control`}
-                                      placeholder="Enter Content"
-                                      autoComplete="off"
-                                      value={values.content}
-                                    
-                                    />
-                                    {errors.content && touched.content ? (
+                                    <label>City</label>
+                                    {this.state.amenitiesEditType > 0 ? (
+                                      <Field
+                                        name="cities"
+                                        type="text"
+                                        className={`form-control`}
+                                        placeholder="Enter city"
+                                        autoComplete="off"
+                                        value={values.cities}
+                                        disabled
+                                      />
+                                    ) : (
+                                      <Select
+                                        name="cities"
+                                        maxMenuHeight={200}
+                                        // isMulti
+                                        isClearable={true}
+                                        isSearchable={true}
+                                        placeholder="Select City"
+                                        options={this.state.city_state_list}
+                                        value={values.cities}
+                                        onChange={(evt) => {
+                                          this.setState({
+                                            add_city: evt.city_name,
+                                            suggestions: "",
+                                            labs: "",
+                                          });
+                                          // setFieldValue("cities", evt.city_name);
+                                        }}
+                                      />
+                                    )}
+
+                                    {errors.cities && touched.cities ? (
                                       <span className="errorMsg">
-                                        {errors.content}
+                                        {errors.cities}
                                       </span>
                                     ) : null}
                                   </div>
                                 </Col>
-                              </Row> */}
+                              </Row>
 
                               <Row>
-                              {/* <Col xs={12} sm={12} md={12}>
-                              <div className="form-group">
-                                <label>
-                                  Search Amentity
-                                  <span className="impField">*</span>
-                                </label>
-                                <div className="position-relative">
-                                  <Autosuggest
-                                    suggestions={this.state.suggestions}
-                                    onSuggestionsFetchRequested={(req) => {
-                                      this.onSuggestionsFetchRequested(req);
-                                      setFieldTouched("labId");
-                                    }}
-                                    onSuggestionsClearRequested={() => {
-                                      this.onSuggestionsClearRequested();
-                                      this.setState({
-                                        selectedValue: "",
-                                      });
-                                    }}
-                                    getSuggestionValue={this.getSuggestionValue}
-                                    renderSuggestion={this.renderSuggestion}
-                                    focusInputOnSuggestionClick={false}
-                                    inputProps={{
-                                      style: {
-                                        width: "100%",
-                                        textTransform: "uppercase",
-                                        display: "block",
-                                        width: "100%",
-                                        height: "34px",
-                                        padding: "6px 12px",
-                                        fontSize: "14px",
-                                        lineHeight: "1.42857143",
-                                        color: "#555555",
-                                        backgroundColor: "#fff",
-                                        backgroundImage: "none",
-                                        border: "1px solid #d2d6de",
-                                      },
-                                      placeholder: "Enter Product Code",
+                                <Col xs={12} sm={12} md={12}>
+                                  <div className="form-group">
+                                    <label>
+                                      Search Lab
+                                      <span className="impField">*</span>
+                                    </label>
+                                    <div className="position-relative">
+                                      {this.state.amenitiesEditType > 0 ? (
+                                        <Field
+                                          name="labs"
+                                          type="text"
+                                          className={`form-control`}
+                                          placeholder="Enter Lab"
+                                          autoComplete="off"
+                                          value={values.labs}
+                                          disabled
+                                        />
+                                      ) : (
+                                        <>
+                                          <Autosuggest
+                                            suggestions={this.state.suggestions}
+                                            onSuggestionsFetchRequested={(
+                                              req
+                                            ) => {
+                                              this.onSuggestionsFetchRequested(
+                                                req
+                                              );
+                                              setFieldTouched("labId");
+                                            }}
+                                            onSuggestionsClearRequested={() => {
+                                              this.onSuggestionsClearRequested();
+                                              this.setState({
+                                                selectedValue: "",
+                                              });
+                                            }}
+                                            getSuggestionValue={
+                                              this.getSuggestionValue
+                                            }
+                                            renderSuggestion={
+                                              this.renderSuggestion
+                                            }
+                                            focusInputOnSuggestionClick={false}
+                                            inputProps={{
+                                              style: {
+                                                width: "100%",
+                                                display: "block",
+                                                width: "100%",
+                                                height: "34px",
+                                                padding: "6px 12px",
+                                                fontSize: "14px",
+                                                lineHeight: "1.42857143",
+                                                color: "#555555",
+                                                backgroundColor: "#fff",
+                                                backgroundImage: "none",
+                                                border: "1px solid #d2d6de",
+                                              },
+                                              placeholder: "Enter Lab Name",
 
-                                      value: this.state.labIdValue,
-                                      onChange: this.onChangeAutoSuggest,
-                                      onKeyDown: this.handleSearchLab,
-                                      onBlur: () => setFieldTouched("labId"),
-                                      disabled: this.state.selectedLabIdValue != "",
-                                    }}
-                                    onSuggestionSelected={(event, req) => {
-                                      this.onSuggestionSelected(
-                                        event,
-                                        req,
-                                        setFieldTouched
-                                      );
-                                      // setTimeout(() => {
-                                      //   setFieldTouched("labId", true)
-                                      // }, 230);
-                                    }}
-                                    container="form-control"
-                                  />
-                                  {this.state.selectedLabIdValue !== "" ? (
-                                    <button
-                                      className="crossBtn btn btn-danger pull-right"
-                                      onClick={() =>
-                                        this.handleAutoSuggestClick()
-                                      }
-                                    >
-                                      X
-                                    </button>
-                                  ) : null}
-                                </div>
-                                {errors.labId && touched.labId ? (
-                                  <span className="errorMsg">
-                                    {errors.labId}
-                                  </span>
-                                ) : null}
-                              </div>
-                            </Col> */}
+                                              value: this.state.labIdValue,
+                                              onChange:
+                                                this.onChangeAutoSuggest,
+                                              onKeyDown: this.handleSearchLab,
+                                              onBlur: () =>
+                                                setFieldTouched("labId"),
+                                              // disabled:
+                                              //   this.state.selectedLabIdValue != "",
+                                            }}
+                                            onSuggestionSelected={(
+                                              event,
+                                              req
+                                            ) => {
+                                              this.onSuggestionSelected(
+                                                event,
+                                                req,
+                                                setFieldTouched
+                                              );
+                                              // setTimeout(() => {
+                                              //   setFieldTouched("labId", true)
+                                              // }, 230);
+                                            }}
+                                            container="form-control"
+                                          />
+                                          {this.state.selectedLabIdValue !==
+                                          "" ? (
+                                            <button
+                                              className="crossBtn btn btn-danger pull-right"
+                                              onClick={() =>
+                                                this.handleAutoSuggestClick()
+                                              }
+                                            >
+                                              X
+                                            </button>
+                                          ) : null}
+                                        </>
+                                      )}
+                                    </div>
+                                    {errors.labId && touched.labId ? (
+                                      <span className="errorMsg">
+                                        {errors.labId}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                </Col>
                                 <Col xs={12} sm={12} md={12}>
                                   <div className="form-group">
                                     <label>
                                       Upload Icon
-                                      {this.state.amenitiesEditType > 0 ? null : (
+                                      {this.state.amenitiesEditType >
+                                      0 ? null : (
                                         <span className="impField">*</span>
                                       )}
                                       <br />{" "}
@@ -949,62 +1045,67 @@ class AmenitiesPartnerPage extends Component {
 
                               <Row>
                                 <Col xs={12} sm={12} md={12}>
-                                    <div className="form-group">
-                                        <label>
-                                            Title
-                                        <span className="impField">*</span>
-                                        </label>
-                                        <Field
-                                            name="heading"
-                                            type="text"
-                                            className={`form-control`}
-                                            placeholder="Enter Title"
-                                            autoComplete="off"
-                                            value={values.heading}
-                                            onChange={(e) => {
-                                              setFieldValue("heading",e.target.value.trim() === '' ? e.target.value.trim():e.target.value)
-                                            }}  
-                                        />
-                                        {errors.heading && touched.heading ? (
-                                            <span className="errorMsg">
-                                                {errors.heading}
-                                            </span>
-                                        ) : null}
-                                    </div>
+                                  <div className="form-group">
+                                    <label>
+                                      Title
+                                      <span className="impField">*</span>
+                                    </label>
+                                    <Field
+                                      name="heading"
+                                      type="text"
+                                      className={`form-control`}
+                                      placeholder="Enter Title"
+                                      autoComplete="off"
+                                      value={values.heading}
+                                      onChange={(e) => {
+                                        setFieldValue(
+                                          "heading",
+                                          e.target.value.trim() === ""
+                                            ? e.target.value.trim()
+                                            : e.target.value
+                                        );
+                                      }}
+                                    />
+                                    {errors.heading && touched.heading ? (
+                                      <span className="errorMsg">
+                                        {errors.heading}
+                                      </span>
+                                    ) : null}
+                                  </div>
                                 </Col>
-                            </Row>
+                              </Row>
 
-                            <Row>
+                              <Row>
                                 <Col xs={12} sm={12} md={12}>
-                                    <div className="form-group">
-                                        <label>
-                                            Content
-                                        <span className="impField">*</span>
-                                        </label>
-                                        <Field
-                                            name="content"
-                                            type="text"
-                                            className={`form-control`}
-                                            placeholder="Enter Content"
-                                            autoComplete="off"
-                                            value={values.content}
-                                            onChange={(e) => {
-                                              setFieldValue(
-                                                "content",
-                                                e.target.value.trim() === ""
-                                                  ? e.target.value.trim()
-                                                  : e.target.value
-                                              );
-                                            }}  
-                                        />
-                                        {errors.content && touched.content ? (
-                                            <span className="errorMsg">
-                                                {errors.content}
-                                            </span>
-                                        ) : null}
-                                    </div>
+                                  <div className="form-group">
+                                    <label>
+                                      Content
+                                      <span className="impField">*</span>
+                                    </label>
+                                    <Field
+                                      name="content"
+                                      type="text"
+                                      className={`form-control`}
+                                      placeholder="Enter Content"
+                                      autoComplete="off"
+                                      value={values.content}
+                                      onChange={(e) => {
+                                        setFieldValue(
+                                          "content",
+                                          e.target.value.trim() === ""
+                                            ? e.target.value.trim()
+                                            : e.target.value
+                                        );
+                                      }}
+                                    />
+                                    {errors.content && touched.content ? (
+                                      <span className="errorMsg">
+                                        {errors.content}
+                                      </span>
+                                    ) : null}
+                                  </div>
                                 </Col>
-                            </Row>
+                              </Row>
 
                               <Row>
                                 <Col xs={12} sm={12} md={12}>
@@ -1077,9 +1178,7 @@ class AmenitiesPartnerPage extends Component {
                   onHide={() => this.imageModalCloseHandler()}
                   backdrop="static"
                 >
-                  <Modal.Header closeButton>
-                    Amenity Image
-                  </Modal.Header>
+                  <Modal.Header closeButton>Amenity Image</Modal.Header>
                   <Modal.Body>
                     <center>
                       <div className="imgUi">

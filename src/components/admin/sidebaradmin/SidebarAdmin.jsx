@@ -111,7 +111,8 @@ class SidebarAdmin extends Component {
       path === "/partner-page/amenities" ||
       path === "/partner-page/services" ||
       path === "/partner-page/center-images" ||
-      path === "/partner-page/current-offers"
+      path === "/partner-page/current-offers" ||
+      path === "/partner-page/add-aboutus"
     ) {
       this.setState({ shown: "6" });
     }

@@ -200,6 +200,7 @@ class Accordion extends Component {
         showErrorMessage(err, this.props);
       });
   }
+  
   editAccordion(e, id, row) {
     e.preventDefault();
 

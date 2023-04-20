@@ -77,10 +77,12 @@ import AddContentAccordian from "../components/admin/r-and-d/AddContentAccordion
 import EditContentAccordion from "../components/admin/r-and-d/EditContentAccordion";
 import EditAccordion from "../components/admin/product-details/EditAccordion";
 import CurrentOffersPartnerPage from "../components/admin/partner-page/CurrentOffersPartnerPage";
-import AboutUsPartnerPage from "../components/admin/partner-page/AboutUsPartnerPage";
+import AboutUsPartnerPage from "../components/admin/partner-page/about-us/AboutUsPartnerPage";
 import CenterImagePartnerPage from "../components/admin/partner-page/CenterImagePartnerPage";
 import AmenitiesPartnerPage from "../components/admin/partner-page/AmenitiesPartnerPage";
 import ServicesPartnerPage from "../components/admin/partner-page/ServicesPartnerPage";
+import AddAboutus from "../components/admin/partner-page/about-us/AddAboutus";
+import EditAboutus from "../components/admin/partner-page/about-us/EditAboutus";
 
 import Pages from "../components/admin/dynamic-landing-page/Pages";
 import Lead from "../components/admin/dynamic-landing-page/Leads";
@@ -251,6 +253,8 @@ class Admin extends Component {
           path="/partner-page/aboutus"
           component={AboutUsPartnerPage}
         />
+        <PrivateRoute path="/partner-page/add-aboutus" component={AddAboutus} />
+        <PrivateRoute path="/partner-page/edit-aboutus/:id" component={EditAboutus} />
         <PrivateRoute
           path="/partner-page/services"
           component={ServicesPartnerPage}
@@ -367,7 +371,7 @@ class Admin extends Component {
           component={FactAboutSrl}
         />
         <PrivateRoute path="/carrer-page/benefits" component={Benefits} />
-        
+
         <Route from="*" component={AdminPageNotFound} />
       </Switch>
     );
