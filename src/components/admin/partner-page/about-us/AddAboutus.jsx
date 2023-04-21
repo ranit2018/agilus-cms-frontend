@@ -243,7 +243,6 @@ class AddAccordion extends Component {
                   }) => {
                     return (
                       <Form>
-                        {console.log(errors)}
                         {this.state.showModalLoader === true ? (
                           <div className="loading_reddy_outer">
                             <div className="loading_reddy">
@@ -317,7 +316,13 @@ class AddAccordion extends Component {
                                       fontSize: "14px",
                                       lineHeight: "1.42857143",
                                       color: "#555555",
-                                      backgroundColor: "#fff",
+                                      // backgroundColor: "#fff",
+                                      backgroundColor: `${
+                                        this.state.add_city == ""
+                                          ? "#eeeeee"
+                                          : "#fff"
+                                      }`,
+
                                       backgroundImage: "none",
                                       border: "1px solid #d2d6de",
                                     },
@@ -370,6 +375,10 @@ class AddAccordion extends Component {
                                   <span className="impField">*</span>
                                 </label>
                                 <Field
+                                  disabled={
+                                    this.state.labs == undefined ||
+                                    this.state.labs == ""
+                                  }
                                   name="content"
                                   as="textarea"
                                   className={`form-control`}

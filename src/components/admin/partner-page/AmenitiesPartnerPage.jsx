@@ -302,7 +302,10 @@ class AmenitiesPartnerPage extends Component {
                 file: "",
                 suggestions: [],
               });
-              if (err.data.status === 3) {
+              if (err.data.errors.status === 5) {
+                actions.setSubmitting(false);
+                actions.setErrors(err.data.errors);
+              } else if (err.data.status === 3) {
                 showErrorMessage(err, this.props);
               } else {
                 actions.setErrors(err.data.errors);
@@ -651,6 +654,12 @@ class AmenitiesPartnerPage extends Component {
         .trim()
         .strict()
         .required("Please enter the content"),
+      add_city: this.state.add_city
+        ? ""
+        : Yup.array().required("Please Select City"),
+      labIdValue: this.state.labIdValue
+        ? ""
+        : Yup.string().required("Please Provide Lab Name"),
     });
 
     const validateStopFlagUpdate = Yup.object().shape({
@@ -758,11 +767,9 @@ class AmenitiesPartnerPage extends Component {
                   >
                     Icon
                   </TableHeaderColumn>
-                  {/* <TableHeaderColumn
-                    dataField="labId"
-                  >
-                    Lab Id
-                  </TableHeaderColumn> */}
+                  <TableHeaderColumn dataField="lab_name">
+                    Lab Name
+                  </TableHeaderColumn>
                   <TableHeaderColumn
                     dataField="heading"
                     dataFormat={__htmlDecode(this)}
@@ -893,10 +900,10 @@ class AmenitiesPartnerPage extends Component {
                                       />
                                     )}
 
-                                    {errors.cities && touched.cities ? (
-                                      <span className="errorMsg">
-                                        {errors.cities}
-                                      </span>
+                                    {errors.add_city || touched.add_city ? (
+                                      <p className="errorMsg">
+                                        {errors.add_city}
+                                      </p>
                                     ) : null}
                                   </div>
                                 </Col>
@@ -949,13 +956,19 @@ class AmenitiesPartnerPage extends Component {
                                               style: {
                                                 width: "100%",
                                                 display: "block",
-                                                width: "100%",
+                                                // width: "100%",
                                                 height: "34px",
                                                 padding: "6px 12px",
                                                 fontSize: "14px",
                                                 lineHeight: "1.42857143",
                                                 color: "#555555",
-                                                backgroundColor: "#fff",
+                                                // backgroundColor: "#fff",
+                                                backgroundColor: `${
+                                                  this.state.add_city == ""
+                                                    ? "#eeeeee"
+                                                    : "#fff"
+                                                }`,
+
                                                 backgroundImage: "none",
                                                 border: "1px solid #d2d6de",
                                               },
@@ -969,6 +982,8 @@ class AmenitiesPartnerPage extends Component {
                                                 setFieldTouched("labId"),
                                               // disabled:
                                               //   this.state.selectedLabIdValue != "",
+                                              disabled:
+                                                this.state.add_city == "",
                                             }}
                                             onSuggestionSelected={(
                                               event,
@@ -999,9 +1014,14 @@ class AmenitiesPartnerPage extends Component {
                                         </>
                                       )}
                                     </div>
-                                    {errors.labId && touched.labId ? (
+                                    {errors.doctor ? (
                                       <span className="errorMsg">
-                                        {errors.labId}
+                                        {errors.doctor}
+                                      </span>
+                                    ) : errors.labIdValue ||
+                                      touched.labIdValue ? (
+                                      <span className="errorMsg">
+                                        {errors.labIdValue}
                                       </span>
                                     ) : null}
                                   </div>
@@ -1020,6 +1040,11 @@ class AmenitiesPartnerPage extends Component {
                                       <i>{this.state.validationMessage}</i>
                                     </label>
                                     <Field
+                                      disabled={
+                                        (this.state.labs == undefined ||
+                                          this.state.labs == "") &&
+                                        this.state.amenitiesEditType == 0
+                                      }
                                       name="file"
                                       type="file"
                                       className={`form-control`}
@@ -1051,6 +1076,11 @@ class AmenitiesPartnerPage extends Component {
                                       <span className="impField">*</span>
                                     </label>
                                     <Field
+                                      disabled={
+                                        (this.state.labs == undefined ||
+                                          this.state.labs == "") &&
+                                        this.state.amenitiesEditType == 0
+                                      }
                                       name="heading"
                                       type="text"
                                       className={`form-control`}
@@ -1083,6 +1113,11 @@ class AmenitiesPartnerPage extends Component {
                                       <span className="impField">*</span>
                                     </label>
                                     <Field
+                                      disabled={
+                                        (this.state.labs == undefined ||
+                                          this.state.labs == "") &&
+                                        this.state.amenitiesEditType == 0
+                                      }
                                       name="content"
                                       type="text"
                                       className={`form-control`}
@@ -1115,6 +1150,11 @@ class AmenitiesPartnerPage extends Component {
                                       <span className="impField">*</span>
                                     </label>
                                     <Field
+                                      disabled={
+                                        (this.state.labs == undefined ||
+                                          this.state.labs == "") &&
+                                        this.state.amenitiesEditType == 0
+                                      }
                                       name="status"
                                       component="select"
                                       className={`selectArowGray form-control`}
