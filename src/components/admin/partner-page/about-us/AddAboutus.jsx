@@ -78,7 +78,6 @@ class AddAccordion extends Component {
   }
 
   clearAutoSuggest() {
-    console.log("hello");
     this.setState({ labs: "", value: "" });
   }
 
@@ -202,7 +201,12 @@ class AddAccordion extends Component {
       value: this.state.value
         ? ""
         : Yup.string().required("Please Provide Lab Name"),
-      content: Yup.string().required("Please Provide Content"),
+      content: Yup.string()
+        .required("Please Provide Content")
+        .matches(
+          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9]*$/,
+          "Special Character are not Allowed."
+        ),
     });
 
     return (
@@ -275,6 +279,8 @@ class AddAccordion extends Component {
                                       suggestions: "",
                                       labs: "",
                                     });
+                                    setFieldValue("content", "");
+
                                     // setFieldValue("cities", evt.city_name);
                                   }}
                                 />

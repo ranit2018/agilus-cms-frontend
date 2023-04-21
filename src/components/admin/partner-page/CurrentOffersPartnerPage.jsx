@@ -222,7 +222,7 @@ class CenterCurrentOffers extends Component {
   }
 
   clearAutoSuggest() {
-    this.setState({ labs: "", value: "" });
+    this.setState({ labs: "", labIdValue: "" });
   }
   changeStatus = (cell, status) => {
     API.put(`/api/center/offers/change_status/${cell}`, {
@@ -420,10 +420,11 @@ class CenterCurrentOffers extends Component {
     this.setState({
       offerDetail: {},
       offerEditType: 0,
-      showModal: false,
+
       suggestion: [],
       labs: "",
       labIdValue: "",
+      showModal: false,
     });
   };
 
@@ -839,6 +840,8 @@ class CenterCurrentOffers extends Component {
                                             suggestions: "",
                                             labs: "",
                                           });
+
+                                          setFieldValue("status", "");
                                           // setFieldValue("cities", evt.city_name);
                                         }}
                                       />

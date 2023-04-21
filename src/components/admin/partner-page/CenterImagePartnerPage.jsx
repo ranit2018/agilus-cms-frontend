@@ -407,7 +407,7 @@ class CenterImagePartnerPage extends Component {
   }
 
   clearAutoSuggest() {
-    this.setState({ labs: "", value: "" });
+    this.setState({ labs: "", labIdValue: "" });
   }
 
   componentDidMount() {
@@ -423,10 +423,11 @@ class CenterImagePartnerPage extends Component {
     this.setState({
       centerImageDetails: {},
       centerImageEditType: 0,
-      showModal: false,
+
       suggestion: [],
       labs: "",
       labIdValue: "",
+      showModal: false,
     });
   };
 
@@ -637,7 +638,13 @@ class CenterImagePartnerPage extends Component {
         .trim()
         .required("Please select status")
         .matches(/^[0|1]$/, "Invalid status selected"),
-      heading: Yup.string().trim().required("Please enter the heading"),
+      heading: Yup.string()
+        .trim()
+        .required("Please enter the heading")
+        .matches(
+          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9]*$/,
+          "Special Character are not Allowed."
+        ),
       add_city: this.state.add_city
         ? ""
         : Yup.array().required("Please Select City"),
@@ -664,7 +671,7 @@ class CenterImagePartnerPage extends Component {
         .trim()
         .required("Please select status")
         .matches(/^[0|1]$/, "Invalid status selected"),
-      heading: Yup.string().required("Please enter the heading"),
+      heading: Yup.string().required("Please enter the heading").matches(/^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9]*$/, 'Special Character are not Allowed.'),
     });
 
     return (
@@ -874,6 +881,8 @@ class CenterImagePartnerPage extends Component {
                                             labs: "",
                                           });
                                           // setFieldValue("cities", evt.city_name);
+                                          setFieldValue("heading", "");
+                                          setFieldValue("status", "");
                                         }}
                                       />
                                     )}

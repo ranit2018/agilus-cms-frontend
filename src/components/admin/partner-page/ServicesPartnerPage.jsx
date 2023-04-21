@@ -226,7 +226,7 @@ class ServicesPartnerPage extends Component {
   }
 
   clearAutoSuggest() {
-    this.setState({ labs: "", value: "" });
+    this.setState({ labs: "", labIdValue: "" });
   }
   changeStatus = (cell, status) => {
     API.put(`/api/center/service/change_status/${cell}`, {
@@ -427,11 +427,12 @@ class ServicesPartnerPage extends Component {
     this.setState({
       serviceDetail: {},
       serviceEditType: 0,
-      showModal: false,
+
       suggestion: [],
       labs: "",
       labIdValue: "",
       selectedLabIdValue: "",
+      showModal: false,
     });
   };
 
@@ -644,8 +645,20 @@ class ServicesPartnerPage extends Component {
         .trim()
         .required("Please select status")
         .matches(/^[0|1]$/, "Invalid status selected"),
-      heading: Yup.string().trim().required("Please enter the heading"),
-      content: Yup.string().trim().required("Please enter the content"),
+      heading: Yup.string()
+        .trim()
+        .required("Please enter the heading")
+        .matches(
+          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9]*$/,
+          "Special Character are not Allowed."
+        ),
+      content: Yup.string()
+        .trim()
+        .required("Please enter the content")
+        .matches(
+          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9]*$/,
+          "Special Character are not Allowed."
+        ),
       add_city: this.state.add_city
         ? ""
         : Yup.array().required("Please Select City"),
@@ -672,8 +685,18 @@ class ServicesPartnerPage extends Component {
         .trim()
         .required("Please select status")
         .matches(/^[0|1]$/, "Invalid status selected"),
-      heading: Yup.string().required("Please enter the heading"),
-      content: Yup.string().required("Please enter the content"),
+      heading: Yup.string()
+        .required("Please enter the heading")
+        .matches(
+          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9]*$/,
+          "Special Character are not Allowed."
+        ),
+      content: Yup.string()
+        .required("Please enter the content")
+        .matches(
+          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9]*$/,
+          "Special Character are not Allowed."
+        ),
     });
 
     return (
@@ -887,6 +910,9 @@ class ServicesPartnerPage extends Component {
                                             suggestions: "",
                                             labs: "",
                                           });
+                                          setFieldValue("heading", "");
+                                          setFieldValue("content", "");
+                                          setFieldValue("status", "");
                                           // setFieldValue("cities", evt.city_name);
                                         }}
                                       />

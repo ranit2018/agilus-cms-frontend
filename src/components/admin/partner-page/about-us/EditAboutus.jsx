@@ -191,7 +191,12 @@ class EditAboutus extends Component {
     });
 
     const validateStopFlag = Yup.object().shape({
-      content: Yup.string().required("Please Add Content"),
+      content: Yup.string()
+        .required("Please Add Content")
+        .matches(
+          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9]*$/,
+          "Special Character are not Allowed."
+        ),
     });
 
     return (

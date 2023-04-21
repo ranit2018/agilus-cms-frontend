@@ -226,7 +226,7 @@ class AmenitiesPartnerPage extends Component {
   }
 
   clearAutoSuggest() {
-    this.setState({ labs: "", value: "" });
+    this.setState({ labs: "", labIdValue: "" });
   }
 
   changeStatus = (cell, status) => {
@@ -431,10 +431,11 @@ class AmenitiesPartnerPage extends Component {
     this.setState({
       amenityDetail: {},
       amenitiesEditType: 0,
-      showModal: false,
+
       suggestion: [],
       labs: "",
       labIdValue: "",
+      showModal: false,
     });
   };
 
@@ -557,6 +558,7 @@ class AmenitiesPartnerPage extends Component {
   clearSearch = () => {
     document.getElementById("status").value = "";
     document.getElementById("search_lab_code").value = "";
+    document.getElementById("search_amenity_heading").value = "";
     this.setState(
       {
         search_by_status: "",
@@ -649,11 +651,21 @@ class AmenitiesPartnerPage extends Component {
         .trim()
         .required("Please select status")
         .matches(/^[0|1]$/, "Invalid status selected"),
-      heading: Yup.string().trim().required("Please enter the heading"),
+      heading: Yup.string()
+        .trim()
+        .required("Please enter the heading")
+        .matches(
+          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9]*$/,
+          "Special Character are not Allowed."
+        ),
       content: Yup.string()
         .trim()
         .strict()
-        .required("Please enter the content"),
+        .required("Please enter the content")
+        .matches(
+          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9]*$/,
+          "Special Character are not Allowed."
+        ),
       add_city: this.state.add_city
         ? ""
         : Yup.array().required("Please Select City"),
@@ -680,8 +692,18 @@ class AmenitiesPartnerPage extends Component {
         .trim()
         .required("Please select status")
         .matches(/^[0|1]$/, "Invalid status selected"),
-      heading: Yup.string().required("Please enter the heading"),
-      content: Yup.string().required("Please enter the content"),
+      heading: Yup.string()
+        .required("Please enter the heading")
+        .matches(
+          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9]*$/,
+          "Special Character are not Allowed."
+        ),
+      content: Yup.string()
+        .required("Please enter the content")
+        .matches(
+          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9]*$/,
+          "Special Character are not Allowed."
+        ),
     });
 
     return (
@@ -895,7 +917,9 @@ class AmenitiesPartnerPage extends Component {
                                             suggestions: "",
                                             labs: "",
                                           });
-                                          // setFieldValue("cities", evt.city_name);
+                                          setFieldValue("heading", "");
+                                          setFieldValue("content", "");
+                                          setFieldValue("status", "");
                                         }}
                                       />
                                     )}
