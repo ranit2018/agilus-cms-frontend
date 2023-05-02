@@ -572,7 +572,7 @@ class AmenitiesPartnerPage extends Component {
   };
 
   onSuggestionsFetchRequested = ({ value }) => {
-    if (value && value.length >= 3) {
+    if (value && value.length >2) {
       let payload = {
         city_name: this.state.add_city,
         search_name: value,

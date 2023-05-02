@@ -102,7 +102,7 @@ class AddAccordion extends Component {
     this.setState({ selectedValue: "", value: "" });
   };
   handaleLabName = (value) => {
-    if (value.value.length > 3) {
+    if (value.value.length > 2) {
       SRL_API.post(`/feed/get-lab-by-name`, {
         city_name: this.state.add_city,
         search_name: value.value,
