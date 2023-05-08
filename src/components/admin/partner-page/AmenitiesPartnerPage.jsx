@@ -655,16 +655,16 @@ class AmenitiesPartnerPage extends Component {
         .trim()
         .required("Please enter the heading")
         .matches(
-          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9]*$/,
-          "Special Character are not Allowed."
+          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9-,.&'\s]*$/,
+          "Special characters are not allowed."
         ),
       content: Yup.string()
         .trim()
         .strict()
         .required("Please enter the content")
         .matches(
-          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9]*$/,
-          "Special Character are not Allowed."
+          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9-,.&'\s]*$/,
+          "Special characters are not allowed."
         ),
       add_city: this.state.add_city
         ? ""
@@ -695,14 +695,14 @@ class AmenitiesPartnerPage extends Component {
       heading: Yup.string()
         .required("Please enter the heading")
         .matches(
-          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9]*$/,
-          "Special Character are not Allowed."
+          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9-,.&'\s]*$/,
+          "Special characters are not allowed."
         ),
       content: Yup.string()
         .required("Please enter the content")
         .matches(
-          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9]*$/,
-          "Special Character are not Allowed."
+          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9-,.&'\s]*$/,
+          "Special characters are not allowed."
         ),
     });
 
@@ -906,7 +906,7 @@ class AmenitiesPartnerPage extends Component {
                                         name="cities"
                                         maxMenuHeight={200}
                                         // isMulti
-                                        isClearable={true}
+                                        isClearable={false}
                                         isSearchable={true}
                                         placeholder="Select City"
                                         options={this.state.city_state_list}
@@ -924,7 +924,7 @@ class AmenitiesPartnerPage extends Component {
                                       />
                                     )}
 
-                                    {errors.add_city || touched.add_city ? (
+                                    {this.state.add_city == ""? (
                                       <p className="errorMsg">
                                         {errors.add_city}
                                       </p>

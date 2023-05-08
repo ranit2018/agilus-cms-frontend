@@ -625,7 +625,7 @@ class AboutUsPartnerPage extends Component {
                     <input
                       className="form-control"
                       id="search_lab_code"
-                      placeholder="Filter by Lab Id"
+                      placeholder="Filter by Lab Name"
                     />
                   </div>
                   <div className="">

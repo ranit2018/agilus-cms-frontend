@@ -12,6 +12,8 @@ import {
 } from "react-bootstrap";
 import { Formik, Field, Form } from "formik";
 import API from "../../../shared/hrAxios";
+import SRL_API from "../../../shared/srl-axios";
+
 import * as Yup from "yup";
 import swal from "sweetalert";
 import { showErrorMessage } from "../../../shared/handle_error";
@@ -130,6 +132,29 @@ class AppliedJobs extends Component {
       job_location: "",
       job_location_arr: [],
       job_id: "",
+      travel_needed_arr: [],
+      travel_needed: "",
+      state_list: [],
+      employment_arr: [],
+      country: [
+        {
+          id: "IN",
+          value: "India",
+        },
+        // {
+        //   id: "SL",
+        //   value: "Sri Lanka",
+        // },
+        // {
+        //   id: "NP",
+        //   value: "Nepal",
+        // },
+      ],
+      city_list: [],
+      selectStatus: [
+        { value: "0", label: "Inactive" },
+        { value: "1", label: "Active" },
+      ],
     };
     // console.log("this.state.activePage", this.state.activePage);
   }
@@ -183,10 +208,16 @@ class AppliedJobs extends Component {
     const email = document.getElementById("email").value;
     // const application_status =
     //   document.getElementById("application_status").value;
-    const job_department = document.getElementById("job_department").value;
+    // const job_department = document.getElementById("job_department").value;
     const experince = document.getElementById("experince").value;
-    // const region = document.getElementById('region_location').value;
+    // const region = document.getElementById("region_location").value;
     const job_id = document.getElementById("job_id").value;
+    const travel_needed = document.getElementById("travel_needed").value;
+    const job_role = document.getElementById("job_role").value;
+    const country = document.getElementById("country").value;
+    const state = document.getElementById("state_filter").value;
+    const city = document.getElementById("city_filter").value;
+    const search_status = document.getElementById("search_status").value;
 
     let from = this.state.from;
     let to = this.state.to;
@@ -194,12 +225,18 @@ class AppliedJobs extends Component {
       name === "" &&
       email === "" &&
       // application_status === "" &&
-      job_department === "" &&
+      // job_department === "" &&
       experince === "" &&
       job_id === "" &&
-      // region === '' &&
+      // region === "" &&
       this.state.from === "" &&
-      this.state.to === ""
+      this.state.to === "" &&
+      travel_needed === "" &&
+      job_role === "" &&
+      country === "" &&
+      state === "" &&
+      city === "" &&
+      search_status === ""
     ) {
       return false;
     }
@@ -227,15 +264,21 @@ class AppliedJobs extends Component {
       API.get(
         `/api/job_portal/job/user/apply?page=1&name=${encodeURIComponent(
           name
-        )}&email=${encodeURIComponent(
-          email
-        )}&job_department=${encodeURIComponent(
-          job_department
+        )}&email=${encodeURIComponent(email)}&job_id=${encodeURIComponent(
+          job_id
+        )}&job_role=${encodeURIComponent(
+          job_role
+        )}&country=${encodeURIComponent(country)}&state=${encodeURIComponent(
+          state
+        )}&city=${encodeURIComponent(city)}&travel_needed=${encodeURIComponent(
+          travel_needed
         )}&experience=${encodeURIComponent(
           experince
-        )}&job_id=${encodeURIComponent(job_id)}&date_from=${encodeURIComponent(
-          from
-        )}&date_to=${encodeURIComponent(to)}`
+        )}&status=${encodeURIComponent(
+          search_status
+        )}&date_from=${encodeURIComponent(from)}&date_to=${encodeURIComponent(
+          to
+        )}`
       )
         .then((res) => {
           this.setState({
@@ -244,7 +287,7 @@ class AppliedJobs extends Component {
             isLoading: false,
             name: name,
             email: email,
-            department: job_department,
+            // department: job_department,
             // status: application_status,
             experince: experince,
             // job_location: region,
@@ -273,10 +316,16 @@ class AppliedJobs extends Component {
     document.getElementById("email").value = "";
     // document.getElementById('job_title').value = '';
     // document.getElementById("application_status").value = "";
-    document.getElementById("job_department").value = "";
+    // document.getElementById("job_department").value = "";
     document.getElementById("experince").value = "";
     // document.getElementById("region_location").value = "";
     document.getElementById("job_id").value = "";
+    document.getElementById("travel_needed").value = "";
+    document.getElementById("job_role").value = "";
+    document.getElementById("country").value = "";
+    document.getElementById("state_filter").value = "";
+    document.getElementById("city_filter").value = "";
+    document.getElementById("search_status").value = "";
 
     let pageNumber = 1;
     this.setState(
@@ -306,6 +355,24 @@ class AppliedJobs extends Component {
         this.setState({
           appliedJobDetails: res.data.data[0],
           showModal: true,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  };
+  getTravelNeeded = () => {
+    API.get(`api/job_portal/travel_needed`)
+      .then((res) => {
+        let options = [];
+        for (var i = 0; i < res.data.data.length; i++) {
+          options.push({
+            value: res.data.data[i].id,
+            label: res.data.data[i].value,
+          });
+        }
+        this.setState({
+          travel_needed_arr: options,
         });
       })
       .catch((err) => {
@@ -367,12 +434,71 @@ class AppliedJobs extends Component {
       });
   };
 
+  getAllState = () => {
+    API.get(`api/feed/get-all-states`)
+      .then((res) => {
+        let options = [];
+        for (var i = 0; i < res.data.data.length; i++) {
+          options.push({
+            value: res.data.data[i].value,
+            label: res.data.data[i].label,
+          });
+        }
+        this.setState({
+          state_list: options,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  };
+  getAllCity = () => {
+    SRL_API.get(`/feed/get-all-edos-cities`)
+      .then((res) => {
+        let options = [];
+        for (var i = 0; i < res.data.data.length; i++) {
+          options.push({
+            value: res.data.data[i].value,
+            label: res.data.data[i].label,
+          });
+        }
+        this.setState({
+          city_list: options,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  };
+  getJobEmployment = () => {
+    API.get(`api/job_portal/job/employment`)
+      .then((res) => {
+        let options = [];
+        for (var i = 0; i < res.data.data.length; i++) {
+          options.push({
+            value: res.data.data[i].id,
+            label: res.data.data[i].employment_name,
+          });
+        }
+        this.setState({
+          employment_arr: options,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  };
+
   componentDidMount() {
     this.getPatientList(this.state.activePage);
     this.getApplicationStatusArr();
     this.getJobDepartment();
     this.getExperinceData();
     this.getlocationArr();
+    this.getTravelNeeded();
+    this.getAllState();
+    this.getJobEmployment();
+    this.getAllCity();
   }
 
   handlePageChange = (pageNumber) => {
@@ -545,6 +671,128 @@ class AppliedJobs extends Component {
                     <div>
                       <input
                         className="form-control"
+                        name="job_id"
+                        id="job_id"
+                        placeholder="Filter by Job ID"
+                      />
+                    </div>
+                    <div className="">
+                      <select
+                        name="job_role"
+                        id="job_role"
+                        className="form-control"
+                      >
+                        <option key="-1" value="">
+                          Filter by job Role
+                        </option>
+                        {this.state.employment_arr.map((val, i) => (
+                          <option key={i} value={val.value}>
+                            {val.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="">
+                      <select
+                        name="country"
+                        id="country"
+                        className="form-control"
+                      >
+                        <option key="-1" value="">
+                          Filter by Country
+                        </option>
+                        {this.state.country.map((val, i) => (
+                          <option key={i} value={val.value}>
+                            {val.value}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="">
+                      <select
+                        name="state_filter"
+                        id="state_filter"
+                        className="form-control"
+                      >
+                        <option key="-1" value="">
+                          Filter by State
+                        </option>
+                        {this.state.state_list.map((val, i) => (
+                          <option key={i} value={val.value}>
+                            {val.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="">
+                      <select
+                        name="city_filter"
+                        id="city_filter"
+                        className="form-control"
+                      >
+                        <option key="-1" value="">
+                          Filter by City
+                        </option>
+                        {this.state.city_list.map((val, i) => (
+                          <option key={i} value={val.value}>
+                            {val.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="">
+                      <select
+                        name="travel_needed"
+                        id="travel_needed"
+                        className="form-control"
+                      >
+                        <option key="-1" value="">
+                          Select Travel Needed
+                        </option>
+                        {this.state.travel_needed_arr.map((val, i) => (
+                          <option key={i} value={val.value}>
+                            {val.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="">
+                      <select
+                        name="experince"
+                        id="experince"
+                        className="form-control"
+                      >
+                        <option key="-1" value="">
+                          Select experience(years)
+                        </option>
+                        {this.state.experince_arr.map((val, i) => {
+                          return (
+                            <option key={i} value={val.value}>
+                              {val.label}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                    <div className="">
+                      <select
+                        className="form-control"
+                        name="status"
+                        id="search_status"
+                      >
+                        <option value="">Select Job Status</option>
+                        {this.state.selectStatus.map((val) => {
+                          return (
+                            <option key={val.value} value={val.value}>
+                              {val.label}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                    <div>
+                      <input
+                        className="form-control"
                         name="name"
                         id="name"
                         placeholder="Filter by Name"
@@ -558,32 +806,8 @@ class AppliedJobs extends Component {
                         placeholder="Filter by Email"
                       />
                     </div>
-                    <div>
-                      <input
-                        className="form-control"
-                        name="job_id"
-                        id="job_id"
-                        placeholder="Filter by Job ID"
-                      />
-                    </div>
 
                     {/* <div className="">
-                      <select
-                        name="application_status"
-                        id="application_status"
-                        className="form-control"
-                      >
-                        <option value="">Select Application Status</option>
-                        {this.state.application_status_arr.map((val, i) => {
-                          return (
-                            <option key={i} value={val.value}>
-                              {val.label}
-                            </option>
-                          );
-                        })}
-                      </select>
-                    </div> */}
-                    <div className="">
                       <select
                         name="department"
                         id="job_department"
@@ -598,25 +822,8 @@ class AppliedJobs extends Component {
                           );
                         })}
                       </select>
-                    </div>
-                    <div className="">
-                      <select
-                        name="experince"
-                        id="experince"
-                        className="form-control"
-                      >
-                        <option key="-1" value="">
-                          Select experience
-                        </option>
-                        {this.state.experince_arr.map((val, i) => {
-                          return (
-                            <option key={i} value={val.value}>
-                              {val.label}
-                            </option>
-                          );
-                        })}
-                      </select>
-                    </div>
+                    </div> */}
+
                     {/* <div className="">
                       <select
                         name="region_location"
@@ -624,9 +831,9 @@ class AppliedJobs extends Component {
                         className="form-control"
                       >
                         <option key="-1" value="">
-                          Select region
+                          Select Preferred Location
                         </option>
-                        {this.state.job_location_arr.map((val, i) => {
+                        {this.state.state_list.map((val, i) => {
                           return (
                             <option key={i} value={val.value}>
                               {val.label}

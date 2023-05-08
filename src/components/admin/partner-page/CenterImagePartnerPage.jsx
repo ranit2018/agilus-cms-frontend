@@ -642,8 +642,8 @@ class CenterImagePartnerPage extends Component {
         .trim()
         .required("Please enter the heading")
         .matches(
-          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9]*$/,
-          "Special Character are not Allowed."
+          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9-,.&'\s]*$/,
+          "Special characters are not allowed."
         ),
       add_city: this.state.add_city
         ? ""
@@ -671,7 +671,7 @@ class CenterImagePartnerPage extends Component {
         .trim()
         .required("Please select status")
         .matches(/^[0|1]$/, "Invalid status selected"),
-      heading: Yup.string().required("Please enter the heading").matches(/^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9]*$/, 'Special Character are not Allowed.'),
+      heading: Yup.string().required("Please enter the heading").matches(/^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9-,.&'\s]*$/, 'Special characters are not allowed.'),
     });
 
     return (
@@ -869,7 +869,7 @@ class CenterImagePartnerPage extends Component {
                                         name="cities"
                                         maxMenuHeight={200}
                                         // isMulti
-                                        isClearable={true}
+                                        isClearable={false}
                                         isSearchable={true}
                                         placeholder="Select City"
                                         options={this.state.city_state_list}
@@ -887,7 +887,7 @@ class CenterImagePartnerPage extends Component {
                                       />
                                     )}
 
-                                    {errors.add_city || touched.add_city ? (
+                                    {this.state.add_city == "" ? (
                                       <p className="errorMsg">
                                         {errors.add_city}
                                       </p>

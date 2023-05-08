@@ -829,7 +829,7 @@ class CenterCurrentOffers extends Component {
                                         name="cities"
                                         maxMenuHeight={200}
                                         // isMulti
-                                        // isClearable={true}
+                                        isClearable={false}
                                         isSearchable={true}
                                         placeholder="Select City"
                                         options={this.state.city_state_list}
@@ -847,7 +847,7 @@ class CenterCurrentOffers extends Component {
                                       />
                                     )}
 
-                                    {errors.add_city || touched.add_city ? (
+                                    {this.state.add_city == "" ? (
                                       <p className="errorMsg">
                                         {errors.add_city}
                                       </p>

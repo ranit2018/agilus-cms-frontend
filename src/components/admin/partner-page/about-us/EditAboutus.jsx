@@ -194,8 +194,8 @@ class EditAboutus extends Component {
       content: Yup.string()
         .required("Please Add Content")
         .matches(
-          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9]*$/,
-          "Special Character are not Allowed."
+          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9-,.&'\s]*$/,
+          "Special characters are not allowed."
         ),
     });
 

@@ -193,10 +193,10 @@ class AddAccordion extends Component {
       status: "",
       description: "",
     });
-
+    console.log(">>>>>>>>>>", this.state.add_city);
     const validateStopFlag = Yup.object().shape({
       add_city: this.state.add_city
-        ? ""
+        ? null
         : Yup.array().required("Please Select City"),
       value: this.state.value
         ? ""
@@ -204,8 +204,8 @@ class AddAccordion extends Component {
       content: Yup.string()
         .required("Please Provide Content")
         .matches(
-          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9]*$/,
-          "Special Character are not Allowed."
+          /^[a-zA-Z0-9-,\s]*[@#^&()_+\-\[\]{};':"\\|.\/?]*[a-zA-Z0-9-,.&'\s]*$/,
+          "Special characters are not allowed."
         ),
     });
 
@@ -268,7 +268,7 @@ class AddAccordion extends Component {
                                   name="cities"
                                   maxMenuHeight={200}
                                   // isMulti
-                                  isClearable={true}
+                                  isClearable={false}
                                   isSearchable={true}
                                   placeholder="Select City"
                                   options={this.state.city_state_list}
@@ -284,7 +284,7 @@ class AddAccordion extends Component {
                                     // setFieldValue("cities", evt.city_name);
                                   }}
                                 />
-                                {errors.add_city || touched.add_city ? (
+                                {this.state.add_city == "" ? (
                                   <p className="errorMsg">{errors.add_city}</p>
                                 ) : null}
                               </div>

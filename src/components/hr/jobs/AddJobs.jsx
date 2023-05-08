@@ -3,6 +3,8 @@ import { Row, Col, Button, Modal } from "react-bootstrap";
 import { Formik, Field, Form } from "formik";
 import { Editor } from "@tinymce/tinymce-react";
 import API from "../../../shared/hrAxios";
+import SRL_API from "../../../shared/srl-axios";
+
 import * as Yup from "yup";
 import swal from "sweetalert";
 import { showErrorMessage } from "../../../shared/handle_error";
@@ -55,16 +57,20 @@ class AddBlog extends Component {
           id: "IN",
           value: "India",
         },
-        {
-          id: "SL",
-          value: "Sri Lanka",
-        },
-        {
-          id: "NP",
-          value: "Nepal",
-        },
+        // {
+        //   id: "SL",
+        //   value: "Sri Lanka",
+        // },
+        // {
+        //   id: "NP",
+        //   value: "Nepal",
+        // },
       ],
       state_list: [],
+      city_list: [],
+      job_department: "",
+      select_state: "",
+      select_city: "",
     };
   }
 
@@ -134,6 +140,24 @@ class AddBlog extends Component {
         }
         this.setState({
           state_list: options,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  };
+  getAllCity = () => {
+    SRL_API.get(`/feed/get-all-edos-cities`)
+      .then((res) => {
+        let options = [];
+        for (var i = 0; i < res.data.data.length; i++) {
+          options.push({
+            value: res.data.data[i].value,
+            label: res.data.data[i].label,
+          });
+        }
+        this.setState({
+          city_list: options,
         });
       })
       .catch((err) => {
@@ -212,6 +236,22 @@ class AddBlog extends Component {
         showErrorMessage(err, this.props);
       });
   };
+
+  handleChanges = (key, e) => {
+    if (key == "job_department") {
+      this.setState({
+        job_department: e.value,
+      });
+    } else if (key === "state_list") {
+      this.setState({
+        select_state: e.value,
+      });
+    } else if (key === "city_list") {
+      this.setState({
+        select_city: e.value,
+      });
+    }
+  };
   componentDidMount() {
     this.setState({
       validationMessage: generateResolutionText("blog"),
@@ -223,17 +263,26 @@ class AddBlog extends Component {
     this.getlocationArr();
     this.getExperinceData();
     this.getAllState();
+    this.getAllCity();
   }
 
   handleSubmitEventAdd = (values, actions) => {
+    console.log("values:", values);
     let state = this.state.state_list.find(
-      (item) => item.value == values.state_list
+      (item) => item.value == this.state.select_state
     );
     let state_label = state ? state.label : "";
+
+    let city = this.state.city_list.find(
+      (item) => item.value == this.state.select_city
+    );
+
+    let city_label = city ? city.label : "";
+
     let postdata = {
       job_id: values.job_id,
       job_employment: values.job_employment,
-      job_department: values.job_department,
+      job_department: String(this.state.job_department),
       job_location: values.job_location,
       travel_needed: values.travel_type,
       // region: values.region,
@@ -244,12 +293,13 @@ class AddBlog extends Component {
       job_designation: values.job_designation,
       country: values.country,
       state: state_label,
-      state_id: values.state_list,
+      state_id: String(this.state.select_state),
+      city: city_label,
+      city_id: String(this.state.select_city),
     };
 
     let url = `api/job_portal/job`;
     let method = "POST";
-
     API({
       method: method,
       url: url,
@@ -297,14 +347,23 @@ class AddBlog extends Component {
       status: "",
       country: "",
       state_list: "",
+      city_list: "",
     };
     const validateStopFlag = Yup.object().shape({
       job_designation: Yup.string().required("Plaese enter job  designation"),
       job_employment: Yup.string().required("Please enter employment type"),
-      job_department: Yup.string().required("Please enter department"),
+      job_department: this.state.job_department
+        ? ""
+        : Yup.string().required("Please enter department"),
       job_location: Yup.string().required("Please select job location"),
       country: Yup.string().required("Please select posting country"),
-      state_list: Yup.string().required("Please select posting state"),
+      state_list: this.state.select_state
+        ? ""
+        : Yup.string().required("Please select posting state"),
+      city_list: this.state.select_city
+        ? ""
+        : Yup.string().required("Please select posting city"),
+      // city_list: Yup.string().required("Please select posting city"),
       travel_type: Yup.string().required("Please enter travel_needed"),
       // region: Yup.string().required("Please enter region"),
       experience: Yup.string().required("Please enter experience"),
@@ -451,7 +510,7 @@ class AddBlog extends Component {
                                     Department
                                     <span className="impField">*</span>
                                   </label>
-                                  <Field
+                                  {/* <Field
                                     name="job_department"
                                     id="job_department"
                                     component="select"
@@ -467,7 +526,20 @@ class AddBlog extends Component {
                                         {val.label}
                                       </option>
                                     ))}
-                                  </Field>
+                                  </Field> */}
+                                  <Select
+                                    name="job_department"
+                                    maxMenuHeight={200}
+                                    // isMulti
+                                    isClearable={false}
+                                    isSearchable={true}
+                                    placeholder="Select Department"
+                                    options={this.state.department_arr}
+                                    value={values.job_department}
+                                    onChange={(e) =>
+                                      this.handleChanges("job_department", e)
+                                    }
+                                  />
                                   {errors.job_department &&
                                   touched.job_department ? (
                                     <span className="errorMsg">
@@ -478,131 +550,6 @@ class AddBlog extends Component {
                               </Col>
                             </Row>
 
-                            {/* <Row>
-                                <Col xs={12} sm={12} md={6}>
-                                  <div className="form-group">
-                                    <label>
-                                      Job Title
-                                      <span className="impField">*</span>
-                                    </label>
-                                    <Field
-                                      name="job_title"
-                                      id="job_title"
-                                      type="text"
-                                      className={`form-control`}
-                                      placeholder="Enter Job Title"
-                                      autoComplete="off"
-                                      value={values.job_title}
-                                    />
-                                    {errors.job_title && touched.job_title ? (
-                                      <span className="errorMsg">
-                                        {errors.job_title}
-                                      </span>
-                                    ) : null}
-                                  </div>
-                                </Col>
-                                <Col xs={12} sm={12} md={6}>
-                                  <div className="form-group">
-                                    <label>
-                                      Job Roles
-                                      <span className="impField">*</span>
-                                    </label>
-                                    <Field
-                                      name="job_role"
-                                      id="job_role"
-                                      component="select"
-                                      className={`selectArowGray form-control`}
-                                      autoComplete="off"
-                                      value={values.job_role}
-                                    >
-                                      <option key="-1" value="">
-                                        Select Job Role
-                                      </option>
-                                      {this.state.job_role_arr.map((val, i) => (
-                                        <option key={i} value={val.value}>
-                                          {val.label}
-                                        </option>
-                                      ))}
-                                    </Field>
-                                    {errors.job_role && touched.job_role ? (
-                                      <span className="errorMsg">
-                                        {errors.job_role}
-                                      </span>
-                                    ) : null}
-                                  </div>
-                                </Col>
-                              </Row> */}
-
-                            {/* <Row>
-                                <Col xs={12} sm={12} md={6}>
-                                  <div className="form-group">
-                                    <label>
-                                      Job Category
-                                      <span className="impField">*</span>
-                                    </label>
-                                    <Field
-                                      name="category_name"
-                                      id="category_name"
-                                      component="select"
-                                      className={`selectArowGray form-control`}
-                                      autoComplete="off"
-                                      value={values.category_name}
-                                    >
-                                      <option key="-1" value="">
-                                        Select Job Category
-                                      </option>
-                                      {this.state.job_category_arr.map(
-                                        (val, i) => (
-                                          <option
-                                            key={val.id}
-                                            value={val.value}
-                                          >
-                                            {val.label}
-                                          </option>
-                                        )
-                                      )}
-                                    </Field>
-                                    {errors.category_name &&
-                                    touched.category_name ? (
-                                      <span className="errorMsg">
-                                        {errors.category_name}
-                                      </span>
-                                    ) : null}
-                                  </div>
-                                </Col>
-                                <Col xs={12} sm={12} md={6}>
-                                  <div className="form-group">
-                                    <label>
-                                      Job Skill
-                                      <span className="impField">*</span>
-                                    </label>
-                                    <Field
-                                      name="job_skill"
-                                      id="job_skill"
-                                      component="select"
-                                      className={`selectArowGray form-control`}
-                                      autoComplete="off"
-                                      value={values.job_skill}
-                                    >
-                                      <option key="-1" value="">
-                                        Select Job Skill
-                                      </option>
-                                      {this.state.job_skill_arr.map(
-                                        (val, i) => (
-                                          <option key={i} value={val.value}>
-                                            {val.label}
-                                          </option>
-                                        )
-                                      )}
-                                    </Field>
-                                    {errors.job_skill && touched.job_skill ? (
-                                      <span className="errorMsg">
-                                        {errors.job_skill}
-                                      </span>
-                                    ) : null}
-                                  </div>
-                                </Col>
-                              </Row> */}
                             <Row>
                               <Col xs={12} sm={12} md={6}>
                                 <div className="form-group">
@@ -640,7 +587,7 @@ class AddBlog extends Component {
                                     Posting State
                                     <span className="impField">*</span>
                                   </label>
-                                  <Field
+                                  {/* <Field
                                     name="state_list"
                                     id="state_list"
                                     component="select"
@@ -656,7 +603,21 @@ class AddBlog extends Component {
                                         {val.label}
                                       </option>
                                     ))}
-                                  </Field>
+                                  </Field> */}
+                                  <Select
+                                    name="state_list"
+                                    maxMenuHeight={200}
+                                    // isMulti
+                                    isClearable={false}
+                                    isSearchable={true}
+                                    placeholder="Select Posting State"
+                                    options={this.state.state_list}
+                                    value={values.select_state}
+                                    // onChange={(evt) => setFieldValue("state_list",evt)}
+                                    onChange={(e) =>
+                                      this.handleChanges("state_list", e)
+                                    }
+                                  />
                                   {errors.state_list && touched.state_list ? (
                                     <span className="errorMsg">
                                       {errors.state_list}
@@ -666,6 +627,50 @@ class AddBlog extends Component {
                               </Col>
                             </Row>
                             <Row>
+                              <Col xs={12} sm={12} md={6}>
+                                <div className="form-group">
+                                  <label>
+                                    Posting City
+                                    <span className="impField">*</span>
+                                  </label>
+                                  {/* <Field
+                                    name="city_list"
+                                    id="city_list"
+                                    component="select"
+                                    className={`selectArowGray form-control`}
+                                    autoComplete="off"
+                                    value={values.city_list}
+                                  >
+                                    <option key="-1" value="">
+                                      Select Posting List
+                                    </option>
+                                    {this.state.city_list.map((val, i) => (
+                                      <option key={i} value={val.value}>
+                                        {val.label}
+                                      </option>
+                                    ))}
+                                  </Field> */}
+                                  <Select
+                                    name="city_list"
+                                    maxMenuHeight={200}
+                                    // isMulti
+                                    isClearable={false}
+                                    isSearchable={true}
+                                    placeholder="Select Posting State"
+                                    options={this.state.city_list}
+                                    value={values.select_city}
+                                    // onChange={(evt) => setFieldValue("city_list",evt)}
+                                    onChange={(e) =>
+                                      this.handleChanges("city_list", e)
+                                    }
+                                  />
+                                  {errors.city_list && touched.city_list ? (
+                                    <span className="errorMsg">
+                                      {errors.city_list}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </Col>
                               <Col xs={12} sm={12} md={6}>
                                 <div className="form-group">
                                   <label>
@@ -684,38 +689,6 @@ class AddBlog extends Component {
                                   touched.job_location ? (
                                     <span className="errorMsg">
                                       {errors.job_location}
-                                    </span>
-                                  ) : null}
-                                </div>
-                              </Col>
-                              <Col xs={12} sm={12} md={6}>
-                                <div className="form-group">
-                                  <label>
-                                    Travel Needed
-                                    <span className="impField">*</span>
-                                  </label>
-                                  <Field
-                                    name="travel_type"
-                                    id="travel_type"
-                                    component="select"
-                                    className={`selectArowGray form-control`}
-                                    autoComplete="off"
-                                    value={values.travel_type}
-                                  >
-                                    <option key="-1" value="">
-                                      Select Travel Needed
-                                    </option>
-                                    {this.state.travel_needed_arr.map(
-                                      (val, i) => (
-                                        <option key={i} value={val.value}>
-                                          {val.label}
-                                        </option>
-                                      )
-                                    )}
-                                  </Field>
-                                  {errors.travel_type && touched.travel_type ? (
-                                    <span className="errorMsg">
-                                      {errors.travel_type}
                                     </span>
                                   ) : null}
                                 </div>
@@ -755,6 +728,38 @@ class AddBlog extends Component {
                                   ) : null}
                                 </div>
                               </Col> */}
+                              <Col xs={12} sm={12} md={6}>
+                                <div className="form-group">
+                                  <label>
+                                    Travel Needed
+                                    <span className="impField">*</span>
+                                  </label>
+                                  <Field
+                                    name="travel_type"
+                                    id="travel_type"
+                                    component="select"
+                                    className={`selectArowGray form-control`}
+                                    autoComplete="off"
+                                    value={values.travel_type}
+                                  >
+                                    <option key="-1" value="">
+                                      Select Travel Needed
+                                    </option>
+                                    {this.state.travel_needed_arr.map(
+                                      (val, i) => (
+                                        <option key={i} value={val.value}>
+                                          {val.label}
+                                        </option>
+                                      )
+                                    )}
+                                  </Field>
+                                  {errors.travel_type && touched.travel_type ? (
+                                    <span className="errorMsg">
+                                      {errors.travel_type}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </Col>
                               <Col xs={12} sm={12} md={6}>
                                 <div className="form-group">
                                   <label>
