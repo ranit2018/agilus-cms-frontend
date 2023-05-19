@@ -1,12 +1,13 @@
-import React, { Component } from 'react';
-import { Row, Col, Button, Modal } from 'react-bootstrap';
-import { Formik, Field, Form } from 'formik';
-import { Editor } from '@tinymce/tinymce-react';
-import API from '../../../shared/hrAxios';
-import * as Yup from 'yup';
-import swal from 'sweetalert';
-import { showErrorMessage } from '../../../shared/handle_error';
-import Select from 'react-select';
+import React, { Component } from "react";
+import { Row, Col, Button, Modal } from "react-bootstrap";
+import { Formik, Field, Form } from "formik";
+import { Editor } from "@tinymce/tinymce-react";
+import API from "../../../shared/hrAxios";
+import SRL_API from "../../../shared/srl-axios";
+import * as Yup from "yup";
+import swal from "sweetalert";
+import { showErrorMessage } from "../../../shared/handle_error";
+import Select from "react-select";
 import {
   htmlDecode,
   getHeightWidth,
@@ -16,23 +17,23 @@ import {
   FILE_SIZE,
   FILE_VALIDATION_TYPE_ERROR_MASSAGE,
   FILE_VALIDATION_SIZE_ERROR_MASSAGE,
-} from '../../../shared/helper';
-import Layout from '../layout/Layout';
-import TagsInput from 'react-tagsinput';
-import 'react-tagsinput/react-tagsinput.css'; // If using WebPack and style-loader.
+} from "../../../shared/helper";
+import Layout from "../layout/Layout";
+import TagsInput from "react-tagsinput";
+import "react-tagsinput/react-tagsinput.css"; // If using WebPack and style-loader.
 
 const stringFormat = (str) => {
-  str = str.replace(/[-[\]{}@'!*+?.,/;\\^$|#\s]/g, ' ');
-  str = str.split(' ');
+  str = str.replace(/[-[\]{}@'!*+?.,/;\\^$|#\s]/g, " ");
+  str = str.split(" ");
   const strArr = [];
   console.log(str);
 
   for (let i in str) {
-    if (str[i] !== '') {
+    if (str[i] !== "") {
       strArr.push(str[i]);
     }
   }
-  const formatedString = strArr.join('-');
+  const formatedString = strArr.join("-");
   return formatedString.toLowerCase();
 };
 
@@ -42,27 +43,43 @@ class EditJob extends Component {
 
     this.state = {
       selectStatus: [
-        { value: '0', label: 'Inactive' },
-        { value: '1', label: 'Active' },
+        { value: "0", label: "Inactive" },
+        { value: "1", label: "Active" },
       ],
       employment_arr: [],
       department_arr: [],
       travel_needed_arr: [],
       job_location_arr: [],
       experince_arr: [],
+      country: [
+        {
+          id: "IN",
+          value: "India",
+        },
+        // {
+        //   id: "SL",
+        //   value: "Sri Lanka",
+        // },
+        // {
+        //   id: "NP",
+        //   value: "Nepal",
+        // },
+      ],
+      state_list: [],
+      city_list: [],
     };
   }
 
   fileChangedHandler = (event, setFieldTouched, setFieldValue, setErrors) => {
     //console.log(event.target.files);
-    setFieldTouched('featured_image');
-    setFieldValue('featured_image', event.target.value);
+    setFieldTouched("featured_image");
+    setFieldValue("featured_image", event.target.value);
 
-    const SUPPORTED_FORMATS = ['image/png', 'image/jpeg', 'image/jpg'];
+    const SUPPORTED_FORMATS = ["image/png", "image/jpeg", "image/jpg"];
     if (!event.target.files[0]) {
       //Supported
       this.setState({
-        featured_image: '',
+        featured_image: "",
         isValidFile: true,
       });
       return;
@@ -80,13 +97,50 @@ class EditJob extends Component {
       //Unsupported
       setErrors({
         featured_image:
-          'Only files with the following extensions are allowed: png jpg jpeg',
+          "Only files with the following extensions are allowed: png jpg jpeg",
       }); //Not working- So Added validation in "yup"
       this.setState({
-        featured_image: '',
+        featured_image: "",
         isValidFile: false,
       });
     }
+  };
+
+  getAllCity = () => {
+    SRL_API.get(`/feed/get-all-edos-cities`)
+      .then((res) => {
+        let options = [];
+        for (var i = 0; i < res.data.data.length; i++) {
+          options.push({
+            value: res.data.data[i].value,
+            label: res.data.data[i].label,
+          });
+        }
+        this.setState({
+          city_list: options,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  };
+  getAllState = () => {
+    API.get(`api/feed/get-all-states`)
+      .then((res) => {
+        let options = [];
+        for (var i = 0; i < res.data.data.length; i++) {
+          options.push({
+            value: res.data.data[i].value,
+            label: res.data.data[i].label,
+          });
+        }
+        this.setState({
+          state_list: options,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
   };
 
   getJobEmployment = () => {
@@ -179,9 +233,30 @@ class EditJob extends Component {
         showErrorMessage(err, this.props);
       });
   };
+  getAllCityById = (payload) => {
+    SRL_API.post(`/feed/city-list`, {
+      state_id: payload,
+    })
+      .then((res) => {
+        console.log("res:", res);
+        // let options = [];
+        // for (var i = 0; i < res.data.data.length; i++) {
+        //   options.push({
+        //     value: res.data.data[i].value,
+        //     label: res.data.data[i].label,
+        //   });
+        // }
+        this.setState({
+          city_list: res.data.data,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  };
   componentDidMount() {
     this.setState({
-      validationMessage: generateResolutionText('blog'),
+      validationMessage: generateResolutionText("blog"),
       fileValidationMessage: FILE_VALIDATION_MASSAGE,
     });
     this.getJobEmployment();
@@ -189,7 +264,13 @@ class EditJob extends Component {
     this.getTravelNeeded();
     this.getlocationArr();
     this.getExperinceData();
+    this.getAllCity();
+    this.getAllState();
   }
+
+  hamdleChange = (e) => {
+    console.log("e:", e.target.value);
+  };
 
   //   handleSubmitEventUpdate = async (values, actions) => {
   //     let postdata = {
@@ -237,24 +318,38 @@ class EditJob extends Component {
 
   render() {
     const { jobDetails } = this.props.location.state;
-    console.log('jobDetails:', jobDetails.job_id);
     this.handleSubmitEventUpdate = async (values, actions) => {
+      let state = this.state.state_list.find(
+        (item) => item.value == values.state_list
+      );
+      let state_label = state ? state.label : "";
+
+      let city = this.state.city_list.find(
+        (item) => item.value == values.city_list
+      );
+
+      let city_label = city ? city.label : "";
       let postdata = {
         job_id: values.job_id,
         job_employment: String(values.job_employment),
         job_department: String(values.job_department),
         job_location: String(values.job_location),
         travel_needed: String(values.travel_type),
-        region: String(values.region),
+        // region: String(values.region),
         experience: String(values.experience),
         company_information: values.company_information,
         status: String(values.status),
         job_description: values.job_description,
         job_designation: values.job_designation,
+        country: values.country,
+        state: state_label,
+        state_id: String(values.state_list),
+        city: city_label,
+        city_id: String(values.city_list),
       };
 
       let url = `/api/job_portal/job/${jobDetails.id}`;
-      let method = 'PUT';
+      let method = "PUT";
 
       API({
         method: method,
@@ -265,11 +360,11 @@ class EditJob extends Component {
           this.setState({ showModal: false });
           swal({
             closeOnClickOutside: false,
-            title: 'Success',
-            text: 'Updated Successfully',
-            icon: 'success',
+            title: "Success",
+            text: "Updated Successfully",
+            icon: "success",
           }).then(() => {
-            this.props.history.push('/hr/jobs');
+            this.props.history.push("/hr/jobs");
           });
         })
         .catch((err) => {
@@ -284,45 +379,73 @@ class EditJob extends Component {
     };
 
     const initialValues = {
-      job_id: '',
-      feature_image: '',
-      job_title: '',
-      job_role: '',
-      job_location: '',
-      job_category: '',
-      job_description: '',
-      desired_skill_set: '',
-      category_name: '',
-      date_posted: '',
-      status: '',
+      job_id: "",
+      feature_image: "",
+      job_title: "",
+      job_role: "",
+      job_location: "",
+      job_category: "",
+      job_description: "",
+      desired_skill_set: "",
+      category_name: "",
+      date_posted: "",
+      status: "",
     };
     const newInitialValues = {
       job_id: htmlDecode(jobDetails.job_id),
       job_employment: jobDetails.employment_id,
       job_department: jobDetails.department_id,
-
+      country: jobDetails.country,
+      state_list: jobDetails.state_id,
+      city_list: jobDetails.city_id,
       job_location: htmlDecode(jobDetails.job_location),
       travel_type: jobDetails.travel_type_id,
-      region: jobDetails.region_id,
+      // region: jobDetails.region_id,
       experience: jobDetails.experience_id,
       company_information: htmlDecode(jobDetails.company_information),
       job_description: htmlDecode(jobDetails.job_description),
       status: jobDetails.status,
       job_designation: htmlDecode(jobDetails.job_designation),
     };
-    const validateStopFlag = Yup.object().shape({
-      job_employment: Yup.string().required('Please enter employment type'),
-      job_department: Yup.string().required('Please enter department'),
-      job_location: Yup.string().required('Please select job location'),
-      travel_type: Yup.string().required('Please enter travel_needed'),
-      region: Yup.string().required('Please enter region'),
-      experience: Yup.string().required('Please enter experience'),
-      company_information: Yup.string().required(
-        'Please enter company_information'
-      ),
-      job_description: Yup.string().required('Please enter job description'),
+    // const validateStopFlag = Yup.object().shape({
+    //   job_employment: Yup.string().required("Please enter employment type"),
+    //   job_department: Yup.string().required("Please enter department"),
+    //   job_location: Yup.string().required("Please select job location"),
+    //   travel_type: Yup.string().required("Please enter travel_needed"),
+    //   // region: Yup.string().required("Please enter region"),
+    //   experience: Yup.string().required("Please enter experience"),
+    //   company_information: Yup.string().required(
+    //     "Please enter company_information"
+    //   ),
+    //   job_description: Yup.string().required("Please enter job description"),
 
-      status: Yup.number().required('Please select status'),
+    //   status: Yup.number().required("Please select status"),
+    // });
+
+    const validateStopFlag = Yup.object().shape({
+      job_designation: Yup.string().required("Plaese enter job  designation"),
+      job_employment: Yup.string().required("Please enter employment type"),
+      job_department: this.state.job_department
+        ? ""
+        : Yup.string().required("Please enter department"),
+      job_location: Yup.string().required("Please select job location"),
+      country: Yup.string().required("Please select posting country"),
+      state_list: this.state.select_state
+        ? ""
+        : Yup.string().required("Please select posting state"),
+      // city_list: this.state.select_city
+      //   ? ""
+      //   : Yup.string().required("Please select posting city"),
+      // city_list: Yup.string().required("Please select posting city"),
+      travel_type: Yup.string().required("Please enter travel_needed"),
+      // region: Yup.string().required("Please enter region"),
+      experience: Yup.string().required("Please enter experience"),
+      company_information: Yup.string().required(
+        "Please enter company_information"
+      ),
+      job_description: Yup.string().required("Please enter job description"),
+
+      status: Yup.number().required("Please select status"),
     });
 
     return (
@@ -341,7 +464,7 @@ class EditJob extends Component {
                 window.history.go(-1);
                 return false;
               }}
-              style={{ right: '9px', position: 'absolute', top: '13px' }}
+              style={{ right: "9px", position: "absolute", top: "13px" }}
             />
           </section>
           <section className="content">
@@ -485,6 +608,127 @@ class EditJob extends Component {
                               <Col xs={12} sm={12} md={6}>
                                 <div className="form-group">
                                   <label>
+                                    Posting Country
+                                    <span className="impField">*</span>
+                                  </label>
+                                  <Field
+                                    name="country"
+                                    id="country"
+                                    component="select"
+                                    className={`selectArowGray form-control`}
+                                    autoComplete="off"
+                                    value={values.country}
+                                  >
+                                    <option key="-1" value="">
+                                      Select Country
+                                    </option>
+                                    {this.state.country.map((val, i) => (
+                                      <option key={i} value={val.value}>
+                                        {val.value}
+                                      </option>
+                                    ))}
+                                  </Field>
+                                  {errors.country && touched.country ? (
+                                    <span className="errorMsg">
+                                      {errors.country}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </Col>
+                              <Col xs={12} sm={12} md={6}>
+                                <div className="form-group">
+                                  <label>
+                                    Posting State
+                                    <span className="impField">*</span>
+                                  </label>
+                                  {/* <Field
+                                    name="state_list"
+                                    id="state_list"
+                                    component="select"
+                                    className={`selectArowGray form-control`}
+                                    autoComplete="off"
+                                    value={values.state_list}
+                                  >
+                                    <option key="-1" value="">
+                                      Select Posting State
+                                    </option>
+                                    {this.state.state_list.map((val, i) => (
+                                      <option key={i} value={val.value}>
+                                        {val.label}
+                                      </option>
+                                    ))}
+                                  </Field> */}
+                                  <Select
+                                    name="state_list"
+                                    maxMenuHeight={200}
+                                    // isMulti
+                                    isClearable={false}
+                                    isSearchable={true}
+                                    placeholder="Select Posting State"
+                                    options={this.state.state_list}
+                                    value={values.state_list}
+                                    // onChange={(evt) => setFieldValue("state_list",evt)}
+                                    onChange={(e) =>
+                                      this.handleChanges("state_list", e)
+                                    }
+                                  />
+                                  {errors.state_list && touched.state_list ? (
+                                    <span className="errorMsg">
+                                      {errors.state_list}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </Col>
+                            </Row>
+
+                            <Row>
+                              <Col xs={12} sm={12} md={6}>
+                                <div className="form-group">
+                                  <label>
+                                    Posting City
+                                    <span className="impField">*</span>
+                                  </label>
+                                  <Field
+                                    name="city_list"
+                                    id="city_list"
+                                    component="select"
+                                    className={`selectArowGray form-control`}
+                                    autoComplete="off"
+                                    value={values.city_list}
+                                  >
+                                    <option key="-1" value="">
+                                      Select Posting List
+                                    </option>
+                                    {this.state.city_list.map((val, i) => (
+                                      <option key={i} value={val.value}>
+                                        {val.label}
+                                      </option>
+                                    ))}
+                                  </Field>
+                                  {/* <Select
+                                    name="city_list"
+                                    maxMenuHeight={200}
+                                    // isMulti
+                                    isClearable={false}
+                                    isSearchable={true}
+                                    placeholder="Select Posting State"
+                                    options={this.state.city_list}
+                                    value={values.select_city}
+                                    // onChange={(evt) => setFieldValue("city_list",evt)}
+                                    onChange={(e) =>
+                                      this.handleChanges("city_list", e)
+                                    }
+                                  /> */}
+                                  {errors.city_list && touched.city_list ? (
+                                    <span className="errorMsg">
+                                      {errors.city_list}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </Col>
+                              <Col xs={12} sm={12} md={6}>
+                                <div className="form-group">
+                                  <label>
                                     Job Location
                                     <span className="impField">*</span>
                                   </label>
@@ -504,6 +748,9 @@ class EditJob extends Component {
                                   ) : null}
                                 </div>
                               </Col>
+                            </Row>
+
+                            <Row>
                               <Col xs={12} sm={12} md={6}>
                                 <div className="form-group">
                                   <label>
@@ -536,10 +783,7 @@ class EditJob extends Component {
                                   ) : null}
                                 </div>
                               </Col>
-                            </Row>
-
-                            <Row>
-                              <Col xs={12} sm={12} md={6}>
+                              {/* <Col xs={12} sm={12} md={6}>
                                 <div className="form-group">
                                   <label>
                                     Region
@@ -570,7 +814,7 @@ class EditJob extends Component {
                                     </span>
                                   ) : null}
                                 </div>
-                              </Col>
+                              </Col> */}
                               <Col xs={12} sm={12} md={6}>
                                 <div className="form-group">
                                   <label>
@@ -616,30 +860,30 @@ class EditJob extends Component {
                                       height: 350,
                                       menubar: false,
                                       plugins: [
-                                        'advlist autolink lists link image charmap print preview anchor',
-                                        'searchreplace visualblocks code fullscreen',
-                                        'insertdatetime media table paste code help wordcount',
+                                        "advlist autolink lists link image charmap print preview anchor",
+                                        "searchreplace visualblocks code fullscreen",
+                                        "insertdatetime media table paste code help wordcount",
                                       ],
                                       toolbar:
-                                        'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ',
+                                        "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
                                       content_style:
-                                        'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-                                      file_browser_callback_types: 'image',
+                                        "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                                      file_browser_callback_types: "image",
                                       file_picker_callback: function (
                                         callback,
                                         value,
                                         meta
                                       ) {
-                                        if (meta.filetype == 'image') {
+                                        if (meta.filetype == "image") {
                                           var input =
-                                            document.getElementById('my-file');
+                                            document.getElementById("my-file");
                                           input.click();
                                           input.onchange = function () {
                                             var file = input.files[0];
                                             var reader = new FileReader();
                                             reader.onload = function (e) {
                                               console.log(
-                                                'name',
+                                                "name",
                                                 e.target.result
                                               );
                                               callback(e.target.result, {
@@ -654,7 +898,7 @@ class EditJob extends Component {
                                     }}
                                     onEditorChange={(value) =>
                                       setFieldValue(
-                                        'company_information',
+                                        "company_information",
                                         value
                                       )
                                     }
@@ -693,30 +937,30 @@ class EditJob extends Component {
                                       height: 350,
                                       menubar: false,
                                       plugins: [
-                                        'advlist autolink lists link image charmap print preview anchor',
-                                        'searchreplace visualblocks code fullscreen',
-                                        'insertdatetime media table paste code help wordcount',
+                                        "advlist autolink lists link image charmap print preview anchor",
+                                        "searchreplace visualblocks code fullscreen",
+                                        "insertdatetime media table paste code help wordcount",
                                       ],
                                       toolbar:
-                                        'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ',
+                                        "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | visualblocks code ",
                                       content_style:
-                                        'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-                                      file_browser_callback_types: 'image',
+                                        "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                                      file_browser_callback_types: "image",
                                       file_picker_callback: function (
                                         callback,
                                         value,
                                         meta
                                       ) {
-                                        if (meta.filetype == 'image') {
+                                        if (meta.filetype == "image") {
                                           var input =
-                                            document.getElementById('my-file');
+                                            document.getElementById("my-file");
                                           input.click();
                                           input.onchange = function () {
                                             var file = input.files[0];
                                             var reader = new FileReader();
                                             reader.onload = function (e) {
                                               console.log(
-                                                'name',
+                                                "name",
                                                 e.target.result
                                               );
                                               callback(e.target.result, {
@@ -730,7 +974,7 @@ class EditJob extends Component {
                                       paste_data_images: true,
                                     }}
                                     onEditorChange={(value) =>
-                                      setFieldValue('job_description', value)
+                                      setFieldValue("job_description", value)
                                     }
                                   />
                                   {errors.job_description &&
@@ -778,7 +1022,7 @@ class EditJob extends Component {
                         <Modal.Footer>
                           <button
                             className={`btn btn-success btn-sm ${
-                              isValid ? 'btn-custom-green' : 'btn-disable'
+                              isValid ? "btn-custom-green" : "btn-disable"
                             } m-r-10`}
                             type="submit"
                             // disabled={
@@ -787,11 +1031,11 @@ class EditJob extends Component {
                           >
                             {this.state.jobId > 0
                               ? isSubmitting
-                                ? 'Updating...'
-                                : 'Update'
+                                ? "Updating..."
+                                : "Update"
                               : isSubmitting
-                              ? 'Submitting...'
-                              : 'Submit'}
+                              ? "Submitting..."
+                              : "Submit"}
                           </button>
                           <button
                             onClick={(e) => this.modalCloseHandler()}

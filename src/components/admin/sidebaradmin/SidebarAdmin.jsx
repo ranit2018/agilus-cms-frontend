@@ -126,10 +126,10 @@ class SidebarAdmin extends Component {
       this.setState({ shown: "7" });
     }
     if (
-      path === "/carrer-page/inside-srl" ||
-      path === "/carrer-page/life-at-srl" ||
-      path === "/carrer-page/fact-about-srl" ||
-      path === "/carrer-page/benefits"
+      path === "/career-page/inside-srl" ||
+      path === "/career-page/life-at-srl" ||
+      path === "/career-page/fact-about-srl" ||
+      path === "/career-page/benefits"
       //  || path === "/partner-page/center-images"
       // || path === "/partner-page/current-offers"
     ) {
@@ -571,14 +571,14 @@ class SidebarAdmin extends Component {
 
           {/* hr start */}
           <li className={rotate == "8" ? "treeview active" : "treeview"}>
-            <Link to="#" data-id="7" onClick={this.handlePlus}>
+            <Link to="#" data-id="8" onClick={this.handlePlus}>
               <i
                 className="fas fa-briefcase sub-menu"
                 data-id="8"
                 onClick={this.handlePlus}
               ></i>{" "}
               <span data-id="8" onClick={this.handlePlus}>
-                Carrer Page{" "}
+                Career Page{" "}
               </span>
               <span className="pull-right-container">
                 <i
@@ -594,10 +594,10 @@ class SidebarAdmin extends Component {
             </Link>
 
             <ul className="treeview-menu">
-              {this.props.path_name === "/carrer-page/inside-srl" ? (
+              {this.props.path_name === "/career-page/inside-srl" ? (
                 <li className="active">
                   {" "}
-                  <Link to="/carrer-page/inside-srl">
+                  <Link to="/career-page/inside-srl">
                     {" "}
                     <i className="fas fa-compress"></i>{" "}
                     <span> Inside SRL </span>
@@ -606,7 +606,7 @@ class SidebarAdmin extends Component {
               ) : (
                 <li>
                   {" "}
-                  <Link to="/carrer-page/inside-srl">
+                  <Link to="/career-page/inside-srl">
                     {" "}
                     <i className="fas fa-compress"></i>{" "}
                     <span> Inside SRL </span>
@@ -615,10 +615,10 @@ class SidebarAdmin extends Component {
               )}
             </ul>
             <ul className="treeview-menu">
-              {this.props.path_name === "/carrer-page/life-at-srl" ? (
+              {this.props.path_name === "/career-page/life-at-srl" ? (
                 <li className="active">
                   {" "}
-                  <Link to="/carrer-page/life-at-srl">
+                  <Link to="/career-page/life-at-srl">
                     {" "}
                     <i className="fas fa-compress"></i>{" "}
                     <span> Life At SRL </span>
@@ -627,7 +627,7 @@ class SidebarAdmin extends Component {
               ) : (
                 <li>
                   {" "}
-                  <Link to="/carrer-page/life-at-srl">
+                  <Link to="/career-page/life-at-srl">
                     {" "}
                     <i className="fas fa-compress"></i>{" "}
                     <span> Life At SRL </span>
@@ -636,10 +636,10 @@ class SidebarAdmin extends Component {
               )}
             </ul>
             <ul className="treeview-menu">
-              {this.props.path_name === "/carrer-page/fact-about-srl" ? (
+              {this.props.path_name === "/career-page/fact-about-srl" ? (
                 <li className="active">
                   {" "}
-                  <Link to="/carrer-page/fact-about-srl">
+                  <Link to="/career-page/fact-about-srl">
                     {" "}
                     <i className="fas fa-compress"></i>{" "}
                     <span> Fact About SRL </span>
@@ -648,7 +648,7 @@ class SidebarAdmin extends Component {
               ) : (
                 <li>
                   {" "}
-                  <Link to="/carrer-page/fact-about-srl">
+                  <Link to="/career-page/fact-about-srl">
                     {" "}
                     <i className="fas fa-compress"></i>{" "}
                     <span> Fact About SRL </span>
@@ -657,10 +657,10 @@ class SidebarAdmin extends Component {
               )}
             </ul>
             <ul className="treeview-menu">
-              {this.props.path_name === "/carrer-page/benefits" ? (
+              {this.props.path_name === "/career-page/benefits" ? (
                 <li className="active">
                   {" "}
-                  <Link to="/carrer-page/benefits">
+                  <Link to="/career-page/benefits">
                     {" "}
                     <i className="fas fa-compress"></i> <span> Benefits </span>
                   </Link>{" "}
@@ -668,7 +668,7 @@ class SidebarAdmin extends Component {
               ) : (
                 <li>
                   {" "}
-                  <Link to="/carrer-page/benefits">
+                  <Link to="/career-page/benefits">
                     {" "}
                     <i className="fas fa-compress"></i> <span> Benefits </span>
                   </Link>{" "}

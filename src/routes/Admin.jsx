@@ -104,10 +104,10 @@ import RegisteredUsers from "../components/hr/registered-users/RegisteredUsers";
 import JobExperience from "../components/hr/master-jobs/experience/Experience";
 import JobTravelNeeded from "../components/hr/master-jobs/travel-needed/TravelNeeded";
 
-import InsideSrl from "../components/admin/carrer-page/InsideSrl";
-import LifeAtSrl from "../components/admin/carrer-page/LifeAtSrl";
-import FactAboutSrl from "../components/admin/carrer-page/FactAboutSrl";
-import Benefits from "../components/admin/carrer-page/Benefits";
+import InsideSrl from "../components/admin/career-page/InsideSrl";
+import LifeAtSrl from "../components/admin/career-page/LifeAtSrl";
+import FactAboutSrl from "../components/admin/career-page/FactAboutSrl";
+import Benefits from "../components/admin/career-page/Benefits";
 // HR end
 
 import "../assets/css/all.css";
@@ -254,7 +254,10 @@ class Admin extends Component {
           component={AboutUsPartnerPage}
         />
         <PrivateRoute path="/partner-page/add-aboutus" component={AddAboutus} />
-        <PrivateRoute path="/partner-page/edit-aboutus/:id" component={EditAboutus} />
+        <PrivateRoute
+          path="/partner-page/edit-aboutus/:id"
+          component={EditAboutus}
+        />
         <PrivateRoute
           path="/partner-page/services"
           component={ServicesPartnerPage}
@@ -364,13 +367,13 @@ class Admin extends Component {
         <PrivateRoute path="/edit-page/:id" component={EditPage} />
         <PrivateRoute path="/dynamic_landing_page/lead" component={Lead} />
 
-        <PrivateRoute path="/carrer-page/inside-srl" component={InsideSrl} />
-        <PrivateRoute path="/carrer-page/life-at-srl" component={LifeAtSrl} />
+        <PrivateRoute path="/career-page/inside-srl" component={InsideSrl} />
+        <PrivateRoute path="/career-page/life-at-srl" component={LifeAtSrl} />
         <PrivateRoute
-          path="/carrer-page/fact-about-srl"
+          path="/career-page/fact-about-srl"
           component={FactAboutSrl}
         />
-        <PrivateRoute path="/carrer-page/benefits" component={Benefits} />
+        <PrivateRoute path="/career-page/benefits" component={Benefits} />
 
         <Route from="*" component={AdminPageNotFound} />
       </Switch>

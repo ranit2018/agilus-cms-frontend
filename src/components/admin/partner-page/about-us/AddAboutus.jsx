@@ -193,7 +193,7 @@ class AddAccordion extends Component {
       status: "",
       description: "",
     });
-    console.log(">>>>>>>>>>", this.state.add_city);
+    // console.log(">>>>>>>>>>", this.state.add_city);
     const validateStopFlag = Yup.object().shape({
       add_city: this.state.add_city
         ? null

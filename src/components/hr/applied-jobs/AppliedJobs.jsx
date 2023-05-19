@@ -267,7 +267,7 @@ class AppliedJobs extends Component {
         )}&email=${encodeURIComponent(email)}&job_id=${encodeURIComponent(
           job_id
         )}&job_role=${encodeURIComponent(
-          job_role
+          (job_role)
         )}&country=${encodeURIComponent(country)}&state=${encodeURIComponent(
           state
         )}&city=${encodeURIComponent(city)}&travel_needed=${encodeURIComponent(

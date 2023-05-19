@@ -54,9 +54,10 @@ class AddBlog extends Component {
       experince_arr: [],
       country: [
         {
-          id: "IN",
+          id: "2",
           value: "India",
         },
+
         // {
         //   id: "SL",
         //   value: "Sri Lanka",
@@ -164,6 +165,27 @@ class AddBlog extends Component {
         showErrorMessage(err, this.props);
       });
   };
+  getAllCityById = (payload) => {
+    SRL_API.post(`/feed/city-list`, {
+      state_id: payload,
+    })
+      .then((res) => {
+        console.log("res:", res);
+        // let options = [];
+        // for (var i = 0; i < res.data.data.length; i++) {
+        //   options.push({
+        //     value: res.data.data[i].value,
+        //     label: res.data.data[i].label,
+        //   });
+        // }
+        this.setState({
+          city_list: res.data.data,
+        });
+      })
+      .catch((err) => {
+        showErrorMessage(err, this.props);
+      });
+  };
   getDepartmentArr = () => {
     API.get(`api/job_portal/job/department?page=1`)
       .then((res) => {
@@ -238,6 +260,7 @@ class AddBlog extends Component {
   };
 
   handleChanges = (key, e) => {
+    console.log("e:", e.value);
     if (key == "job_department") {
       this.setState({
         job_department: e.value,
@@ -246,6 +269,7 @@ class AddBlog extends Component {
       this.setState({
         select_state: e.value,
       });
+      this.getAllCityById(e.value);
     } else if (key === "city_list") {
       this.setState({
         select_city: e.value,
@@ -256,6 +280,7 @@ class AddBlog extends Component {
     this.setState({
       validationMessage: generateResolutionText("blog"),
       fileValidationMessage: FILE_VALIDATION_MASSAGE,
+      select_city: "",
     });
     this.getJobEmployment();
     this.getDepartmentArr();
@@ -264,6 +289,7 @@ class AddBlog extends Component {
     this.getExperinceData();
     this.getAllState();
     this.getAllCity();
+    // this.getAllCityById();
   }
 
   handleSubmitEventAdd = (values, actions) => {
