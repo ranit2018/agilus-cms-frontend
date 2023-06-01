@@ -10,11 +10,13 @@ import * as Yup from "yup";
 import { connect } from "react-redux";
 import { adminLogout } from "../../../store/actions/auth";
 
-import logoImage from "../../../assets/images/cipla_logo_white.png";
+// import logoImage from "../../../assets/images/cipla_logo_white.png";
 // import logoImageMini from '../../../assets/images/drreddylogosmall_white.png';
-import userImage from "../../../assets/images/user2-160x160.jpg";
-import SRLLogo from "../../../assets/images/SRL-Logo.png";
-import SRLLogoNew from "../../../assets/images/logoJpg.933b09051.png";
+// import userImage from "../../../assets/images/user2-160x160.jpg";
+import SRLLogo from "../../../assets/images/Agilus-Logo.png";
+// import SRLLogo from "../../../assets/images/SRL-Logo.png";
+import SRLLogoNew from "../../../assets/images/Agilus_White.png";
+// import SRLLogoNew from "../../../assets/images/logoJpg.933b09051.png";
 
 import swal from "sweetalert";
 import { showErrorMessage } from "../../../shared/handle_error";
@@ -223,7 +225,7 @@ class Header extends Component {
                   <img src={SRLLogo} alt="User Img" />
                   </div>
                   <span className="hidden-xs user-name">
-                    SRL Diagnostics
+                    Agilus Diagnostics
                   </span>
                   <i className="fa fa-angle-down"></i>
                   <div className="clearFix"></div>
@@ -240,7 +242,7 @@ class Header extends Component {
                    
                     <p>
                       {" "}
-                      SRL Diagnostics CMS Admin{" "}
+                      Agilus Diagnostics CMS Admin{" "}
                     </p>
                   </li>
                   <li className="user-footer">

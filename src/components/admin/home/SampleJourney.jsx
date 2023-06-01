@@ -734,7 +734,7 @@ class SampleJourneny extends Component {
                         <div className="row">
                             <div className="col-lg-12 col-sm-12 col-xs-12">
                                 <h1>
-                                    Manage SRL Sample Journey
+                                    Manage Agilus Sample Journey
                 <small />
                                 </h1>
                             </div>
@@ -746,7 +746,7 @@ class SampleJourneny extends Component {
                                         className="btn btn-info btn-sm"
                                         onClick={(e) => this.modalShowHandler(e, "")}
                                     >
-                                        <i className="fas fa-plus m-r-5" /> Add SRL Sample Journey
+                                        <i className="fas fa-plus m-r-5" /> Add Agilus Sample Journey
                     </button>
                                 </div>
 

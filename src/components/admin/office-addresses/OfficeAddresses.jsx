@@ -40,13 +40,13 @@ const custStatus = (refObj) => (cell) => {
 const setOfficeType = (refObj) => (cell) => {
     //return cell === 1 ? "Active" : "Inactive";
     if (cell === 1) {
-        return "SRL Diagnostics Registered Office";
+        return "Agilus Diagnostics Registered Office";
     } else if (cell === 2) {
-        return "SRL Diagnostics Corporate Office";
+        return "Agilus Diagnostics Corporate Office";
     } else if (cell === 3) {
         return "Footer Address";
     } else if (cell === 4) {
-        return "SRL Diagnostics Office";
+        return "Agilus Diagnostics Office";
     }
 };
 

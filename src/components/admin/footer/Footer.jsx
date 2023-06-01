@@ -9,7 +9,7 @@ class Footer extends Component {
 
     return (
       <footer className="main-footer">
-            Copyright {dateFormat(new Date(), "yyyy")}. SRL Diagnostics. All rights reserved.
+            Copyright {dateFormat(new Date(), "yyyy")}. Agilus Diagnostics. All rights reserved.
       </footer>
     );
     

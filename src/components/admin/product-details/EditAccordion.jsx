@@ -580,7 +580,7 @@ class AddAccordion extends Component {
             swal({
               closeOnClickOutside: true,
               title: "Error",
-              text: `This Product is in-active on SRL, You can't update the Content`,
+              text: `This Product is in-active on Agilus, You can't update the Content`,
               icon: "error",
             }).then(() => {
               this.props.history.push("/product-details/accordion");
@@ -590,7 +590,7 @@ class AddAccordion extends Component {
         swal({
           closeOnClickOutside: true,
           title: "Error",
-          text: `This Product is in-active on SRL, You can't update the Content.`,
+          text: `This Product is in-active on Agilus, You can't update the Content.`,
           icon: "error",
         }).then(() => {
           this.props.history.push("/product-details/accordion");

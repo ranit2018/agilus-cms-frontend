@@ -1222,7 +1222,7 @@ class SidebarAdmin extends Component {
                       <Link to="/about-us/about-srl">
                         {" "}
                         <i className="fas fa-chalkboard-teacher"></i>{" "}
-                        <span>About SRL</span>
+                        <span>About Agilus</span>
                       </Link>{" "}
                     </li>
                   ) : (
@@ -1231,7 +1231,7 @@ class SidebarAdmin extends Component {
                       <Link to="/about-us/about-srl">
                         {" "}
                         <i className="fas fa-chalkboard-teacher"></i>{" "}
-                        <span>About SRL</span>
+                        <span>About Agilus</span>
                       </Link>{" "}
                     </li>
                   )}

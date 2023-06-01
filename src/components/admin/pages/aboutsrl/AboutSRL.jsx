@@ -59,7 +59,7 @@ class AboutSRL extends Component {
                 <div className="row">
                   <div className="col-lg-12 col-sm-12 col-xs-12">
                     <h1>
-                      Manage About SRL
+                      Manage About Agilus
                         <small />
                     </h1>
                   </div>
@@ -75,7 +75,7 @@ class AboutSRL extends Component {
                             state: { content: this.state.content}
                         })}
                       >
-                        <i className="fas fa-plus m-r-5" /> Edit About SRL
+                        <i className="fas fa-plus m-r-5" /> Edit About Agilus
                         </button>
                     </div>
                   </div>

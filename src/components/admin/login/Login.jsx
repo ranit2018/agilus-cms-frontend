@@ -8,6 +8,7 @@ import { Link, Redirect } from "react-router-dom";
 // redux store
 import { connect } from "react-redux";
 import { adminLogin } from "../../../store/actions/auth";
+import SRLLogoNew from "../../../assets/images/Agilus_White.png";
 
 const validateLogin = Yup.object().shape({
   username: Yup.string().trim().required("Please enter your username"),
@@ -67,7 +68,7 @@ class Login extends Component {
                   <div className="login-logo">
                     <Link to="/" className="logo">
                       <span className="logo-mini">
-                        <img src="../img/logoJpg.933b0905.png" alt="SRL Diagnostics" />
+                        <img src={SRLLogoNew} alt="SRL Diagnostics" width={200} />
                       </span>
                     </Link>
                   </div>

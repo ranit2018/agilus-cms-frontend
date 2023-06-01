@@ -38,7 +38,7 @@ class EditAboutSRL extends Component {
                 swal({
                     closeOnClickOutside: false,
                     title: "Success",
-                    text: "About SRL Updated Successfully",
+                    text: "About Agilus Updated Successfully",
                     icon: "success"
                 }).then(() => {
                     this.props.history.push('/about-us/about-srl')
@@ -72,7 +72,7 @@ class EditAboutSRL extends Component {
 
                     <section className="content-header">
                         <h1>
-                            Edit About SRL
+                            Edit About Agilus
                     <small />
                         </h1> <br />
 
