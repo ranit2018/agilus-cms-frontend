@@ -10,16 +10,19 @@ export const adminLogin = (request, onSuccess, setErrors) => {
       password = request.password.trim(),
       customErr = { process: "Invalid access" };
 
+    const payloadsss = {
+      username: username,
+      password: password,
+    };
+
     const encryptedPass = AES.encrypt(
-      password,
+      JSON.stringify(payloadsss),
       localStorage.getItem("agilus_cms_decrypted_KEY").replaceAll('"', "")
     ).toString();
 
     axios
       .post("/api/adm/login", {
-        username: username,
-        userlogin: username,
-        password: encryptedPass,
+        logindata: encryptedPass,
       })
       .then((response) => {
         dispatch({

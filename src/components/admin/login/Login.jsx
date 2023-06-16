@@ -10,9 +10,9 @@ import { connect } from "react-redux";
 import { adminLogin } from "../../../store/actions/auth";
 import SRLLogoNew from "../../../assets/images/Agilus_White.png";
 
-import crypto from 'crypto-browserify';
-import { Buffer } from 'buffer/';
-import { Transform } from 'stream-browserify';
+import crypto from "crypto-browserify";
+import { Buffer } from "buffer/";
+import { Transform } from "stream-browserify";
 import axios from "../../../shared/axios";
 
 global.Buffer = Buffer;
@@ -21,7 +21,8 @@ window.Transform = Transform;
 
 const validateLogin = Yup.object().shape({
   username: Yup.string().trim().required("Please enter your username"),
-  password: Yup.string().trim()
+  password: Yup.string()
+    .trim()
     .required("Please enter your password")
     .min(8, "Password must be at least 8 characters long"),
 });
@@ -40,6 +41,7 @@ class Login extends Component {
   }
 
   handleSubmitEvent = (values, { setErrors }) => {
+    console.log("i am in");
     this.setState({ isLoading: true });
     this.props.submitLogin(
       values,
@@ -52,45 +54,58 @@ class Login extends Component {
     );
   };
 
-  componentDidMount(){
+  componentDidMount() {
     this.GET_KEY();
   }
 
   GET_KEY = () => {
-		// Creating Client
+    // Creating Client
 
-		const client = crypto.createDiffieHellman(256);
-		const clientPublicKey = client.generateKeys().toString('base64');
+    const client = crypto.createDiffieHellman(256);
+    const clientPublicKey = client.generateKeys().toString("base64");
 
-		// Get Server Public key
-		axios.get(`/api/cms/profile`, {
-			clientPublicKey: clientPublicKey,
-		}).then((response) => {
-			const serverPublicKey = Buffer.from(response.data, 'base64');
-			const sharedSecret = client.computeSecret(serverPublicKey, 'base64');
+    // Get Server Public key
+    axios
+      .get(`/api/cms/profile`, {
+        clientPublicKey: clientPublicKey,
+      })
+      .then((response) => {
+        const serverPublicKey = Buffer.from(response.data, "base64");
+        const sharedSecret = client.computeSecret(serverPublicKey, "base64");
 
-			axios.post(`/api/cms/homeinfo`, {
-				sharedSecret: sharedSecret,
-			}).then((response) => {
-				var iv = Buffer.from(response.data.iv, 'hex');
+        axios
+          .post(`/api/cms/homeinfo`, {
+            sharedSecret: sharedSecret,
+          })
+          .then((response) => {
+            var iv = Buffer.from(response.data.iv, "hex");
 
-				const decipher = crypto.createDecipheriv('aes-256-cbc', sharedSecret, iv);
+            const decipher = crypto.createDecipheriv(
+              "aes-256-cbc",
+              sharedSecret,
+              iv
+            );
 
-				let decrypted = decipher.update(response.data.encrypted, 'hex', 'utf8');
-				decrypted += decipher.final('utf8');
+            let decrypted = decipher.update(
+              response.data.encrypted,
+              "hex",
+              "utf8"
+            );
+            decrypted += decipher.final("utf8");
 
-				localStorage.setItem('agilus_cms_decrypted_KEY', JSON.stringify(decrypted.replaceAll('"', '')));
-			});
-		});
-	};
-
-
+            localStorage.setItem(
+              "agilus_cms_decrypted_KEY",
+              JSON.stringify(decrypted.replaceAll('"', ""))
+            );
+          });
+      });
+  };
 
   render() {
     const initialValues = {
       username: "",
       password: "",
-    }
+    };
 
     let token = localStorage.getItem("admin_token");
     if (token) {
@@ -111,7 +126,11 @@ class Login extends Component {
                   <div className="login-logo">
                     <Link to="/" className="logo">
                       <span className="logo-mini">
-                        <img src={SRLLogoNew} alt="Agilus Diagnostics" width={200} />
+                        <img
+                          src={SRLLogoNew}
+                          alt="Agilus Diagnostics"
+                          width={200}
+                        />
                       </span>
                     </Link>
                   </div>
@@ -177,6 +196,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     submitLogin: (data, onSuccess, setErrors) =>
+      // console.log('data:', data)
       dispatch(adminLogin(data, onSuccess, setErrors)),
   };
 };
