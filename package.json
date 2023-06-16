@@ -10,6 +10,7 @@
     "axios": "^0.20.0",
     "babel-polyfill": "^6.26.0",
     "bootstrap": "^3.4.1",
+    "crypto-js": "^4.1.1",
     "dateformat": "^3.0.3",
     "formik": "^2.2.0",
     "jwt-decode": "^3.0.0",
