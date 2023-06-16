@@ -68,7 +68,7 @@ class Login extends Component {
                   <div className="login-logo">
                     <Link to="/" className="logo">
                       <span className="logo-mini">
-                        <img src={SRLLogoNew} alt="SRL Diagnostics" width={200} />
+                        <img src={SRLLogoNew} alt="Agilus Diagnostics" width={200} />
                       </span>
                     </Link>
                   </div>
