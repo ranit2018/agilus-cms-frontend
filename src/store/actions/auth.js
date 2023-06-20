@@ -1,7 +1,7 @@
 import axios from "../../shared/axios";
 //import jwt_decode from "jwt-decode";
-import AES from "crypto-js/aes";
-import ENC_UTF8 from "crypto-js/enc-utf8";
+// import AES from "crypto-js/aes";
+// import ENC_UTF8 from "crypto-js/enc-utf8";
 import { AUTH_TOKEN, AUTH_LOGOUT, AUTH_FAILURE } from "./constant";
 
 export const adminLogin = (request, onSuccess, setErrors) => {
@@ -15,14 +15,16 @@ export const adminLogin = (request, onSuccess, setErrors) => {
       password: password,
     };
 
-    const encryptedPass = AES.encrypt(
-      JSON.stringify(payloadsss),
-      localStorage.getItem("agilus_cms_decrypted_KEY").replaceAll('"', "")
-    ).toString();
+    // const encryptedPass = AES.encrypt(
+    //   JSON.stringify(payloadsss),
+    //   localStorage.getItem("agilus_cms_decrypted_KEY").replaceAll('"', "")
+    // ).toString();
 
     axios
       .post("/api/adm/login", {
-        logindata: encryptedPass,
+        // logindata: encryptedPass,
+        username: username,
+        password: password,
       })
       .then((response) => {
         dispatch({

@@ -10,14 +10,14 @@ import { connect } from "react-redux";
 import { adminLogin } from "../../../store/actions/auth";
 import SRLLogoNew from "../../../assets/images/Agilus_White.png";
 
-import crypto from "crypto-browserify";
-import { Buffer } from "buffer/";
-import { Transform } from "stream-browserify";
-import axios from "../../../shared/axios";
+// import crypto from "crypto-browserify";
+// import { Buffer } from "buffer/";
+// import { Transform } from "stream-browserify";
+// import axios from "../../../shared/axios";
 
-global.Buffer = Buffer;
-global.Transform = Transform;
-window.Transform = Transform;
+// global.Buffer = Buffer;
+// global.Transform = Transform;
+// window.Transform = Transform;
 
 const validateLogin = Yup.object().shape({
   username: Yup.string().trim().required("Please enter your username"),
@@ -54,52 +54,52 @@ class Login extends Component {
     );
   };
 
-  componentDidMount() {
-    this.GET_KEY();
-  }
+  // componentDidMount() {
+  //   this.GET_KEY();
+  // }
 
-  GET_KEY = () => {
-    // Creating Client
+  // GET_KEY = () => {
+  //   // Creating Client
 
-    const client = crypto.createDiffieHellman(256);
-    const clientPublicKey = client.generateKeys().toString("base64");
+  //   const client = crypto.createDiffieHellman(256);
+  //   const clientPublicKey = client.generateKeys().toString("base64");
 
-    // Get Server Public key
-    axios
-      .get(`/api/cms/profile`, {
-        clientPublicKey: clientPublicKey,
-      })
-      .then((response) => {
-        const serverPublicKey = Buffer.from(response.data, "base64");
-        const sharedSecret = client.computeSecret(serverPublicKey, "base64");
+  //   // Get Server Public key
+  //   axios
+  //     .get(`/api/cms/profile`, {
+  //       clientPublicKey: clientPublicKey,
+  //     })
+  //     .then((response) => {
+  //       const serverPublicKey = Buffer.from(response.data, "base64");
+  //       const sharedSecret = client.computeSecret(serverPublicKey, "base64");
 
-        axios
-          .post(`/api/cms/homeinfo`, {
-            sharedSecret: sharedSecret,
-          })
-          .then((response) => {
-            var iv = Buffer.from(response.data.iv, "hex");
+  //       axios
+  //         .post(`/api/cms/homeinfo`, {
+  //           sharedSecret: sharedSecret,
+  //         })
+  //         .then((response) => {
+  //           var iv = Buffer.from(response.data.iv, "hex");
 
-            const decipher = crypto.createDecipheriv(
-              "aes-256-cbc",
-              sharedSecret,
-              iv
-            );
+  //           const decipher = crypto.createDecipheriv(
+  //             "aes-256-cbc",
+  //             sharedSecret,
+  //             iv
+  //           );
 
-            let decrypted = decipher.update(
-              response.data.encrypted,
-              "hex",
-              "utf8"
-            );
-            decrypted += decipher.final("utf8");
+  //           let decrypted = decipher.update(
+  //             response.data.encrypted,
+  //             "hex",
+  //             "utf8"
+  //           );
+  //           decrypted += decipher.final("utf8");
 
-            localStorage.setItem(
-              "agilus_cms_decrypted_KEY",
-              JSON.stringify(decrypted.replaceAll('"', ""))
-            );
-          });
-      });
-  };
+  //           localStorage.setItem(
+  //             "agilus_cms_decrypted_KEY",
+  //             JSON.stringify(decrypted.replaceAll('"', ""))
+  //           );
+  //         });
+  //     });
+  // };
 
   render() {
     const initialValues = {
